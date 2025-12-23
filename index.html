@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Sistema de Navegação Costeira - IMO A.893(21)">
+    <meta name="author" content="Jossian Brito | Charlie Bravo">
+    <title>SISNAV Costeiro v3.1 Modular</title>
+
+    <!-- DEPENDÊNCIAS EXTERNAS (CDNs) -->
+    <!-- <script src="js/services/TideCSVService.js"></script> REMOVED: Loaded via Module import in App.js -->
+    <script src="js/services/ReportService.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- CORREÇÃO: Leaflet carregado no HEAD para garantir que 'L' exista globalmente antes do App iniciar -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+    <!-- ESTILOS DO PROJETO -->
+    <link rel="stylesheet" href="css/main.css">
+</head>
+
+<body class="font-sans text-slate-800 bg-slate-100">
+
+    <!-- BARRA DE NAVEGAÇÃO -->
+    <nav class="bg-slate-900 text-white p-3 shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <i class="fas fa-anchor text-blue-400 text-xl"></i>
+                <div>
+                    <h1 class="font-bold tracking-wider text-sm md:text-base leading-tight">SISNAV COSTEIRO</h1>
+                    <p class="text-[10px] text-slate-400">v3.1 Modular | Charlie Bravo</p>
+                </div>
+            </div>
+
+            <div class="flex gap-2 text-xs md:text-sm">
+                <button id="btn-tab-appraisal"
+                    class="tab-btn px-3 py-2 rounded transition-colors bg-slate-700 text-blue-300 font-bold"
+                    data-target="view-appraisal">
+                    1. APPRAISAL
+                </button>
+                <button id="btn-tab-planning"
+                    class="tab-btn px-3 py-2 rounded transition-colors text-slate-300 hover:bg-slate-800"
+                    data-target="view-planning">
+                    2. PLAN
+                </button>
+                <button id="btn-tab-monitoring"
+                    class="tab-btn px-3 py-2 rounded transition-colors text-slate-300 hover:bg-slate-800"
+                    data-target="view-monitoring">
+                    3. MONITOR
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="max-w-7xl mx-auto p-4 pb-24">
+
+        <!-- ABA 1: APPRAISAL -->
+        <section id="view-appraisal" class="view-section animate-fade-in block">
+            <div id="card-appraisal"
+                class="bg-white p-6 rounded-lg shadow border-l-4 border-red-500 transition-colors duration-300">
+                <header class="flex justify-between items-center mb-6 border-b pb-2">
+                    <h2 class="text-lg font-bold flex items-center gap-2">
+                        <i class="fas fa-clipboard-check text-slate-600"></i> Checklist Pré-Viagem
+                    </h2>
+                    <span id="status-badge-appraisal"
+                        class="text-xs px-2 py-1 bg-red-100 text-red-800 rounded font-bold uppercase">
+                        Pendente
+                    </span>
+                </header>
+
+                <!-- DADOS DA EMBARCAÇÃO (STAGE 1) -->
+                <div class="mb-6 space-y-4">
+                    <!-- LINHA 1: Rebocador, Filial, Data -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Rebocador</label>
+                            <div class="flex gap-2">
+                                <select id="select-ship-name"
+                                    class="flex-1 p-2 border rounded text-sm bg-gray-50 focus:border-blue-500 uppercase font-bold cursor-pointer">
+                                    <option value="">Carregando...</option>
+                                </select>
+                                <input type="text" id="inp-ship-imo"
+                                    class="w-20 p-2 border rounded text-xs bg-gray-100 text-gray-500 text-center font-mono"
+                                    placeholder="IMO" readonly>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Filial</label>
+                            <input type="text" id="inp-ship-branch"
+                                class="w-full p-2 border rounded text-sm bg-white focus:border-blue-500 uppercase"
+                                value="ITAGUAÍ">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Data Elaboração</label>
+                            <input type="date" id="inp-plan-date"
+                                class="w-full p-2 border rounded text-sm bg-white focus:border-blue-500">
+                        </div>
+                    </div>
+
+                    <!-- LINHA 1.5: Portos e Datas (ETD/ETA) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-blue-50 p-2 rounded border border-blue-100">
+                        <div>
+                            <label class="block text-[10px] font-bold text-blue-800 mb-1">Porto Origem / ETD</label>
+                            <select id="select-port-dep"
+                                class="w-full p-1 border rounded text-xs mb-1 font-bold text-gray-700">
+                                <option value="">Selecione...</option>
+                            </select>
+                            <input type="datetime-local" id="inp-etd" class="w-full p-1 border rounded text-xs">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-blue-800 mb-1">Porto Destino / ETA</label>
+                            <select id="select-port-arr"
+                                class="w-full p-1 border rounded text-xs mb-1 font-bold text-gray-700">
+                                <option value="">Selecione...</option>
+                            </select>
+                            <input type="datetime-local" id="inp-eta" class="w-full p-1 border rounded text-xs">
+                        </div>
+                    </div>
+
+                    <!-- LINHA 2: Comandante e Tripulação -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Comandante</label>
+                            <input type="text" id="inp-ship-commander"
+                                class="w-full p-2 border rounded text-sm bg-white focus:border-blue-500 uppercase"
+                                placeholder="NOME DO CMT">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Tripulação</label>
+                            <input type="number" id="inp-ship-crew"
+                                class="w-24 p-2 border rounded text-sm bg-white focus:border-blue-500 text-center"
+                                value="06">
+                        </div>
+                    </div>
+
+                    <!-- LINHA 3: Parâmetros Operacionais -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-50 p-3 rounded border">
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 mb-1">Vel. Cruzeiro (kn)</label>
+                            <input type="number" id="inp-ship-speed"
+                                class="w-full p-1 border rounded text-sm text-center font-bold text-blue-800"
+                                value="10.0" step="0.1">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-red-400 mb-1">Vel. Reboque (kn)</label>
+                            <input type="number" id="inp-ship-tow-speed"
+                                class="w-full p-1 border rounded text-sm text-center font-bold text-red-800" value="0.0"
+                                step="0.1">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 mb-1">Consumo (L/h)</label>
+                            <input type="number" id="inp-ship-consumption"
+                                class="w-full p-1 border rounded text-sm text-center font-bold text-red-800" value="150"
+                                step="10">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-gray-400 mb-1">Estoque (L)</label>
+                            <input type="number" id="inp-ship-stock"
+                                class="w-full p-1 border rounded text-sm text-center font-bold text-green-800"
+                                value="33200" step="100">
+                        </div>
+                    </div>
+
+                    <!-- LINHA 4: Calados -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-blue-50 p-3 rounded border border-blue-100">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Calado Popa (m)</label>
+                            <input type="number" id="inp-draft-aft"
+                                class="w-full p-1 border rounded text-sm text-center font-bold text-slate-800"
+                                value="5.40" step="0.01">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Calado Proa (m)</label>
+                            <input type="number" id="inp-draft-fwd"
+                                class="w-full p-1 border rounded text-sm text-center font-bold text-slate-800"
+                                value="5.50" step="0.01">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-red-500 mb-1">Rebocado Popa (m)</label>
+                            <input type="number" id="inp-draft-tow-aft"
+                                class="w-full p-1 border rounded text-sm text-center font-bold text-red-800"
+                                placeholder="N/A" step="0.01">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-red-500 mb-1">Rebocado Proa (m)</label>
+                            <input type="number" id="inp-draft-tow-fwd"
+                                class="w-full p-1 border rounded text-sm text-center font-bold text-red-800"
+                                placeholder="N/A" step="0.01">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <div class="space-y-6">
+                            <h3 class="text-xs font-bold uppercase text-gray-400 tracking-wider">Navegação & Segurança
+                            </h3>
+
+                            <!-- 1. CARTAS & NTM -->
+                            <div class="bg-gray-50 p-3 rounded border border-gray-200">
+                                <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Cartas e NTM
+                                    Atualizadas</label>
+                                <div class="flex gap-2 mb-2">
+                                    <select id="select-chart-add"
+                                        class="flex-1 min-w-0 p-1.5 border rounded text-xs bg-white text-gray-700">
+                                        <option value="">Carregando Cartas...</option>
+                                    </select>
+                                    <button id="btn-add-chart"
+                                        class="shrink-0 px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded hover:bg-blue-700 w-8 h-8 flex items-center justify-center"><i
+                                            class="fas fa-plus"></i></button>
+                                </div>
+                                <div id="list-selected-charts" class="flex flex-wrap gap-2 min-h-[30px]">
+                                    <!-- Tags inseridas via JS -->
+                                    <span class="text-[10px] text-gray-400 italic p-1">Nenhuma carta selecionada.</span>
+                                </div>
+                            </div>
+
+                            <!-- 2. METEO -->
+                            <div class="bg-gray-50 p-3 rounded border border-gray-200">
+                                <label
+                                    class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Meteomarinha</label>
+                                <div class="space-y-2">
+                                    <textarea id="txt-meteo-content" rows="6"
+                                        class="w-full p-2 border rounded text-[10px] focus:border-blue-500 font-mono bg-white shadow-inner"
+                                        placeholder=" COLE AQUI O TEXTO DO BOLETIM METEOMARINHA..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- 3. NAVAREA V -->
+                            <div class="bg-gray-50 p-3 rounded border border-gray-200">
+                                <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Navarea
+                                    V</label>
+                                <div class="space-y-2">
+                                    <textarea id="txt-navarea-content" rows="6"
+                                        class="w-full p-2 border rounded text-[10px] focus:border-blue-500 font-mono bg-white shadow-inner"
+                                        placeholder=" COLE AQUI O TEXTO DOS AVISOS NAVAREA..."></textarea>
+                                </div>
+                            </div>
+
+                            <!-- 3. MARÉ / UKC -->
+                            <div class="bg-gray-50 p-3 rounded border border-gray-200">
+                                <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Maré / UKC
+                                    Validado</label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <label
+                                        class="cursor-pointer bg-white border border-dashed border-gray-300 rounded p-1.5 text-center hover:bg-gray-100">
+                                        <span class="text-[10px] text-gray-500 block">Tabua Origem</span>
+                                        <input type="file" id="file-tide-dep" accept=".pdf" class="hidden">
+                                        <span id="status-tide-dep"
+                                            class="text-[9px] text-green-600 font-bold hidden">OK</span>
+                                    </label>
+                                    <label
+                                        class="cursor-pointer bg-white border border-dashed border-gray-300 rounded p-1.5 text-center hover:bg-gray-100">
+                                        <span class="text-[10px] text-gray-500 block">Tabua Destino</span>
+                                        <input type="file" id="file-tide-arr" accept=".pdf" class="hidden">
+                                        <span id="status-tide-arr"
+                                            class="text-[9px] text-green-600 font-bold hidden">OK</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="space-y-4">
+                        <h3 class="text-xs font-bold uppercase text-gray-400 tracking-wider">Praça de Máquinas</h3>
+                        <div class="p-3 bg-gray-50 border rounded-md">
+                            <label for="select-engine-status" class="block text-xs font-bold mb-1 text-gray-600">Status
+                                Operacional</label>
+                            <select id="select-engine-status"
+                                class="w-full p-2 border rounded text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+                                <option value="" selected disabled>Selecione a condição...</option>
+                                <option value="ok">Full Power (Todos MCPs/MCAs)</option>
+                                <option value="restricted">Restrito (Falha Equip. Aux)</option>
+                                <option value="no-go">NO-GO (Falha Crítica)</option>
+                            </select>
+                        </div>
+                        <label class="chk-container"><input type="checkbox" class="chk-item" id="chk-bunker">
+                            <span>Bunkering Suficiente</span></label>
+
+                        <!-- CONTATOS DE APOIO EM TERRA -->
+                        <div class="space-y-2 mt-6">
+                            <h3 class="text-xs font-bold uppercase text-gray-400 tracking-wider">Contatos de Apoio em
+                                Terra</h3>
+                            <div class="bg-gray-50 p-3 rounded border border-gray-200">
+                                <div class="flex gap-2 mb-2">
+                                    <select id="select-contact-add"
+                                        class="flex-1 min-w-0 p-1.5 border rounded text-xs bg-white text-gray-700">
+                                        <option value="">Carregando Contatos...</option>
+                                    </select>
+                                    <button id="btn-add-contact"
+                                        class="shrink-0 px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded hover:bg-blue-700 w-8 h-8 flex items-center justify-center"><i
+                                            class="fas fa-plus"></i></button>
+                                </div>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-[10px] text-left">
+                                        <thead class="bg-gray-200 text-gray-600 uppercase">
+                                            <tr>
+                                                <th class="p-1">Nome</th>
+                                                <th class="p-1">Tel</th>
+                                                <th class="p-1">Email</th>
+                                                <th class="p-1"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbody-contacts" class="bg-white divide-y divide-gray-100">
+                                            <!-- Rows inseridas via JS -->
+                                            <tr>
+                                                <td colspan="4" class="p-2 text-center text-gray-400 italic">Nenhum
+                                                    contato adicionado.</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- FARÓIS & ABRIGOS -->
+                        <div class="space-y-4 mt-6">
+                            <h3 class="text-xs font-bold uppercase text-gray-400 tracking-wider">Auxílios à Navegação &
+                                Abrigo</h3>
+
+                            <!-- 1. FARÓIS -->
+                            <div class="bg-gray-50 p-3 rounded border border-gray-200">
+                                <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Lista de Faróis
+                                    (Rota)</label>
+                                <div class="flex gap-2 mb-2">
+                                    <select id="select-lighthouse-add"
+                                        class="flex-1 min-w-0 p-1.5 border rounded text-xs bg-white text-gray-700">
+                                        <option value="">Carregando Faróis...</option>
+                                    </select>
+                                    <button id="btn-add-lighthouse"
+                                        class="shrink-0 px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded hover:bg-blue-700 w-8 h-8 flex items-center justify-center"><i
+                                            class="fas fa-lightbulb"></i></button>
+                                </div>
+                                <div class="overflow-x-auto max-h-48 overflow-y-auto">
+                                    <table class="w-full text-[10px] text-left">
+                                        <thead class="bg-gray-200 text-gray-600 uppercase sticky top-0">
+                                            <tr>
+                                                <th class="p-1">Nome</th>
+                                                <th class="p-1">Coord</th>
+                                                <th class="p-1">Carac.</th>
+                                                <th class="p-1">Desc.</th>
+                                                <th class="p-1"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbody-lighthouses" class="bg-white divide-y divide-gray-100">
+                                            <tr>
+                                                <td colspan="4" class="p-2 text-center text-gray-400 italic">Nenhum
+                                                    farol selecionado.</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- 2. ABRIGOS -->
+                            <div class="bg-gray-50 p-3 rounded border border-gray-200">
+                                <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Áreas de Abrigo
+                                    / Fundeio</label>
+                                <div class="flex gap-2 mb-2">
+                                    <select id="select-shelter-add"
+                                        class="flex-1 min-w-0 p-1.5 border rounded text-xs bg-white text-gray-700">
+                                        <option value="">Carregando Abrigos...</option>
+                                    </select>
+                                    <button id="btn-add-shelter"
+                                        class="shrink-0 px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded hover:bg-blue-700 w-8 h-8 flex items-center justify-center"><i
+                                            class="fas fa-anchor"></i></button>
+                                </div>
+                                <div class="overflow-x-auto max-h-40 overflow-y-auto">
+                                    <table class="w-full text-[10px] text-left">
+                                        <thead class="bg-gray-200 text-gray-600 uppercase sticky top-0">
+                                            <tr>
+                                                <th class="p-1">Local</th>
+                                                <th class="p-1">Tipo</th>
+                                                <th class="p-1">Detalhes</th>
+                                                <th class="p-1"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tbody-shelters" class="bg-white divide-y divide-gray-100">
+                                            <tr>
+                                                <td colspan="4" class="p-2 text-center text-gray-400 italic">Nenhuma
+                                                    área selecionada.</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABA 2: PLANNING -->
+        <section id="view-planning" class="view-section hidden animate-fade-in">
+            <!-- TOOLBAR TOP -->
+            <div class="mb-4 flex flex-row gap-2 justify-end">
+                <button id="btn-load-txt-plan"
+                    class="px-3 py-1 bg-yellow-600 text-white rounded hover:bg-yellow-700 text-[10px] font-bold shadow-sm flex items-center gap-1 transition-transform active:scale-95"
+                    onclick="document.getElementById('input-gpx').click()">
+                    <i class="fas fa-folder-open"></i> Carregar
+                </button>
+                <button id="btn-export-pdf-plan"
+                    class="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 text-[10px] font-bold shadow-sm flex items-center gap-1 transition-transform active:scale-95"
+                    onclick="if(window.ReportService) window.ReportService.generatePDF(State); else console.error('Srv missing');">
+                    <i class="fas fa-file-pdf"></i> Exportar PDF
+                </button>
+            </div>
+            <div
+                class="bg-blue-50 border-2 border-dashed border-blue-300 rounded-lg p-8 text-center transition-colors hover:bg-blue-100 group relative">
+                <i
+                    class="fas fa-file-import text-4xl text-blue-400 mb-3 group-hover:scale-110 transition-transform"></i>
+                <h3 class="font-bold text-blue-900 text-lg">Importar Rota (GPX)</h3>
+                <input type="file" id="input-gpx" accept=".gpx"
+                    class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                <span class="text-xs bg-white px-3 py-1 rounded shadow text-blue-500 font-bold">Selecionar
+                    Arquivo</span>
+            </div>
+
+            <!-- MANUAL PLANNING BUTTON -->
+            <div id="btn-manual-plan"
+                class="bg-indigo-50 border-2 border-dashed border-indigo-300 rounded-lg p-8 text-center transition-colors hover:bg-indigo-100 cursor-pointer group mt-4">
+                <i
+                    class="fas fa-pen-to-square text-4xl text-indigo-400 mb-3 group-hover:scale-110 transition-transform"></i>
+                <h3 class="font-bold text-indigo-900 text-lg">Planejamento Manual</h3>
+                <p class="text-[10px] text-indigo-400">Digitar Coordenadas</p>
+            </div>
+
+            <!-- VISUAL PLANNING BUTTON -->
+            <div onclick="window.startVisualPlanning()"
+                class="bg-emerald-50 border-2 border-dashed border-emerald-300 rounded-lg p-8 text-center transition-colors hover:bg-emerald-100 cursor-pointer group mt-4">
+                <i class="fas fa-magnet text-4xl text-emerald-400 mb-3 group-hover:scale-110 transition-transform"></i>
+                <h3 class="font-bold text-emerald-900 text-lg">Modo Visual</h3>
+                <p class="text-[10px] text-emerald-400">Desenhar com Snapping</p>
+            </div>
+
+            <!-- MODAL MANUAL INPUT -->
+            <div id="modal-manual-wp"
+                class="fixed inset-0 bg-black/50 z-[100] hidden flex items-center justify-center backdrop-blur-sm">
+                <div class="bg-white rounded-lg shadow-2xl w-full max-w-md p-6 transform transition-all scale-100">
+                    <header class="flex justify-between items-center mb-4 border-b pb-2">
+                        <h3 class="text-lg font-bold text-slate-800"><i class="fas fa-map-pin text-red-500"></i> Novo
+                            Waypoint</h3>
+                        <button id="btn-close-modal" class="text-slate-400 hover:text-red-500"><i
+                                class="fas fa-times"></i></button>
+                    </header>
+
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Nome do Ponto</label>
+                            <input type="text" id="inp-wp-name" placeholder="Ex: CANAL 3, PÃO DE AÇUCAR"
+                                class="w-full p-2 border rounded text-sm focus:border-blue-500 uppercase">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">Latitude</label>
+                                <input type="text" id="inp-wp-lat" placeholder="23º07.358’S"
+                                    class="w-full p-2 border rounded text-sm focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 mb-1">Longitude</label>
+                                <input type="text" id="inp-wp-lon" placeholder="043º33.674’W"
+                                    class="w-full p-2 border rounded text-sm focus:border-blue-500">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Carta Náutica (Opcional)</label>
+                            <input type="text" id="inp-wp-chart" placeholder="Ex: 1620"
+                                class="w-full p-2 border rounded text-sm focus:border-blue-500">
+                        </div>
+
+                        <div class="pt-2 text-[10px] text-gray-400 italic">
+                            Dica: Aceita formatos Decimais (-23.5) ou Graus (23 30 S).
+                        </div>
+                    </div>
+
+                    <footer class="mt-6 flex justify-end gap-2">
+                        <button id="btn-cancel-wp"
+                            class="px-4 py-2 text-sm text-slate-500 hover:bg-slate-100 rounded">Cancelar</button>
+                        <button id="btn-save-wp"
+                            class="px-4 py-2 text-sm bg-blue-600 text-white rounded font-bold hover:bg-blue-700 shadow">Adicionar</button>
+                    </footer>
+                </div>
+            </div>
+
+            <div id="planning-dashboard" class="mt-6 space-y-4 transition-opacity">
+                <div class="bg-white p-4 rounded shadow border-l-4 border-blue-500">
+                    <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2"><i class="far fa-clock"></i>
+                        Cronograma & Ambiente</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Data/Hora de Partida (ETD)</label>
+                            <input type="datetime-local" id="input-etd"
+                                class="w-full p-2 border rounded bg-gray-50 text-sm focus:border-blue-500 outline-none">
+                            <div
+                                class="mt-3 p-3 bg-blue-50 rounded border border-blue-100 flex justify-between items-center">
+                                <span class="text-xs text-blue-600 font-bold">ETA Estimado</span>
+                                <span id="display-eta" class="font-mono font-bold text-lg text-blue-900">--/--
+                                    --:--</span>
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center text-sm border-b pb-2 gap-2">
+                                <div class="w-24">
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase">Partida</label>
+                                    <select id="select-dep"
+                                        class="w-full text-xs font-bold text-slate-700 bg-transparent border-none focus:ring-0 cursor-pointer p-0">
+                                        <option value="">Selecione...</option>
+                                    </select>
+                                </div>
+                                <div id="card-weather-dep" class="flex-1 text-right"><span
+                                        class="text-xs bg-gray-200 px-2 py-1 rounded text-gray-500">Aguardando...</span>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center text-sm pt-1 gap-2">
+                                <div class="w-24">
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase">Chegada</label>
+                                    <select id="select-arr"
+                                        class="w-full text-xs font-bold text-slate-700 bg-transparent border-none focus:ring-0 cursor-pointer p-0">
+                                        <option value="">Selecione...</option>
+                                    </select>
+                                </div>
+                                <div id="card-weather-arr" class="flex-1 text-right"><span
+                                        class="text-xs bg-gray-200 px-2 py-1 rounded text-gray-500">Aguardando...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="stat-card bg-white p-4 rounded shadow text-center">
+                        <div class="text-xs text-gray-400 uppercase font-bold">Distância</div>
+                        <div id="stat-distance" class="font-mono font-bold text-xl text-slate-800">0.0 NM</div>
+                    </div>
+                    <div class="stat-card bg-white p-4 rounded shadow text-center">
+                        <div class="text-xs text-gray-400 uppercase font-bold">Tempo (10kts)</div>
+                        <div id="stat-duration" class="font-mono font-bold text-xl text-slate-800">00h 00m</div>
+                    </div>
+                    <div class="stat-card bg-white p-4 rounded shadow text-center">
+                        <div class="text-xs text-gray-400 uppercase font-bold">WPs</div>
+                        <div id="stat-waypoints" class="font-mono font-bold text-xl text-slate-800">0</div>
+                    </div>
+                </div>
+
+                <!-- DASHBOARD COMBUSTÍVEL -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="bg-white p-4 rounded shadow border-l-4 border-red-500">
+                        <h4 class="text-xs font-bold text-gray-500 uppercase mb-1">Combustível Requerido</h4>
+                        <div id="stat-fuel-required" class="text-xl font-mono font-bold text-red-700">0 L</div>
+                        <div class="text-[10px] text-gray-400" id="stat-fuel-rate-display">Base: 150 L/h</div>
+                    </div>
+                    <div class="bg-white p-4 rounded shadow border-l-4 border-green-500">
+                        <h4 class="text-xs font-bold text-gray-500 uppercase mb-1">ROB na Chegada (Est.)</h4>
+                        <div id="stat-fuel-rob" class="text-xl font-mono font-bold text-green-700">--</div>
+                        <div class="text-[10px] text-gray-400">Autonomia: <span id="stat-fuel-autonomy">--</span></div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded shadow overflow-hidden border border-gray-200">
+                    <div class="overflow-x-auto max-h-[400px]">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-gray-100 text-xs uppercase text-gray-600 sticky top-0 shadow-sm z-10">
+                                <tr>
+                                    <th class="p-3 w-10 text-center">#</th>
+                                    <th class="p-3">Waypoint</th>
+                                    <th class="p-3 text-center">Rumo</th>
+                                    <th class="p-3 text-center">Dist</th>
+                                    <th class="p-3 text-center hidden md:table-cell">Coord</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-route-body" class="divide-y divide-gray-100">
+                                <tr>
+                                    <td colspan="5" class="p-8 text-center text-gray-400 italic">Nenhuma rota carregada.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABA 3: MONITORING -->
+        <section id="view-monitoring" class="view-section hidden animate-fade-in relative">
+            <div id="map-container"
+                class="rounded-lg shadow-lg border border-slate-300 h-[70vh] w-full bg-slate-200 relative z-0"></div>
+            <div
+                class="absolute top-4 right-4 z-[400] bg-slate-900/95 text-white p-4 rounded-lg backdrop-blur shadow-2xl border border-slate-700 min-w-[160px]">
+                <div class="text-[10px] text-gray-400 uppercase tracking-widest mb-3 border-b border-gray-700 pb-1">
+                    Tempo Real</div>
+                <div class="flex justify-between items-end mb-2">
+                    <div class="text-right">
+                        <div class="text-[10px] text-blue-300">SOG</div>
+                        <div class="text-2xl font-mono font-bold leading-none">10.0 <span
+                                class="text-xs font-sans font-normal text-gray-400">kts</span></div>
+                    </div>
+                    <div class="text-right ml-4">
+                        <div class="text-[10px] text-blue-300">COG</div>
+                        <div class="text-2xl font-mono font-bold leading-none">058°</div>
+                    </div>
+                </div>
+            </div>
+            <div class="absolute bottom-6 left-4 z-[400] flex gap-2">
+                <button id="btn-simulate"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow-lg font-bold text-sm flex items-center gap-2 transition-transform active:scale-95"><i
+                        class="fas fa-play"></i> Simular Viagem</button>
+
+                <!-- Speed Slider -->
+                <div
+                    class="bg-slate-900/90 text-white px-4 py-2 rounded shadow-lg flex items-center gap-3 border border-slate-700 backdrop-blur">
+                    <span class="text-[10px] uppercase font-bold text-gray-400">Velocidade</span>
+                    <input type="range" id="inp-sim-speed" min="1" max="100" value="10"
+                        class="w-24 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+                    <span id="lbl-sim-speed" class="text-xs font-mono font-bold w-8 text-right">10x</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer
+        class="fixed bottom-0 w-full bg-slate-200 text-slate-500 text-[10px] text-center p-1 border-t border-slate-300 z-50">
+        SISNAV Costeiro &copy; 2025 TugLife | Jossian Brito</footer>
+
+    <!-- SCRIPT PRINCIPAL (MÓDULO) - Carregado após as dependências -->
+    <script type="module" src="js/App.js?v=6"></script>
+</body>
+
+</html>

@@ -1,0 +1,9 @@
+NAME	TYPE	DETAILS
+BAÍA DE GUANABARA	PORTO/BAÍA	Abrigo para todo tempo. Fundeadouros internos.
+BAÍA DE SEPETIBA	PORTO/BAÍA	Abrigo N/NE. Atenção com SW.
+ILHA GRANDE (ABRAÃO)	ABRIGO NATURAL	Excelente abrigo contra S/SW.
+SÃO SEBASTIÃO (CANAL)	CANAL	Abrigo contra S/SE no canal norte.
+SANTOS (BARRA)	PORTO	Fundeio de espera. Exposto a S.
+PARANAGUÁ (GALHETA)	PORTO	Fundeio externo. Atenção com swell SE.
+ENSEADA DE MACAÉ	ABRIGO	Abrigo limitado. Bom para ventos de terra.
+CABO FRIO (FORNO)	ENSEADA	Abrigo contra NE. Exposto a SW.

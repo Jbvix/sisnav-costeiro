@@ -1,0 +1,168 @@
+/**
+ * ARQUIVO: main.css
+ * MÓDULO: Folha de Estilos Global & Componentes Customizados
+ * AUTOR: Jossian Brito
+ * DATA: 2025-12-16
+ * VERSÃO: 2.0.0
+ * DESCRIÇÃO: 
+ * Complemento ao Tailwind CSS. Define animações, scrollbars customizadas
+ * e componentes complexos de UI (Checkboxes e Mapas).
+ */
+
+/* =========================================
+   1. RESET & GLOBAIS
+   ========================================= */
+:root {
+    --primary-blue: #1e3a8a; /* Slate-900 like */
+    --accent-blue: #3b82f6;  /* Blue-500 like */
+    --danger-red: #ef4444;
+    --success-green: #10b981;
+}
+
+html, body {
+    height: 100%;
+    /* Previne "bounce" do scroll em iOS */
+    overscroll-behavior-y: none; 
+}
+
+/* Scrollbar Customizada (Webkit) - Estilo Dashboard */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* =========================================
+   2. ANIMAÇÕES
+   ========================================= */
+
+/* Classe utilitária para Fade In suave */
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =========================================
+   3. COMPONENTES: CHECKLIST (Appraisal)
+   ========================================= */
+
+/* Container do Checkbox Customizado */
+.chk-container {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* Estado Hover (Desktop) e Active (Touch) */
+.chk-container:hover {
+    background-color: #f8fafc;
+    border-color: var(--accent-blue);
+}
+
+.chk-container span {
+    font-size: 0.875rem; /* text-sm */
+    color: #334155;      /* slate-700 */
+    margin-left: 12px;
+    font-weight: 500;
+}
+
+/* O input real é escondido ou estilizado? 
+   Aqui usamos o input nativo com acento de cor do Tailwind/Browser
+   mas aumentamos a área de toque */
+.chk-item {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--accent-blue);
+    cursor: pointer;
+}
+
+/* =========================================
+   4. COMPONENTES: UPLOAD ZONE (Planning)
+   ========================================= */
+
+/* Animação pulsante suave para área de upload */
+@keyframes pulse-border {
+    0% { border-color: #93c5fd; }
+    50% { border-color: #3b82f6; }
+    100% { border-color: #93c5fd; }
+}
+
+.upload-active {
+    background-color: #eff6ff !important; /* blue-50 */
+    animation: pulse-border 2s infinite;
+    border-color: var(--accent-blue) !important;
+}
+
+/* =========================================
+   5. COMPONENTES: MAPA & LEAFLET TWEAKS
+   ========================================= */
+
+/* Garante que o mapa não quebre o layout flex */
+#map-container {
+    isolation: isolate; /* Cria novo contexto de empilhamento */
+    overflow: hidden;   /* Previne vazamento de tiles */
+}
+
+/* Customização dos Popups do Leaflet para bater com o tema */
+.leaflet-popup-content-wrapper {
+    border-radius: 8px;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    font-family: ui-sans-serif, system-ui, sans-serif;
+    padding: 0;
+}
+
+.leaflet-popup-content {
+    margin: 10px 14px;
+    font-size: 0.8rem;
+    color: #1e293b;
+    font-weight: bold;
+}
+
+/* Ícone do Navio (Rotação suave) */
+.ship-icon-marker {
+    transition: transform 1s linear; /* Interpolação de movimento suave */
+}
+
+/* =========================================
+   6. RESPONSIVIDADE (MOBILE TWEAKS)
+   ========================================= */
+
+@media (max-width: 640px) {
+    /* Em telas pequenas, a tabela de rota rola horizontalmente */
+    .overflow-x-auto {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Botões de navegação ficam menores */
+    .tab-btn {
+        padding: 6px 10px;
+        font-size: 0.7rem;
+    }
+}
