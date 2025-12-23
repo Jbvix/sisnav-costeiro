@@ -1,0 +1,7 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/c62gtwye66po/sisnav
+    - /bin/cp -R * $DEPLOYPATH
+    # Se precisar reinstalar dependências a cada deploy (opcional, deixa mais lento)
+    # - /home/c62gtwye66po/virtualenv/sisnav/3.9/bin/pip install -r $DEPLOYPATH/requirements.txt
