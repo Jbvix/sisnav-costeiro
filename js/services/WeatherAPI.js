@@ -7,7 +7,7 @@
  */
 
 import TideLocator from './TideLocator.js?v=5';
-import TideCSVService from '/js/services/TideCSVService.js?v=6';
+import TideCSVService from './TideCSVService.js?v=6';
 
 const WeatherAPI = {
 

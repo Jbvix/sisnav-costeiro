@@ -23,6 +23,15 @@
 
     <!-- ESTILOS DO PROJETO -->
     <link rel="stylesheet" href="css/main.css">
+    <script>
+        window.onerror = function (msg, url, line, col, error) {
+            alert("Erro JS: " + msg + "\nArquivo: " + url + "\nLinha: " + line);
+            return false;
+        };
+        window.addEventListener('unhandledrejection', function (event) {
+            alert("Erro Promise: " + event.reason);
+        });
+    </script>
 </head>
 
 <body class="font-sans text-slate-800 bg-slate-100">
