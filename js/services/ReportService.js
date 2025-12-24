@@ -15,6 +15,68 @@ const ReportService = {
             const doc = new jsPDF();
             console.log("ReportService: Doc criado.");
 
+            // --- LOAD ASSETS ---
+            const loadImage = (src) => new Promise((resolve, reject) => {
+                const img = new Image();
+                img.src = src;
+                img.onload = () => resolve(img);
+                img.onerror = (e) => {
+                    console.warn(`Falha ao carregar imagem: ${src}`, e);
+                    resolve(null); // Resolve null to not block PDF generation
+                };
+            });
+
+            console.log("ReportService: Carregando imagens...");
+            const [bgImg, logoImg] = await Promise.all([
+                loadImage('library/img/chart_bg.png'),
+                loadImage('library/img/saam_logo.png')
+            ]);
+
+            // --- COVER PAGE ---
+            // 1. Background (Faint chart)
+            if (bgImg) {
+                // Tenta aplicar transparência se suportado (GState)
+                try {
+                    // Check if GState exists in this version of jsPDF
+                    if (doc.GState) {
+                        doc.saveGraphicsState();
+                        doc.setGState(new doc.GState({ opacity: 0.15 })); // Very faint (15%)
+                        doc.addImage(bgImg, 'PNG', 0, 0, 210, 297);
+                        doc.restoreGraphicsState();
+                    } else {
+                        // Se não tiver GState, adiciona normal (espero que a imagem já seja clara ou aceitamos assim)
+                        // Alternativa: desenhar um retângulo branco semi-transparente por cima?
+                        // jsPDF não suporta rgba fill com alpha facil em versoes antigas.
+                        // Imagem direta:
+                        doc.addImage(bgImg, 'PNG', 0, 0, 210, 297);
+                    }
+                } catch (e) {
+                    console.warn("Erro ao desenhar background:", e);
+                }
+            }
+
+            // 2. Logo (Top Left)
+            if (logoImg) {
+                // Width 40mm, maintain aspect
+                const logoW = 50;
+                const logoH = logoW * (logoImg.height / logoImg.width);
+                doc.addImage(logoImg, 'PNG', 10, 10, logoW, logoH);
+            }
+
+            // 3. Title (Centered)
+            doc.setFontSize(28);
+            doc.setFont(undefined, 'bold');
+            doc.setTextColor(0, 51, 102); // Dark Blue (SAAM color-ish)
+            doc.text("PLANO DE PASSAGEM", 105, 140, { align: "center" });
+
+            doc.setFontSize(14);
+            doc.setTextColor(100);
+            doc.text(`${new Date().getFullYear()}`, 105, 150, { align: "center" });
+
+            // Add Start Page
+            doc.addPage();
+            doc.setTextColor(0); // Reset color
+
             // HELPERS
             const addSectionTitle = (text, y) => {
                 doc.setFontSize(10);
