@@ -68,7 +68,44 @@
     </nav>
 
     <!-- CONTEÚDO PRINCIPAL -->
-    <main class="max-w-7xl mx-auto p-4 pb-24">
+    <main class="max-w-7xl mx-auto p-4 pb-24 relative">
+
+        <!-- VIEW: CAPA / SPLASH SCREEN -->
+        <section id="view-cover"
+            class="fixed inset-0 z-[100] bg-slate-50 flex flex-col items-center justify-center overflow-hidden">
+            <!-- Background Image with Overlay -->
+            <div class="absolute inset-0 z-0 bg-cover bg-center opacity-10"
+                style="background-image: url('library/img/chart_bg.png'); filter: grayscale(100%);">
+            </div>
+
+            <!-- Content Container -->
+            <div class="relative z-10 flex flex-col items-center space-y-8 animate-fade-in-up">
+                <!-- Logo -->
+                <img src="library/img/saam_logo.png" alt="SAAM Towage" class="w-48 md:w-64 drop-shadow-sm mb-4">
+
+                <!-- Title -->
+                <div class="text-center">
+                    <h1 class="text-4xl md:text-6xl font-extrabold text-[#003366] tracking-tight leading-tight">
+                        PLANO DE<br>PASSAGEM
+                    </h1>
+                    <p class="text-slate-400 mt-2 text-sm md:text-base font-mono tracking-widest uppercase">
+                        SISNAV Costeiro
+                    </p>
+                </div>
+
+                <!-- Action -->
+                <button id="btn-start-app"
+                    class="mt-12 px-8 py-3 bg-[#003366] text-white text-lg font-bold rounded shadow-lg hover:bg-blue-800 hover:scale-105 transition transform duration-300 flex items-center gap-3">
+                    <span>INICIAR</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- Footer on Splash -->
+            <div class="absolute bottom-6 text-[10px] text-slate-400 font-mono">
+                &copy; 2025 SAAM Towage | TugLife
+            </div>
+        </section>
 
         <!-- ABA 1: APPRAISAL -->
         <section id="view-appraisal" class="view-section animate-fade-in block">
@@ -625,7 +662,7 @@
         SISNAV Costeiro &copy; 2025 TugLife | Jossian Brito</footer>
 
     <!-- SCRIPT PRINCIPAL (MÓDULO) - Carregado após as dependências -->
-    <script type="module" src="js/App.js?v=10"></script>
+    <script type="module" src="js/App.js?v=11"></script>
 </body>
 
 </html>

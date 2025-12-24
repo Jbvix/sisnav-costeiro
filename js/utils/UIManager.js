@@ -27,7 +27,33 @@ const UIManager = {
         displayEta: document.getElementById('display-eta'),
         weatherDep: document.getElementById('card-weather-dep'),
         weatherArr: document.getElementById('card-weather-arr'),
-        planningDashboard: document.getElementById('planning-dashboard')
+        weatherArr: document.getElementById('card-weather-arr'),
+        planningDashboard: document.getElementById('planning-dashboard'),
+        coverScreen: document.getElementById('view-cover'),
+        btnStart: document.getElementById('btn-start-app')
+    },
+
+    /**
+     * Inicializa a UI (Listeners de Eventos)
+     */
+    init: function () {
+        if (this.elements.btnStart) {
+            this.elements.btnStart.addEventListener('click', () => {
+                this.dismissCover();
+            });
+        }
+    },
+
+    /**
+     * Remove a tela de capa e inicia o app
+     */
+    dismissCover: function () {
+        if (this.elements.coverScreen) {
+            this.elements.coverScreen.classList.add('transition', 'duration-500', 'opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                this.elements.coverScreen.style.display = 'none';
+            }, 500);
+        }
     },
 
     /**

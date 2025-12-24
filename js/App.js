@@ -42,6 +42,11 @@ const App = {
     },
 
     setupEventListeners: function () {
+        // Inicializa UI (Cover Screen etc)
+        if (UIManager && typeof UIManager.init === 'function') {
+            UIManager.init();
+        }
+
         // Abas
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
