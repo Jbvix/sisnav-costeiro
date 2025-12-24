@@ -57,7 +57,7 @@ const ReportService = {
                 ["Navio:", ship.name, "IMO:", ship.imo],
                 ["Comandante:", ship.commander || "-", "Tripulação:", ship.crew],
                 ["Calado (Popa/Proa):", `${drafts.aft}m / ${drafts.fwd}m`, "Rebocado:", `${drafts.towAft || 0}m`],
-                ["Status Máquinas:", engineStatusMap[engine.status] || "N/A", "Bunkering:", engine.bunkerOk ? "Suficiente" : "Verificar"],
+                ["Status Máquinas:", engineStatusMap[engine.status] || "N/A", "", ""],
                 ["Estoque Combustível:", `${stock} L`, "Consumo:", `${rate} L/h`],
                 ["Autonomia Est.:", `${autonomyHours} horas`, "Vel. Cruzeiro:", `${ship.speed} kn`]
             ];
@@ -78,8 +78,7 @@ const ReportService = {
             const pdfData = [
                 ["Meteomarinha:", files.meteo || "N/A"],
                 ["Avisos Navarea V:", files.navarea || "N/A"],
-                ["Tábua de Maré (Origem):", files.tideDep || "N/A"],
-                ["Tábua de Maré (Destino):", files.tideArr || "N/A"]
+
             ];
 
             doc.autoTable({

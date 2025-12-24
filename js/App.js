@@ -704,8 +704,7 @@ const App = {
         };
         // bindFile('file-meteo-upload', 'meteo', 'status-meteo-file', 'txt-meteo-content'); // Removed
         // bindFile('file-navarea-upload', 'navarea', 'status-navarea-file', 'txt-navarea-content'); // Removed
-        bindFile('file-tide-dep', 'tideDep', 'status-tide-dep');
-        bindFile('file-tide-arr', 'tideArr', 'status-tide-arr');
+
 
         // Inputs de Link
         const bindLink = (id, key) => {
@@ -731,15 +730,7 @@ const App = {
             });
         }
 
-        const chkBunker = document.getElementById('chk-bunker');
-        if (chkBunker) {
-            chkBunker.addEventListener('change', (e) => {
-                const checked = e.target.checked;
-                if (!State.shipProfile.engine) State.shipProfile.engine = {};
-                State.shipProfile.engine.bunkerOk = checked;
-                console.log("App: Bunker OK:", checked);
-            });
-        }
+
     },
 
     renderSelectedCharts: function () {
@@ -836,15 +827,15 @@ const App = {
         const navareaVal = document.getElementById('txt-navarea-content') ? document.getElementById('txt-navarea-content').value : "";
         const hasNavarea = (navareaVal.length > 0 || State.appraisal.files.navarea !== null);
 
-        // Marés: Ambos arquivos (Dep/Arr)
-        const hasTides = (State.appraisal.files.tideDep !== null && State.appraisal.files.tideArr !== null);
+        // Marés: Ambos arquivos (Dep/Arr) - REMOVED
+        // const hasTides = (State.appraisal.files.tideDep !== null && State.appraisal.files.tideArr !== null);
 
-        const isAllChecked = hasCharts && hasMeteo && hasNavarea && hasTides;
+        const isAllChecked = hasCharts && hasMeteo && hasNavarea; // removed hasTides
 
         if (State.appraisal) State.appraisal.isValid = (isAllChecked && isEngineOk);
         UIManager.updateAppraisalStatus(isAllChecked && isEngineOk);
 
-        console.log(`App: Validacao - Charts: ${hasCharts}, Meteo: ${hasMeteo}, Navarea: ${hasNavarea}, Tides: ${hasTides}, Eng: ${isEngineOk}`);
+        console.log(`App: Validacao - Charts: ${hasCharts}, Meteo: ${hasMeteo}, Navarea: ${hasNavarea}, Eng: ${isEngineOk}`);
     },
 
     handleFileUpload: function (event) {
