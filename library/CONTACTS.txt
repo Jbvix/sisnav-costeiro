@@ -1,4 +1,5 @@
-NAME	PHONE	EMAIL
-VINICIUS PEREIRA	(21) 96756-0447	Vinicius.pereira@saamtowage.com
-JOSÉ AUGUSTO TIMM	(41) 99957-6401	Jtimm@saamtowage.com
-CCO	(21) 972967929	cco.brasil@saamtowage.com
+NAME	PHONE	EMAIL	ROLE
+VINICIUS PEREIRA	(21) 96756-0447	Vinicius.pereira@saamtowage.com	-
+JOSÉ AUGUSTO TIMM	(41) 99957-6401	Jtimm@saamtowage.com	Gerente de Operações
+CCO	(21) 972967929	cco.brasil@saamtowage.com	Operações
+VLADIMIR OLIVEIRA	(21) 99457-9089	-	Coord Operações
