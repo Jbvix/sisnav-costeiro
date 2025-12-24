@@ -250,10 +250,10 @@ const ReportService = {
             // Contatos
             const contacts = state.appraisal.shoreContacts || [];
             if (contacts.length > 0) {
-                const contactBody = contacts.map(c => [c.name, c.phone, c.email]);
+                const contactBody = contacts.map(c => [c.name, c.role || '-', c.phone, c.email]);
                 doc.autoTable({
                     startY: currentY,
-                    head: [['Contato', 'Telefone', 'Email']],
+                    head: [['Contato', 'Função', 'Telefone', 'Email']],
                     body: contactBody,
                     theme: 'striped',
                     styles: { fontSize: 8 },

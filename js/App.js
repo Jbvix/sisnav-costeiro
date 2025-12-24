@@ -268,24 +268,40 @@ const App = {
                 // Armazena temporariamente para facilitar o Add
                 this.availableContacts = [];
 
+                // Lista Fixa que precisa estar na tela (Ordem Solicitada)
+                const fixedNames = ["CCO", "JOSÉ AUGUSTO TIMM", "VLADIMIR OLIVEIRA"];
+
                 lines.forEach(line => {
                     if (!line || line.startsWith('NAME')) return;
                     const parts = line.split('\t');
-                    // NAME, PHONE, EMAIL
+                    // NAME | PHONE | EMAIL | ROLE
                     if (parts.length >= 3) {
                         const contact = {
                             name: parts[0].trim(),
                             phone: parts[1].trim(),
-                            email: parts[2].trim()
+                            email: parts[2].trim(),
+                            role: parts[3] ? parts[3].trim() : '-'
                         };
                         this.availableContacts.push(contact);
 
                         const opt = document.createElement('option');
-                        opt.value = contact.name; // Usar nome como ID simples
+                        opt.value = contact.name;
                         opt.text = contact.name;
                         select.appendChild(opt);
                     }
                 });
+
+                // Enforce Fixed Contacts on Init
+                if (!State.appraisal.shoreContacts || State.appraisal.shoreContacts.length === 0) {
+                    State.appraisal.shoreContacts = [];
+                    fixedNames.forEach(fixedName => {
+                        const found = this.availableContacts.find(c => c.name.toUpperCase() === fixedName);
+                        if (found) {
+                            State.appraisal.shoreContacts.push(found);
+                        }
+                    });
+                    this.renderContactsTable();
+                }
             })
             .catch(e => console.error("App: Erro loading contacts", e));
 
@@ -326,7 +342,7 @@ const App = {
         tbody.innerHTML = '';
 
         if (State.appraisal.shoreContacts.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" class="p-2 text-center text-gray-400 italic">Nenhum contato adicionado.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" class="p-2 text-center text-gray-400 italic">Nenhum contato adicionado.</td></tr>';
             return;
         }
 
@@ -335,6 +351,7 @@ const App = {
             tr.className = "border-b hover:bg-gray-50";
             tr.innerHTML = `
                 <td class="p-1 font-bold text-gray-700">${contact.name}</td>
+                <td class="p-1 text-gray-500 text-[10px] italic">${contact.role || '-'}</td>
                 <td class="p-1 text-gray-600">${contact.phone}</td>
                 <td class="p-1 text-blue-600 underline cursor-pointer" onclick="window.location.href='mailto:${contact.email}'">${contact.email}</td>
                 <td class="p-1 text-center">
