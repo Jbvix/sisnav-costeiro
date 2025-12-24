@@ -490,7 +490,10 @@ const App = {
                             lat: parts[1].trim(),
                             lon: parts[2].trim(),
                             char: parts[3] ? parts[3].trim() : '',
-                            desc: parts[4] ? parts[4].trim() : ''
+                            desc: parts[4] ? parts[4].trim() : '',
+                            // Pre-parse for distance calc
+                            latDec: NavMath.parseDMS(parts[1].trim()),
+                            lonDec: NavMath.parseDMS(parts[2].trim())
                         };
                         this.availableLighthouses.push(lh);
                         const opt = document.createElement('option');
@@ -559,6 +562,37 @@ const App = {
             State.appraisal.lighthouses.splice(index, 1);
             this.renderLighthousesTable();
         }
+    },
+
+    /**
+     * Finds the nearest lighthouse to a given point
+     * @param {number} lat 
+     * @param {number} lon 
+     * @returns {object|null} { name, dist, desc } or null
+     */
+    getNearestLighthouse: function (lat, lon) {
+        if (!this.availableLighthouses || this.availableLighthouses.length === 0) return null;
+
+        let nearest = null;
+        let minDist = Infinity;
+
+        this.availableLighthouses.forEach(lh => {
+            if (lh.latDec && lh.lonDec) {
+                const leg = NavMath.calcLeg(lat, lon, lh.latDec, lh.lonDec);
+                if (leg.dist < minDist) {
+                    minDist = leg.dist;
+                    nearest = {
+                        name: lh.name,
+                        dist: leg.dist,
+                        desc: lh.desc,
+                        lat: lh.lat,
+                        lon: lh.lon
+                    };
+                }
+            }
+        });
+
+        return nearest;
     },
 
     // --- ABRIGOS ---

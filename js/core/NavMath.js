@@ -13,7 +13,7 @@ const NavMath = {
      * @param {number} deg 
      * @returns {number}
      */
-    toRad: function(deg) {
+    toRad: function (deg) {
         return deg * Math.PI / 180;
     },
 
@@ -23,19 +23,56 @@ const NavMath = {
      * @param {string} type 'lat' | 'lon'
      * @returns {string}
      */
-    formatPos: function(val, type) {
+    formatPos: function (val, type) {
         const absVal = Math.abs(val);
         const deg = Math.floor(absVal);
         const min = ((absVal - deg) * 60).toFixed(3);
-        
+
         let suffix = '';
         if (type === 'lat') {
             suffix = val >= 0 ? 'N' : 'S';
         } else {
             suffix = val >= 0 ? 'E' : 'W';
         }
-        
+
         return `${deg}° ${min}' ${suffix}`;
+    },
+
+    /**
+     * Converte string DMS (ex: "04°25.86' N") para Decimal
+     * @param {string} dmsStr 
+     * @returns {number}
+     */
+    parseDMS: function (dmsStr) {
+        if (!dmsStr) return 0;
+        try {
+            // Remove caracteres especiais e espaços extras
+            // Esperado: "04°25.86' N" ou similar
+            let clean = dmsStr.replace(/°|'|"/g, ' ').trim().toUpperCase();
+
+            // Detecta hemisfério
+            let factor = 1;
+            if (clean.includes('S') || clean.includes('W')) {
+                factor = -1;
+            }
+
+            // Remove letras para parsear números
+            clean = clean.replace(/[NSEW]/g, '').trim();
+            const parts = clean.split(/\s+/);
+
+            let deg = 0;
+            let min = 0;
+            let sec = 0;
+
+            if (parts.length >= 1) deg = parseFloat(parts[0]);
+            if (parts.length >= 2) min = parseFloat(parts[1]);
+            if (parts.length >= 3) sec = parseFloat(parts[2]);
+
+            return factor * (deg + min / 60 + sec / 3600);
+        } catch (e) {
+            console.error("NavMath: Erro ao parsear DMS", dmsStr, e);
+            return 0;
+        }
     },
 
     /**
@@ -46,9 +83,9 @@ const NavMath = {
      * @param {number} lon2 
      * @returns {{crs: number, dist: number}}
      */
-    calcLeg: function(lat1, lon1, lat2, lon2) {
+    calcLeg: function (lat1, lon1, lat2, lon2) {
         const R = 3440.065; // Raio da Terra em Milhas Náuticas
-        
+
         // Uso direto de Math.PI e funções internas
         const dLon = (lon2 - lon1) * Math.PI / 180;
         const phi1 = lat1 * Math.PI / 180;
@@ -56,7 +93,7 @@ const NavMath = {
 
         // Mercator sailing calculation
         // Evita log de zero ou infinito se phi1/phi2 forem exatamente +/- 90
-        const dPhi = Math.log(Math.tan(Math.PI/4 + phi2/2) / Math.tan(Math.PI/4 + phi1/2));
+        const dPhi = Math.log(Math.tan(Math.PI / 4 + phi2 / 2) / Math.tan(Math.PI / 4 + phi1 / 2));
 
         // Rumo (q)
         let q = Math.atan2(dLon, dPhi) * 180 / Math.PI;
@@ -76,9 +113,9 @@ const NavMath = {
             dist = Math.abs(dLat / Math.cos(q * Math.PI / 180)) * R;
         }
 
-        return { 
-            crs: q, 
-            dist: dist 
+        return {
+            crs: q,
+            dist: dist
         };
     }
 };
