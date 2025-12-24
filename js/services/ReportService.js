@@ -212,37 +212,7 @@ const ReportService = {
             }
 
             // --- ANEXOS DE TEXTO (METEO/NAVAREA) ---
-            if (state.appraisal.meteoText || state.appraisal.navareaText) {
-                currentY += 10;
 
-                if (state.appraisal.meteoText) {
-                    if (currentY > 250) { doc.addPage(); currentY = 20; }
-                    currentY = addSectionTitle("ANEXO: PREVISÃO METEOMARINHA", currentY);
-
-                    doc.autoTable({
-                        startY: currentY,
-                        body: [[state.appraisal.meteoText]],
-                        theme: 'plain',
-                        styles: { fontSize: 8, cellPadding: 2, overflow: 'linebreak' },
-                        columnStyles: { 0: { cellWidth: 180 } }
-                    });
-                    currentY = doc.lastAutoTable.finalY + 5;
-                }
-
-                if (state.appraisal.navareaText) {
-                    if (currentY > 250) { doc.addPage(); currentY = 20; }
-                    currentY = addSectionTitle("ANEXO: AVISOS NAVAREA V", currentY);
-
-                    doc.autoTable({
-                        startY: currentY,
-                        body: [[state.appraisal.navareaText]],
-                        theme: 'plain',
-                        styles: { fontSize: 8, cellPadding: 2, overflow: 'linebreak' },
-                        columnStyles: { 0: { cellWidth: 180 } }
-                    });
-                    currentY = doc.lastAutoTable.finalY + 5;
-                }
-            }
 
             // --- 3. CONTATOS E ABRIGOS ---
             currentY = addSectionTitle("3. APOIO E CONTINGÊNCIA", currentY);
@@ -331,6 +301,47 @@ const ReportService = {
                     columnStyles: { 3: { fontSize: 7 } } // Smaller font for desc
                 });
             }
+            if (state.appraisal.meteoText || state.appraisal.navareaText) {
+                doc.addPage(); // Start attachments on a new page? Or just flow? User said "Before signatures". 
+                // Let's check space. Or just always add page for cleanliness if it's an "Annex"?
+                // The previous logic checked `currentY > 250`.
+                // Since we are at the end, `currentY` might be high from Lighthouses.
+                // Let's use the same logic.
+
+                // Reset Y if just added a page? No, we just trust flow.
+                // Actually, Lighthouses creates a table. `doc.lastAutoTable.finalY` is reliable?
+                // `doc.autoTable` tracks Y.
+
+                currentY = (doc.lastAutoTable && doc.lastAutoTable.finalY) ? doc.lastAutoTable.finalY + 10 : 30;
+
+                if (state.appraisal.meteoText) {
+                    if (currentY > 250) { doc.addPage(); currentY = 20; }
+                    currentY = addSectionTitle("ANEXO: PREVISÃO METEOMARINHA", currentY);
+
+                    doc.autoTable({
+                        startY: currentY,
+                        body: [[state.appraisal.meteoText]],
+                        theme: 'plain',
+                        styles: { fontSize: 8, cellPadding: 2, overflow: 'linebreak' },
+                        columnStyles: { 0: { cellWidth: 180 } }
+                    });
+                    currentY = doc.lastAutoTable.finalY + 5;
+                }
+
+                if (state.appraisal.navareaText) {
+                    if (currentY > 250) { doc.addPage(); currentY = 20; }
+                    currentY = addSectionTitle("ANEXO: AVISOS NAVAREA V", currentY);
+
+                    doc.autoTable({
+                        startY: currentY,
+                        body: [[state.appraisal.navareaText]],
+                        theme: 'plain',
+                        styles: { fontSize: 8, cellPadding: 2, overflow: 'linebreak' },
+                        columnStyles: { 0: { cellWidth: 180 } }
+                    });
+                    currentY = doc.lastAutoTable.finalY + 5;
+                }
+            }
 
             // --- ASSINATURAS ---
             const pageCount = doc.internal.getNumberOfPages();
@@ -342,18 +353,23 @@ const ReportService = {
                     doc.setDrawColor(0);
 
                     // Signature Lines
-                    doc.line(20, y, 90, y); // Left
-                    doc.line(120, y, 190, y); // Right
+                    // Signature Lines
+                    // doc.line(20, y, 90, y); // Left (Removed Chief)
+
+                    // Centering Commander? Or keeping right?
+                    // User said "Only Commander".
+                    // Let's Center it for better look.
+                    doc.line(75, y, 135, y); // Center (Width 60)
 
                     doc.setFontSize(10);
                     doc.setFont(undefined, 'bold');
-                    doc.text("Chefe de Máquinas", 55, y + 5, { align: "center" });
-                    doc.text("Comandante", 155, y + 5, { align: "center" });
+                    // doc.text("Chefe de Máquinas", 55, y + 5, { align: "center" });
+                    doc.text("Comandante", 105, y + 5, { align: "center" });
 
                     doc.setFontSize(8);
                     doc.setFont(undefined, 'normal');
-                    doc.text("Visto / Carimbo", 55, y + 10, { align: "center" });
-                    doc.text("Visto / Carimbo", 155, y + 10, { align: "center" });
+                    // doc.text("Visto / Carimbo", 55, y + 10, { align: "center" });
+                    doc.text("Visto / Carimbo", 105, y + 10, { align: "center" });
                 }
 
                 doc.setFontSize(8);
