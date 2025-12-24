@@ -147,10 +147,11 @@ const UIManager = {
         // Cálculo dinâmico de tempo
         const safeSpeed = speed > 0 ? speed : 0.1; // Evita div por zero
         const totalHours = totalDist / safeSpeed;
-        const h = Math.floor(totalHours);
-        const m = Math.round((totalHours - h) * 60);
+        const days = Math.floor(totalHours / 24);
+        const hours = Math.floor(totalHours % 24);
+        // const m = Math.round((totalHours - h) * 60); // Minutes Removed as per request
 
-        this.elements.statTime.innerText = `${h}h ${m}m`;
+        this.elements.statTime.innerText = `${days}d ${hours}h`;
 
         if (eta && !isNaN(eta)) {
             const options = { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' };
