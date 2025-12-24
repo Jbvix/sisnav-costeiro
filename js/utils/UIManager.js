@@ -129,11 +129,38 @@ const UIManager = {
                     ${NavMath.formatPos(p2.lat, 'lat')}<br>
                     ${NavMath.formatPos(p2.lon, 'lon')}
                 </td>
+                <td class="p-3 text-center text-[10px] text-gray-600 border-l border-gray-50">
+                    ${this.renderLighthouseInfo(p2.lat, p2.lon)}
+                </td>
             `;
             tbody.appendChild(row);
         }
     },
 
+    /**
+     * Helper para renderizar a coluna FAROL
+     */
+    renderLighthouseInfo: function (lat, lon) {
+        if (window.App && typeof window.App.getNearestLighthouse === 'function') {
+            const lh = window.App.getNearestLighthouse(lat, lon);
+            if (lh && lh.dist < 50) { // Só mostra se < 50 NM para não poluir ?
+                // Ícone baseado na distância
+                let icon = '<i class="far fa-lightbulb text-gray-300"></i>';
+                if (lh.dist < 10) icon = '<i class="fas fa-lightbulb text-yellow-500"></i>';
+                else if (lh.dist < 20) icon = '<i class="fas fa-lightbulb text-yellow-300"></i>';
+
+                return `
+                    <div class="flex flex-col items-center leading-tight">
+                        <span class="font-bold text-slate-700">${lh.name}</span>
+                        <span class="text-[9px] text-gray-400">${icon} ${lh.dist.toFixed(1)} NM</span>
+                    </div>
+                `;
+            } else if (lh) {
+                return `<span class="text-gray-300 text-[9px]">${lh.name} (${lh.dist.toFixed(0)}NM)</span>`;
+            }
+        }
+        return '<span class="text-gray-300">-</span>';
+    },
     /**
      * Atualiza os cartões de estatística (Dashboard)
      * @param {number} totalDist - Distância total em NM
@@ -153,12 +180,7 @@ const UIManager = {
 
         this.elements.statTime.innerText = `${days}d ${hours}h`;
 
-        if (eta && !isNaN(eta)) {
-            const options = { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' };
-            this.elements.displayEta.innerText = eta.toLocaleDateString('pt-BR', options);
-        } else {
-            this.elements.displayEta.innerText = "--/-- --:--";
-        }
+        return;
     },
 
     /**
