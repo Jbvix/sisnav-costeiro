@@ -27,10 +27,12 @@ const ReportService = {
             });
 
             console.log("ReportService: Carregando imagens...");
+            // Use path relative to index.html
             const [bgImg, logoImg] = await Promise.all([
-                loadImage('library/img/chart_bg.png'),
-                loadImage('library/img/saam_logo.png')
+                loadImage('./library/img/chart_bg.png'),
+                loadImage('./library/img/saam_logo.png')
             ]);
+            console.log("ReportService: Imagens carregadas:", bgImg ? "Fundo OK" : "Fundo FALHOU", logoImg ? "Logo OK" : "Logo FALHOU");
 
             // --- COVER PAGE ---
             // 1. Background (Faint chart)
