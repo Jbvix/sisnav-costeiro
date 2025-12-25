@@ -975,8 +975,9 @@ const App = {
             const etaDate = new Date(etdDate.getTime() + (durationHours * 3600 * 1000));
 
             // Sync with New Sidebar Inputs
-            const inpEta = document.getElementById('inp-eta');
-            const inpEtdSidebar = document.getElementById('inp-etd');
+            const elEtaDisplay = document.getElementById('display-eta');
+            const inpEtdSidebar = document.getElementById('input-etd');
+            const inpEtdAppraisal = document.getElementById('inp-plan-date');
 
             // Format for datetime-local (YYYY-MM-DDTHH:mm)
             const fmt = (d) => {
@@ -984,10 +985,14 @@ const App = {
                 return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
             };
 
-            if (inpEta) {
-                inpEta.value = fmt(etaDate);
-                // Trigger change to update State
-                inpEta.dispatchEvent(new Event('change'));
+            // Format for Display (DD/MM HH:mm)
+            const fmtDisplay = (d) => {
+                const pad = n => n.toString().padStart(2, '0');
+                return `${pad(d.getDate())}/${pad(d.getMonth() + 1)} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+            };
+
+            if (elEtaDisplay) {
+                elEtaDisplay.innerText = fmtDisplay(etaDate);
             }
             if (inpEtdSidebar && inpEtdSidebar.value !== etdVal) {
                 inpEtdSidebar.value = etdVal;
