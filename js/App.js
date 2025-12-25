@@ -14,10 +14,16 @@ import GPXParser from './utils/GPXParser.js?v=7';
 import UIManager from './utils/UIManager.js?v=7';
 import PortDatabase from './services/PortDatabase.js?v=7';
 import PersistenceService from './services/PersistenceService.js?v=1';
+import UpdateService from './services/UpdateService.js?v=1';
 
 const App = {
     init: function () {
         console.log("App: Inicializando v3.4.0...");
+
+        // Expose Services for Global Access (UpdateService, HTML Buttons)
+        window.TideCSVService = TideCSVService;
+        window.ReportService = window.ReportService || null; // Already global in ReportService.js? check
+
 
         if (NavMath && typeof NavMath.calcLeg === 'function') {
             console.log("App: Módulo NavMath OK.");
@@ -196,6 +202,55 @@ const App = {
                     // Reset value to allow reloading same file if needed
                     e.target.value = '';
                 }
+            });
+        }
+
+        // UPDATE DATA (ON-DEMAND)
+        const btnUpdateData = document.getElementById('btn-update-data');
+        if (btnUpdateData) {
+            btnUpdateData.addEventListener('click', () => {
+                const modal = document.getElementById('modal-update');
+                const bar = document.getElementById('bar-update-progress');
+                const lblStatus = document.getElementById('lbl-update-status');
+                const lblPercent = document.getElementById('lbl-update-percent');
+
+                // Reset UI
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    if (bar) bar.style.width = '0%';
+                    if (lblStatus) lblStatus.innerText = "Iniciando...";
+                    if (lblPercent) lblPercent.innerText = "0%";
+                }
+
+                UpdateService.triggerUpdate(
+                    (status, progress) => {
+                        if (lblStatus) lblStatus.innerText = status;
+                        if (lblPercent) lblPercent.innerText = progress + "%";
+                        if (bar) bar.style.width = progress + "%";
+                    },
+                    (success) => {
+                        if (success) {
+                            if (lblStatus) lblStatus.innerText = "Concluído! Recarregando sistema...";
+                            if (bar) bar.style.width = "100%";
+
+                            setTimeout(async () => {
+                                // Reload CSV Data
+                                if (window.TideCSVService && window.TideCSVService.reload) {
+                                    await window.TideCSVService.reload();
+                                }
+                                // Soft Reload UI (Recalculate Voyage)
+                                this.recalculateVoyage();
+                                alert("Dados atualizados com sucesso!");
+                                if (modal) modal.classList.add('hidden');
+                            }, 1000);
+                        } else {
+                            setTimeout(() => {
+                                alert("Erro na atualização. Verifique o servidor.");
+                                if (modal) modal.classList.add('hidden');
+                            }, 500);
+                        }
+                    }
+                );
             });
         }
 

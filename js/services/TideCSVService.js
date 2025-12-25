@@ -23,6 +23,13 @@ const TideCSVService = {
         return `${y}-${m}-${d}`;
     },
 
+    reload: function () {
+        this.isLoaded = false;
+        this.tideCache.clear();
+        this.weatherCache.clear();
+        return this.init();
+    },
+
     init: async function () {
         if (this.isLoaded) return;
 
