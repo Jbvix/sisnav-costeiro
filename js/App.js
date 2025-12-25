@@ -420,28 +420,19 @@ const App = {
 
     // --- MARÉS E VIAGEM ---
     populateTidePorts: function () {
-        // Init service if needed (usually implicit, but ensuring)
-        if (window.TideCSVService && !window.TideCSVService.isLoaded) {
-            window.TideCSVService.init();
-        }
-
-        if (!window.TideCSVService || !window.TideCSVService.isLoaded) {
-            // Wait for service
-            setTimeout(() => this.populateTidePorts(), 500);
-            return;
-        }
-
-        const stations = window.TideCSVService.getStations();
+        // Use PortDatabase (Source of Truth) instead of TideCSV strings
+        const stations = PortDatabase;
         const selDep = document.getElementById('select-port-dep');
         const selArr = document.getElementById('select-port-arr');
 
+        // Formato solicitado: "BR_RIG: Rio Grande-RS"
         [selDep, selArr].forEach(sel => {
             if (sel) {
                 sel.innerHTML = '<option value="">Selecione...</option>';
-                stations.forEach(st => {
+                stations.forEach(port => {
                     const opt = document.createElement('option');
-                    opt.value = st;
-                    opt.text = st;
+                    opt.value = port.id; // Correct ID
+                    opt.text = `${port.id}: ${port.name}`; // Display Format
                     sel.appendChild(opt);
                 });
             }
@@ -454,20 +445,17 @@ const App = {
         const bind = (id, key) => {
             const el = document.getElementById(id);
             if (el) {
-                // Listen to 'input' for smoother date updates, 'change' for others
                 const eventType = (key.includes('Time')) ? 'input' : 'change';
-
                 el.addEventListener(eventType, (e) => {
                     State.voyage[key] = e.target.value;
 
-                    // If ETD changed in Sidebar, sync Main Input and Recalc
+                    // Sync ETD Sidebar
                     if (key === 'depTime') {
                         const mainEtd = document.getElementById('input-etd');
                         if (mainEtd) mainEtd.value = e.target.value;
                         this.recalculateVoyage();
                     }
                 });
-                // Also listen to change for Date just in case
                 if (key.includes('Time')) {
                     el.addEventListener('change', (e) => {
                         State.voyage[key] = e.target.value;
@@ -486,28 +474,26 @@ const App = {
         bind('select-port-arr', 'arrPort');
         bind('inp-eta', 'arrTime');
 
-        // Extended Sync: Map Scraped Name -> Port ID
-        const syncPort = (sidebarId, mainId) => {
-            const sideEl = document.getElementById(sidebarId);
+        // Sync Sidebar (Appraisal Dropdown -> Main Dropdown)
+        const syncPort = (appraisalId, mainId) => {
+            const appEl = document.getElementById(appraisalId);
             const mainEl = document.getElementById(mainId);
-            if (sideEl && mainEl) {
-                // Remove old listeners to prevent duplicates if function called multiple times? 
-                // Hard to do with anonymous fns. Assuming single init.
 
-                sideEl.addEventListener('change', () => {
-                    const sideVal = sideEl.value; // "Rio Grande"
-                    if (!sideVal) return;
+            if (appEl && mainEl) {
+                appEl.addEventListener('change', () => {
+                    const val = appEl.value; // Now returns ID like 'BR_RIG'
+                    if (val) {
+                        mainEl.value = val; // Direct ID Match
 
-                    // Find corresponding ID in PortDatabase
-                    // Using csvName (best match) or name
-                    const port = PortDatabase.find(p => p.csvName === sideVal || p.name === sideVal);
+                        // Validar se Main Dropdown aceita esse valor (pode estar populado diferente?)
+                        // Assumindo que Main Dropdown também usa IDs.
+                        if (mainEl.value !== val) {
+                            console.warn("App: Sync ID mismatch. Main dropdown may not have option:", val);
+                            // Fallback: Try setting by Text matching?
+                        }
 
-                    if (port) {
-                        mainEl.value = port.id;
-                        console.log(`App: Sync sidebar '${sideVal}' -> Main ID '${port.id}'`);
-                        mainEl.dispatchEvent(new Event('change')); // Triggers Auto-Route
-                    } else {
-                        console.warn(`App: Sync failed. No PortDatabase ID for '${sideVal}'`);
+                        console.log(`App: Sync '${val}' -> Main`);
+                        mainEl.dispatchEvent(new Event('change'));
                     }
                 });
             }
