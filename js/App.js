@@ -1273,13 +1273,19 @@ const App = {
 
         if (depMatch.port && depMatch.dist < THRESHOLD) {
             const sel = document.getElementById('select-dep');
-            if (sel) sel.value = depMatch.port.id;
+            if (sel) {
+                sel.value = depMatch.port.id;
+                sel.dispatchEvent(new Event('change')); // Trigger fetch
+            }
             console.log(`App: Auto-selecionado Partida: ${depMatch.port.name} (${depMatch.dist.toFixed(1)} NM)`);
         }
 
         if (arrMatch.port && arrMatch.dist < THRESHOLD) {
             const sel = document.getElementById('select-arr');
-            if (sel) sel.value = arrMatch.port.id;
+            if (sel) {
+                sel.value = arrMatch.port.id;
+                sel.dispatchEvent(new Event('change')); // Trigger fetch
+            }
             console.log(`App: Auto-selecionado Chegada: ${arrMatch.port.name} (${arrMatch.dist.toFixed(1)} NM)`);
         }
     },
