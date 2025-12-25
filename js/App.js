@@ -147,6 +147,23 @@ const App = {
             });
         }
 
+        // Listeners Tábua de Marés (Restaurado)
+        const bindTideFile = (id, field) => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('change', (e) => {
+                    const f = e.target.files[0];
+                    if (State.appraisal && State.appraisal.files) {
+                        State.appraisal.files[field] = f || null;
+                        console.log(`App: Tide File ${field} updated.`);
+                    }
+                    this.validateAppraisalLogic();
+                });
+            }
+        };
+        bindTideFile('inp-file-tide-dep', 'tideDep');
+        bindTideFile('inp-file-tide-arr', 'tideArr');
+
         const appraisalInputs = document.querySelectorAll('#view-appraisal input[type="checkbox"], #view-appraisal select');
         appraisalInputs.forEach(input => input.addEventListener('change', () => this.validateAppraisalLogic()));
 
