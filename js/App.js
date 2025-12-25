@@ -258,6 +258,25 @@ const App = {
             });
     },
 
+    populatePortDropdowns: function () {
+        const selDep = document.getElementById('select-dep');
+        const selArr = document.getElementById('select-arr');
+
+        // Populate specific Main Dropdowns (Sidebar)
+        [selDep, selArr].forEach(sel => {
+            if (sel) {
+                sel.innerHTML = '<option value="">Selecione...</option>';
+                // Sort alphabetically? Or by ID? Preserving DB order.
+                PortDatabase.forEach(port => {
+                    const opt = document.createElement('option');
+                    opt.value = port.id;
+                    opt.text = port.name; // Keep sidebar clean (Name only)
+                    sel.appendChild(opt);
+                });
+            }
+        });
+    },
+
     populateVesselDropdown: function () {
         const select = document.getElementById('select-ship-name');
         if (!select) return;

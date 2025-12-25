@@ -6,9 +6,9 @@
  * VERSÃO: 1.0.0
  */
 
-import State from '../core/State.js?v=2';
-import UIManager from '../utils/UIManager.js?v=11';
-import MapService from '../core/MapService.js?v=1';
+import State from '../core/State.js?v=7';
+import UIManager from '../utils/UIManager.js?v=7';
+import MapService from '../core/MapService.js?v=7';
 
 const PersistenceService = {
 
