@@ -142,7 +142,8 @@ const ReportService = {
             const pdfData = [
                 ["Meteomarinha:", files.meteo || "N/A"],
                 ["Avisos Navarea V:", files.navarea || "N/A"],
-
+                ["Tábua Maré (Partida):", (files.tideDep && files.tideDep.name) ? files.tideDep.name : (files.tideDep || "N/A")],
+                ["Tábua Maré (Chegada):", (files.tideArr && files.tideArr.name) ? files.tideArr.name : (files.tideArr || "N/A")]
             ];
 
             doc.autoTable({
