@@ -555,6 +555,24 @@
             </div>
 
             <div id="planning-dashboard" class="mt-6 space-y-4 transition-opacity">
+
+                <!-- GESTÃO DO PLANO (PERSISTÊNCIA) -->
+                <div
+                    class="bg-gray-100 p-3 rounded shadow-inner border border-gray-200 flex gap-2 justify-between items-center">
+                    <span class="text-xs font-bold text-gray-500 uppercase">Gestão da Viagem</span>
+                    <div class="flex gap-2">
+                        <button id="btn-save-plan"
+                            class="px-3 py-1 bg-green-600 text-white text-xs font-bold rounded shadow hover:bg-green-700 flex items-center gap-1">
+                            <i class="fas fa-save"></i> Salvar
+                        </button>
+                        <button id="btn-load-plan"
+                            class="px-3 py-1 bg-orange-500 text-white text-xs font-bold rounded shadow hover:bg-orange-600 flex items-center gap-1">
+                            <i class="fas fa-folder-open"></i> Carregar
+                        </button>
+                        <input type="file" id="inp-load-state" accept=".sisnav" class="hidden">
+                    </div>
+                </div>
+
                 <div class="bg-white p-4 rounded shadow border-l-4 border-blue-500">
                     <h3 class="font-bold text-slate-700 mb-4 flex items-center gap-2"><i class="far fa-clock"></i>
                         Cronograma & Ambiente</h3>
@@ -697,7 +715,7 @@
         SISNAV Costeiro &copy; 2025 TugLife | Jossian Brito</footer>
 
     <!-- SCRIPT PRINCIPAL (MÓDULO) - Carregado após as dependências -->
-    <script type="module" src="js/App.js?v=15"></script>
+    <script type="module" src="js/App.js?v=16"></script>
 </body>
 
 </html>

@@ -13,6 +13,7 @@ import WeatherAPI from './services/WeatherAPI.js?v=7';
 import GPXParser from './utils/GPXParser.js?v=7';
 import UIManager from './utils/UIManager.js?v=7';
 import PortDatabase from './services/PortDatabase.js?v=7';
+import PersistenceService from './services/PersistenceService.js?v=1';
 
 const App = {
     init: function () {
@@ -173,6 +174,30 @@ const App = {
 
         if (selDep) selDep.addEventListener('change', () => this.handlePortSelection());
         if (selArr) selArr.addEventListener('change', () => this.handlePortSelection());
+
+        if (selArr) selArr.addEventListener('change', () => this.handlePortSelection());
+
+        // PERSISTENCE (SALVAR/CARREGAR)
+        const btnSavePlan = document.getElementById('btn-save-plan');
+        const btnLoadPlan = document.getElementById('btn-load-plan');
+        const inpLoadState = document.getElementById('inp-load-state');
+
+        if (btnSavePlan) {
+            btnSavePlan.addEventListener('click', () => PersistenceService.saveState());
+        }
+        if (btnLoadPlan) {
+            btnLoadPlan.addEventListener('click', () => inpLoadState.click());
+        }
+        if (inpLoadState) {
+            inpLoadState.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    PersistenceService.loadState(file);
+                    // Reset value to allow reloading same file if needed
+                    e.target.value = '';
+                }
+            });
+        }
 
         // MANUAL PLANNING
         const btnManual = document.getElementById('btn-manual-plan');
