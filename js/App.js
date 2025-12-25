@@ -205,6 +205,53 @@ const App = {
             });
         }
 
+        // --- ROUTE FEED (LIBRARY) ---
+        const btnFeed = document.getElementById('btn-feed-route');
+        const inpFeed = document.getElementById('inp-feed-route');
+        const feedStatus = document.getElementById('feed-status');
+
+        if (btnFeed && inpFeed) {
+            btnFeed.addEventListener('click', () => inpFeed.click());
+
+            inpFeed.addEventListener('change', async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                if (feedStatus) {
+                    feedStatus.innerText = "Enviando e Processando...";
+                    feedStatus.classList.remove('hidden');
+                }
+
+                const formData = new FormData();
+                formData.append('file', file);
+
+                try {
+                    const res = await fetch('/api/upload-gpx', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const json = await res.json();
+
+                    if (res.ok) {
+                        alert(`Sucesso: ${json.message}`);
+                        if (feedStatus) feedStatus.innerText = "Rota Adicionada!";
+                        // Clear input
+                        e.target.value = '';
+                    } else {
+                        throw new Error(json.error || "Erro desconhecido");
+                    }
+                } catch (err) {
+                    console.error("Feed Error:", err);
+                    alert("Erro ao enviar rota: " + err.message);
+                    if (feedStatus) feedStatus.innerText = "Falha no envio.";
+                }
+
+                setTimeout(() => {
+                    if (feedStatus) feedStatus.classList.add('hidden');
+                }, 3000);
+            });
+        }
+
         // UPDATE DATA (ON-DEMAND)
         const btnUpdateData = document.getElementById('btn-update-data');
         if (btnUpdateData) {

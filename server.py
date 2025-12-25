@@ -9,6 +9,7 @@ import time
 try:
     import rebuild_csv
     import update_weather_batch
+    import build_route_index # New
 except ImportError as e:
     print(f"Warning: Update scripts not found: {e}")
 
@@ -51,6 +52,38 @@ def update_data():
             yield f"data: {json.dumps({'status': f'Erro: {str(e)}', 'progress': 0, 'error': True})}\n\n"
 
     return Response(generate(), mimetype='text/event-stream')
+
+@app.route('/api/upload-gpx', methods=['POST'])
+def upload_gpx():
+    from flask import request
+    
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'}), 400
+        
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'}), 400
+        
+    if file and file.filename.lower().endswith('.gpx'):
+        try:
+            # Save to gpx/ folder
+            save_path = os.path.join(os.getcwd(), 'gpx', file.filename)
+            file.save(save_path)
+            
+            # Rebuild Index
+            gpx_dir = os.path.join(os.getcwd(), 'gpx')
+            output_file = os.path.join(os.getcwd(), 'js', 'data', 'known_routes.json')
+            
+            # Capture output or just run?
+            # We can mock the print or just trust it.
+            build_route_index.build_index(gpx_dir, output_file)
+            
+            return jsonify({'status': 'OK', 'message': f'Rota {file.filename} adicionada e índice atualizado!'})
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+            
+    return jsonify({'error': 'Invalid file type'}), 400
+
 
 if __name__ == '__main__':
     print("="*60)
