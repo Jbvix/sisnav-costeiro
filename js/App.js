@@ -977,7 +977,10 @@ const App = {
             // Sync with New Sidebar Inputs
             const elEtaDisplay = document.getElementById('display-eta');
             const inpEtdSidebar = document.getElementById('input-etd');
-            const inpEtdAppraisal = document.getElementById('inp-plan-date');
+
+            // Sync with Appraisal Inputs
+            const inpEtdAppraisal = document.getElementById('inp-etd');
+            const inpEtaAppraisal = document.getElementById('inp-eta');
 
             // Format for datetime-local (YYYY-MM-DDTHH:mm)
             const fmt = (d) => {
@@ -991,9 +994,25 @@ const App = {
                 return `${pad(d.getDate())}/${pad(d.getMonth() + 1)} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
             };
 
+            // Update Sidebar Display
             if (elEtaDisplay) {
                 elEtaDisplay.innerText = fmtDisplay(etaDate);
             }
+
+            // Update Appraisal Input
+            if (inpEtaAppraisal) {
+                inpEtaAppraisal.value = fmt(etaDate);
+            }
+
+            // Sync ETD (Sidebar -> Appraisal)
+            // Note: The source of truth logic usually comes from the trigger. 
+            // If Sidebar changed, sync Appraisal. If Appraisal changed, sync Sidebar.
+            // Currently recalculateVoyage uses 'input-etd' (Sidebar) as source.
+            if (inpEtdAppraisal && inpEtdAppraisal.value !== etdVal) {
+                inpEtdAppraisal.value = etdVal;
+            }
+
+            // Also sync Sidebar if source was potentially different (redundant but safe)
             if (inpEtdSidebar && inpEtdSidebar.value !== etdVal) {
                 inpEtdSidebar.value = etdVal;
             }
