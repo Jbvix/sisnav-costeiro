@@ -5,6 +5,17 @@ const ReportService = {
             return;
         }
 
+        // Dynamic Import of NavMath
+        let NavMath = window.NavMath;
+        if (!NavMath) {
+            try {
+                const module = await import('../core/NavMath.js');
+                NavMath = module.default;
+            } catch (e) {
+                console.error("ReportService: Failed to load NavMath", e);
+            }
+        }
+
         try {
             console.log("ReportService: Iniciando geração do PDF...");
 
@@ -415,10 +426,9 @@ const ReportService = {
                     const p2 = state.routePoints[i + 1];
 
                     // Calc Leg
-                    // Using NavMath from global scope if available, else simplistic
                     let crs = 0, legDist = 0;
-                    if (window.NavMath) {
-                        const leg = window.NavMath.calcLeg(p1.lat, p1.lon, p2.lat, p2.lon);
+                    if (NavMath) {
+                        const leg = NavMath.calcLeg(p1.lat, p1.lon, p2.lat, p2.lon);
                         crs = leg.crs;
                         legDist = leg.dist;
                     }
