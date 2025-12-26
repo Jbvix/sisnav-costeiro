@@ -6,8 +6,8 @@
  * VERSÃO: 3.2.0 (Error Handling 400)
  */
 
-import TideLocator from './TideLocator.js?v=5';
-import TideCSVService from './TideCSVService.js?v=6';
+import TideLocator from './TideLocator.js?v=6';
+import TideCSVService from './TideCSVService.js?v=7';
 
 const WeatherAPI = {
 
