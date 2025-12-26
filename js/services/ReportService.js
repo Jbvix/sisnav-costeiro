@@ -135,7 +135,87 @@ const ReportService = {
             });
             currentY = doc.lastAutoTable.finalY + 5;
 
-            // --- 2. DOCUMENTAÇÃO E SEGURANÇA (PDFs e Cartas) ---
+            // --- 1.1 CHECKLIST PRAÇA DE MÁQUINAS ---
+            currentY = addSectionTitle("PRAÇA DE MÁQUINAS - STATUS OPERACIONAL", currentY);
+
+            // Re-definition of items for report mapping
+            const checkItems = {
+                safety: [
+                    { id: 'safety_estanque', label: 'Estanqueidade (Saídas)' },
+                    { id: 'safety_fire', label: 'Combate a Incêndio' },
+                    { id: 'safety_pump', label: 'Bomba Emergência' },
+                    { id: 'safety_alarm', label: 'Alarmes / Painel' },
+                    { id: 'safety_comm', label: 'Comunicação' },
+                    { id: 'safety_stop', label: 'Parada Emergência' },
+                    { id: 'safety_sopep', label: 'SOPEP' }
+                ],
+                propulsion: [
+                    { id: 'prop_protection', label: 'Proteções MCPs' },
+                    { id: 'prop_inspection', label: 'Visual MCPs' },
+                    { id: 'prop_thermal', label: 'Isolamento Térmico' },
+                    { id: 'prop_azi_oil', label: 'Azimutal (Óleo/Refrig)' },
+                    { id: 'prop_steering', label: 'Testes de Governo' },
+                    { id: 'prop_temp', label: 'Temps. (Trocadores)' }
+                ],
+                power: [
+                    { id: 'pow_protection', label: 'Proteções MCAs' },
+                    { id: 'pow_maint', label: 'Manutenção (Óleo/Filtro)' },
+                    { id: 'pow_batt', label: 'Baterias (Carregadores)' },
+                    { id: 'pow_light', label: 'Iluminação Emergência' }
+                ],
+                aux: [
+                    { id: 'aux_diesel', label: 'Purificador Diesel' },
+                    { id: 'aux_tanks', label: 'Tanques (Visores)' },
+                    { id: 'aux_air', label: 'Ar Comprimido' },
+                    { id: 'aux_waste', label: 'Resíduos/Dalas' },
+                    { id: 'aux_septic', label: 'Tanque Séptico' }
+                ],
+                spares: [
+                    { id: 'spare_lube', label: 'Lubrificantes (Estoque)' },
+                    { id: 'spare_filter', label: 'Filtros (Estoque)' },
+                    { id: 'spare_parts', label: 'Peças Críticas' }
+                ]
+            };
+
+            const checklistData = [];
+            const checklistState = (state.appraisal.engine && state.appraisal.engine.checklist) ? state.appraisal.engine.checklist : {};
+
+            // Helper to format group
+            const formatGroup = (title, items) => {
+                const lines = items.map(item => {
+                    const status = checklistState[item.id] ? "OK" : "PENDENTE";
+                    return `${status} - ${item.label}`;
+                });
+                return [title, lines.join("\n")];
+            };
+
+            checklistData.push(formatGroup("SEGURANÇA (CRÍTICO)", checkItems.safety));
+            checklistData.push(formatGroup("PROPULSÃO", checkItems.propulsion));
+            checklistData.push(formatGroup("GERAÇÃO DE ENERGIA", checkItems.power));
+            checklistData.push(formatGroup("AUXILIARES", checkItems.aux));
+            checklistData.push(formatGroup("SOBRESSALENTES", checkItems.spares));
+
+            doc.autoTable({
+                startY: currentY,
+                body: checklistData,
+                theme: 'grid',
+                head: [['Grupo', 'Itens Verificados']],
+                headStyles: { fillColor: [70, 70, 70] },
+                styles: { fontSize: 8, cellPadding: 2 },
+                columnStyles: { 0: { fontStyle: 'bold', width: 60 } }
+            });
+            currentY = doc.lastAutoTable.finalY + 5;
+
+            // OBSERVAÇÕES
+            const obs = (state.appraisal.engine && state.appraisal.engine.obs) ? state.appraisal.engine.obs : "Sem observações registradas.";
+            doc.setFont(undefined, 'bold');
+            doc.text("Observações da Praça de Máquinas:", 14, currentY + 4);
+            doc.setFont(undefined, 'normal');
+            doc.setFontSize(8);
+
+            const splitObs = doc.splitTextToSize(obs, 180);
+            doc.text(splitObs, 14, currentY + 9);
+            currentY += 10 + (splitObs.length * 4);
             currentY = addSectionTitle("2. DOCUMENTAÇÃO E REFERÊNCIAS", currentY);
 
             const files = state.appraisal.files || {};
