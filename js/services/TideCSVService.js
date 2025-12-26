@@ -132,6 +132,30 @@ const TideCSVService = {
         return Array.from(this.tideCache.keys()).sort();
     },
 
+    getWeatherDateRange: function () {
+        if (!this.isLoaded) return null;
+        let minDate = null;
+        let maxDate = null;
+
+        for (const [station, dateMap] of this.weatherCache) {
+            for (const dateStr of dateMap.keys()) {
+                // dateStr is YYYY-MM-DD
+                if (!minDate || dateStr < minDate) minDate = dateStr;
+                if (!maxDate || dateStr > maxDate) maxDate = dateStr;
+            }
+        }
+
+        if (!minDate || !maxDate) return null;
+
+        // Format to DD/MM
+        const toDDMM = (iso) => {
+            const [y, m, d] = iso.split('-');
+            return `${d}/${m}`;
+        };
+
+        return { min: toDDMM(minDate), max: toDDMM(maxDate) };
+    },
+
     getTide: function (csvStationName, dateObj) {
         if (!this.isLoaded) return null;
         const dateStr = this._getDateKey(dateObj);

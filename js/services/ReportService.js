@@ -58,6 +58,116 @@ const parseMeteoText = (text) => {
     return parsedData;
 };
 
+const parseNavareaText = (text) => {
+    if (!text) return [];
+
+    // Normalize text
+    const raw = text.replace(/\r\n/g, '\n');
+    const lines = raw.split('\n');
+
+    // Heuristic: Check if user pasted tab-separated or structured lines
+    // Example: "0778/25 STS ..."
+    // We try to group by Header ID (XXXX/YY)
+
+    const entries = [];
+    let currentEntry = null;
+
+    // Regex for ID: 0778/25 or 778/25
+    const idRegex = /^(\d{3,4}\/\d{2})/;
+
+    // Regex for Coords: 26-20.33S 046-23.42W (Standard nautical)
+    const coordRegex = /(\d{2}-\d{2}(?:\.\d+)?[NS])\s+(\d{3}-\d{2}(?:\.\d+)?[EW])/;
+    // Regex for Date Range: 27/12 a 03/01 or 27/12 - 03/01
+    const dateRegex = /(\d{1,2}\/\d{2})\s*(?:a|até|-)\s*(\d{1,2}\/\d{2})/i;
+
+    // Keywords for Category (Priority List)
+    const catKeywords = ['STS', 'SHIP TO SHIP', 'PERIGO', 'HAZARD', 'SÍSMICA', 'SEISMIC', 'REBOQUE', 'TOWING', 'FOGUETE', 'ROCKET', 'EXERCÍCIO', 'MILITAR', 'FAROL', 'LIGHTHOUSE', 'BOIA', 'BUOY'];
+
+    const processEntry = (entry) => {
+        if (!entry) return;
+        const fullText = entry.lines.join(' ');
+
+        // 1. ID
+        const id = entry.id;
+
+        // 2. Category
+        let category = '-';
+        for (const k of catKeywords) {
+            if (fullText.toUpperCase().includes(k)) {
+                category = k;
+                break;
+            }
+        }
+
+        // 3. Coords
+        let coords = '-';
+        const cMatch = fullText.match(coordRegex);
+        if (cMatch) {
+            coords = `${cMatch[1]} ${cMatch[2]}`;
+        }
+
+        // 4. Period
+        let period = '-';
+        const dMatch = fullText.match(dateRegex);
+        if (dMatch) {
+            period = `${dMatch[1]} a ${dMatch[2]}`;
+        }
+
+        // 5. Local/Details splitting
+        // This is fuzzy. We assume what remains is details.
+        // Let's take the first line sans ID as potential "Local" if short?
+        // Or just dump text into Details/Vessels.
+        // User example: "Sul de Santos" was separate.
+        // Let's try to extract Location via heuristics or just dump all in details.
+
+        // Simplistic extraction: Remove ID, remove coords, try to present clean text
+        let details = fullText.replace(id, '')
+            .replace(coordRegex, '')
+            .replace(dateRegex, '')
+            .replace(/\s+/g, ' ').trim();
+
+        // Try to identify "Local" if usually after Category? 
+        // Hard to generalize. We will put everything else in "Detalhes/Embarcações" column
+        // But separate Location if detected common names (Santos, Rio, etc)
+
+        let local = '-';
+        const commonLocs = ['SUL DE SANTOS', 'RIO DE JANEIRO', 'CABO FRIO', 'BACIA DE SANTOS', 'BACIA DE CAMPOS', 'ESPÍRITO SANTO', 'PARANAGUÁ', 'SÃO FRANCISCO', 'RIO GRANDE'];
+        for (const l of commonLocs) {
+            if (details.toUpperCase().includes(l)) {
+                local = l; // Found a geographic match
+                break;
+            }
+        }
+
+        entries.push([id, category, local, period, details, coords]);
+    };
+
+    lines.forEach(line => {
+        const trimmed = line.trim();
+        if (!trimmed) return;
+
+        const m = trimmed.match(idRegex);
+        if (m) {
+            // New Entry
+            if (currentEntry) processEntry(currentEntry);
+            currentEntry = { id: m[1], lines: [trimmed] };
+        } else {
+            // Continuation
+            if (currentEntry) {
+                currentEntry.lines.push(trimmed);
+            } else {
+                // Orphan line? Maybe unstructured text. Treat as new entry without ID?
+                // Or append to previous if we want to be robust?
+                // check if it looks like a table row without ID?
+            }
+        }
+    });
+
+    if (currentEntry) processEntry(currentEntry);
+
+    return entries;
+};
+
 const ReportService = {
     generatePDF: async function (state) {
         if (!state) {
@@ -619,17 +729,38 @@ const ReportService = {
                 }
 
                 if (state.appraisal.navareaText) {
-                    if (currentY > 250) { doc.addPage(); currentY = 20; }
+                    if (currentY > 230) { doc.addPage(); currentY = 20; }
                     currentY = addSectionTitle("ANEXO: AVISOS NAVAREA V", currentY);
 
-                    doc.autoTable({
-                        startY: currentY,
-                        body: [[state.appraisal.navareaText]],
-                        theme: 'plain',
-                        styles: { fontSize: 8, cellPadding: 2, overflow: 'linebreak' },
-                        columnStyles: { 0: { cellWidth: 180 } }
-                    });
-                    currentY = doc.lastAutoTable.finalY + 5;
+                    const navareaData = parseNavareaText(state.appraisal.navareaText);
+
+                    if (navareaData.length > 0) {
+                        doc.autoTable({
+                            startY: currentY,
+                            head: [['Aviso', 'Cat.', 'Local (Ref)', 'Período', 'Detalhes / Embarcações', 'Coord']],
+                            body: navareaData,
+                            theme: 'grid',
+                            headStyles: { fillColor: [192, 57, 43] }, // Redish for Warnings
+                            styles: { fontSize: 7, cellPadding: 2, valign: 'middle' },
+                            columnStyles: {
+                                0: { fontStyle: 'bold', cellWidth: 15 }, // ID
+                                1: { cellWidth: 15 }, // Cat
+                                2: { cellWidth: 25 }, // Local
+                                3: { cellWidth: 20 }, // Period
+                                5: { cellWidth: 25, font: 'courier' }  // Coords
+                            }
+                        });
+                        currentY = doc.lastAutoTable.finalY + 10;
+                    } else {
+                        // Fallback
+                        doc.autoTable({
+                            startY: currentY,
+                            body: [[state.appraisal.navareaText]],
+                            theme: 'plain',
+                            styles: { fontSize: 8, cellPadding: 2, overflow: 'linebreak', font: 'courier' },
+                        });
+                        currentY = doc.lastAutoTable.finalY + 5;
+                    }
                 }
             }
 

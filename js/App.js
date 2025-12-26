@@ -15,6 +15,7 @@ import UIManager from './utils/UIManager.js?v=7';
 import PortDatabase from './services/PortDatabase.js?v=7';
 import PersistenceService from './services/PersistenceService.js?v=1';
 import UpdateService from './services/UpdateService.js?v=1';
+import TideCSVService from './services/TideCSVService.js?v=7';
 
 const App = {
     init: function () {
@@ -45,7 +46,9 @@ const App = {
         this.populateContactsDropdown();
         this.populateLighthousesDropdown();
         this.populateSheltersDropdown();
+        this.populateSheltersDropdown();
         this.populateTidePorts(); // New
+        this.updateWeatherStatusUI();
     },
 
     setupEventListeners: function () {
@@ -95,8 +98,22 @@ const App = {
             console.error("App: Input ETD não encontrado!");
         }
 
-        const btnSimulate = document.getElementById('btn-simulate');
         if (btnSimulate) btnSimulate.addEventListener('click', () => this.startSimulation());
+
+        // Refresh Weather Button
+        const btnRefreshWeather = document.getElementById('btn-refresh-weather');
+        if (btnRefreshWeather) {
+            btnRefreshWeather.addEventListener('click', () => {
+                if (window.TideCSVService) {
+                    window.TideCSVService.reload().then(() => {
+                        this.updateWeatherStatusUI();
+                        alert("Dados atualizados com sucesso!");
+                    });
+                } else {
+                    window.location.reload();
+                }
+            });
+        }
 
         const btnPdf = document.getElementById('btn-export-pdf');
         if (btnPdf) btnPdf.addEventListener('click', () => {
@@ -1483,6 +1500,33 @@ const App = {
                 } catch (e) {
                     console.error("App: Erro crítico na atualização ambiental", e);
                 }
+            }
+        }
+    },
+
+    updateWeatherStatusUI: function () {
+        const spanStatus = document.getElementById('weather-status-display');
+        if (!spanStatus) return;
+
+        // Ensure service loaded
+        // Use imported service or window object
+        const svc = window.TideCSVService || TideCSVService;
+
+        if (svc && svc.isLoaded) {
+            const range = svc.getWeatherDateRange();
+            if (range) {
+                spanStatus.textContent = `Dados: ${range.min} a ${range.max}`;
+                spanStatus.classList.remove('text-red-500', 'bg-red-50');
+                spanStatus.classList.add('text-green-600', 'bg-green-50');
+            } else {
+                spanStatus.textContent = "Dados: Indisponíveis";
+                spanStatus.classList.add('text-red-500', 'bg-red-50');
+            }
+        } else {
+            // Maybe wait for load?
+            if (svc) {
+                // Check again in a bit
+                setTimeout(() => this.updateWeatherStatusUI(), 1000);
             }
         }
     },
