@@ -316,7 +316,7 @@ const ReportService = {
                 currentY = doc.lastAutoTable.finalY + 5;
             }
 
-            // --- 4. ROTA E WAYPOINTS ---
+            // --- 4. ROTA PLANEJADA ---
             // New Page if low on space
             if (currentY > 200) {
                 doc.addPage();
@@ -324,24 +324,56 @@ const ReportService = {
             }
 
             currentY = addSectionTitle("4. ROTA PLANEJADA", currentY);
-            const dist = (state.totalDistance / 1852).toFixed(1);
-            doc.text(`Distância Total: ${dist} NM  |  Waypoints: ${state.routePoints.length}`, 14, currentY + 5);
+            const totalDistNm = (state.totalDistance / 1852).toFixed(1);
+            doc.text(`Distância Total: ${totalDistNm} NM  |  Pernas: ${(state.routePoints.length > 0 ? state.routePoints.length - 1 : 0)}`, 14, currentY + 5);
 
-            const routeData = (state.routePoints || []).map((wp, i) => [
-                (i + 1).toString(),
-                wp.name || `WPT ${i + 1}`,
-                wp.lat ? wp.lat.toFixed(4) : "0.0000",
-                wp.lng ? wp.lng.toFixed(4) : "0.0000",
-                // Calc distance to next would be nice here, but keeping it simple
-            ]);
+            // Build Route Data matching Plan Screen (Legs)
+            const routeData = [];
+            if (state.routePoints && state.routePoints.length > 1) {
+                for (let i = 0; i < state.routePoints.length - 1; i++) {
+                    const p1 = state.routePoints[i];
+                    const p2 = state.routePoints[i + 1];
+
+                    // Calc Leg
+                    // Using NavMath from global scope if available, else simplistic
+                    let crs = 0, legDist = 0;
+                    if (window.NavMath) {
+                        const leg = window.NavMath.calcLeg(p1.lat, p1.lon, p2.lat, p2.lon);
+                        crs = leg.crs;
+                        legDist = leg.dist;
+                    }
+
+                    // Lighthouse Info (Near p2, matching UI)
+                    let farolTxt = "-";
+                    if (window.App && typeof window.App.getNearestLighthouse === 'function') {
+                        const lh = window.App.getNearestLighthouse(p2.lat, p2.lon);
+                        if (lh && lh.dist < 50) {
+                            farolTxt = `${lh.name}\n(${lh.dist.toFixed(1)} NM)`;
+                        }
+                    }
+
+                    routeData.push([
+                        (i + 1).toString(),
+                        `${p1.name}\n(to ${p2.name})`,
+                        `${p1.lat.toFixed(4)}\n${p1.lon.toFixed(4)}`, // Lat/Long stacked
+                        `${crs.toFixed(1)}°`,
+                        legDist.toFixed(1),
+                        farolTxt
+                    ]);
+                }
+            }
 
             doc.autoTable({
                 startY: currentY + 8,
-                head: [['#', 'Nome', 'Lat', 'Lon']],
+                head: [['#', 'Waypoint', 'Lat / Long', 'Rumo', 'Dist.', 'Farol']],
                 body: routeData,
                 theme: 'grid',
-                headStyles: { fillColor: [52, 152, 219] },
-                styles: { fontSize: 8 }
+                headStyles: { fillColor: [52, 152, 219], halign: 'center' },
+                styles: { fontSize: 8, valign: 'middle', halign: 'center' },
+                columnStyles: {
+                    1: { halign: 'left' }, // Waypoint name left aligned
+                    5: { fontSize: 7 }     // Lighthouse smaller
+                }
             });
 
             // --- 5. AUXÍLIOS À NAVEGAÇÃO (FARÓIS) ---
