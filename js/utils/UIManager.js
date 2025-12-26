@@ -143,6 +143,10 @@ const UIManager = {
                     <div class="font-bold text-slate-700 text-sm">${p1.name}</div>
                     <div class="text-[10px] text-gray-400 uppercase tracking-wide">to ${p2.name}</div>
                 </td>
+                <td class="p-3 text-center text-[10px] font-mono text-gray-500">
+                    ${NavMath.formatPos(p1.lat, 'lat')}<br>
+                    ${NavMath.formatPos(p1.lon, 'lon')}
+                </td>
                 <td class="p-3 text-center">
                     <span class="font-mono font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded text-xs">
                         ${leg.crs.toFixed(1)}°
@@ -150,10 +154,6 @@ const UIManager = {
                 </td>
                 <td class="p-3 text-center font-mono text-sm text-slate-600">
                     ${leg.dist.toFixed(1)}
-                </td>
-                <td class="p-3 text-center text-[10px] font-mono text-gray-400 hidden md:table-cell">
-                    ${NavMath.formatPos(p2.lat, 'lat')}<br>
-                    ${NavMath.formatPos(p2.lon, 'lon')}
                 </td>
                 <td class="p-3 text-center text-[10px] text-gray-600 border-l border-gray-50">
                     ${this.renderLighthouseInfo(p2.lat, p2.lon)}
