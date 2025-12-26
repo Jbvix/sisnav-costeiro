@@ -849,17 +849,43 @@ const App = {
             .then(text => {
                 const lines = text.split('\n');
                 select.innerHTML = '<option value="" disabled selected>Selecionar Carta...</option>';
+
+                const coastalGroup = document.createElement('optgroup');
+                coastalGroup.label = "Cartas Costeiras (Gerais)";
+
+                const approachGroup = document.createElement('optgroup');
+                approachGroup.label = "Aproximação / Portos";
+
                 lines.forEach(line => {
                     if (!line || line.startsWith('CHART')) return;
                     const parts = line.split('\t');
                     if (parts.length >= 2) {
-                        const val = `${parts[0]} - ${parts[1]}`;
+                        const id = parts[0].trim();
+                        const title = parts[1].trim();
+                        const val = `${id} - ${title}`;
+
+                        // Heurística de Classificação
+                        // 4 dígitos = Porto/Aproximação (ex: 1701)
+                        // 2 dígitos = Geral (ex: 10, 20)
+                        // 5 dígitos (23xxx) = Costeira INT
+
+                        let isApproach = false;
+                        if (id.length === 4) isApproach = true;
+                        if (title.includes('PORTO') || title.includes('BAÍA') || title.includes('BARRA')) isApproach = true;
+                        if (title.startsWith('COSTA') || title.startsWith('DO ') || title.startsWith('DA ')) isApproach = false;
+
                         const opt = document.createElement('option');
                         opt.value = val;
                         opt.text = val;
-                        select.appendChild(opt);
+                        opt.setAttribute('data-type', isApproach ? 'APPROACH' : 'COASTAL');
+
+                        if (isApproach) approachGroup.appendChild(opt);
+                        else coastalGroup.appendChild(opt);
                     }
                 });
+
+                select.appendChild(approachGroup);
+                select.appendChild(coastalGroup);
             })
             .catch(e => console.error("App: Erro loading charts", e));
 
@@ -949,8 +975,28 @@ const App = {
 
         State.appraisal.selectedCharts.forEach((chart, idx) => {
             const tag = document.createElement('span');
-            tag.className = "bg-blue-100 text-blue-800 text-[10px] px-2 py-1 rounded flex items-center gap-1";
-            tag.innerHTML = `<b>${chart.split(' - ')[0]}</b> <i class="fas fa-times cursor-pointer hover:text-red-500"></i>`;
+
+            // Re-infer type for badge (since we store only string)
+            const id = chart.split(' - ')[0];
+            const title = chart.split(' - ')[1] || "";
+            let isApproach = false;
+            if (id.length === 4) isApproach = true;
+            if (title.includes('PORTO') || title.includes('BAÍA') || title.includes('BARRA')) isApproach = true;
+            if (title.startsWith('COSTA') || title.startsWith('DO ') || title.startsWith('DA ')) isApproach = false;
+
+            const badgeClass = isApproach
+                ? "bg-amber-100 text-amber-800 border-amber-200"
+                : "bg-cyan-100 text-cyan-800 border-cyan-200";
+
+            const badgeLabel = isApproach ? "APR" : "COST";
+
+            tag.className = `${badgeClass} border text-[10px] px-2 py-1 rounded flex items-center gap-2 shadow-sm`;
+            tag.innerHTML = `
+                <span class="font-bold text-[9px] opacity-70 border-r border-gray-300 pr-1 mr-1">${badgeLabel}</span>
+                <b>${id}</b> 
+                <span class="truncate max-w-[150px]">${title}</span>
+                <i class="fas fa-times cursor-pointer hover:text-red-500 ml-1"></i>`;
+
             tag.querySelector('i').addEventListener('click', () => {
                 State.appraisal.selectedCharts.splice(idx, 1);
                 this.renderSelectedCharts();
