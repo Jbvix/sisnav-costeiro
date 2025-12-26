@@ -98,6 +98,7 @@ const App = {
             console.error("App: Input ETD não encontrado!");
         }
 
+        const btnSimulate = document.getElementById('btn-simulate');
         if (btnSimulate) btnSimulate.addEventListener('click', () => this.startSimulation());
 
         // Refresh Weather Button
