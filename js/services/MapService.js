@@ -47,6 +47,7 @@ const MapService = {
         State.layers.ship = L.layerGroup().addTo(map); // Grupo separado para o navio
         State.layers.waypoints = L.layerGroup().addTo(map); // Grupo separado para WPs
         State.layers.ports = L.layerGroup().addTo(map); // Grupo para Portos (Âncoras)
+        State.layers.lighthouses = L.layerGroup().addTo(map); // Grupo para Faróis
 
         console.log("MapService: ECDIS Inicializado com sucesso.");
     },
@@ -72,6 +73,42 @@ const MapService = {
 
             L.marker([port.lat, port.lon], { icon: anchorIcon }).addTo(State.layers.ports);
         });
+    },
+
+    /**
+     * Renderiza marcadores de faróis no mapa.
+     * @param {Array} lhList - Lista de faróis carregada no App.
+     */
+    renderLighthouses: function (lhList) {
+        if (!State.mapInstance || !State.layers.lighthouses) return;
+
+        State.layers.lighthouses.clearLayers();
+
+        lhList.forEach(lh => {
+            // Validate coordinates
+            if (!lh.latDec || !lh.lonDec) return;
+
+            const lhIcon = L.divIcon({
+                className: 'bg-transparent',
+                html: `<div class="text-center" style="transform: translate(-50%, -50%);">
+                         <i class="fas fa-lightbulb text-yellow-500 text-lg drop-shadow-md"></i>
+                       </div>`,
+                iconSize: [20, 20]
+            });
+
+            L.marker([lh.latDec, lh.lonDec], { icon: lhIcon })
+                .bindPopup(`
+                    <div class="text-xs text-slate-800">
+                        <strong class="uppercase text-blue-800">${lh.name}</strong><br>
+                        <span class="font-mono">${lh.lat} / ${lh.lon}</span><br>
+                        <span class="text-gray-600 italic">${lh.char}</span><br>
+                        <p class="mt-1 border-t pt-1">${lh.desc || ''}</p>
+                    </div>
+                `)
+                .addTo(State.layers.lighthouses);
+        });
+
+        console.log(`MapService: ${lhList.length} faróis plotados.`);
     },
 
     /**

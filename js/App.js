@@ -665,6 +665,10 @@ const App = {
                         select.appendChild(opt);
                     }
                 });
+                // Plot on Map (Se MapService disponível)
+                if (MapService && typeof MapService.renderLighthouses === 'function') {
+                    MapService.renderLighthouses(this.availableLighthouses);
+                }
             })
             .catch(e => console.error("App: Erro loading lighthouses", e));
 
