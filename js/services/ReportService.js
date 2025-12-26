@@ -1,3 +1,63 @@
+import NavMath from '../core/NavMath.js';
+import TideCSVService from './TideCSVService.js';
+
+const METEO_AREAS = [
+    { id: 'ALFA', limits: 'Arroio Chuí (RS) até Farol de Santa Marta (SC)', states: 'RS e Sul de SC' },
+    { id: 'BRAVO', limits: 'Laguna (SC) até Arraial do Cabo (RJ) - Oceânica', states: 'SC, PR, SP, RJ (Águas Profundas)' },
+    { id: 'CHARLIE', limits: 'Laguna (SC) até Arraial do Cabo (RJ) - Costeira', states: 'Norte de SC, PR, SP, Sul do RJ' },
+    { id: 'DELTA', limits: 'Arraial do Cabo (RJ) até Caravelas (BA)', states: 'Norte do RJ, ES, Sul da BA' },
+    { id: 'ECHO', limits: 'Caravelas (BA) até Salvador (BA)', states: 'Bahia (Litoral Sul e Recôncavo)' },
+    { id: 'FOXTROT', limits: 'Salvador (BA) até Natal (RN)', states: 'BA(N), SE, AL, PE, PB, RN(Leste)' },
+    { id: 'GOLF', limits: 'Natal (RN) até São Luís (MA)', states: 'RN(Norte), CE, PI, MA(Leste)' },
+    { id: 'HOTEL', limits: 'São Luís (MA) até Oiapoque (AP)', states: 'MA(Oeste), PA, AP' }
+];
+
+const parseMeteoText = (text) => {
+    if (!text) return [];
+
+    // Normalize newlines
+    const raw = text.replace(/\r\n/g, '\n');
+
+    // Regex for Area Header: "ÁREA ALFA" or just "ALFA" at start of line
+    const areaRegex = /(?:ÁREA\s+)?(ALFA|BRAVO|CHARLIE|DELTA|ECHO|FOXTROT|GOLF|HOTEL)/g;
+
+    // Split by Areas, but keep the delimiter
+    // This logic is tricky with Regex split. 
+    // Alternative: Find all indices of Areas and slice.
+
+    const matches = [...raw.matchAll(areaRegex)];
+    if (matches.length === 0) return [];
+
+    const parsedData = [];
+
+    for (let i = 0; i < matches.length; i++) {
+        const match = matches[i];
+        const areaName = match[1];
+        const startIdx = match.index;
+        const endIdx = (i < matches.length - 1) ? matches[i + 1].index : raw.length;
+
+        const block = raw.substring(startIdx, endIdx);
+
+        // Extract fields using Regex
+        // "TEMPO:..." or "TEMPO ..."
+        const getWeather = (key) => {
+            const re = new RegExp(`(?:${key}[:\\.]?)\\s*([^\\n\\r.]+)`, 'i');
+            const m = block.match(re);
+            return m ? m[1].trim() : '-';
+        };
+
+        parsedData.push([
+            areaName,
+            getWeather('TEMPO|OBS'),
+            getWeather('VENTO'),
+            getWeather('ONDAS|MAR'),
+            getWeather('VISIBILIDADE|VIS')
+        ]);
+    }
+
+    return parsedData;
+};
+
 const ReportService = {
     generatePDF: async function (state) {
         if (!state) {
@@ -502,17 +562,60 @@ const ReportService = {
                 currentY = (doc.lastAutoTable && doc.lastAutoTable.finalY) ? doc.lastAutoTable.finalY + 10 : 30;
 
                 if (state.appraisal.meteoText) {
-                    if (currentY > 250) { doc.addPage(); currentY = 20; }
+                    if (currentY > 230) { doc.addPage(); currentY = 20; }
                     currentY = addSectionTitle("ANEXO: PREVISÃO METEOMARINHA", currentY);
 
+                    // 1. Tabela de Referência (Definições)
+                    doc.setFontSize(8);
+                    doc.text("TABELA 1: DEFINIÇÃO DAS ÁREAS METEOMARINHAS", 14, currentY + 5);
+
                     doc.autoTable({
-                        startY: currentY,
-                        body: [[state.appraisal.meteoText]],
-                        theme: 'plain',
-                        styles: { fontSize: 8, cellPadding: 2, overflow: 'linebreak' },
-                        columnStyles: { 0: { cellWidth: 180 } }
+                        startY: currentY + 7,
+                        head: [['ÁREA', 'LIMITES (PONTOS COSTEIROS)', 'ESTADOS ABRANGIDOS']],
+                        body: METEO_AREAS.map(a => [a.id, a.limits, a.states]),
+                        theme: 'striped',
+                        headStyles: { fillColor: [70, 70, 70] },
+                        styles: { fontSize: 7, cellPadding: 1.5 },
+                        columnStyles: { 0: { cellWidth: 25, fontStyle: 'bold' } }
                     });
-                    currentY = doc.lastAutoTable.finalY + 5;
+
+                    currentY = doc.lastAutoTable.finalY + 10;
+
+                    // 2. Tabela de Previsão (Dinâmica)
+                    const forecastData = parseMeteoText(state.appraisal.meteoText);
+
+                    doc.text("TABELA 2: PREVISÃO DIÁRIA (Extraída do Boletim)", 14, currentY - 2);
+
+                    if (forecastData.length > 0) {
+                        // Render Structured Table
+                        doc.autoTable({
+                            startY: currentY,
+                            head: [['ÁREA', 'TEMPO / OBS', 'VENTO', 'ONDAS', 'VISIBILIDADE']],
+                            body: forecastData,
+                            theme: 'grid',
+                            headStyles: { fillColor: [41, 128, 185] },
+                            styles: { fontSize: 8, cellPadding: 2, valign: 'middle' },
+                            columnStyles: {
+                                0: { fontStyle: 'bold', cellWidth: 20 },
+                                1: { cellWidth: 60 } // Weather definition wider
+                            }
+                        });
+                        currentY = doc.lastAutoTable.finalY + 10;
+                    } else {
+                        // Fallback: Raw Text if regex fails
+                        doc.setFontSize(8);
+                        doc.setTextColor(150, 0, 0); // Warning color
+                        doc.text("(Formato não reconhecido - Exibindo texto original)", 14, currentY - 2, { align: 'right' });
+                        doc.setTextColor(0);
+
+                        doc.autoTable({
+                            startY: currentY,
+                            body: [[state.appraisal.meteoText]],
+                            theme: 'plain',
+                            styles: { fontSize: 8, cellPadding: 2, overflow: 'linebreak', font: 'courier' },
+                        });
+                        currentY = doc.lastAutoTable.finalY + 5;
+                    }
                 }
 
                 if (state.appraisal.navareaText) {
