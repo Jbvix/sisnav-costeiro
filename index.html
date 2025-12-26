@@ -333,16 +333,24 @@
 
                     <div class="space-y-4">
                         <h3 class="text-xs font-bold uppercase text-gray-400 tracking-wider">Praça de Máquinas</h3>
-                        <div class="p-3 bg-gray-50 border rounded-md">
-                            <label for="select-engine-status" class="block text-xs font-bold mb-1 text-gray-600">Status
-                                Operacional</label>
-                            <select id="select-engine-status"
-                                class="w-full p-2 border rounded text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none">
-                                <option value="" selected disabled>Selecione a condição...</option>
-                                <option value="ok">Full Power (Todos MCPs/MCAs)</option>
-                                <option value="restricted">Restrito (Falha Equip. Aux)</option>
-                                <option value="no-go">NO-GO (Falha Crítica)</option>
-                            </select>
+                        <div class="p-4 bg-gray-50 border rounded-md">
+                            <div class="flex justify-between items-center mb-3">
+                                <label class="block text-xs font-bold text-gray-600 uppercase">Status
+                                    Operacional</label>
+                                <span id="badge-engine-status"
+                                    class="text-xs font-bold px-2 py-1 bg-gray-200 text-gray-600 rounded uppercase">PENDENTE</span>
+                            </div>
+
+                            <button id="btn-open-engine-checklist"
+                                class="w-full bg-slate-700 text-white py-2 rounded shadow hover:bg-slate-800 text-xs font-bold flex items-center justify-center gap-2 mb-3 transition-transform active:scale-95">
+                                <i class="fas fa-clipboard-check"></i> Checklist de Máquinas
+                            </button>
+
+                            <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Observações
+                                Gerais</label>
+                            <textarea id="txt-engine-obs" rows="3"
+                                class="w-full p-2 border rounded text-[10px] focus:border-blue-500 font-mono bg-white shadow-inner"
+                                placeholder="Observações sobre a praça de máquinas..."></textarea>
                         </div>
 
 
@@ -738,6 +746,83 @@
                 Isso pode levar alguns segundos. Aguarde.<br>
                 Não feche o navegador.
             </p>
+        </div>
+    </div>
+
+    <!-- MODAL: CHECKLIST MÁQUINAS -->
+    <div id="modal-engine-checklist"
+        class="fixed inset-0 z-[200] bg-slate-900/90 backdrop-blur-sm hidden flex items-center justify-center overflow-y-auto pt-10 pb-10">
+        <div class="bg-white rounded-lg shadow-2xl w-full max-w-4xl border border-slate-200 flex flex-col max-h-full">
+            <!-- Header -->
+            <div class="p-4 bg-slate-100 border-b border-gray-200 flex justify-between items-center sticky top-0 z-10">
+                <h3 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fas fa-cogs text-slate-600"></i>
+                    Checklist - Praça de Máquinas
+                </h3>
+                <button id="btn-close-engine-checklist" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Content -->
+            <div class="p-6 overflow-y-auto space-y-6 bg-slate-50 text-sm">
+
+                <!-- 1. Segurança e Salvatagem -->
+                <div class="bg-white p-4 rounded shadow border-l-4 border-red-500">
+                    <h4 class="font-bold text-red-700 uppercase mb-1 flex items-center gap-2"><i
+                            class="fas fa-life-ring"></i> 1. Segurança e Salvatagem (Prioridade Zero)</h4>
+                    <p class="text-xs text-gray-500 mb-3 block border-b pb-2">Garantem a integridade da tripulação e da
+                        embarcação em emergências.</p>
+                    <div class="space-y-2" id="checklist-group-safety">
+                        <!-- Items injected or hardcoded -->
+                    </div>
+                </div>
+
+                <!-- 2. Propulsão e Governo -->
+                <div class="bg-white p-4 rounded shadow border-l-4 border-blue-500">
+                    <h4 class="font-bold text-blue-700 uppercase mb-1 flex items-center gap-2"><i
+                            class="fas fa-anchor"></i> 2. Propulsão (MCPs) e Governo</h4>
+                    <p class="text-xs text-gray-500 mb-3 block border-b pb-2">Verificação da confiabilidade da manobra.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="checklist-group-propulsion"></div>
+                </div>
+
+                <!-- 3. Geração de Energia -->
+                <div class="bg-white p-4 rounded shadow border-l-4 border-yellow-500">
+                    <h4 class="font-bold text-yellow-700 uppercase mb-1 flex items-center gap-2"><i
+                            class="fas fa-bolt"></i> 3. Geração de Energia (MCAs)</h4>
+                    <p class="text-xs text-gray-500 mb-3 block border-b pb-2">Garantia de energia contínua e backup.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="checklist-group-power"></div>
+                </div>
+
+                <!-- 4. Sistemas Auxiliares -->
+                <div class="bg-white p-4 rounded shadow border-l-4 border-cyan-500">
+                    <h4 class="font-bold text-cyan-700 uppercase mb-1 flex items-center gap-2"><i
+                            class="fas fa-fan"></i> 4. Sistemas Auxiliares</h4>
+                    <p class="text-xs text-gray-500 mb-3 block border-b pb-2">Sustentação da operação (Ar, Combustível,
+                        Resíduos).</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="checklist-group-aux"></div>
+                </div>
+
+                <!-- 5. Sobressalentes -->
+                <div class="bg-white p-4 rounded shadow border-l-4 border-emerald-500">
+                    <h4 class="font-bold text-emerald-700 uppercase mb-1 flex items-center gap-2"><i
+                            class="fas fa-boxes"></i> 5. Estoque Crítico (Sobressalentes)</h4>
+                    <p class="text-xs text-gray-500 mb-3 block border-b pb-2">Itens obrigatórios a bordo para
+                        contingências.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3" id="checklist-group-spares"></div>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="p-4 bg-slate-100 border-t border-gray-200 flex justify-end gap-3 sticky bottom-0 z-10">
+                <button id="btn-cancel-checklist"
+                    class="px-4 py-2 bg-white border border-gray-300 text-gray-700 font-bold rounded shadow hover:bg-gray-50">Cancelar</button>
+                <button id="btn-save-checklist"
+                    class="px-6 py-2 bg-blue-600 text-white font-bold rounded shadow hover:bg-blue-700 flex items-center gap-2">
+                    <i class="fas fa-save"></i> Salvar Checklist
+                </button>
+            </div>
         </div>
     </div>
 

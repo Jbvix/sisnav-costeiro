@@ -54,6 +54,15 @@ const App = {
             UIManager.init();
         }
 
+        // Initialize Engine State if missing
+        if (State.appraisal && !State.appraisal.engine) {
+            State.appraisal.engine = {
+                status: 'pending',
+                checklist: {},
+                observations: ''
+            };
+        }
+
         // Abas
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -956,13 +965,159 @@ const App = {
         bindLink('txt-navarea-content', 'navareaText');
 
         // Listeners Praça de Máquinas (Engine)
-        const selEngine = document.getElementById('select-engine-status');
-        if (selEngine) {
-            selEngine.addEventListener('change', (e) => {
-                const val = e.target.value;
-                if (!State.shipProfile.engine) State.shipProfile.engine = {};
-                State.shipProfile.engine.status = val;
-                console.log("App: Status Máquinas:", val);
+        // Listeners Praça de Máquinas (Engine)
+        // MODIFICADO: Usa Checklist agora.
+
+        const btnOpenChecklist = document.getElementById('btn-open-engine-checklist');
+        const modalChecklist = document.getElementById('modal-engine-checklist');
+        const btnCloseChecklist = document.getElementById('btn-close-engine-checklist');
+        const btnCancelChecklist = document.getElementById('btn-cancel-checklist');
+        const btnSaveChecklist = document.getElementById('btn-save-checklist');
+        const txtObs = document.getElementById('txt-engine-obs');
+
+        // Definição dos Itens do Checklist
+        const checkItems = {
+            safety: [
+                { id: 'safety_estanque', label: 'Estanqueidade: Saídas de emergência aprovadas (teste giz)' },
+                { id: 'safety_fire', label: 'Combate a Incêndio: Bombas, extintores e caixas íntegras' },
+                { id: 'safety_pump', label: 'Equip. Emergência: Bomba Sand Piper e linha pneumatic.' },
+                { id: 'safety_alarm', label: 'Alarmes: Painel sem falhas e boias de dalas operacionais' },
+                { id: 'safety_comm', label: 'Comunicação: Tlf Autoexcitado, Fones e Intercomunicadores' },
+                { id: 'safety_stop', label: 'Parada de Emergência: Botoeiras de bombas/ventilação' },
+                { id: 'safety_sopep', label: 'SOPEP: Kit revisado, completo e íntegro' }
+            ],
+            propulsion: [
+                { id: 'prop_protection', label: 'Proteções MCPs: Testar paradas emergência, temp/pressão' },
+                { id: 'prop_inspection', label: 'Visual MCPs: Vazamentos e mangueiras diesel' },
+                { id: 'prop_thermal', label: 'Isolamento Térmico: Turbinas e partes quentes' },
+                { id: 'prop_azi_oil', label: 'Azimutal: Níveis óleo e bombas refrigeração auto' },
+                { id: 'prop_steering', label: 'Testes de Governo: Emergência e NFU' },
+                { id: 'prop_temp', label: 'Temperaturas: Trocadores e caixas de engrenagens' }
+            ],
+            power: [
+                { id: 'pow_protection', label: 'Proteções MCAs: Baixa pressão, alta temp, overspeed' },
+                { id: 'pow_maint', label: 'Manutenção: Óleo, filtros e Racor trocados' },
+                { id: 'pow_batt', label: 'Baterias: Carregadores sem alarme, bornes íntegros' },
+                { id: 'pow_light', label: 'Iluminação: Luzes de emergência operacionais' }
+            ],
+            aux: [
+                { id: 'aux_diesel', label: 'Diesel: Purificador ok, válvulas corte testadas' },
+                { id: 'aux_tanks', label: 'Tanques: Visores íntegros, suspiros, overflow vazio' },
+                { id: 'aux_air', label: 'Ar Comprimido: Compressores, purgadoes e drenos' },
+                { id: 'aux_waste', label: 'Resíduos: Tanques e dalas esgotados' },
+                { id: 'aux_septic', label: 'Tanque Séptico: Estanqueidade e controle' }
+            ],
+            spares: [
+                { id: 'spare_lube', label: 'Lubrificantes: Hidráulico (200L), Propulsão (200L), Motor (400L)' },
+                { id: 'spare_filter', label: 'Filtros: Diesel (5 Racor, 3 Dif), Lube/Hidr (2/3 un)' },
+                { id: 'spare_parts', label: 'Peças Críticas: Correias, mangotes, sensores, bomba água' }
+            ]
+        };
+
+        const renderChecklist = () => {
+            const createCheckbox = (item) => {
+                const isChecked = State.appraisal.engine.checklist[item.id] === true;
+                return `
+                    <div class="flex items-start gap-2 p-2 hover:bg-slate-50 rounded border border-transparent hover:border-slate-200">
+                        <input type="checkbox" id="${item.id}" class="mt-1 w-4 h-4 text-blue-600 rounded focus:ring-blue-500 engine-check" ${isChecked ? 'checked' : ''}>
+                        <label for="${item.id}" class="text-xs text-slate-700 cursor-pointer select-none leading-tight">${item.label}</label>
+                    </div>
+                `;
+            };
+
+            const fillGroup = (groupId, items) => {
+                const container = document.getElementById(groupId);
+                if (container) container.innerHTML = items.map(createCheckbox).join('');
+            };
+
+            fillGroup('checklist-group-safety', checkItems.safety);
+            fillGroup('checklist-group-propulsion', checkItems.propulsion);
+            fillGroup('checklist-group-power', checkItems.power);
+            fillGroup('checklist-group-aux', checkItems.aux);
+            fillGroup('checklist-group-spares', checkItems.spares);
+        };
+
+        const saveChecklist = () => {
+            // Coletar dados
+            const checks = document.querySelectorAll('.engine-check');
+            const stateChecks = {};
+            let allSafetyOk = true;
+
+            checks.forEach(chk => {
+                stateChecks[chk.id] = chk.checked;
+                // Check Critical (Safety group starts with 'safety_')
+                if (chk.id.startsWith('safety_') && !chk.checked) allSafetyOk = false;
+            });
+
+            // Determinar Status
+            // Regra: Se Safety (Zero) falhar = NO-GO
+            // Se tudo selecionado = OK
+            // Se falta algo não crítico = Restricted ? (Simplificado: Tudo check = OK, Safety fail = NO-GO, resto = Restricted)
+
+            // Mas o usuário pode não ter marcado nada ainda.
+
+            let status = 'restricted'; // Default se faltar itens não críticos
+
+            // Verifica se TUDO está marcado
+            const totalItems = checks.length;
+            const checkedCount = Array.from(checks).filter(c => c.checked).length;
+
+            if (!allSafetyOk) {
+                status = 'no-go';
+            } else if (checkedCount === totalItems) {
+                status = 'ok';
+            }
+
+            // Atualizar State
+            if (!State.appraisal.engine) State.appraisal.engine = {};
+            State.appraisal.engine.checklist = stateChecks;
+            State.appraisal.engine.status = status;
+
+            // Atualizar UI Badge
+            updateEngineBadge(status);
+
+            // Fechar modal
+            modalChecklist.classList.add('hidden');
+
+            // Revalidar App geral
+            this.validateAppraisalLogic();
+            console.log(`App: Checklist salvo. Status: ${status}`);
+        };
+
+        const updateEngineBadge = (status) => {
+            const badge = document.getElementById('badge-engine-status');
+            if (!badge) return;
+
+            const map = {
+                'ok': { text: 'FULL POWER (OK)', class: 'bg-green-100 text-green-800' },
+                'restricted': { text: 'RESTRITO', class: 'bg-yellow-100 text-yellow-800' },
+                'no-go': { text: 'NO-GO / CRÍTICO', class: 'bg-red-100 text-red-800' },
+                'pending': { text: 'PENDENTE', class: 'bg-gray-200 text-gray-600' }
+            };
+
+            const style = map[status] || map['pending'];
+            badge.className = `text-xs font-bold px-2 py-1 rounded uppercase ${style.class}`;
+            badge.innerText = style.text;
+        };
+
+        // Bind Events
+        if (btnOpenChecklist) {
+            btnOpenChecklist.addEventListener('click', () => {
+                renderChecklist(); // Render current state
+                modalChecklist.classList.remove('hidden');
+            });
+        }
+
+        const closeFunc = () => modalChecklist.classList.add('hidden');
+        if (btnCloseChecklist) btnCloseChecklist.addEventListener('click', closeFunc);
+        if (btnCancelChecklist) btnCancelChecklist.addEventListener('click', closeFunc);
+        if (btnSaveChecklist) btnSaveChecklist.addEventListener('click', saveChecklist);
+
+        // Obs Listener
+        if (txtObs) {
+            txtObs.addEventListener('input', (e) => {
+                if (!State.appraisal.engine) State.appraisal.engine = {};
+                State.appraisal.engine.observations = e.target.value;
             });
         }
 
@@ -1077,11 +1232,14 @@ const App = {
     validateAppraisalLogic: function () {
         if (!State.appraisal) return;
 
-        const engStatus = document.getElementById('select-engine-status').value;
+        const engStatus = State.appraisal.engine ? State.appraisal.engine.status : 'pending';
         const isEngineOk = (engStatus === 'ok' || engStatus === 'restricted');
 
         // Validação dos novos campos ricos
         const hasCharts = State.appraisal.selectedCharts ? State.appraisal.selectedCharts.length > 0 : false;
+
+        // Checklist Check (require status to not be pending or no-go)
+        const isEngineValid = (engStatus === 'ok' || engStatus === 'restricted');
 
         // Meteo: Texto ou Arquivo
         const meteoVal = document.getElementById('txt-meteo-content') ? document.getElementById('txt-meteo-content').value : "";
@@ -1096,10 +1254,10 @@ const App = {
 
         const isAllChecked = hasCharts && hasMeteo && hasNavarea; // removed hasTides
 
-        if (State.appraisal) State.appraisal.isValid = (isAllChecked && isEngineOk);
-        UIManager.updateAppraisalStatus(isAllChecked && isEngineOk);
+        if (State.appraisal) State.appraisal.isValid = (isAllChecked && isEngineValid);
+        UIManager.updateAppraisalStatus(isAllChecked && isEngineValid);
 
-        console.log(`App: Validacao - Charts: ${hasCharts}, Meteo: ${hasMeteo}, Navarea: ${hasNavarea}, Eng: ${isEngineOk}`);
+        console.log(`App: Validacao - Charts: ${hasCharts}, Meteo: ${hasMeteo}, Navarea: ${hasNavarea}, Eng: ${isEngineValid}`);
     },
 
     handleFileUpload: function (event) {
