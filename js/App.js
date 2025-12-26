@@ -850,6 +850,8 @@ const App = {
                 const lines = text.split('\n');
                 select.innerHTML = '<option value="" disabled selected>Selecionar Carta...</option>';
 
+                this.availableCharts = []; // Cache for lookup
+
                 const coastalGroup = document.createElement('optgroup');
                 coastalGroup.label = "Cartas Costeiras (Gerais)";
 
@@ -857,30 +859,33 @@ const App = {
                 approachGroup.label = "Aproximação / Portos";
 
                 lines.forEach(line => {
+                    // Skip header or empty
                     if (!line || line.startsWith('CHART')) return;
+
                     const parts = line.split('\t');
                     if (parts.length >= 2) {
                         const id = parts[0].trim();
                         const title = parts[1].trim();
-                        const val = `${id} - ${title}`;
+                        // Handle optional columns if file is mixed, but we just wrote it standard
+                        const category = parts.length > 2 ? parts[2].trim() : (id.length === 4 ? 'Aproximação' : 'Costeira');
+                        const scale = parts.length > 3 ? parts[3].trim() : '';
 
-                        // Heurística de Classificação
-                        // 4 dígitos = Porto/Aproximação (ex: 1701)
-                        // 2 dígitos = Geral (ex: 10, 20)
-                        // 5 dígitos (23xxx) = Costeira INT
+                        // Objeto completo para cache
+                        const chartObj = { id, title, category, scale };
+                        this.availableCharts.push(chartObj);
 
-                        let isApproach = false;
-                        if (id.length === 4) isApproach = true;
-                        if (title.includes('PORTO') || title.includes('BAÍA') || title.includes('BARRA')) isApproach = true;
-                        if (title.startsWith('COSTA') || title.startsWith('DO ') || title.startsWith('DA ')) isApproach = false;
+                        const val = `${id} - ${title}`; // Stored Value
 
                         const opt = document.createElement('option');
                         opt.value = val;
-                        opt.text = val;
-                        opt.setAttribute('data-type', isApproach ? 'APPROACH' : 'COASTAL');
+                        // Display: "21010 - Titulo (1:1.000.000)"
+                        opt.text = `${id} - ${title} [${scale}]`;
 
-                        if (isApproach) approachGroup.appendChild(opt);
-                        else coastalGroup.appendChild(opt);
+                        if (category.toLowerCase().includes('aprox')) {
+                            approachGroup.appendChild(opt);
+                        } else {
+                            coastalGroup.appendChild(opt);
+                        }
                     }
                 });
 
@@ -973,17 +978,20 @@ const App = {
             return;
         }
 
-        State.appraisal.selectedCharts.forEach((chart, idx) => {
+        State.appraisal.selectedCharts.forEach((chartStr, idx) => {
             const tag = document.createElement('span');
 
-            // Re-infer type for badge (since we store only string)
-            const id = chart.split(' - ')[0];
-            const title = chart.split(' - ')[1] || "";
-            let isApproach = false;
-            if (id.length === 4) isApproach = true;
-            if (title.includes('PORTO') || title.includes('BAÍA') || title.includes('BARRA')) isApproach = true;
-            if (title.startsWith('COSTA') || title.startsWith('DO ') || title.startsWith('DA ')) isApproach = false;
+            // Extract ID to lookup metadata
+            const id = chartStr.split(' - ')[0];
 
+            // Lookup in availableCharts if loaded
+            let meta = { scale: '', category: 'Costeira' };
+            if (this.availableCharts) {
+                const found = this.availableCharts.find(c => c.id === id);
+                if (found) meta = found;
+            }
+
+            const isApproach = meta.category && meta.category.toLowerCase().includes('aprox');
             const badgeClass = isApproach
                 ? "bg-amber-100 text-amber-800 border-amber-200"
                 : "bg-cyan-100 text-cyan-800 border-cyan-200";
@@ -991,10 +999,15 @@ const App = {
             const badgeLabel = isApproach ? "APR" : "COST";
 
             tag.className = `${badgeClass} border text-[10px] px-2 py-1 rounded flex items-center gap-2 shadow-sm`;
+
+            // Display: [TYPE] ID - Title (Scale)
+            // chartStr already has "ID - Title"
+            // We append scale
+
             tag.innerHTML = `
                 <span class="font-bold text-[9px] opacity-70 border-r border-gray-300 pr-1 mr-1">${badgeLabel}</span>
-                <b>${id}</b> 
-                <span class="truncate max-w-[150px]">${title}</span>
+                <span class="truncate max-w-[200px]">${chartStr}</span>
+                <span class="font-mono text-[9px] text-gray-500 bg-white/50 px-1 rounded">${meta.scale || '?'}</span>
                 <i class="fas fa-times cursor-pointer hover:text-red-500 ml-1"></i>`;
 
             tag.querySelector('i').addEventListener('click', () => {

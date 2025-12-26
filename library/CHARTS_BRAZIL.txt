@@ -1,22 +1,19 @@
-CHART	TITLE
-23100	BAÍA DE SEPETIBA
-1511	BARRA DO PORTO DO RIO DE JANEIRO
-1512	PORTO DO RIO DE JANEIRO
-1623	BAÍA DE SANTOS
-1620	PROXIMIDADES DA BAÍA DE SANTOS E DO PORTO DE SÃO SEBASTIÃO
-1501	BAÍA DE GUANABARA
-10	COSTA DO BRASIL - ARQUIPÉLAGO DE FERNANDO DE NORONHA À BAÍA DE TODOS OS SANTOS
-20	COSTA DO BRASIL - DA BAÍA DE TODOS OS SANTOS À ILHA DE SÃO SEBASTIÃO
-21	COSTA DO BRASIL - DA ILHA DE SÃO SEBASTIÃO AO CABO DE SANTA MARTA GRANDE
-23000	DO CABO FRIO AO CABO DE SÃO TOMÉ
-23001	DO RIO DE JANEIRO A SANTOS
-23002	DE SANTOS A CANANÉIA
-1701	PORTO DE SANTOS
-21010	PORTO DE PARANAGUÁ E ANTONINA
-21020	BARRA DO RIO GRANDE
-1901	PORTO DE VITÓRIA
-1101	PORTO DE SALVADOR
-1201	PORTO DE ARACAJU
-1301	PORTO DE MACEIÓ
-1401	PORTO DO RECIFE
-1500	ENTRADA DA BAÍA DE GUANABARA
+CHART	TITLE	CATEGORY	SCALE
+21010	De Cayenne ao Cabo Gurupi	Costeira	1:1.000.000
+21020	De Salinópolis a Fortaleza	Costeira	1:1.000.000
+21040	De Natal ao Rio Itariri	Costeira	1:1.000.000
+21050	Do Rio Itariri ao Arquipélago dos Abrolhos	Costeira	1:1.000.000
+21060	Do Arquipélago dos Abrolhos ao Cabo Frio	Costeira	1:1.000.000
+21070	Do Cabo Frio ao Cabo de Santa Marta Grande	Costeira	1:1.000.000
+21080	Do Cabo de Santa Marta Grande ao Arroio Chuí	Costeira	1:1.000.000
+410	Proximidades da Baía de São Marcos	Aproximação	1:135.000
+710	Proximidades do Terminal do Pecém e do Porto de Mucuripe	Aproximação	1:50.000
+810	Proximidades do Porto de Natal	Aproximação	1:50.000
+930	Proximidades do Porto do Recife	Aproximação	1:100.000
+1101	Proximidades do Porto de Salvador	Aproximação	1:29.976
+1410	Proximidades dos Portos de Vitória e Tubarão	Aproximação	1:50.000
+1506	Proximidades da Baía de Guanabara	Aproximação	1:75.000
+1711	Proximidades do Porto de Santos	Aproximação	1:80.000
+1820	Proximidades da Barra de Paranaguá	Aproximação	1:100.000
+1902	Proximidades da Ilha de Santa Catarina	Aproximação	1:100.928
+2110	Proximidades do Porto do Rio Grande	Aproximação	1:50.000
