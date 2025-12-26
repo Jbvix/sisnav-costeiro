@@ -1007,7 +1007,7 @@ const App = {
             tag.innerHTML = `
                 <span class="font-bold text-[9px] opacity-70 border-r border-gray-300 pr-1 mr-1">${badgeLabel}</span>
                 <span class="truncate max-w-[200px]">${chartStr}</span>
-                <span class="font-mono text-[9px] text-gray-500 bg-white/50 px-1 rounded">${meta.scale || '?'}</span>
+                <span class="font-mono text-[9px] text-gray-500 bg-white/50 px-1 rounded hidden md:inline-block">${meta.scale || '?'}</span>
                 <i class="fas fa-times cursor-pointer hover:text-red-500 ml-1"></i>`;
 
             tag.querySelector('i').addEventListener('click', () => {
