@@ -1275,8 +1275,15 @@ const App = {
         const reader = new FileReader();
         reader.onload = (e) => {
             try {
-                const points = GPXParser.parse(e.target.result);
+                let points = GPXParser.parse(e.target.result);
                 console.log(`App: ${points.length} pontos.`);
+
+                // Check Reversal
+                const chkReverse = document.getElementById('chk-reverse-gpx');
+                if (chkReverse && chkReverse.checked) {
+                    points.reverse();
+                    console.log("App: Rota invertida conforme solicitado.");
+                }
 
                 State.routePoints = points;
 
