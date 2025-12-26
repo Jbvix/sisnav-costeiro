@@ -1684,6 +1684,61 @@ const App = {
         }
     },
 
+    checkBeamVisibility: function (lat, lon) {
+        if (!this.availableLighthouses || this.availableLighthouses.length === 0) return;
+
+        const DEFAULT_RANGE = 18; // NM (Standard visual range for major lights)
+        const APPROACH_ZONE = DEFAULT_RANGE * 1.5;
+
+        // Find closest
+        let closest = null;
+        let minD = Infinity;
+
+        this.availableLighthouses.forEach(lh => {
+            const d = NavMath.calcLeg(lat, lon, lh.latDec, lh.lonDec).dist;
+            if (d < minD) {
+                minD = d;
+                closest = lh;
+            }
+        });
+
+        const panel = document.getElementById('panel-beam-warning');
+        if (!closest || minD > APPROACH_ZONE) {
+            if (panel && !panel.classList.contains('hidden')) panel.classList.add('hidden');
+            return;
+        }
+
+        // Show Panel
+        if (panel) {
+            panel.classList.remove('hidden');
+
+            // Update Data
+            document.getElementById('beam-lh-name').innerText = closest.name;
+            const elDist = document.getElementById('beam-lh-dist');
+            const elVis = document.getElementById('beam-lh-vis');
+
+            if (elDist) elDist.innerText = minD.toFixed(1) + ' NM';
+
+            if (minD <= DEFAULT_RANGE) {
+                // Visible
+                if (elVis) {
+                    elVis.innerText = "VISÍVEL";
+                    elVis.className = "font-bold text-sm text-green-400 blink";
+                }
+                panel.classList.add('border-green-500');
+                panel.classList.remove('border-yellow-500');
+            } else {
+                // Approaches
+                if (elVis) {
+                    elVis.innerText = "OCULTO (APROX)";
+                    elVis.className = "font-bold text-sm text-yellow-500";
+                }
+                panel.classList.remove('border-green-500');
+                panel.classList.add('border-yellow-500');
+            }
+        }
+    },
+
     startSimulation: function () {
         if (!State.routePoints.length) return alert("Carregue uma rota primeiro!");
 
@@ -1735,6 +1790,9 @@ const App = {
 
             // Update Map
             MapService.updateShipPosition(curLat, curLon);
+
+            // Check Beam Visibility
+            this.checkBeamVisibility(curLat, curLon);
 
             // Update Dashboard Data (Fake SOG/COG for demo)
             // Calc COG

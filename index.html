@@ -705,6 +705,36 @@
                     </div>
                 </div>
             </div>
+
+            <!-- BEAM WARNING PANEL -->
+            <div id="panel-beam-warning"
+                class="hidden absolute top-32 right-4 bg-slate-900/90 text-green-400 p-4 rounded border border-green-500 z-[1000] shadow-2xl backdrop-blur-sm max-w-xs transition-all duration-500">
+                <h4
+                    class="text-[10px] uppercase text-gray-400 font-bold mb-1 tracking-widest border-b border-gray-700 pb-1">
+                    Través / Beam (Proximidade)</h4>
+                <div class="text-base font-bold flex items-center gap-3 mt-2">
+                    <div class="relative">
+                        <i class="fas fa-lightbulb text-yellow-500 text-2xl"></i>
+                        <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                            <span
+                                class="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"></span>
+                        </span>
+                    </div>
+                    <span id="beam-lh-name" class="leading-tight text-white shadow-black drop-shadow-md">NOME DO
+                        FAROL</span>
+                </div>
+                <div class="grid grid-cols-2 gap-4 mt-3 text-sm font-mono bg-black/40 p-2 rounded">
+                    <div>
+                        <span class="text-[9px] text-gray-500 block uppercase">Distância</span>
+                        <span id="beam-lh-dist" class="font-bold text-lg">-- NM</span>
+                    </div>
+                    <div>
+                        <span class="text-[9px] text-gray-500 block uppercase">Visibilidade</span>
+                        <span id="beam-lh-vis" class="font-bold text-sm text-green-500">VISÍVEL</span>
+                    </div>
+                </div>
+            </div>
             <div class="absolute bottom-6 left-4 z-[400] flex gap-2">
                 <button id="btn-simulate"
                     class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow-lg font-bold text-sm flex items-center gap-2 transition-transform active:scale-95"><i
