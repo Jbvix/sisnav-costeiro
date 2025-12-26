@@ -110,7 +110,8 @@ const App = {
             if (el) {
                 el.addEventListener('change', (e) => {
                     let val = e.target.value;
-                    if (isNum) val = parseFloat(val) || 0;
+                    // Changed: Allow text for "N/A" support, parse later
+                    // if (isNum) val = parseFloat(val) || 0; 
                     if (State.shipProfile) State.shipProfile[field] = val;
                     // console.log(`App: ${field} alterado para ${val}`);
                     this.recalculateVoyage();
@@ -1339,8 +1340,10 @@ const App = {
         if (etdVal) {
             const etdDate = new Date(etdVal);
 
-            // Speed logic
-            const speed = State.shipProfile?.speed || 10.0;
+            // Speed logic (Handle N/A or text)
+            let speed = parseFloat(State.shipProfile?.speed);
+            if (isNaN(speed) || speed <= 0) speed = 10.0; // Fallback to avoid division by zero
+
             const durationHours = totalDist / speed;
             const etaDate = new Date(etdDate.getTime() + (durationHours * 3600 * 1000));
 
