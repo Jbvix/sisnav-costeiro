@@ -96,6 +96,39 @@ const App = {
             etdInput.addEventListener('blur', () => this.recalculateVoyage());
         } else {
             console.error("App: Input ETD não encontrado!");
+            console.error("App: Input ETD não encontrado!");
+        }
+
+        // Logic to refresh weather on date change
+        const refreshWeatherLogic = () => {
+            // Delay slightly to allow state to settle?
+            // Since TideCSVService.reload is async but loads from file, we can just call it.
+            if (window.TideCSVService && typeof window.TideCSVService.reload === 'function') {
+                console.log("App: Auto-refreshing Weather Data...");
+                window.TideCSVService.reload().then(() => {
+                    this.updateWeatherStatusUI();
+                    console.log("App: Weather Data Refreshed.");
+                });
+            } else {
+                console.warn("App: TideCSVService missing for auto-refresh.");
+            }
+        };
+
+        // Appraisal Inputs (ETD / ETA)
+        const inpEtdAppraisal = document.getElementById('inp-etd');
+        const inpEtaAppraisal = document.getElementById('inp-eta');
+
+        if (inpEtdAppraisal) {
+            inpEtdAppraisal.addEventListener('change', () => {
+                refreshWeatherLogic();
+                // Also trigger voyage recalc?
+                // The sync logic usually handles value propagation, but explicit call is safer if needed.
+            });
+        }
+        if (inpEtaAppraisal) {
+            inpEtaAppraisal.addEventListener('change', () => {
+                refreshWeatherLogic();
+            });
         }
 
         const btnSimulate = document.getElementById('btn-simulate');
