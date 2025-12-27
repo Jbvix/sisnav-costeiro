@@ -1,6 +1,5 @@
-
 // TideJSONService.js - Source: maritimo_mare_meteo.json (TabuaDeMares Scraper)
-import { PortDatabase } from './PortDatabase.js';
+import PortDatabase from './PortDatabase.js';
 
 class TideJSONService {
     constructor() {
