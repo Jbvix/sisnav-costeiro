@@ -1792,48 +1792,59 @@ const App = {
                 }
 
                 if (found) {
-                    // 3. Reconstrói caminho
-                    let curr = arrId;
-                    const segments = [];
-                    const routeNames = [];
+                    console.log("App: Caminho encontrado! Iniciando reconstrução...");
+                    try {
+                        // 3. Reconstrói caminho
+                        let curr = arrId;
+                        const segments = [];
+                        const routeNames = [];
 
-                    while (curr !== depId) {
-                        const info = pathMap[curr];
-                        segments.unshift(info.edge);
-                        routeNames.unshift(info.edge.id);
-                        curr = info.parent;
-                    }
+                        while (curr !== depId) {
+                            const info = pathMap[curr];
+                            if (!info) throw new Error(`PathMap broken for ${curr}`);
+                            segments.unshift(info.edge);
+                            routeNames.unshift(info.edge.id);
+                            curr = info.parent;
+                        }
 
-                    const msg = segments.length === 1
-                        ? `Rota Direta Encontrada:\n${routeNames[0]}`
-                        : `Rota Composta Encontrada (${segments.length} trechos):\n${routeNames.join(' + ')}`;
+                        console.log("App: Caminho reconstruído:", routeNames.join(' -> '));
 
-                    if (confirm(`${msg}\n\nDeseja costurar e importar esta derrota?`)) {
-                        console.log("App: Costurando rotas:", routeNames);
-                        let finalPoints = [];
-                        let seq = 1;
+                        const msg = segments.length === 1
+                            ? `Rota Direta Encontrada:\n${routeNames[0]}`
+                            : `Rota Composta Encontrada (${segments.length} trechos):\n${routeNames.join(' + ')}`;
 
-                        segments.forEach((seg) => {
-                            let pts = JSON.parse(JSON.stringify(seg.route.points));
-                            if (seg.reverse) pts.reverse();
+                        console.log("App: Exibindo confirm...");
+                        // Auto-confirm para teste se necessário, mas mantendo confirm por enquanto
+                        if (confirm(`${msg}\n\nDeseja costurar e importar esta derrota?`)) {
+                            console.log("App: Costurando rotas:", routeNames);
+                            let finalPoints = [];
+                            let seq = 1;
 
-                            pts.forEach(p => {
-                                finalPoints.push({
-                                    sequence: seq++,
-                                    lat: p.lat,
-                                    lon: p.lon,
-                                    name: `WPT ${seq - 1}`,
-                                    chart: ""
+                            segments.forEach((seg) => {
+                                let pts = JSON.parse(JSON.stringify(seg.route.points));
+                                if (seg.reverse) pts.reverse();
+
+                                pts.forEach(p => {
+                                    finalPoints.push({
+                                        sequence: seq++,
+                                        lat: p.lat,
+                                        lon: p.lon,
+                                        name: `WPT ${seq - 1}`,
+                                        chart: ""
+                                    });
                                 });
                             });
-                        });
 
-                        State.routePoints = finalPoints;
-                        this.recalculateVoyage();
-                        MapService.plotRoute(finalPoints);
-                        UIManager.renderRouteTable(finalPoints);
-                        UIManager.unlockPlanningDashboard();
-                        alert(`Rota carregada: ${finalPoints.length} WPs via ${segments.length} arquivo(s).`);
+                            State.routePoints = finalPoints;
+                            this.recalculateVoyage();
+                            MapService.plotRoute(finalPoints);
+                            UIManager.renderRouteTable(finalPoints);
+                            UIManager.unlockPlanningDashboard();
+                            alert(`Rota carregada: ${finalPoints.length} WPs via ${segments.length} arquivo(s).`);
+                        }
+                    } catch (err) {
+                        console.error("App: Erro CRÍTICO na reconstrução da rota:", err);
+                        alert("Erro interno ao construir a rota. Verifique o console.");
                     }
 
                 } else {
