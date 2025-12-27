@@ -1456,6 +1456,11 @@ const App = {
                 inpEtdSidebar.value = etdVal;
             }
 
+            // TRIGGER METOC UPDATE (Refined Logic)
+            if (typeof this.updateMetocStatus === 'function') {
+                this.updateMetocStatus();
+            }
+
             // Update State (Redundant if listeners work, but safe)
             if (!State.voyage) State.voyage = {};
             State.voyage.depTime = etdVal;
@@ -1650,10 +1655,12 @@ const App = {
         const id = elSelect ? elSelect.value : "";
         let dateVal = elDate ? elDate.value : "";
 
-        // Fallback Date: Use Current Time if empty set
+        // Fallback Date: REMOVED. Strict Check.
         if (!dateVal) {
-            const now = new Date();
-            dateVal = now.toISOString(); // Approximation for calculation
+             setTxt(`disp-tide-${type}`, "-");
+             setTxt(`disp-wind-${type}`, "-");
+             setTxt(`disp-wx-${type}`, "-");
+             return; 
         }
 
         let tideTxt = "-";
