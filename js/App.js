@@ -23,7 +23,9 @@ const App = {
 
         // Expose Services for Global Access (UpdateService, HTML Buttons)
         window.TideCSVService = TideCSVService;
+        window.TideCSVService = TideCSVService;
         window.ReportService = window.ReportService || null; // Already global in ReportService.js? check
+        window.State = State; // Expose State for inline handlers or debug
 
 
         if (NavMath && typeof NavMath.calcLeg === 'function') {
@@ -149,7 +151,7 @@ const App = {
             });
         }
 
-        const btnPdf = document.getElementById('btn-export-pdf');
+        const btnPdf = document.getElementById('btn-export-pdf-plan');
         if (btnPdf) btnPdf.addEventListener('click', () => {
             if (window.ReportService) window.ReportService.generatePDF(State);
             else console.error("ReportService nao carregado");
