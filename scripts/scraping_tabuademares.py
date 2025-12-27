@@ -32,17 +32,21 @@ from bs4 import BeautifulSoup
 PORTS = {
     # Norte
     "Vila do Conde-PA (proxy Barcarena)": "https://tabuademares.com/br/para/barcarena",
+    "Belém-PA (Porto)": "https://tabuademares.com/br/para/belem",
+    "Santana-AP (Porto)": "https://tabuademares.com/br/amapa/santana",
     # Nordeste
     "Itaqui-MA": "https://tabuademares.com/br/maranhao/itaqui",   # se existir no site, mantém; senão ajustar
     "Pecém-CE": "https://tabuademares.com/br/ceara/pecem",       # se existir no site, mantém; senão ajustar
     "Mucuripe-CE (Fortaleza)": "https://tabuademares.com/br/ceara/fortaleza",
     "Suape-PE": "https://tabuademares.com/br/pernambuco/suape",
+    "Recife-PE (Porto)": "https://tabuademares.com/br/pernambuco/recife",
     "Salvador-BA": "https://tabuademares.com/br/bahia/salvador",
     # Sudeste
     "Vitória-ES": "https://tabuademares.com/br/espirito-santo/vitoria",
     "Rio de Janeiro-RJ": "https://tabuademares.com/br/rio-de-janeiro/rio-de-janeiro",
     "Angra dos Reis-RJ": "https://tabuademares.com/br/rio-de-janeiro/angra-dos-reis",
     "Sepetiba-RJ": "https://tabuademares.com/br/rio-de-janeiro/sepetiba",
+    "Santos-SP (Porto)": "https://tabuademares.com/br/so-paulo/santos",
     # Sul
     "Paranaguá-PR": "https://tabuademares.com/br/parana/paranagua",
     "São Francisco do Sul-SC": "https://tabuademares.com/br/santa-catarina/sao-francisco-do-sul",

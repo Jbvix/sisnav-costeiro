@@ -39,6 +39,10 @@ class TideJSONService {
             "Rio Grande-RS": "Rio Grande-RS (Porto)",
             "Rio de Janeiro-RJ": "Rio de Janeiro-RJ",
             "Vila do Conde-PA": "Vila do Conde-PA (proxy Barcarena)",
+            "Santos-SP": "Santos-SP (Porto)",
+            "Recife-PE": "Recife-PE (Porto)",
+            "Belém-PA": "Belém-PA (Porto)",
+            "Santana-AP": "Santana-AP (Porto)",
             "S. Francisco do Sul-SC": "São Francisco do Sul-SC",
             "Sepetiba": "Sepetiba-RJ"
         };
