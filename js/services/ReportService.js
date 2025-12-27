@@ -94,7 +94,156 @@ const parseMeteoText = (text) => {
     return parsedData;
 };
 
+const NAVAREA_CATEGORIES = {
+    'NAV_TRAFFIC': "Navegação e tráfego",
+    'STS_OPERATION': "Operação Ship-to-Ship",
+    'TOWING_OPERATION': "Operação de reboque",
+    'VESSEL_ADRIFT': "Embarcação à deriva",
+    'SAR_RELATED': "Busca e salvamento",
+    'WRECK_SUNKEN': "Naufrágio / Destroços",
+    'DERELICT_FLOATING': "Objeto à deriva",
+    'OBSTRUCTION': "Obstrução / Perigo",
+    'HYDROGRAPHY_BATHY': "Hidrografia",
+    'CHART_CORRECTION': "Correção cartográfica",
+    'AtoN_LIGHTHOUSE': "Farol",
+    'AtoN_BUOY': "Boias/Balizas",
+    'AtoN_AIS_RACON': "AIS/RACON",
+    'METOCEAN_BUOY': "Boias Meteo",
+    'OFFSHORE_SEISMIC': "Sísmica",
+    'OFFSHORE_SURVEY': "Sondagem",
+    'OFFSHORE_DRILLING': "Perfuração",
+    'OFFSHORE_PRODUCTION': "Produção Offshore",
+    'SUBSEA_OPS': "Operações Subaquáticas",
+    'PIPELINE_CABLE': "Dutos/Cabos",
+    'DANGEROUS_OPERATIONS': "Operações Perigosas",
+    'MILITARY_EXERCISE': "Exercício Militar",
+    'ENV_POLLUTION': "Poluição",
+    'NATURAL_HAZARD': "Fenômeno Natural",
+    'ADMIN_CANCEL': "Administração"
+};
+
 const parseNavareaText = (text) => {
+    if (!text) return [];
+
+    const raw = text.replace(/\r\n/g, '\n');
+    const lines = raw.split('\n');
+
+    // Regex Definitions
+    const idRegex = /^(\d{3,4}\/\d{2})/;
+    const coordRegex = /(\d{2}-\d{2}(?:\.\d+)?[NS])\s+(\d{3}-\d{2}(?:\.\d+)?[EW])/;
+    const dateRegex = /(\d{1,2}\/\d{2})\s*(?:a|até|-)\s*(\d{1,2}\/\d{2})/i;
+
+    // Region Detection Keywords
+    const regions = [
+        'SUL DE SANTOS', 'RIO DE JANEIRO', 'CABO FRIO',
+        'BACIA DE SANTOS', 'BACIA DE CAMPOS', 'ESPÍRITO SANTO',
+        'PARANAGUÁ', 'SÃO FRANCISCO', 'RIO GRANDE', 'VITÓRIA',
+        'SALVADOR', 'RECIFE', 'NATAL', 'FORTALEZA'
+    ];
+
+    // Category Parsing Map (Keyword -> Enum Key)
+    const catMap = [
+        { k: 'STS', v: 'STS_OPERATION' },
+        { k: 'SHIP TO SHIP', v: 'STS_OPERATION' },
+        { k: 'REBOQUE', v: 'TOWING_OPERATION' },
+        { k: 'TOWING', v: 'TOWING_OPERATION' },
+        { k: 'DERIVA', v: 'VESSEL_ADRIFT' },
+        { k: 'ADRIFT', v: 'VESSEL_ADRIFT' },
+        { k: 'SÍSMICA', v: 'OFFSHORE_SEISMIC' },
+        { k: 'SEISMIC', v: 'OFFSHORE_SEISMIC' },
+        { k: 'SONDAGEM', v: 'OFFSHORE_SURVEY' },
+        { k: 'SURVEY', v: 'OFFSHORE_SURVEY' },
+        { k: 'PERIGO', v: 'OBSTRUCTION' },
+        { k: 'HAZARD', v: 'OBSTRUCTION' },
+        { k: 'FAROL', v: 'AtoN_LIGHTHOUSE' },
+        { k: 'LIGHTHOUSE', v: 'AtoN_LIGHTHOUSE' },
+        { k: 'BOIA', v: 'AtoN_BUOY' },
+        { k: 'BUOY', v: 'AtoN_BUOY' },
+        { k: 'EXERCÍCIO', v: 'MILITARY_EXERCISE' },
+        { k: 'MILITARY', v: 'MILITARY_EXERCISE' },
+        { k: 'TIRO', v: 'MILITARY_EXERCISE' },
+        { k: 'FOGUETE', v: 'ROCKET_LAUNCH' },
+        { k: 'ROCKET', v: 'ROCKET_LAUNCH' },
+        { k: 'CARTA', v: 'CHART_CORRECTION' },
+        { k: 'CHART', v: 'CHART_CORRECTION' },
+        { k: 'CANCEL', v: 'ADMIN_CANCEL' }
+    ];
+
+    const entries = [];
+    let currentEntry = null;
+
+    const processEntry = (entry) => {
+        if (!entry) return;
+        const fullText = entry.lines.join(' ');
+
+        // 1. ID
+        const id = entry.id;
+
+        // 2. Region
+        let region = '-';
+        for (const r of regions) {
+            if (fullText.toUpperCase().includes(r)) {
+                region = r;
+                break;
+            }
+        }
+
+        // 3. Category & Type
+        let catKey = 'NAV_TRAFFIC'; // Default
+        let typeLabel = '-';
+
+        for (const item of catMap) {
+            if (fullText.toUpperCase().includes(item.k)) {
+                catKey = item.v;
+                typeLabel = item.k; // Use keyword as type hint initially
+                break;
+            }
+        }
+        const categoryLabel = NAVAREA_CATEGORIES[catKey] || catKey;
+
+        // 4. Period
+        let period = '-';
+        const dMatch = fullText.match(dateRegex);
+        if (dMatch) period = `${dMatch[1]} a ${dMatch[2]}`;
+
+        // 5. Coords
+        let coords = '-';
+        const cMatch = fullText.match(coordRegex);
+        if (cMatch) coords = `${cMatch[1]} ${cMatch[2]}`;
+
+        // 6. Assets / Details
+        // Remove known parts to isolate details
+        let details = fullText
+            .replace(id, '')
+            .replace(cMatch ? cMatch[0] : '', '') // Remove coords
+            .replace(dMatch ? dMatch[0] : '', '')
+            .replace(/NAVAREA V/gi, '')
+            .replace(/\s+/g, ' ').trim();
+
+        // Truncate if too long?
+        if (details.length > 80) details = details.substring(0, 80) + '...';
+
+        entries.push([id, region, categoryLabel, typeLabel, details, period, coords]);
+    };
+
+    lines.forEach(line => {
+        const trimmed = line.trim();
+        if (!trimmed) return;
+        const m = trimmed.match(idRegex);
+        if (m) {
+            if (currentEntry) processEntry(currentEntry);
+            currentEntry = { id: m[1], lines: [trimmed] };
+        } else {
+            if (currentEntry) currentEntry.lines.push(trimmed);
+        }
+    });
+    if (currentEntry) processEntry(currentEntry);
+
+    return entries;
+};
+
+/* LEGACY CODE DISABLED
+const parseNavareaText_OLD = (text) => {
     if (!text) return [];
 
     // Normalize text
@@ -203,7 +352,7 @@ const parseNavareaText = (text) => {
 
     return entries;
 };
-
+*/
 const ReportService = {
     generatePDF: async function (state) {
         if (!state) {
@@ -779,17 +928,19 @@ const ReportService = {
                     if (navareaData.length > 0) {
                         doc.autoTable({
                             startY: currentY,
-                            head: [['Aviso', 'Cat.', 'Local (Ref)', 'Período', 'Detalhes / Embarcações', 'Coord']],
+                            head: [['Aviso', 'Região', 'Categoria', 'Tipo', 'Meios/Alvos', 'Período', 'Coord']],
                             body: navareaData,
                             theme: 'grid',
-                            headStyles: { fillColor: [192, 57, 43] }, // Redish for Warnings
-                            styles: { fontSize: 7, cellPadding: 2, valign: 'middle' },
+                            headStyles: { fillColor: [192, 57, 43], fontSize: 6 }, // Redish for Warnings
+                            styles: { fontSize: 6, cellPadding: 1.5, valign: 'middle' },
                             columnStyles: {
-                                0: { fontStyle: 'bold', cellWidth: 15 }, // ID
-                                1: { cellWidth: 15 }, // Cat
-                                2: { cellWidth: 25 }, // Local
-                                3: { cellWidth: 20 }, // Period
-                                5: { cellWidth: 25, font: 'courier' }  // Coords
+                                0: { fontStyle: 'bold', cellWidth: 10 }, // ID
+                                1: { cellWidth: 15 }, // Region
+                                2: { cellWidth: 20 }, // Cat
+                                3: { cellWidth: 15 }, // Type
+                                4: { cellWidth: 35 }, // Assets
+                                5: { cellWidth: 15 }, // Period
+                                6: { cellWidth: 20, font: 'courier' }  // Coords
                             }
                         });
                         currentY = doc.lastAutoTable.finalY + 10;
