@@ -1713,9 +1713,9 @@ const App = {
         fetch(`js/data/known_routes.json?v=${new Date().getTime()}`)
             .then(r => r.json())
             .then(routes => {
+                console.log(`App: Rotas carregadas: ${routes.length}`);
+
                 // 1. Construir o Grafo
-                // Nó = Port ID
-                // Aresta = Rota (pode ser invertida)
                 const graph = {};
                 const THRESHOLD_NM = 30; // Tolerância Geo-Spatial
 
@@ -1727,6 +1727,8 @@ const App = {
                         const d = NavMath.calcLeg(lat, lon, p.lat, p.lon).dist;
                         if (d < minD) { minD = d; closestId = p.id; }
                     });
+                    // Log para debug de nós
+                    // if (minD < 50) console.log(`DebugNode: ${lat},${lon} -> ${closestId} (${minD.toFixed(1)}NM)`);
                     return minD < THRESHOLD_NM ? closestId : null;
                 };
 
@@ -1748,6 +1750,11 @@ const App = {
                     }
                 });
 
+                console.log(`App: Grafo construído. Nós: ${Object.keys(graph).join(', ')}`);
+                console.log(`App: Buscando caminho de ${depId} -> ${arrId}`);
+                if (!graph[depId]) console.warn(`App: Nó de origem ${depId} NÃO está no grafo!`);
+                if (!graph[arrId]) console.warn(`App: Nó de destino ${arrId} NÃO está no grafo!`);
+
                 // 2. Busca em Largura (BFS)
                 const queue = [[depId]];
                 const visited = new Set();
@@ -1758,6 +1765,9 @@ const App = {
                 while (queue.length > 0) {
                     const path = queue.shift();
                     const node = path[path.length - 1];
+
+                    // Debug BFS
+                    // console.log(`App: Visitando ${node}`);
 
                     if (node === arrId) {
                         found = true;
