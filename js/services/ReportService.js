@@ -278,7 +278,8 @@ const NAVAREA_CATEGORIES = {
     'MILITARY_EXERCISE': "Exercício Militar",
     'ENV_POLLUTION': "Poluição",
     'NATURAL_HAZARD': "Fenômeno Natural",
-    'ADMIN_CANCEL': "Administração"
+    'ADMIN_CANCEL': "Administração",
+    'DERRELITO': "Derrelito" // New Category
 };
 
 const parseNavareaText = (text) => {
@@ -325,7 +326,8 @@ const parseNavareaText = (text) => {
         { k: 'ROCKET', v: 'ROCKET_LAUNCH' },
         { k: 'CARTA', v: 'CHART_CORRECTION' },
         { k: 'CHART', v: 'CHART_CORRECTION' },
-        { k: 'CANCEL', v: 'ADMIN_CANCEL' }
+        { k: 'CANCEL', v: 'ADMIN_CANCEL' },
+        { k: 'DERRELITO', v: 'DERRELITO' }
     ];
 
     const entries = [];
@@ -1107,8 +1109,10 @@ const ReportService = {
                 }
 
                 if (state.appraisal.navareaText) {
-                    if (currentY > 230) { doc.addPage(); currentY = 20; }
-                    currentY = addSectionTitle("ANEXO: AVISOS NAVAREA V", currentY);
+                    // Landscape Page for Navarea V
+                    doc.addPage('a4', 'l');
+                    currentY = 20;
+                    currentY = addSectionTitle("ANEXO: AVISOS NAVAREA V (Paisagem)", currentY);
 
                     const navareaData = parseNavareaText(state.appraisal.navareaText);
 
@@ -1121,13 +1125,13 @@ const ReportService = {
                             headStyles: { fillColor: [192, 57, 43], fontSize: 6 }, // Redish for Warnings
                             styles: { fontSize: 6, cellPadding: 1.5, valign: 'middle' },
                             columnStyles: {
-                                0: { fontStyle: 'bold', cellWidth: 10 }, // ID
-                                1: { cellWidth: 15 }, // Region
-                                2: { cellWidth: 20 }, // Cat
-                                3: { cellWidth: 15 }, // Type
-                                4: { cellWidth: 35 }, // Assets
-                                5: { cellWidth: 15 }, // Period
-                                6: { cellWidth: 20, font: 'courier' }  // Coords
+                                0: { fontStyle: 'bold', cellWidth: 20 }, // ID
+                                1: { cellWidth: 30 }, // Region
+                                2: { cellWidth: 35 }, // Cat
+                                3: { cellWidth: 30 }, // Type
+                                4: { cellWidth: 80 }, // Assets (Expanded)
+                                5: { cellWidth: 35 }, // Period
+                                6: { cellWidth: 35, font: 'courier' }  // Coords
                             }
                         });
                         currentY = doc.lastAutoTable.finalY + 10;
