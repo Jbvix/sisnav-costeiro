@@ -1648,6 +1648,11 @@ const App = {
     },
 
     renderMetocBlock: function (type) {
+        const setTxt = (eid, txt) => {
+            const e = document.getElementById(eid);
+            if (e) e.innerText = txt;
+        };
+
         const elSelect = document.getElementById(type === 'dep' ? 'select-port-dep' : 'select-port-arr')
             || document.getElementById(type === 'dep' ? 'select-dep' : 'select-arr');
         const elDate = document.getElementById(type === 'dep' ? 'inp-etd' : 'inp-eta');
@@ -1657,10 +1662,10 @@ const App = {
 
         // Fallback Date: REMOVED. Strict Check.
         if (!dateVal) {
-             setTxt(`disp-tide-${type}`, "-");
-             setTxt(`disp-wind-${type}`, "-");
-             setTxt(`disp-wx-${type}`, "-");
-             return; 
+            setTxt(`disp-tide-${type}`, "-");
+            setTxt(`disp-wind-${type}`, "-");
+            setTxt(`disp-wx-${type}`, "-");
+            return;
         }
 
         let tideTxt = "-";
@@ -1685,11 +1690,6 @@ const App = {
                 }
             }
         }
-
-        const setTxt = (eid, txt) => {
-            const e = document.getElementById(eid);
-            if (e) e.innerText = txt;
-        };
 
         setTxt(`disp-tide-${type}`, tideTxt);
         setTxt(`disp-wind-${type}`, windTxt);
