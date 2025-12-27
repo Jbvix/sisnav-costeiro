@@ -1808,212 +1808,219 @@ const App = {
                         }
 
                         console.log("App: Caminho reconstruído:", routeNames.join(' -> '));
-                        const msg = segments.length === 1
-                            ? `Rota Direta Encontrada:\n${routeNames[0]}`
-                            : `Rota Composta Encontrada (${segments.length} trechos):\n${routeNames.join(' + ')}`;
 
-                        pts.forEach(p => {
-                            finalPoints.push({
-                                sequence: seq++,
-                                lat: p.lat,
-                                lon: p.lon,
-                                name: `WPT ${seq - 1}`,
-                                chart: ""
+                        // AUTO-ACCEPT (Confirm removido)
+                        console.log("App: Costurando rotas (AUTO)...");
+
+                        let finalPoints = [];
+                        let seq = 1;
+
+                        segments.forEach((seg) => {
+                            let pts = JSON.parse(JSON.stringify(seg.route.points));
+                            if (seg.reverse) pts.reverse();
+
+                            pts.forEach(p => {
+                                finalPoints.push({
+                                    sequence: seq++,
+                                    lat: p.lat,
+                                    lon: p.lon,
+                                    name: `WPT ${seq - 1}`,
+                                    chart: ""
+                                });
                             });
                         });
-                    });
 
-        State.routePoints = finalPoints;
-        this.recalculateVoyage();
-        MapService.plotRoute(finalPoints);
-        UIManager.renderRouteTable(finalPoints);
-        UIManager.unlockPlanningDashboard();
-        alert(`Rota carregada: ${finalPoints.length} WPs via ${segments.length} arquivo(s).`);
-    }
-} catch (err) {
-    console.error("App: Erro CRÍTICO na reconstrução da rota:", err);
-    alert("Erro interno ao construir a rota. Verifique o console.");
-}
+                        State.routePoints = finalPoints;
+                        this.recalculateVoyage();
+                        MapService.plotRoute(finalPoints);
+                        UIManager.renderRouteTable(finalPoints);
+                        UIManager.unlockPlanningDashboard();
+                        console.log(`App: Rota carregada: ${finalPoints.length} WPs via ${segments.length} arquivo(s).`);
+
+                    } catch (err) {
+                        console.error("App: Erro CRÍTICO na reconstrução da rota:", err);
+                        alert("Erro interno ao construir a rota. Verifique o console.");
+                    }
 
                 } else {
-    console.log("App: Nenhuma conexão encontrada no Grafo.");
-    // Feedback visual solicitado pelo usuário
-    alert(`Não foi possível calcular uma rota automática entre ${pDep.name} e ${pArr.name}.\n\nPossíveis causas:\n1. Não há arquivos GPX cobrindo este trecho.\n2. Os arquivos existentes não conectam os portos (distância > 30NM).`);
-}
+                    console.log("App: Nenhuma conexão encontrada no Grafo.");
+                    // Feedback visual solicitado pelo usuário
+                    alert(`Não foi possível calcular uma rota automática entre ${pDep.name} e ${pArr.name}.\n\nPossíveis causas:\n1. Não há arquivos GPX cobrindo este trecho.\n2. Os arquivos existentes não conectam os portos (distância > 30NM).`);
+                }
             })
-            .catch (e => console.error("App: Erro no auto-route", e));
+            .catch(e => console.error("App: Erro no auto-route", e));
     },
 
-autoSelectPortsFromGPX: function (points) {
-    if (!points || points.length < 2) return;
+    autoSelectPortsFromGPX: function (points) {
+        if (!points || points.length < 2) return;
 
-    const start = points[0];
-    const end = points[points.length - 1];
+        const start = points[0];
+        const end = points[points.length - 1];
 
-    const findClosest = (lat, lon) => {
+        const findClosest = (lat, lon) => {
+            let closest = null;
+            let minD = 9999;
+            PortDatabase.forEach(port => {
+                const d = NavMath.calcLeg(lat, lon, port.lat, port.lon).dist;
+                if (d < minD) {
+                    minD = d;
+                    closest = port;
+                }
+            });
+            return { port: closest, dist: minD };
+        };
+
+        const depMatch = findClosest(start.lat, start.lon);
+        const arrMatch = findClosest(end.lat, end.lon);
+
+        // Se estiver num raio de ~20NM, seleciona auto
+        const THRESHOLD = 20;
+
+        if (depMatch.port && depMatch.dist < THRESHOLD) {
+            const sel = document.getElementById('select-dep');
+            if (sel) {
+                sel.value = depMatch.port.id;
+                sel.dispatchEvent(new Event('change')); // Trigger fetch
+            }
+            console.log(`App: Auto-selecionado Partida: ${depMatch.port.name} (${depMatch.dist.toFixed(1)} NM)`);
+        }
+
+        if (arrMatch.port && arrMatch.dist < THRESHOLD) {
+            const sel = document.getElementById('select-arr');
+            if (sel) {
+                sel.value = arrMatch.port.id;
+                sel.dispatchEvent(new Event('change')); // Trigger fetch
+            }
+            console.log(`App: Auto-selecionado Chegada: ${arrMatch.port.name} (${arrMatch.dist.toFixed(1)} NM)`);
+        }
+    },
+
+    checkBeamVisibility: function (lat, lon) {
+        if (!this.availableLighthouses || this.availableLighthouses.length === 0) return;
+
+        const DEFAULT_RANGE = 18; // NM (Standard visual range for major lights)
+        const APPROACH_ZONE = DEFAULT_RANGE * 1.5;
+
+        // Find closest
         let closest = null;
-        let minD = 9999;
-        PortDatabase.forEach(port => {
-            const d = NavMath.calcLeg(lat, lon, port.lat, port.lon).dist;
+        let minD = Infinity;
+
+        this.availableLighthouses.forEach(lh => {
+            const d = NavMath.calcLeg(lat, lon, lh.latDec, lh.lonDec).dist;
             if (d < minD) {
                 minD = d;
-                closest = port;
+                closest = lh;
             }
         });
-        return { port: closest, dist: minD };
-    };
 
-    const depMatch = findClosest(start.lat, start.lon);
-    const arrMatch = findClosest(end.lat, end.lon);
-
-    // Se estiver num raio de ~20NM, seleciona auto
-    const THRESHOLD = 20;
-
-    if (depMatch.port && depMatch.dist < THRESHOLD) {
-        const sel = document.getElementById('select-dep');
-        if (sel) {
-            sel.value = depMatch.port.id;
-            sel.dispatchEvent(new Event('change')); // Trigger fetch
-        }
-        console.log(`App: Auto-selecionado Partida: ${depMatch.port.name} (${depMatch.dist.toFixed(1)} NM)`);
-    }
-
-    if (arrMatch.port && arrMatch.dist < THRESHOLD) {
-        const sel = document.getElementById('select-arr');
-        if (sel) {
-            sel.value = arrMatch.port.id;
-            sel.dispatchEvent(new Event('change')); // Trigger fetch
-        }
-        console.log(`App: Auto-selecionado Chegada: ${arrMatch.port.name} (${arrMatch.dist.toFixed(1)} NM)`);
-    }
-},
-
-checkBeamVisibility: function (lat, lon) {
-    if (!this.availableLighthouses || this.availableLighthouses.length === 0) return;
-
-    const DEFAULT_RANGE = 18; // NM (Standard visual range for major lights)
-    const APPROACH_ZONE = DEFAULT_RANGE * 1.5;
-
-    // Find closest
-    let closest = null;
-    let minD = Infinity;
-
-    this.availableLighthouses.forEach(lh => {
-        const d = NavMath.calcLeg(lat, lon, lh.latDec, lh.lonDec).dist;
-        if (d < minD) {
-            minD = d;
-            closest = lh;
-        }
-    });
-
-    const panel = document.getElementById('panel-beam-warning');
-    if (!closest || minD > APPROACH_ZONE) {
-        if (panel && !panel.classList.contains('hidden')) panel.classList.add('hidden');
-        return;
-    }
-
-    // Show Panel
-    if (panel) {
-        panel.classList.remove('hidden');
-
-        // Update Data
-        document.getElementById('beam-lh-name').innerText = closest.name;
-        const elDist = document.getElementById('beam-lh-dist');
-        const elVis = document.getElementById('beam-lh-vis');
-
-        if (elDist) elDist.innerText = minD.toFixed(1) + ' NM';
-
-        if (minD <= DEFAULT_RANGE) {
-            // Visible
-            if (elVis) {
-                elVis.innerText = "VISÍVEL";
-                elVis.className = "font-bold text-sm text-green-400 blink";
-            }
-            panel.classList.add('border-green-500');
-            panel.classList.remove('border-yellow-500');
-        } else {
-            // Approaches
-            if (elVis) {
-                elVis.innerText = "OCULTO (APROX)";
-                elVis.className = "font-bold text-sm text-yellow-500";
-            }
-            panel.classList.remove('border-green-500');
-            panel.classList.add('border-yellow-500');
-        }
-    }
-},
-
-startSimulation: function () {
-    if (!State.routePoints.length) return alert("Carregue uma rota primeiro!");
-
-    let i = 0;
-    let progress = 0;
-    const speedInput = document.getElementById('inp-sim-speed');
-    const lblSpeed = document.getElementById('lbl-sim-speed');
-    let speedMult = speedInput ? parseInt(speedInput.value) : 10;
-
-    // Listener for dynamic speed change
-    if (speedInput) {
-        speedInput.addEventListener('input', (e) => {
-            speedMult = parseInt(e.target.value);
-            if (lblSpeed) lblSpeed.innerText = speedMult + 'x';
-        });
-    }
-
-    // Setup UI
-    UIManager.switchTab('view-monitoring');
-    if (MapService) MapService.invalidateSize();
-
-    if (this.simTimer) clearInterval(this.simTimer);
-
-    // Simulation Loop
-    const segmentTimeBase = 2000; // ms per segment at 1x
-
-    this.simTimer = setInterval(() => {
-        if (i >= State.routePoints.length - 1) {
-            clearInterval(this.simTimer);
-            alert("Viagem Concluída");
+        const panel = document.getElementById('panel-beam-warning');
+        if (!closest || minD > APPROACH_ZONE) {
+            if (panel && !panel.classList.contains('hidden')) panel.classList.add('hidden');
             return;
         }
 
-        const p1 = State.routePoints[i];
-        const p2 = State.routePoints[i + 1];
+        // Show Panel
+        if (panel) {
+            panel.classList.remove('hidden');
 
-        // Advance progress
-        progress += (speedMult / 100); // arbitrary step
+            // Update Data
+            document.getElementById('beam-lh-name').innerText = closest.name;
+            const elDist = document.getElementById('beam-lh-dist');
+            const elVis = document.getElementById('beam-lh-vis');
 
-        if (progress >= 1) {
-            progress = 0;
-            i++;
-            return;
+            if (elDist) elDist.innerText = minD.toFixed(1) + ' NM';
+
+            if (minD <= DEFAULT_RANGE) {
+                // Visible
+                if (elVis) {
+                    elVis.innerText = "VISÍVEL";
+                    elVis.className = "font-bold text-sm text-green-400 blink";
+                }
+                panel.classList.add('border-green-500');
+                panel.classList.remove('border-yellow-500');
+            } else {
+                // Approaches
+                if (elVis) {
+                    elVis.innerText = "OCULTO (APROX)";
+                    elVis.className = "font-bold text-sm text-yellow-500";
+                }
+                panel.classList.remove('border-green-500');
+                panel.classList.add('border-yellow-500');
+            }
+        }
+    },
+
+    startSimulation: function () {
+        if (!State.routePoints.length) return alert("Carregue uma rota primeiro!");
+
+        let i = 0;
+        let progress = 0;
+        const speedInput = document.getElementById('inp-sim-speed');
+        const lblSpeed = document.getElementById('lbl-sim-speed');
+        let speedMult = speedInput ? parseInt(speedInput.value) : 10;
+
+        // Listener for dynamic speed change
+        if (speedInput) {
+            speedInput.addEventListener('input', (e) => {
+                speedMult = parseInt(e.target.value);
+                if (lblSpeed) lblSpeed.innerText = speedMult + 'x';
+            });
         }
 
-        // Interpolate
-        const curLat = p1.lat + (p2.lat - p1.lat) * progress;
-        const curLon = p1.lon + (p2.lon - p1.lon) * progress;
+        // Setup UI
+        UIManager.switchTab('view-monitoring');
+        if (MapService) MapService.invalidateSize();
 
-        // Update Map
-        MapService.updateShipPosition(curLat, curLon);
+        if (this.simTimer) clearInterval(this.simTimer);
 
-        // Check Beam Visibility
-        this.checkBeamVisibility(curLat, curLon);
+        // Simulation Loop
+        const segmentTimeBase = 2000; // ms per segment at 1x
 
-        // Update Dashboard Data (Fake SOG/COG for demo)
-        // Calc COG
-        const dLat = p2.lat - p1.lat;
-        const dLon = p2.lon - p1.lon;
-        const cog = (Math.atan2(dLon, dLat) * 180 / Math.PI + 360) % 360;
+        this.simTimer = setInterval(() => {
+            if (i >= State.routePoints.length - 1) {
+                clearInterval(this.simTimer);
+                alert("Viagem Concluída");
+                return;
+            }
 
-        // Update UI Elements directly if they exist (hardcoded for speed)
-        // (Ideally use UIManager, but traversing DOM is fast enough here)
-        const elSog = document.querySelector('#view-monitoring .text-2xl'); // 1st one usually SOG
-        const elCog = document.querySelectorAll('#view-monitoring .text-2xl')[1];
+            const p1 = State.routePoints[i];
+            const p2 = State.routePoints[i + 1];
 
-        if (elSog) elSog.innerHTML = (10 + (Math.random() * 1)).toFixed(1) + '<span class="text-xs font-sans font-normal text-gray-400">kts</span>';
-        if (elCog) elCog.innerText = cog.toFixed(0) + '°';
+            // Advance progress
+            progress += (speedMult / 100); // arbitrary step
 
-    }, 50); // 20fps
-}
+            if (progress >= 1) {
+                progress = 0;
+                i++;
+                return;
+            }
+
+            // Interpolate
+            const curLat = p1.lat + (p2.lat - p1.lat) * progress;
+            const curLon = p1.lon + (p2.lon - p1.lon) * progress;
+
+            // Update Map
+            MapService.updateShipPosition(curLat, curLon);
+
+            // Check Beam Visibility
+            this.checkBeamVisibility(curLat, curLon);
+
+            // Update Dashboard Data (Fake SOG/COG for demo)
+            // Calc COG
+            const dLat = p2.lat - p1.lat;
+            const dLon = p2.lon - p1.lon;
+            const cog = (Math.atan2(dLon, dLat) * 180 / Math.PI + 360) % 360;
+
+            // Update UI Elements directly if they exist (hardcoded for speed)
+            // (Ideally use UIManager, but traversing DOM is fast enough here)
+            const elSog = document.querySelector('#view-monitoring .text-2xl'); // 1st one usually SOG
+            const elCog = document.querySelectorAll('#view-monitoring .text-2xl')[1];
+
+            if (elSog) elSog.innerHTML = (10 + (Math.random() * 1)).toFixed(1) + '<span class="text-xs font-sans font-normal text-gray-400">kts</span>';
+            if (elCog) elCog.innerText = cog.toFixed(0) + '°';
+
+        }, 50); // 20fps
+    }
 };
 
 window.addEventListener('load', () => App.init());
