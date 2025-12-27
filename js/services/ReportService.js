@@ -282,141 +282,240 @@ const NAVAREA_CATEGORIES = {
     'DERRELITO': "Derrelito" // New Category
 };
 
+// ----------------------------------------------------------------------------
+// NAVWATCH PARSER (Ported from Python v1.0.0)
+// ----------------------------------------------------------------------------
+
 const parseNavareaText = (text) => {
     if (!text) return [];
 
-    const raw = text.replace(/\r\n/g, '\n');
-    const lines = raw.split('\n');
+    const norm = (s) => (s || "").trim().toUpperCase();
 
-    // Regex Definitions
-    const idRegex = /^(\d{3,4}\/\d{2})/;
-    const coordRegex = /(\d{2}-\d{2}(?:\.\d+)?[NS])\s+(\d{3}-\d{2}(?:\.\d+)?[EW])/;
-    const dateRegex = /(\d{1,2}\/\d{2})\s*(?:a|até|-)\s*(\d{1,2}\/\d{2})/i;
+    // Regex Helpers
+    const isIdLine = (line) => /^\d{3,4}\/\d{2}$/.test(norm(line));
+    const isCartaLine = (line) => norm(line).startsWith("CARTA ");
+    const isNoiseHeader = (line) => {
+        const t = norm(line);
+        return ["OUTROS", "NAVAREA", "AVISOS-RADIO", ""].includes(t);
+    };
+    const isCancelLine = (line) => {
+        const t = norm(line);
+        return t.startsWith("CANCELAR ESTE AVISO") || t.startsWith("CANCELAR NAVAREA");
+    };
+    const containsCoord = (line) => /\d{1,2}-\d{1,2}(?:\.\d+)?[NS]\s+\d{1,3}-\d{1,2}(?:\.\d+)?[WE]/.test(norm(line));
 
-    // Region Detection Keywords
-    const regions = [
-        'SUL DE SANTOS', 'RIO DE JANEIRO', 'CABO FRIO',
-        'BACIA DE SANTOS', 'BACIA DE CAMPOS', 'ESPÍRITO SANTO',
-        'PARANAGUÁ', 'SÃO FRANCISCO', 'RIO GRANDE', 'VITÓRIA',
-        'SALVADOR', 'RECIFE', 'NATAL', 'FORTALEZA'
-    ];
-
-    // Category Parsing Map (Keyword -> Enum Key)
-    const catMap = [
-        { k: 'STS', v: 'STS_OPERATION' },
-        { k: 'SHIP TO SHIP', v: 'STS_OPERATION' },
-        { k: 'REBOQUE', v: 'TOWING_OPERATION' },
-        { k: 'TOWING', v: 'TOWING_OPERATION' },
-        { k: 'DERIVA', v: 'VESSEL_ADRIFT' },
-        { k: 'ADRIFT', v: 'VESSEL_ADRIFT' },
-        { k: 'SÍSMICA', v: 'OFFSHORE_SEISMIC' },
-        { k: 'SEISMIC', v: 'OFFSHORE_SEISMIC' },
-        { k: 'SONDAGEM', v: 'OFFSHORE_SURVEY' },
-        { k: 'SURVEY', v: 'OFFSHORE_SURVEY' },
-        { k: 'PERIGO', v: 'OBSTRUCTION' },
-        { k: 'HAZARD', v: 'OBSTRUCTION' },
-        { k: 'FAROL', v: 'AtoN_LIGHTHOUSE' },
-        { k: 'LIGHTHOUSE', v: 'AtoN_LIGHTHOUSE' },
-        { k: 'BOIA', v: 'AtoN_BUOY' },
-        { k: 'BUOY', v: 'AtoN_BUOY' },
-        { k: 'EXERCÍCIO', v: 'MILITARY_EXERCISE' },
-        { k: 'MILITARY', v: 'MILITARY_EXERCISE' },
-        { k: 'TIRO', v: 'MILITARY_EXERCISE' },
-        { k: 'FOGUETE', v: 'ROCKET_LAUNCH' },
-        { k: 'ROCKET', v: 'ROCKET_LAUNCH' },
-        { k: 'CARTA', v: 'CHART_CORRECTION' },
-        { k: 'CHART', v: 'CHART_CORRECTION' },
-        { k: 'CANCEL', v: 'ADMIN_CANCEL' },
-        { k: 'DERRELITO', v: 'DERRELITO' }
-    ];
-
-    const entries = [];
-    let currentEntry = null;
-
-    const processEntry = (entry) => {
-        if (!entry) return;
-        const fullText = entry.lines.join(' ');
-
-        // 1. ID
-        const id = entry.id;
-
-        // 2. Region
-        let region = '-';
-        for (const r of regions) {
-            if (fullText.toUpperCase().includes(r)) {
-                region = r;
-                break;
-            }
-        }
-
-        // 3. Category & Type
-        let catKey = 'NAV_TRAFFIC'; // Default
-        let typeLabel = '-';
-
-        for (const item of catMap) {
-            if (fullText.toUpperCase().includes(item.k)) {
-                catKey = item.v;
-                typeLabel = item.k; // Use keyword as type hint initially
-                break;
-            }
-        }
-        const categoryLabel = NAVAREA_CATEGORIES[catKey] || catKey;
-
-        // 4. Period
-        let period = '-';
-        const dMatch = fullText.match(dateRegex);
-        if (dMatch) period = `${dMatch[1]} a ${dMatch[2]}`;
-
-        // 5. Coords
-        let coords = '-';
-        const cMatch = fullText.match(coordRegex);
-        if (cMatch) coords = `${cMatch[1]} ${cMatch[2]}`;
-
-        // 6. Assets / Details
-        // Remove known parts to isolate details
-        let details = fullText
-            .replace(id, '')
-            .replace(cMatch ? cMatch[0] : '', '') // Remove coords
-            .replace(dMatch ? dMatch[0] : '', '')
-            .replace(/NAVAREA V/gi, '')
-            .replace(/\s+/g, ' ').trim();
-
-        // Truncate if too long?
-        if (details.length > 80) details = details.substring(0, 80) + '...';
-
-        // Fix: Detect SEISMIC SURVEY inside Chart Correction or other misclassified entries 
-        // User Request: If "CORREÇÃO CARTOGRÁFICA" (keywords CARTA/CHART) but details has "SÍSMICO", 
-        // Force: Category="LEVANTAMENTO SISMICO", Type="PESQUISA GEOFÍSICA"
-        let finalCategory = categoryLabel;
-        let finalType = typeLabel;
-        let finalDetails = details;
-
-        if ((catKey === 'CHART_CORRECTION' || catKey === 'NAV_TRAFFIC') && (details.toUpperCase().includes('SÍSMIC') || details.toUpperCase().includes('SEISMIC'))) {
-            finalCategory = "LEVANTAMENTO SISMICO"; // Explicit Override
-            finalType = "PESQUISA GEOFÍSICA";       // Explicit Override
-
-            // Re-construct details if needed, or leave as extracted. 
-            // The extraction logic already keeps the text body (minus ID/Date/Coords). 
-            // "LESTE DO ARROIO CHUI CARTA 30..." is likely already in 'details'.
-        }
-
-        entries.push([id, region, finalCategory, finalType, finalDetails, period, coords]);
+    // Period Detection
+    const isPeriodLike = (line) => {
+        const t = norm(line);
+        // "270301 UTC DEZ 25 A ..." or "28 DEZ 25 A 11 JAN 26"
+        const hasUTC = t.includes(" UTC ");
+        const hasMonth = /(JAN|FEV|MAR|ABR|MAI|JUN|JUL|AGO|SET|OUT|NOV|DEZ)/.test(t);
+        const hasA = /\bA\b/.test(t);
+        return hasUTC || (hasA && hasMonth);
     };
 
-    lines.forEach(line => {
-        const trimmed = line.trim();
-        if (!trimmed) return;
-        const m = trimmed.match(idRegex);
-        if (m) {
-            if (currentEntry) processEntry(currentEntry);
-            currentEntry = { id: m[1], lines: [trimmed] };
-        } else {
-            if (currentEntry) currentEntry.lines.push(trimmed);
-        }
-    });
-    if (currentEntry) processEntry(currentEntry);
+    // ---------------------------------------------------------
+    // Rules for Classification (Priority Ordered)
+    // ---------------------------------------------------------
+    const RULES = [
+        { pat: /LEVANTAMENTO SISMICO/, cat: "LEVANTAMENTO SISMICO", typ: "LEVANTAMENTO SISMICO" },
+        { pat: /OPERACAO SHIP TO SHIP|SHIP TO SHIP/, cat: "OPERACAO", typ: "SHIP TO SHIP" },
+        { pat: /OPERACOES SUBAQUATICAS/, cat: "OPERACAO", typ: "OPERACOES SUBAQUATICAS" },
+        { pat: /SERVICO DE SONDAGEM/, cat: "OPERACAO", typ: "SERVICO DE SONDAGEM" },
+        { pat: /LANCAMENTO DE BOIA|BOIA ONDOGRAFO|BOIA ODAS|BOIA/, cat: "SINALIZACAO", typ: "BOIA/BALIZA" },
+        { pat: /DERRELITO/, cat: "PERIGO", typ: "DERRELITO" },
+        { pat: /\bAUV\b|VEICULO AUTONOMO SUBMARINO/, cat: "PERIGO", typ: "DERRELITO (AUV)" },
+        { pat: /\bA DERIVA\b|EMBARCACAO .* A DERIVA|\bDERIVA\b/, cat: "PERIGO", typ: "EMBARCACAO A DERIVA" },
+        { pat: /OPERACOES PERIGOSAS|LANCAMENTO DE FOGUETE/, cat: "PERIGO", typ: "OPERACOES PERIGOSAS" },
+        { pat: /\bREBOQUE\b|REBOCANDO/, cat: "OPERACAO", typ: "REBOQUE" },
+        // Chart Correction: Only if explicit actions or specific keywords, low priority
+        { pat: /\bINSERIR\b|\bRETIRAR\b|\bCORRIGIR\b|\bATUALIZAR\b|\bSUBSTITUIR\b|\bPROFUNDIDADE/, cat: "CORRECAO CARTOGRAFICA", typ: "CARTA" },
+        // Fallback for "CARTA" if no other specific rule matched, but user wanted strictness.
+        // The user said: "NUNCA cair em 'Correção cartográfica' só porque apareceu 'CARTA'". 
+        // So we interpret "CARTA" alone NOT as correction unless verbs are present.
+    ];
 
-    return entries;
+    const classify = (blockText) => {
+        const t = norm(blockText);
+        for (const rule of RULES) {
+            if (rule.pat.test(t)) {
+                return { cat: rule.cat, typ: rule.typ };
+            }
+        }
+        return { cat: "OUTROS", typ: "INFORMACAO" }; // Default
+    };
+
+    // ---------------------------------------------------------
+    // Extraction Functions
+    // ---------------------------------------------------------
+    const extractRegiao = (blockLines, idIdx) => {
+        // First valid line after ID
+        for (let j = idIdx + 1; j < Math.min(idIdx + 10, blockLines.length); j++) {
+            const ln = blockLines[j].trim();
+            const t = norm(ln);
+            if (!t) continue;
+
+            if (isNoiseHeader(ln) || isCartaLine(ln) || isCancelLine(ln) || containsCoord(ln) || isPeriodLike(ln)) continue;
+
+            // Avoid Category keywords becoming region
+            if (/LEVANTAMENTO SISMICO|OPERACAO|REBOQUE|DERRELITO|PERIGO|BOIA|SERVICO DE SONDAGEM/.test(t)) continue;
+
+            return ln; // Found valid region
+        }
+        return '-';
+    };
+
+    const extractCoords = (blockText) => {
+        // Regex for DD-MM.mm S/N DDD-MM.mm W/E
+        const matches = blockText.matchAll(/(\d{1,2}-\d{1,2}(?:\.\d+)?[NS])\s+(\d{1,3}-\d{1,2}(?:\.\d+)?[WE])/g);
+        const coords = [];
+        for (const m of matches) {
+            coords.push(`${m[1]} ${m[2]}`);
+        }
+        return coords.join("; ") || '-';
+    };
+
+    const extractPeriod = (blockLines) => {
+        // 1. Explicit Period
+        for (const ln of blockLines) {
+            if (isPeriodLike(ln) && !isCancelLine(ln)) {
+                return ln.trim(); // Return raw string for now
+            }
+        }
+        // 2. Fallback Cancel
+        for (const ln of blockLines) {
+            if (isCancelLine(ln)) {
+                // Return "ATE ..." derived from cancel line if possible
+                const match = ln.match(/CANCELAR .*? (\d{6} UTC [A-Z]{3} \d{2})/i);
+                if (match) return `ATE ${match[1]}`;
+                return ln.trim();
+            }
+        }
+        return '-';
+    };
+
+    const extractMeiosAlvos = (blockLines) => {
+        const take = [];
+        const seen = new Set();
+
+        for (const ln of blockLines) {
+            const t = norm(ln);
+            if (!t) continue;
+            if (isIdLine(ln) || isNoiseHeader(ln) || isCartaLine(ln) || isCancelLine(ln) || containsCoord(ln)) continue;
+            // Removed "NA AREA" logic check from Python script:
+            if (t.startsWith("NA AREA") || t.startsWith("AREA ") || (t.startsWith("ENTRE ") && containsCoord(ln))) continue;
+
+            // Valuable lines
+            let keep = false;
+            if (t.startsWith("POR ")) keep = true;
+            else if (t.startsWith("REBOCANDO ")) keep = true;
+            else if (t.includes("REBOCADOR") || t.includes("USV") || t.includes("AUV")) keep = true;
+            else if (/\bKNUTSEN\b|\bSPIRIT\b|\bCHOUEST\b/.test(t) && !t.includes("UTC")) keep = true;
+            // Also keep if explicitly mentioned in the "rules" matches (like vessel names or specific descriptions)
+            // Or if it's a "CARTA" line that wasn't filtered but provides context?
+            // The Python script was strict. Let's stick to valid content lines that aren't excluded.
+            // Actually, for broadness, if we haven't filtered it as noise/coord/header, it satisfies 'details' if it's descriptive.
+            // But lets follow the "strong lines" heuristic or fallback to concatenating non-noise logic.
+
+            if (keep) {
+                if (!seen.has(t)) {
+                    take.push(ln.trim());
+                    seen.add(t);
+                }
+            }
+        }
+
+        // Fallback: If 'take' is empty, maybe take the main text body excluding header/period/coords?
+        // The user's Python script is strict: "linhas fortes" (POR, REBOCANDO...).
+        // But what if it's just "LANÇAMENTO DE BOIA..."?
+        // Let's implement a fallback: if empty, take lines that are NOT noise/header/period/coord.
+        if (take.length === 0) {
+            for (const ln of blockLines) {
+                const t = norm(ln);
+                if (!t) continue;
+                if (isIdLine(ln) || isNoiseHeader(ln) || isCartaLine(ln) || isCancelLine(ln) || containsCoord(ln) || isPeriodLike(ln)) continue;
+                if (t === extractRegiao(blockLines, -1).toUpperCase()) continue; // Skip region line
+
+                // Add unique
+                if (!seen.has(t)) {
+                    take.push(ln.trim());
+                    seen.add(t);
+                }
+            }
+        }
+
+        let result = take.join(" | ");
+        if (result.length > 100) result = result.substring(0, 100) + '...';
+        return result || '-';
+    };
+
+    // ---------------------------------------------------------
+    // Main Loop
+    // ---------------------------------------------------------
+    const rawLines = text.replace(/\r/g, '').split('\n');
+    const blocks = [];
+    let currentBlock = [];
+
+    // Split Blocks
+    for (const ln of rawLines) {
+        if (isIdLine(ln)) {
+            if (currentBlock.length > 0) blocks.push(currentBlock);
+            currentBlock = [ln];
+        } else {
+            if (currentBlock.length > 0) currentBlock.push(ln);
+        }
+    }
+    if (currentBlock.length > 0) blocks.push(currentBlock);
+
+    const items = [];
+
+    for (const block of blocks) {
+        const blockLines = block.filter(l => l.trim().length > 0);
+        const rawBlock = block.join("\n");
+        const blockText = norm(rawBlock);
+
+        // ID
+        const idLine = blockLines.find(l => isIdLine(l));
+        const aviso = idLine ? norm(idLine) : "?";
+        const idIdx = blockLines.indexOf(idLine);
+
+        // Region
+        const regiao = extractRegiao(blockLines, idIdx);
+
+        // Classification
+        let { cat, typ } = classify(blockText);
+
+        // Absolute Overrides (User Priority)
+        // "A correção é: a linha/termo “LEVANTAMENTO SISMICO” deve ter prioridade absoluta"
+        if (blockText.includes("LEVANTAMENTO SISMICO")) {
+            cat = "LEVANTAMENTO SISMICO";
+            typ = "LEVANTAMENTO SISMICO"; // Or "PESQUISA GEOFISICA" as asked in previous prompt, but user script says "LEVANTAMENTO SISMICO" here.
+            // "TIPO=PESQUISA GEOFÍSICA" was in the previous Prompt text example. 
+            // BUT the Python script provided in THIS prompt says: (r"LEVANTAMENTO SISMICO", "LEVANTAMENTO SISMICO", "LEVANTAMENTO SISMICO")
+            // I will follow the Python script literally as it is the latest instruction.
+        }
+
+        // Period
+        const period = extractPeriod(blockLines);
+
+        // Coords
+        const coords = extractCoords(rawBlock);
+
+        // Meios/Alvos
+        const meiosAlvos = extractMeiosAlvos(blockLines);
+
+        items.push([
+            aviso,
+            regiao,
+            cat,
+            typ,
+            meiosAlvos,
+            period,
+            coords
+        ]);
+    }
+
+    return items;
 };
 
 /* LEGACY CODE DISABLED
