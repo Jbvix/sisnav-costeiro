@@ -12,18 +12,33 @@ const METEO_AREAS = [
     { id: 'HOTEL', limits: 'São Luís (MA) até Oiapoque (AP)', states: 'MA(Oeste), PA, AP' }
 ];
 
+// Helper to extract global Date/Time/Validity from the top of the text
+const extractMeteoHeader = (text) => {
+    if (!text) return null;
+    // Regex looking for Data: dd/mm/aaaa ... Hora: HHHHZ ... Validade: ...
+    // Or similar variations.
+    const dateMatch = text.match(/Data:\s*(\d{2}\/\d{2}\/\d{4})/i);
+    const timeMatch = text.match(/Hora:\s*(\d{4}Z?)/i);
+    const validMatch = text.match(/Validade:\s*([^\n]+)/i);
+
+    if (dateMatch || validMatch) {
+        return {
+            date: dateMatch ? dateMatch[1] : '-',
+            time: timeMatch ? timeMatch[1] : '-',
+            validity: validMatch ? validMatch[1].trim() : '-'
+        };
+    }
+    return null;
+};
+
 const parseMeteoText = (text) => {
     if (!text) return [];
 
     // Normalize newlines
     const raw = text.replace(/\r\n/g, '\n');
 
-    // Regex for Area Header: "ÁREA ALFA" or just "ALFA" at start of line
-    const areaRegex = /(?:ÁREA\s+)?(ALFA|BRAVO|CHARLIE|DELTA|ECHO|FOXTROT|GOLF|HOTEL)/g;
-
-    // Split by Areas, but keep the delimiter
-    // This logic is tricky with Regex split. 
-    // Alternative: Find all indices of Areas and slice.
+    // Regex for Area Header: "ÁREA ALFA" or just "ALFA" or "SUL OESTE" etc
+    const areaRegex = /(?:ÁREA\s+)?(ALFA|BRAVO|CHARLIE|DELTA|ECHO|FOXTROT|GOLF|HOTEL|SUL\s+OESTE|SUL\s+LESTE|30S–25S|N\s*>25S|NORTE\s+OCEÂNICA)/gi;
 
     const matches = [...raw.matchAll(areaRegex)];
     if (matches.length === 0) return [];
@@ -32,24 +47,45 @@ const parseMeteoText = (text) => {
 
     for (let i = 0; i < matches.length; i++) {
         const match = matches[i];
-        const areaName = match[1];
+        const areaName = match[1].toUpperCase();
         const startIdx = match.index;
         const endIdx = (i < matches.length - 1) ? matches[i + 1].index : raw.length;
 
         const block = raw.substring(startIdx, endIdx);
 
+        // Lookup Region description
+        // Use fuzzy match or exact ID match
+        let regionDesc = '-';
+        // Check METEO_AREAS for exact ID first
+        const areaDef = METEO_AREAS.find(a => a.id === areaName);
+        if (areaDef) {
+            regionDesc = areaDef.limits; // Uses limits as Region
+        } else {
+            // Manual fallbacks for known oceanic areas if not in METEO_AREAS
+            if (areaName.includes('SUL OESTE')) regionDesc = 'Sul 30S / Oest. 030W';
+            else if (areaName.includes('SUL LESTE')) regionDesc = 'Sul 30S / Lest. 030W';
+            else if (areaName.includes('30S–25S')) regionDesc = 'Oceânica';
+            else if (areaName.includes('N >25S')) regionDesc = 'Oceânica';
+            else if (areaName.includes('NORTE')) regionDesc = 'Norte de 02S';
+        }
+
         // Extract fields using Regex
-        // "TEMPO:..." or "TEMPO ..."
+        // Supports "TEMPO:..." or lines like "TEMPO Pancadas"
         const getWeather = (key) => {
             const re = new RegExp(`(?:${key}[:\\.]?)\\s*([^\\n\\r.]+)`, 'i');
             const m = block.match(re);
             return m ? m[1].trim() : '-';
         };
 
+        // Also support "Vento (Beaufort) NE/NW" style if user pastes table
+        // But assuming user pastes Bulletins "VENTO: ...", we use that.
+        // If raw string has no labels, it's harder.
+
         parsedData.push([
             areaName,
+            regionDesc,
             getWeather('TEMPO|OBS'),
-            getWeather('VENTO'),
+            getWeather('VENTO'), // Will need to manually add "(Beaufort)" in head
             getWeather('ONDAS|MAR'),
             getWeather('VISIBILIDADE|VIS')
         ]);
@@ -675,39 +711,45 @@ const ReportService = {
                     if (currentY > 230) { doc.addPage(); currentY = 20; }
                     currentY = addSectionTitle("ANEXO: PREVISÃO METEOMARINHA", currentY);
 
-                    // 1. Tabela de Referência (Definições)
-                    doc.setFontSize(8);
-                    doc.text("TABELA 1: DEFINIÇÃO DAS ÁREAS METEOMARINHAS", 14, currentY + 5);
+                    // 1. Header Information (Date/Time/Validity)
+                    const headerInfo = extractMeteoHeader(state.appraisal.meteoText);
+                    if (headerInfo) {
+                        doc.setFontSize(9);
+                        doc.setFont(undefined, 'bold');
+                        doc.text(`Data: ${headerInfo.date} – Hora: ${headerInfo.time}`, 14, currentY + 4);
+                        doc.text(`Validade: ${headerInfo.validity}`, 14, currentY + 9);
+                        currentY += 15;
+                    } else {
+                        // Fallback default label
+                        doc.setFontSize(8);
+                        doc.text("TABELA DE PREVISÃO METEOMARINHA", 14, currentY + 5);
+                        currentY += 10;
+                    }
 
-                    doc.autoTable({
-                        startY: currentY + 7,
-                        head: [['ÁREA', 'LIMITES (PONTOS COSTEIROS)', 'ESTADOS ABRANGIDOS']],
-                        body: METEO_AREAS.map(a => [a.id, a.limits, a.states]),
-                        theme: 'striped',
-                        headStyles: { fillColor: [70, 70, 70] },
-                        styles: { fontSize: 7, cellPadding: 1.5 },
-                        columnStyles: { 0: { cellWidth: 25, fontStyle: 'bold' } }
-                    });
-
-                    currentY = doc.lastAutoTable.finalY + 10;
-
-                    // 2. Tabela de Previsão (Dinâmica)
+                    // 2. Tabela Consolidada (Área | Região | Dados)
                     const forecastData = parseMeteoText(state.appraisal.meteoText);
 
-                    doc.text("TABELA 2: PREVISÃO DIÁRIA (Extraída do Boletim)", 14, currentY - 2);
-
                     if (forecastData.length > 0) {
-                        // Render Structured Table
+                        // Render Structured Table 6 Columns
                         doc.autoTable({
                             startY: currentY,
-                            head: [['ÁREA', 'TEMPO / OBS', 'VENTO', 'ONDAS', 'VISIBILIDADE']],
+                            head: [['ÁREA', 'REGIÃO', 'TEMPO', 'VENTO (Beaufort)', 'ONDAS (m)', 'VISIBILIDADE']],
                             body: forecastData,
                             theme: 'grid',
-                            headStyles: { fillColor: [41, 128, 185] },
-                            styles: { fontSize: 8, cellPadding: 2, valign: 'middle' },
+                            headStyles: {
+                                fillColor: [41, 128, 185],
+                                valign: 'middle',
+                                halign: 'center',
+                                fontSize: 7
+                            },
+                            styles: { fontSize: 7, cellPadding: 2, valign: 'middle' },
                             columnStyles: {
-                                0: { fontStyle: 'bold', cellWidth: 20 },
-                                1: { cellWidth: 60 } // Weather definition wider
+                                0: { fontStyle: 'bold', cellWidth: 15 }, // Area
+                                1: { cellWidth: 35 }, // Region
+                                2: { cellWidth: 40 }, // Tempo
+                                3: { cellWidth: 25 }, // Vento
+                                4: { cellWidth: 25 }, // Waves
+                                // Visibility auto
                             }
                         });
                         currentY = doc.lastAutoTable.finalY + 10;
