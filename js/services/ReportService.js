@@ -31,6 +31,21 @@ const extractMeteoHeader = (text) => {
     return null;
 };
 
+const METEO_CATEGORIES = {
+    "SYNOPTIC_ANALYSIS": "Análise sinótica",
+    "FORECAST_COASTAL_ZONE": "Previsão costeira",
+    "FORECAST_OCEANIC_ZONE": "Previsão oceânica",
+    "FRONT_COLD": "Frente fria",
+    "FRONT_STATIONARY": "Frente estacionária",
+    "ITCZ_ZCIT": "ZCIT",
+    "SQUALLS_SHOWERS": "Pancadas",
+    "THUNDERSTORMS": "Trovoadas",
+    "VISIBILITY_LIMITED": "Visibilidade restrita",
+    "WIND_SHIFT": "Variação de vento",
+    "GUSTS": "Rajadas",
+    "SEA_STATE": "Estado do mar"
+};
+
 const parseMeteoText = (text) => {
     if (!text) return [];
 
@@ -54,9 +69,7 @@ const parseMeteoText = (text) => {
         const block = raw.substring(startIdx, endIdx);
 
         // Lookup Region description
-        // Use fuzzy match or exact ID match
         let regionDesc = '-';
-        // Check METEO_AREAS for exact ID first
         const areaDef = METEO_AREAS.find(a => a.id === areaName);
         if (areaDef) {
             regionDesc = areaDef.limits; // Uses limits as Region
@@ -70,25 +83,21 @@ const parseMeteoText = (text) => {
         }
 
         // Extract fields using Regex
-        // Supports "TEMPO:..." or lines like "TEMPO Pancadas"
         const getWeather = (key) => {
             const re = new RegExp(`(?:${key}[:\\.]?)\\s*([^\\n\\r.]+)`, 'i');
             const m = block.match(re);
             return m ? m[1].trim() : '-';
         };
 
-        // Also support "Vento (Beaufort) NE/NW" style if user pastes table
-        // But assuming user pastes Bulletins "VENTO: ...", we use that.
-        // If raw string has no labels, it's harder.
-
-        parsedData.push([
-            areaName,
-            regionDesc,
-            getWeather('TEMPO|OBS'),
-            getWeather('VENTO'), // Will need to manually add "(Beaufort)" in head
-            getWeather('ONDAS|MAR'),
-            getWeather('VISIBILIDADE|VIS')
-        ]);
+        // Mapping to new Schema Fields (table_rows)
+        parsedData.push({
+            zone_id: areaName,
+            zone_name: regionDesc,
+            wx_short: getWeather('TEMPO|OBS'),
+            wind_short: getWeather('VENTO'),
+            sea_short: getWeather('ONDAS|MAR'),
+            vis_short: getWeather('VISIBILIDADE|VIS')
+        });
     }
 
     return parsedData;
@@ -879,11 +888,20 @@ const ReportService = {
                     const forecastData = parseMeteoText(state.appraisal.meteoText);
 
                     if (forecastData.length > 0) {
-                        // Render Structured Table 6 Columns
+                        // Render Structured Table 6 Columns (Schema-based)
+                        const tableBody = forecastData.map(row => [
+                            row.zone_id,
+                            row.zone_name,
+                            row.wx_short,
+                            row.wind_short,
+                            row.sea_short,
+                            row.vis_short
+                        ]);
+
                         doc.autoTable({
                             startY: currentY,
-                            head: [['ÁREA', 'REGIÃO', 'TEMPO', 'VENTO (Beaufort)', 'ONDAS (m)', 'VISIBILIDADE']],
-                            body: forecastData,
+                            head: [['ÁREA', 'REGIÃO', 'TEMPO', 'VENTO (Bft)', 'ONDAS (m)', 'VISIB.']],
+                            body: tableBody,
                             theme: 'grid',
                             headStyles: {
                                 fillColor: [41, 128, 185],
@@ -898,7 +916,7 @@ const ReportService = {
                                 2: { cellWidth: 40 }, // Tempo
                                 3: { cellWidth: 25 }, // Vento
                                 4: { cellWidth: 25 }, // Waves
-                                // Visibility auto
+                                5: { cellWidth: 25 }  // Visibility
                             }
                         });
                         currentY = doc.lastAutoTable.finalY + 10;
