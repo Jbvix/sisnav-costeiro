@@ -1,3 +1,4 @@
+
 // TideJSONService.js - Source: maritimo_mare_meteo.json (TabuaDeMares Scraper)
 import PortDatabase from './PortDatabase.js';
 
@@ -33,16 +34,30 @@ class TideJSONService {
             if (portById) internalName = portById.name;
         }
 
+        // 0.5 Explicit Patch Map for tricky names
+        const PATCH_MAP = {
+            "Rio Grande-RS": "Rio Grande-RS (Porto)",
+            "Rio de Janeiro-RJ": "Rio de Janeiro-RJ",
+            "Vila do Conde-PA": "Vila do Conde-PA (proxy Barcarena)",
+            "S. Francisco do Sul-SC": "São Francisco do Sul-SC",
+            "Sepetiba": "Sepetiba-RJ"
+        };
+
+        if (PATCH_MAP[internalName] && this.data.ports[PATCH_MAP[internalName]]) {
+            return PATCH_MAP[internalName];
+        }
+
         const keys = Object.keys(this.data.ports);
 
         // 1. Direct Match
         if (this.data.ports[internalName]) return internalName;
 
         // 2. Fuzzy / Substring Match (e.g. "Rio Grande" -> "Rio Grande-RS (Porto)")
+        // Prioritize exact start match or containment
         const norm = s => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         const search = norm(internalName);
 
-        const found = keys.find(k => norm(k).includes(search));
+        const found = keys.find(k => norm(k).includes(search) || search.includes(norm(k)));
 
         if (!found) {
             console.warn(`TideJSONService: Port not found for '${internalName}' (Search: '${search}')`);
@@ -54,19 +69,24 @@ class TideJSONService {
 
     /**
      * Get Raw Tide Events (High/Low) for a specific date
-     * @param {string} portName
+     * @param {string} portName 
      * @param {string} dateISO "YYYY-MM-DD"
      */
     getTides(portName, dateISO) {
         const key = this._resolvePortKey(portName);
         if (!key) return [];
         const dayEvents = this.data.ports[key].tides_7d.filter(e => e.date_iso === dateISO);
-        return dayEvents.sort((a, b) => a.time_local.localeCompare(b.time_local));
+        // Robust Sort: Pad Hours
+        return dayEvents.sort((a, b) => {
+            const [hA, mA] = a.time_local.split(':').map(Number);
+            const [hB, mB] = b.time_local.split(':').map(Number);
+            return (hA * 60 + mA) - (hB * 60 + mB); // Minute-based compare
+        });
     }
 
     /**
      * Calculate Tide Height at specific Date/Time using Cosine Interpolation
-     * @param {string} portName
+     * @param {string} portName 
      * @param {Date} targetDate JS Date Object
      * @returns {number|null} Estimated Height (m)
      */
@@ -75,17 +95,21 @@ class TideJSONService {
         if (!key) return null;
 
         const portData = this.data.ports[key];
-        const tides = portData.tides_7d; // Sorted by date/time?
+        const tides = portData.tides_7d;
 
-        // Flatten all events into a comparable timeline
-        // Need to parse date_iso + time_local -> Date Object
-        const parseEventTime = (e) => new Date(`${e.date_iso}T${e.time_local}:00`);
+        const parseEventTime = (e) => {
+            // Handle single digit hours if present
+            const [h, m] = e.time_local.split(':');
+            const padH = h.padStart(2, '0');
+            const padM = m.padStart(2, '0');
+            return new Date(`${e.date_iso}T${padH}:${padM}:00`);
+        };
 
         // Find events surrounding targetDate
         let prev = null;
         let next = null;
 
-        // Optimize: narrow down? Scan all for now (7 days is small)
+        // Robust linear scan
         for (const e of tides) {
             const t = parseEventTime(e);
             if (t <= targetDate) {
@@ -105,11 +129,19 @@ class TideJSONService {
         const t = targetDate.getTime();
         const t1 = parseEventTime(prev).getTime();
         const t2 = parseEventTime(next).getTime();
-        const h1 = parseFloat(prev.height_m); // Ensure float
-        const h2 = parseFloat(next.height_m); // Ensure float
+
+        // Robust Parse
+        const parseH = (val) => {
+            if (typeof val === 'number') return val;
+            if (typeof val === 'string') return parseFloat(val.replace(',', '.'));
+            return NaN;
+        };
+
+        const h1 = parseH(prev.height_m);
+        const h2 = parseH(next.height_m);
 
         if (isNaN(h1) || isNaN(h2)) {
-            console.error(`TideJSONService: Invalid heights for ${portName}:`, h1, h2);
+            console.error(`TideJSONService: Invalid heights for ${portName}:`, prev.height_m, next.height_m);
             return null;
         }
 
@@ -127,12 +159,7 @@ class TideJSONService {
      */
     getCurve(portName, centerDate) {
         const curve = [];
-        // Generate points: Center - 90min to Center + 90min, step 15min?
-        // Or specific T-1.5, T, T+1.5 as requested
-        // Let's do step 30 min for smoothness in valid window
-
         const start = new Date(centerDate.getTime() - 90 * 60000); // -1.5h
-        // const end = new Date(centerDate.getTime() + 90 * 60000);   // +1.5h
 
         for (let i = 0; i <= 6; i++) { // 0, 30, 60, 90, 120, 150, 180 mins from start
             const t = new Date(start.getTime() + i * 30 * 60000);
