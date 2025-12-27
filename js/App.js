@@ -1709,7 +1709,8 @@ const App = {
 
         console.log(`App: Buscando rota auto de '${originKey}' para '${destKey}'...`);
 
-        fetch('js/data/known_routes.json')
+        // Cache-busting para garantir carregamento de rotas novas/patchs
+        fetch(`js/data/known_routes.json?v=${new Date().getTime()}`)
             .then(r => r.json())
             .then(routes => {
                 // 1. Construir o Grafo
