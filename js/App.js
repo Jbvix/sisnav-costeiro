@@ -1768,6 +1768,9 @@ const App = {
 
                     // Debug BFS
                     // console.log(`App: Visitando ${node}`);
+                    if (graph[node]) {
+                        console.log(`App: Vizinhos de ${node}:`, graph[node].map(n => n.target).join(', '));
+                    }
 
                     if (node === arrId) {
                         found = true;
