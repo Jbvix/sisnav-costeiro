@@ -43,6 +43,10 @@ class TideJSONService {
         const search = norm(internalName);
 
         const found = keys.find(k => norm(k).includes(search));
+
+        if (!found) {
+            console.warn(`TideJSONService: Port not found for '${internalName}' (Search: '${search}')`);
+        }
         return found || null;
     }
 
@@ -50,7 +54,7 @@ class TideJSONService {
 
     /**
      * Get Raw Tide Events (High/Low) for a specific date
-     * @param {string} portName 
+     * @param {string} portName
      * @param {string} dateISO "YYYY-MM-DD"
      */
     getTides(portName, dateISO) {
@@ -62,7 +66,7 @@ class TideJSONService {
 
     /**
      * Calculate Tide Height at specific Date/Time using Cosine Interpolation
-     * @param {string} portName 
+     * @param {string} portName
      * @param {Date} targetDate JS Date Object
      * @returns {number|null} Estimated Height (m)
      */
@@ -91,17 +95,23 @@ class TideJSONService {
             }
         }
 
-        if (!prev || !next) return null; // Out of range
+        if (!prev || !next) {
+            console.warn(`TideJSONService: No surrounding tides for ${portName} at ${targetDate.toISOString()}`);
+            return null; // Out of range
+        }
 
         // Cosine Interpolation
         // formula: h(t) = (h1 + h2)/2 + (h1 - h2)/2 * cos(pi * (t - t1) / (t2 - t1))
         const t = targetDate.getTime();
         const t1 = parseEventTime(prev).getTime();
         const t2 = parseEventTime(next).getTime();
-        const h1 = prev.height_m;
-        const h2 = next.height_m;
+        const h1 = parseFloat(prev.height_m); // Ensure float
+        const h2 = parseFloat(next.height_m); // Ensure float
 
-        if (h1 === null || h2 === null) return null;
+        if (isNaN(h1) || isNaN(h2)) {
+            console.error(`TideJSONService: Invalid heights for ${portName}:`, h1, h2);
+            return null;
+        }
 
         const phase = Math.PI * (t - t1) / (t2 - t1);
         const height = (h1 + h2) / 2 + (h1 - h2) / 2 * Math.cos(phase);

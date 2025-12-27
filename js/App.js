@@ -1609,8 +1609,12 @@ const App = {
         const container = document.getElementById('metoc-status-container');
         const progress = document.getElementById('metoc-progress');
         const results = document.getElementById('metoc-results');
-        const depId = document.getElementById('select-dep').value;
-        const arrId = document.getElementById('select-arr').value;
+
+        const elDep = document.getElementById('select-port-dep') || document.getElementById('select-dep');
+        const elArr = document.getElementById('select-port-arr') || document.getElementById('select-arr');
+
+        const depId = elDep ? elDep.value : "";
+        const arrId = elArr ? elArr.value : "";
 
         // Se nada selecionado, esconde
         if (!depId && !arrId) {
@@ -1639,25 +1643,37 @@ const App = {
     },
 
     renderMetocBlock: function (type) {
-        const id = document.getElementById(type === 'dep' ? 'select-dep' : 'select-arr').value;
-        const dateVal = document.getElementById(type === 'dep' ? 'inp-etd' : 'inp-eta').value;
+        const elSelect = document.getElementById(type === 'dep' ? 'select-port-dep' : 'select-port-arr')
+            || document.getElementById(type === 'dep' ? 'select-dep' : 'select-arr');
+        const elDate = document.getElementById(type === 'dep' ? 'inp-etd' : 'inp-eta');
+
+        const id = elSelect ? elSelect.value : "";
+        let dateVal = elDate ? elDate.value : "";
+
+        // Fallback Date: Use Current Time if empty set
+        if (!dateVal) {
+            const now = new Date();
+            dateVal = now.toISOString(); // Approximation for calculation
+        }
 
         let tideTxt = "-";
         let windTxt = "-";
         let wxTxt = "-";
 
-        if (id && dateVal && window.TideJSONService) {
+        if (id && window.TideJSONService) {
             const port = PortDatabase.find(p => p.id === id);
             const portName = port ? port.name : "";
+
+            // Check valid date
             const dateObj = new Date(dateVal);
 
             if (!isNaN(dateObj.getTime())) {
                 const h = window.TideJSONService.getHeightAt(portName, dateObj);
                 const w = window.TideJSONService.getWeather(portName, dateObj);
 
-                if (h !== null) tideTxt = `${h.toFixed(2)} m`;
+                if (h !== null && !isNaN(h)) tideTxt = `${h.toFixed(2)} m`;
                 if (w) {
-                    windTxt = `${w.windSpeed} ${w.windDir}`; // Agora em Knots (scraper fixed)
+                    windTxt = `${w.windSpeed} ${w.windDir}`;
                     wxTxt = w.condition;
                 }
             }
