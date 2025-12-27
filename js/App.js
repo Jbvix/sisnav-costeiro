@@ -16,15 +16,14 @@ import PortDatabase from './services/PortDatabase.js?v=7';
 import PersistenceService from './services/PersistenceService.js?v=1';
 import UpdateService from './services/UpdateService.js?v=1';
 import TideCSVService from './services/TideCSVService.js?v=7';
+import ReportService from './services/ReportService.js?v=7';
 
 const App = {
     init: function () {
         console.log("App: Inicializando v3.4.0...");
 
-        // Expose Services for Global Access (UpdateService, HTML Buttons)
         window.TideCSVService = TideCSVService;
-        window.TideCSVService = TideCSVService;
-        window.ReportService = window.ReportService || null; // Already global in ReportService.js? check
+        window.ReportService = ReportService; // Assign imported module to global
         window.State = State; // Expose State for inline handlers or debug
 
 

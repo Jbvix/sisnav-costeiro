@@ -806,3 +806,4 @@ const ReportService = {
 };
 
 window.ReportService = ReportService;
+export default ReportService;
