@@ -385,13 +385,22 @@ const parseNavareaText = (text) => {
         if (details.length > 80) details = details.substring(0, 80) + '...';
 
         // Fix: Detect SEISMIC SURVEY inside Chart Correction or other misclassified entries 
-        // User Request: If "CORREÇÃO CARTOGRÁFICA" but details has "SÍSMICO", change to "Levantamento Sísmico"
+        // User Request: If "CORREÇÃO CARTOGRÁFICA" (keywords CARTA/CHART) but details has "SÍSMICO", 
+        // Force: Category="LEVANTAMENTO SISMICO", Type="PESQUISA GEOFÍSICA"
         let finalCategory = categoryLabel;
+        let finalType = typeLabel;
+        let finalDetails = details;
+
         if ((catKey === 'CHART_CORRECTION' || catKey === 'NAV_TRAFFIC') && (details.toUpperCase().includes('SÍSMIC') || details.toUpperCase().includes('SEISMIC'))) {
-            finalCategory = "Levantamento Sísmico"; // Explicit Override
+            finalCategory = "LEVANTAMENTO SISMICO"; // Explicit Override
+            finalType = "PESQUISA GEOFÍSICA";       // Explicit Override
+
+            // Re-construct details if needed, or leave as extracted. 
+            // The extraction logic already keeps the text body (minus ID/Date/Coords). 
+            // "LESTE DO ARROIO CHUI CARTA 30..." is likely already in 'details'.
         }
 
-        entries.push([id, region, finalCategory, typeLabel, details, period, coords]);
+        entries.push([id, region, finalCategory, finalType, finalDetails, period, coords]);
     };
 
     lines.forEach(line => {
