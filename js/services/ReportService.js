@@ -50,57 +50,207 @@ const parseMeteoText = (text) => {
     if (!text) return [];
 
     // Normalize newlines
-    const raw = text.replace(/\r\n/g, '\n');
+    const raw = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 
-    // Regex for Area Header: "ÁREA ALFA" or just "ALFA" or "SUL OESTE" etc
-    const areaRegex = /(?:ÁREA\s+)?(ALFA|BRAVO|CHARLIE|DELTA|ECHO|FOXTROT|GOLF|HOTEL|SUL\s+OESTE|SUL\s+LESTE|30S–25S|N\s*>25S|NORTE\s+OCEÂNICA)/gi;
+    // 1. Header parsing (Optional usage for extraction, but mainly we need Areas)
+    // Python: "METEOROMARINHA DE 27/DEZ/2025 - 0000Z"
+    // We can extract this if needed, but the Table Generator uses parsedData rows.
+    // The previous implementation extracted this in `extractMeteoHeader`. We can keep using that for the title.
 
-    const matches = [...raw.matchAll(areaRegex)];
-    if (matches.length === 0) return [];
+    // 2. Validity (Validade) extraction logic is in extractMeteoHeader too.
 
-    const parsedData = [];
+    // 3. Extract Areas Logic (Mirroring Python)
+    const areas = [];
+    let zoneOrder = 1;
 
-    for (let i = 0; i < matches.length; i++) {
-        const match = matches[i];
-        const areaName = match[1].toUpperCase();
-        const startIdx = match.index;
-        const endIdx = (i < matches.length - 1) ? matches[i + 1].index : raw.length;
+    // Helper to clean spaces
+    const clean = (s) => (s || "").replace(/\s+/g, " ").trim();
 
-        const block = raw.substring(startIdx, endIdx);
+    // Find Validity Line index to start searching for areas after it
+    // "PREVISÃO DO TEMPO VÁLIDA DE ..."
+    const valMatch = raw.match(/PREVIS[ÃA]O DO TEMPO V[ÁA]LIDA/i);
+    const startIndex = valMatch ? valMatch.index : 0;
+    const bodyText = raw.substring(startIndex); // Search from validity onwards
 
-        // Lookup Region description
-        let regionDesc = '-';
-        const areaDef = METEO_AREAS.find(a => a.id === areaName);
-        if (areaDef) {
-            regionDesc = areaDef.limits; // Uses limits as Region
-        } else {
-            // Manual fallbacks for known oceanic areas if not in METEO_AREAS
-            if (areaName.includes('SUL OESTE')) regionDesc = 'Sul 30S / Oest. 030W';
-            else if (areaName.includes('SUL LESTE')) regionDesc = 'Sul 30S / Lest. 030W';
-            else if (areaName.includes('30S–25S')) regionDesc = 'Oceânica';
-            else if (areaName.includes('N >25S')) regionDesc = 'Oceânica';
-            else if (areaName.includes('NORTE')) regionDesc = 'Norte de 02S';
-        }
+    // --- A. COASTAL AREAS (ALFA..HOTEL) ---
+    // Python Regex: (ÁREA (ALFA..HOTEL) \((.*?)\) (.*?)) (?=(ÁREA (ALFA..HOTEL) \(|ÁREA SUL OCEÂNICA|$))
+    const coastalRegex = /(?:ÁREA\s+)(ALFA|BRAVO|CHARLIE|DELTA|ECHO|FOXTROT|GOLF|HOTEL)\s*\((.*?)\)\s*([\s\S]*?)(?=(?:ÁREA\s+(?:ALFA|BRAVO|CHARLIE|DELTA|ECHO|FOXTROT|GOLF|HOTEL)\s*\(|ÁREA\s+SUL\s+OCE[ÂA]NICA|$))/gi;
 
-        // Extract fields using Regex
-        const getWeather = (key) => {
-            const re = new RegExp(`(?:${key}[:\\.]?)\\s*([^\\n\\r.]+)`, 'i');
-            const m = block.match(re);
-            return m ? m[1].trim() : '-';
+    let match;
+    while ((match = coastalRegex.exec(bodyText)) !== null) {
+        const zoneId = match[1].toUpperCase();
+        const zoneName = clean(match[2]);
+        const blockBody = clean(match[3]);
+
+        // Extract Weather Fields
+        const getField = (keyword, stopKeywords) => {
+            // Find keyword, take text until one of stopKeywords or End
+            const idx = blockBody.toUpperCase().indexOf(keyword);
+            if (idx === -1) return null;
+            let sub = blockBody.substring(idx + keyword.length);
+
+            let minIdx = sub.length;
+            stopKeywords.forEach(sk => {
+                const skIdx = sub.toUpperCase().indexOf(sk);
+                if (skIdx !== -1 && skIdx < minIdx) minIdx = skIdx;
+            });
+            return clean(sub.substring(0, minIdx).replace(/^[.:-]/, ''));
         };
 
-        // Mapping to new Schema Fields (table_rows)
-        parsedData.push({
-            zone_id: areaName,
-            zone_name: regionDesc,
-            wx_short: getWeather('TEMPO|OBS'),
-            wind_short: getWeather('VENTO'),
-            sea_short: getWeather('ONDAS|MAR'),
-            vis_short: getWeather('VISIBILIDADE|VIS')
+        // Order: TEMPO ... VENTO ... ONDAS ... VISIBILIDADE ...
+        // We assume "TEMPO" is the start (implicit) usually? Or explicit "TEMPO", "PREVISÃO", or just start text.
+        // Python code splits by "VENTO".
+
+        let wx = "";
+        let wind = "";
+        let waves = "";
+        let vis = "";
+
+        const ventoIdx = blockBody.toUpperCase().indexOf("VENTO");
+        if (ventoIdx !== -1) {
+            wx = clean(blockBody.substring(0, ventoIdx));
+            const remainder = blockBody.substring(ventoIdx); // Starts with VENTO...
+
+            // Parse VENTO
+            const ondasIdx = remainder.toUpperCase().indexOf("ONDAS");
+            const visIdx = remainder.toUpperCase().indexOf("VISIBILIDADE");
+
+            // Wind is from start (VENTO) to ONDAS or VIS or END
+            const endWind = (ondasIdx !== -1) ? ondasIdx : (visIdx !== -1 ? visIdx : remainder.length);
+            wind = clean(remainder.substring(5, endWind).replace(/^[.:-]/, '')); // Skip "VENTO"
+
+            // Waves
+            if (ondasIdx !== -1) {
+                const remainderWaves = remainder.substring(ondasIdx);
+                const visIdx2 = remainderWaves.toUpperCase().indexOf("VISIBILIDADE");
+                const endWaves = (visIdx2 !== -1) ? visIdx2 : remainderWaves.length;
+                waves = clean(remainderWaves.substring(5, endWaves).replace(/^[.:-]/, '')); // Skip "ONDAS"
+            }
+
+            // Vis
+            if (visIdx !== -1) {
+                vis = clean(remainder.substring(visIdx + 12).replace(/^[.:-]/, ''));
+            }
+        } else {
+            wx = blockBody; // Fallback
+        }
+
+        areas.push({
+            group: "Costeira",
+            zone_id: zoneId,
+            zone_name: zoneName,
+            wx_short: wx || "-",
+            wind_short: wind || "-",
+            sea_short: waves || "-",
+            vis_short: vis || "-",
+            zone_order: zoneOrder++
         });
     }
 
-    return parsedData;
+    // --- B. SOUTH OCEANIC (SUL OCEÂNICA) ---
+    const sulStart = bodyText.match(/ÁREA\s+SUL\s+OCE[ÂA]NICA([\s\S]*?)(?=ÁREA\s+NORTE\s+OCE[ÂA]NICA|$)/i);
+    if (sulStart) {
+        const sulBlock = sulStart[1];
+        // Sub-areas keywords
+        const subZones = [
+            { title: "SUL DE 30S - OESTE DE 030W", id: "SUL_OCEANICA_30S_W030W" },
+            { title: "SUL DE 30S - LESTE DE 030W", id: "SUL_OCEANICA_30S_E030W" },
+            { title: "ENTRE 30S E 25S", id: "SUL_OCEANICA_30S_25S" },
+            { title: "NORTE DE 25S", id: "SUL_OCEANICA_N25S" }
+        ];
+
+        subZones.forEach(sz => {
+            // Find text between extraction of this title and next title
+            const escapedTitle = sz.title.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+            // Regex to find Title ... (NextTitle|$ )
+            // Naive simple search:
+            const idx = sulBlock.toUpperCase().indexOf(sz.title);
+            if (idx !== -1) {
+                // Find next title index
+                let nextIdx = sulBlock.length;
+                subZones.forEach(other => {
+                    if (other.title !== sz.title) {
+                        const oIdx = sulBlock.toUpperCase().indexOf(other.title);
+                        if (oIdx > idx && oIdx < nextIdx) nextIdx = oIdx;
+                    }
+                });
+
+                const blockBody = clean(sulBlock.substring(idx + sz.title.length, nextIdx));
+
+                // Extract Fields (Same logic as above)
+                let wx = "", wind = "", waves = "", vis = "";
+                const ventoIdx = blockBody.toUpperCase().indexOf("VENTO");
+                if (ventoIdx !== -1) {
+                    wx = clean(blockBody.substring(0, ventoIdx));
+                    const remainder = blockBody.substring(ventoIdx);
+                    const ondasIdx = remainder.toUpperCase().indexOf("ONDAS");
+                    const visIdx = remainder.toUpperCase().indexOf("VISIBILIDADE");
+
+                    const endWind = (ondasIdx !== -1) ? ondasIdx : (visIdx !== -1 ? visIdx : remainder.length);
+                    wind = clean(remainder.substring(5, endWind).replace(/^[.:-]/, ''));
+
+                    if (ondasIdx !== -1) {
+                        const rw = remainder.substring(ondasIdx);
+                        const vi2 = rw.toUpperCase().indexOf("VISIBILIDADE");
+                        waves = clean(rw.substring(5, vi2 !== -1 ? vi2 : rw.length).replace(/^[.:-]/, ''));
+                    }
+                    if (visIdx !== -1) {
+                        vis = clean(remainder.substring(visIdx + 12).replace(/^[.:-]/, ''));
+                    }
+                } else { wx = blockBody; }
+
+                areas.push({
+                    group: "Oceânica Sul",
+                    zone_id: sz.id,
+                    zone_name: sz.title, // Use title as name
+                    wx_short: wx || "-",
+                    wind_short: wind || "-",
+                    sea_short: waves || "-",
+                    vis_short: vis || "-",
+                    zone_order: 100 + zoneOrder++
+                });
+            }
+        });
+    }
+
+    // --- C. NORTH OCEANIC (NORTE OCEÂNICA) ---
+    const norteStart = bodyText.match(/ÁREA\s+NORTE\s+OCE[ÂA]NICA([\s\S]*)$/i);
+    if (norteStart) {
+        const norteBody = clean(norteStart[1]);
+        let wx = "", wind = "", waves = "", vis = "";
+        const ventoIdx = norteBody.toUpperCase().indexOf("VENTO");
+        if (ventoIdx !== -1) {
+            wx = clean(norteBody.substring(0, ventoIdx));
+            const remainder = norteBody.substring(ventoIdx);
+            const ondasIdx = remainder.toUpperCase().indexOf("ONDAS");
+            const visIdx = remainder.toUpperCase().indexOf("VISIBILIDADE");
+
+            const endWind = (ondasIdx !== -1) ? ondasIdx : (visIdx !== -1 ? visIdx : remainder.length);
+            wind = clean(remainder.substring(5, endWind).replace(/^[.:-]/, ''));
+
+            if (ondasIdx !== -1) {
+                const rw = remainder.substring(ondasIdx);
+                const vi2 = rw.toUpperCase().indexOf("VISIBILIDADE");
+                waves = clean(rw.substring(5, vi2 !== -1 ? vi2 : rw.length).replace(/^[.:-]/, ''));
+            }
+            if (visIdx !== -1) {
+                vis = clean(remainder.substring(visIdx + 12).replace(/^[.:-]/, ''));
+            }
+        } else { wx = norteBody; }
+
+        areas.push({
+            group: "Oceânica Norte",
+            zone_id: "NORTE_OCEANICA",
+            zone_name: "Norte Oceânica",
+            wx_short: wx || "-",
+            wind_short: wind || "-",
+            sea_short: waves || "-",
+            vis_short: vis || "-",
+            zone_order: 200
+        });
+    }
+
+    return areas;
 };
 
 const NAVAREA_CATEGORIES = {
@@ -232,7 +382,14 @@ const parseNavareaText = (text) => {
         // Truncate if too long?
         if (details.length > 80) details = details.substring(0, 80) + '...';
 
-        entries.push([id, region, categoryLabel, typeLabel, details, period, coords]);
+        // Fix: Detect SEISMIC SURVEY inside Chart Correction or other misclassified entries 
+        // User Request: If "CORREÇÃO CARTOGRÁFICA" but details has "SÍSMICO", change to "Levantamento Sísmico"
+        let finalCategory = categoryLabel;
+        if ((catKey === 'CHART_CORRECTION' || catKey === 'NAV_TRAFFIC') && (details.toUpperCase().includes('SÍSMIC') || details.toUpperCase().includes('SEISMIC'))) {
+            finalCategory = "Levantamento Sísmico"; // Explicit Override
+        }
+
+        entries.push([id, region, finalCategory, typeLabel, details, period, coords]);
     };
 
     lines.forEach(line => {
@@ -866,32 +1023,38 @@ const ReportService = {
                 currentY = (doc.lastAutoTable && doc.lastAutoTable.finalY) ? doc.lastAutoTable.finalY + 10 : 30;
 
                 if (state.appraisal.meteoText) {
-                    if (currentY > 230) { doc.addPage(); currentY = 20; }
-                    currentY = addSectionTitle("ANEXO: PREVISÃO METEOMARINHA", currentY);
+                    // Landscape Page for Meteomarinha
+                    doc.addPage('a4', 'l');
+                    currentY = 20;
+                    currentY = addSectionTitle("ANEXO: PREVISÃO METEOMARINHA (Paisagem)", currentY);
 
                     // 1. Header Information (Date/Time/Validity)
                     const headerInfo = extractMeteoHeader(state.appraisal.meteoText);
                     if (headerInfo) {
-                        doc.setFontSize(9);
+                        doc.setFontSize(10);
                         doc.setFont(undefined, 'bold');
-                        doc.text(`Data: ${headerInfo.date} – Hora: ${headerInfo.time}`, 14, currentY + 4);
-                        doc.text(`Validade: ${headerInfo.validity}`, 14, currentY + 9);
-                        currentY += 15;
+                        doc.text(`Boletim: ${headerInfo.date} - ${headerInfo.time}`, 14, currentY + 5);
+                        doc.text(`Validade: ${headerInfo.validity}`, 14, currentY + 11);
+                        doc.setFontSize(9);
+                        doc.setFont(undefined, 'normal');
+                        doc.text("Unidades: Vento (Escala Beaufort) | Ondas (Metros)", 14, currentY + 17);
+                        currentY += 25;
                     } else {
                         // Fallback default label
-                        doc.setFontSize(8);
+                        doc.setFontSize(10);
                         doc.text("TABELA DE PREVISÃO METEOMARINHA", 14, currentY + 5);
-                        currentY += 10;
+                        currentY += 15;
                     }
 
-                    // 2. Tabela Consolidada (Área | Região | Dados)
+                    // 2. Tabela Consolidada (Grupo | Área | Tempo | Vento | Ondas | Visib)
                     const forecastData = parseMeteoText(state.appraisal.meteoText);
 
                     if (forecastData.length > 0) {
-                        // Render Structured Table 6 Columns (Schema-based)
+                        // Map parsed data to table rows
+                        // Expected: Group, Area (ID+Name), Weather, Wind, Waves, Vis
                         const tableBody = forecastData.map(row => [
-                            row.zone_id,
-                            row.zone_name,
+                            row.group,
+                            `${row.zone_id}\n${row.zone_name}`,
                             row.wx_short,
                             row.wind_short,
                             row.sea_short,
@@ -900,23 +1063,29 @@ const ReportService = {
 
                         doc.autoTable({
                             startY: currentY,
-                            head: [['ÁREA', 'REGIÃO', 'TEMPO', 'VENTO (Bft)', 'ONDAS (m)', 'VISIB.']],
+                            head: [['Grupo', 'Área', 'Tempo (Wx)', 'Vento (Bft)', 'Ondas (m)', 'Visib.']],
                             body: tableBody,
                             theme: 'grid',
                             headStyles: {
-                                fillColor: [41, 128, 185],
+                                fillColor: [11, 61, 145], // #0B3D91-ish
                                 valign: 'middle',
                                 halign: 'center',
-                                fontSize: 7
+                                fontSize: 9
                             },
-                            styles: { fontSize: 7, cellPadding: 2, valign: 'middle' },
+                            styles: { fontSize: 8, cellPadding: 3, valign: 'top' },
+                            // Landscape Width ~270-280mm active
+                            // ColWidths sum: 25+65+60+40+35+30 = 255mm approx
                             columnStyles: {
-                                0: { fontStyle: 'bold', cellWidth: 15 }, // Area
-                                1: { cellWidth: 35 }, // Region
-                                2: { cellWidth: 40 }, // Tempo
-                                3: { cellWidth: 25 }, // Vento
-                                4: { cellWidth: 25 }, // Waves
-                                5: { cellWidth: 25 }  // Visibility
+                                0: { cellWidth: 25, fontStyle: 'bold' }, // Group
+                                1: { cellWidth: 65, fontStyle: 'bold' }, // Area
+                                2: { cellWidth: 60 }, // Wx
+                                3: { cellWidth: 35 }, // Wind
+                                4: { cellWidth: 35 }, // Waves
+                                5: { cellWidth: 30 }  // Vis
+                            },
+                            didDrawPage: function (data) {
+                                // Add footer/header on new pages if table splits?
+                                // For now autoTable handles it.
                             }
                         });
                         currentY = doc.lastAutoTable.finalY + 10;
