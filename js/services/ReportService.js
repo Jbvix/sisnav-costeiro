@@ -921,9 +921,19 @@ const ReportService = {
                 const step = 900 * 1000; // 15 min in ms
                 for (let t = startDate.getTime(); t <= endDate.getTime(); t += step) {
                     const d = new Date(t);
-                    const res = window.TideCSVService.getInterpolatedTide(station, d);
-                    if (res) {
-                        const h = parseFloat(res.height);
+                    let h = null;
+
+                    // NEW: Prioritize JSON Service
+                    if (window.TideJSONService && window.TideJSONService.isLoaded) {
+                        h = window.TideJSONService.getHeightAt(station, d);
+                    }
+                    // Fallback to CSV
+                    if (h === null && window.TideCSVService && typeof window.TideCSVService.getInterpolatedTide === 'function') {
+                        const res = window.TideCSVService.getInterpolatedTide(station, d);
+                        if (res) h = parseFloat(res.height);
+                    }
+
+                    if (h !== null) {
                         if (h < minH) minH = h;
                         if (h > maxH) maxH = h;
                         points.push({ t: t, h: h, label: d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
@@ -965,10 +975,18 @@ const ReportService = {
                 doc.line(cx, y + 10, cx, y + height - 10);
 
                 // Annotate Center Height
-                const centerRes = window.TideCSVService.getInterpolatedTide(station, centerDate);
-                if (centerRes) {
+                let centerH = null;
+                if (window.TideJSONService && window.TideJSONService.isLoaded) {
+                    centerH = window.TideJSONService.getHeightAt(station, centerDate);
+                }
+                if (centerH === null && window.TideCSVService && typeof window.TideCSVService.getInterpolatedTide === 'function') {
+                    const res = window.TideCSVService.getInterpolatedTide(station, centerDate);
+                    if (res) centerH = parseFloat(res.height);
+                }
+
+                if (centerH !== null) {
                     doc.setTextColor(255, 0, 0);
-                    doc.text(`${centerRes.height}m`, cx + 1, y + 15);
+                    doc.text(`${centerH.toFixed(2)}m`, cx + 1, y + 15);
                     doc.setTextColor(0);
                 }
 

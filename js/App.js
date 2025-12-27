@@ -15,6 +15,7 @@ import UIManager from './utils/UIManager.js?v=7';
 import PortDatabase from './services/PortDatabase.js?v=7';
 import PersistenceService from './services/PersistenceService.js?v=1';
 import UpdateService from './services/UpdateService.js?v=1';
+import { tideJSONService } from './services/TideJSONService.js'; // NEW
 import TideCSVService from './services/TideCSVService.js?v=7';
 import ReportService from './services/ReportService.js?v=7';
 
@@ -23,8 +24,14 @@ const App = {
         console.log("App: Inicializando v3.4.0...");
 
         window.TideCSVService = TideCSVService;
+        window.TideJSONService = tideJSONService; // Expose new service
         window.ReportService = ReportService; // Assign imported module to global
         window.State = State; // Expose State for inline handlers or debug
+
+        // Load JSON Data (Async)
+        tideJSONService.load().then(ok => {
+            if (ok) console.log("App: Marés JSON carregadas.");
+        });
 
 
         if (NavMath && typeof NavMath.calcLeg === 'function') {
@@ -1592,6 +1599,78 @@ const App = {
         if (depId && arrId) {
             this.autoFindRoute(depId, arrId);
         }
+
+        // TRIGGER METOC UPDATE (NEW)
+        this.updateMetocStatus();
+    },
+
+    // --- METOC UI LOGIC ---
+    updateMetocStatus: async function () {
+        const container = document.getElementById('metoc-status-container');
+        const progress = document.getElementById('metoc-progress');
+        const results = document.getElementById('metoc-results');
+        const depId = document.getElementById('select-dep').value;
+        const arrId = document.getElementById('select-arr').value;
+
+        // Se nada selecionado, esconde
+        if (!depId && !arrId) {
+            if (container) container.classList.add('hidden');
+            return;
+        }
+
+        // Reset UI p/ Loading
+        if (container) container.classList.remove('hidden');
+        if (progress) progress.classList.remove('hidden');
+        if (results) results.classList.add('hidden');
+
+        // Load Data
+        if (window.TideJSONService) {
+            await window.TideJSONService.load();
+        }
+
+        // Delay Artificial (UX - Feedback de Captura)
+        await new Promise(r => setTimeout(r, 600));
+
+        if (progress) progress.classList.add('hidden');
+        if (results) results.classList.remove('hidden');
+
+        this.renderMetocBlock('dep');
+        this.renderMetocBlock('arr');
+    },
+
+    renderMetocBlock: function (type) {
+        const id = document.getElementById(type === 'dep' ? 'select-dep' : 'select-arr').value;
+        const dateVal = document.getElementById(type === 'dep' ? 'inp-etd' : 'inp-eta').value;
+
+        let tideTxt = "-";
+        let windTxt = "-";
+        let wxTxt = "-";
+
+        if (id && dateVal && window.TideJSONService) {
+            const port = PortDatabase.find(p => p.id === id);
+            const portName = port ? port.name : "";
+            const dateObj = new Date(dateVal);
+
+            if (!isNaN(dateObj.getTime())) {
+                const h = window.TideJSONService.getHeightAt(portName, dateObj);
+                const w = window.TideJSONService.getWeather(portName, dateObj);
+
+                if (h !== null) tideTxt = `${h.toFixed(2)} m`;
+                if (w) {
+                    windTxt = `${w.windSpeed} ${w.windDir}`; // Agora em Knots (scraper fixed)
+                    wxTxt = w.condition;
+                }
+            }
+        }
+
+        const setTxt = (eid, txt) => {
+            const e = document.getElementById(eid);
+            if (e) e.innerText = txt;
+        };
+
+        setTxt(`disp-tide-${type}`, tideTxt);
+        setTxt(`disp-wind-${type}`, windTxt);
+        setTxt(`disp-wx-${type}`, wxTxt);
     },
 
     autoFindRoute: function (depId, arrId) {

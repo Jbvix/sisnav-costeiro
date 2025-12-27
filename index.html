@@ -187,6 +187,64 @@
                         </div>
                     </div>
 
+                    <!-- METOC STATUS & PREDICTION (NEW) -->
+                    <div id="metoc-status-container"
+                        class="mt-4 bg-slate-50 border border-slate-200 rounded p-3 hidden">
+                        <!-- Progress Bar -->
+                        <div id="metoc-progress" class="hidden">
+                            <div class="flex justify-between text-[10px] text-blue-600 font-bold mb-1">
+                                <span>Capturando dados oceanográficos...</span>
+                                <i class="fas fa-satellite-dish animate-pulse"></i>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-1.5">
+                                <div class="bg-blue-500 h-1.5 rounded-full animate-progress" style="width: 100%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Results Grid -->
+                        <div id="metoc-results" class="grid grid-cols-2 gap-4 text-xs mt-2 hidden">
+                            <!-- Departure Metoc -->
+                            <div class="bg-white p-2 rounded border border-blue-100 shadow-sm">
+                                <h4 class="font-bold text-blue-800 text-[10px] uppercase mb-1 border-b pb-1">Previsão
+                                    Partida (ETD)</h4>
+                                <div class="space-y-1">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-500">Maré (est):</span>
+                                        <span id="disp-tide-dep" class="font-mono font-bold">-</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-500">Vento:</span>
+                                        <span id="disp-wind-dep" class="font-mono font-bold">-</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-500">Tempo:</span>
+                                        <span id="disp-wx-dep" class="font-mono font-bold">-</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Arrival Metoc -->
+                            <div class="bg-white p-2 rounded border border-blue-100 shadow-sm">
+                                <h4 class="font-bold text-blue-800 text-[10px] uppercase mb-1 border-b pb-1">Previsão
+                                    Chegada (ETA)</h4>
+                                <div class="space-y-1">
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-500">Maré (est):</span>
+                                        <span id="disp-tide-arr" class="font-mono font-bold">-</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-500">Vento:</span>
+                                        <span id="disp-wind-arr" class="font-mono font-bold">-</span>
+                                    </div>
+                                    <div class="flex justify-between">
+                                        <span class="text-gray-500">Tempo:</span>
+                                        <span id="disp-wx-arr" class="font-mono font-bold">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- LINHA 2: Comandante e Tripulação -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
