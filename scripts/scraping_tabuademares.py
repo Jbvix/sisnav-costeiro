@@ -167,6 +167,17 @@ def parse_hourly_table_like(text: str) -> list[tuple[str, str]]:
     return out
 
 
+def _kmh_to_knots(s: str) -> str:
+    """
+    Converte string '14 km/h' para '7.6 kn'
+    """
+    m = re.search(r"(\d+)", s)
+    if not m:
+        return s
+    kmh = float(m.group(1))
+    knots = kmh / 1.852
+    return f"{knots:.1f} kn"
+
 def parse_wind_hourly(html: str) -> list[HourlyVector]:
     soup = BeautifulSoup(html, "html.parser")
     text = soup.get_text("\n", strip=True)
@@ -185,19 +196,23 @@ def parse_wind_hourly(html: str) -> list[HourlyVector]:
             # coleta janela próxima
             win = lines[i:i+6]
             direction = next((x for x in win if re.fullmatch(r"[A-Z]{1,3}", x)), None)
-            speed = next((x for x in win if re.search(r"\bkm/h\b", x)), None)
-            if direction or speed:
+            speed_kmh = next((x for x in win if re.search(r"\bkm/h\b", x)), None)
+            
+            if direction or speed_kmh:
+                val_kn = _kmh_to_knots(speed_kmh) if speed_kmh else ""
                 vectors.append(HourlyVector(
                     date_iso=today,
                     hour_local=ln,
-                    value=f"{speed or ''}".strip(),
+                    value=val_kn,
                     extra={"direction": direction}
                 ))
 
     # fallback simples
     if not vectors and pairs:
         for hhmm, val in pairs:
-            vectors.append(HourlyVector(date_iso=today, hour_local=hhmm, value=val, extra={}))
+            # Tenta converter também no fallback se parecer km/h
+            val_final = _kmh_to_knots(val) if "km/h" in val else val
+            vectors.append(HourlyVector(date_iso=today, hour_local=hhmm, value=val_final, extra={}))
 
     return vectors
 
