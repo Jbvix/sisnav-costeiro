@@ -1539,12 +1539,28 @@ const App = {
 
                 // Promise.allSettled é melhor aqui, pois se um falhar, o outro carrega
                 // Mas para simplificar, usaremos o try/catch interno do WeatherAPI que já retorna objeto de erro
+                // Improved Error Handling: Use allSettled to prevent one failure from blocking the other
                 try {
-                    const [depData, arrData] = await Promise.all([depPromise, arrPromise]);
-                    UIManager.renderWeatherCard('dep', depData);
-                    UIManager.renderWeatherCard('arr', arrData);
+                    const results = await Promise.allSettled([depPromise, arrPromise]);
+
+                    // Departure Handling
+                    if (results[0].status === 'fulfilled') {
+                        UIManager.renderWeatherCard('dep', results[0].value);
+                    } else {
+                        console.error("App: Falha ao carregar dados de Partida:", results[0].reason);
+                        UIManager.renderWeatherCard('dep', { status: 'ERROR', message: "Dados indisponíveis" });
+                    }
+
+                    // Arrival Handling
+                    if (results[1].status === 'fulfilled') {
+                        UIManager.renderWeatherCard('arr', results[1].value);
+                    } else {
+                        console.error("App: Falha ao carregar dados de Chegada:", results[1].reason);
+                        UIManager.renderWeatherCard('arr', { status: 'ERROR', message: "Dados indisponíveis" });
+                    }
+
                 } catch (e) {
-                    console.error("App: Erro crítico na atualização ambiental", e);
+                    console.error("App: Erro crítico inesperado na atualização ambiental", e);
                 }
             }
         }
