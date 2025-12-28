@@ -142,6 +142,9 @@ const App = {
         const btnSimulate = document.getElementById('btn-simulate');
         if (btnSimulate) btnSimulate.addEventListener('click', () => this.startSimulation());
 
+        const btnActivateGps = document.getElementById('btn-activate-gps');
+        if (btnActivateGps) btnActivateGps.addEventListener('click', () => this.startRealTimeNavigation());
+
         // Refresh Weather Button
         const btnRefreshWeather = document.getElementById('btn-refresh-weather');
         if (btnRefreshWeather) {
@@ -1928,11 +1931,13 @@ const App = {
 
             // Update UI Elements directly if they exist (hardcoded for speed)
             // (Ideally use UIManager, but traversing DOM is fast enough here)
-            const elSog = document.querySelector('#view-monitoring .text-2xl'); // 1st one usually SOG
-            const elCog = document.querySelectorAll('#view-monitoring .text-2xl')[1];
+            // Update UI/Dashboard
+            const sogEl = document.getElementById('stat-live-sog');
+            const speed = (10 + (Math.random() * 1)); // Re-introduce speed calculation
+            if (sogEl) sogEl.innerHTML = `${speed.toFixed(1)} <span class="text-xs font-sans font-normal text-gray-400">kts</span>`;
 
-            if (elSog) elSog.innerHTML = (10 + (Math.random() * 1)).toFixed(1) + '<span class="text-xs font-sans font-normal text-gray-400">kts</span>';
-            if (elCog) elCog.innerText = cog.toFixed(0) + '°';
+            const cogEl = document.getElementById('stat-live-cog');
+            if (cogEl) cogEl.innerText = `${Math.round(cog)}°`;
 
         }, 50); // 20fps
     }
