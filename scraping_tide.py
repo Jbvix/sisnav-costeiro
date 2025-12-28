@@ -243,11 +243,8 @@ class TideDataCollector:
             tide_pattern = re.compile(r'(\d{1,2}:\d{2}).*?([\d.,]+)\s*m')
             
             for cell in cells:
-                text = cell.get_text(" ", strip=True) 
-                # logger.info(f"DEBUG: Regex checking text: '{text}'") 
+                text = cell.get_text(separator=' ') 
                 matches = tide_pattern.findall(text)
-                if matches:
-                    logger.info(f"DEBUG: Matches found: {matches}")
                 
                 for time, height in matches:
                     # Determinar tipo de maré baseado no contexto ou altura

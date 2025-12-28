@@ -30,7 +30,7 @@ STATIONS_MAP = [
     {'id': 'BR_VIT', 'state': 'espirito-santo', 'city': 'vitoria', 'csv_name': 'Vitória'},
     {'id': 'BR_SAL', 'state': 'bahia', 'city': 'salvador', 'csv_name': 'Salvador'},
     {'id': 'BR_REC', 'state': 'pernambuco', 'city': 'recife', 'csv_name': 'Recife'},
-    {'id': 'BR_SUA', 'state': 'pernambuco', 'city': 'porto-de-suape', 'csv_name': 'Suape'}, 
+    {'id': 'BR_SUA', 'state': 'pernambuco', 'city': 'suape', 'csv_name': 'Suape'}, 
     {'id': 'BR_FOR', 'state': 'ceara', 'city': 'fortaleza', 'csv_name': 'Fortaleza'},
     {'id': 'BR_BEL', 'state': 'para', 'city': 'belem', 'csv_name': 'Belém'},
     {'id': 'BR_VDC', 'state': 'para', 'city': 'vila-do-conde', 'csv_name': 'Vila do Conde'}, 
