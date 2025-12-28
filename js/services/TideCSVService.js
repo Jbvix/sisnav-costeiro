@@ -37,7 +37,8 @@ const TideCSVService = {
             console.log("TideCSV: Carregando arquivos...");
 
             // Load Tides
-            const tideRes = await fetch(this.csvPath);
+            const cb = new Date().getTime();
+            const tideRes = await fetch(this.csvPath + '?v=' + cb);
             if (tideRes.ok) {
                 this.parseTideCSV(await tideRes.text());
             } else {
@@ -45,7 +46,7 @@ const TideCSVService = {
             }
 
             // Load Weather
-            const weatherRes = await fetch(this.weatherCsvPath);
+            const weatherRes = await fetch(this.weatherCsvPath + '?v=' + cb);
             if (weatherRes.ok) {
                 this.parseWeatherCSV(await weatherRes.text());
             } else {
@@ -175,6 +176,16 @@ const TideCSVService = {
         if (!this.isLoaded) return null;
 
         const stationMap = this.weatherCache.get(csvStationName);
+
+        // DEBUG LOGGING
+        if (csvStationName === 'Suape') {
+            console.log(`TideCSV: [DEBUG] Request Suape @ ${dateObj.toLocaleString()} (Key: ${this._getDateKey(dateObj)})`);
+            console.log(`TideCSV: [DEBUG] Has Suape Cache? ${!!stationMap}`);
+            if (stationMap) {
+                console.log(`TideCSV: [DEBUG] Has Date Key? ${stationMap.has(this._getDateKey(dateObj))}`);
+            }
+        }
+
         if (!stationMap) return null;
 
         // Search in Prev, Current, and Next days to find the absolute closest record
