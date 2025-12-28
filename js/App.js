@@ -1457,9 +1457,8 @@ const App = {
             }
 
             // TRIGGER METOC UPDATE (Refined Logic)
-            if (typeof this.updateMetocStatus === 'function') {
-                this.updateMetocStatus();
-            }
+            // TRIGGER METOC UPDATE (REMOVED)
+            // if (typeof this.updateMetocStatus === 'function') { ... }
 
             // Update State (Redundant if listeners work, but safe)
             if (!State.voyage) State.voyage = {};
@@ -1606,95 +1605,11 @@ const App = {
         }
 
         // TRIGGER METOC UPDATE (NEW)
-        this.updateMetocStatus();
+        // TRIGGER METOC UPDATE (REMOVED)
+        // this.updateMetocStatus();
     },
 
-    // --- METOC UI LOGIC ---
-    updateMetocStatus: async function () {
-        const container = document.getElementById('metoc-status-container');
-        const progress = document.getElementById('metoc-progress');
-        const results = document.getElementById('metoc-results');
 
-        const elDep = document.getElementById('select-port-dep') || document.getElementById('select-dep');
-        const elArr = document.getElementById('select-port-arr') || document.getElementById('select-arr');
-
-        const depId = elDep ? elDep.value : "";
-        const arrId = elArr ? elArr.value : "";
-
-        // Se nada selecionado, esconde
-        if (!depId && !arrId) {
-            if (container) container.classList.add('hidden');
-            return;
-        }
-
-        // Reset UI p/ Loading
-        if (container) container.classList.remove('hidden');
-        if (progress) progress.classList.remove('hidden');
-        if (results) results.classList.add('hidden');
-
-        // Load Data
-        if (window.TideJSONService) {
-            await window.TideJSONService.load();
-        }
-
-        // Delay Artificial (UX - Feedback de Captura)
-        await new Promise(r => setTimeout(r, 600));
-
-        if (progress) progress.classList.add('hidden');
-        if (results) results.classList.remove('hidden');
-
-        this.renderMetocBlock('dep');
-        this.renderMetocBlock('arr');
-    },
-
-    renderMetocBlock: function (type) {
-        const setTxt = (eid, txt) => {
-            const e = document.getElementById(eid);
-            if (e) e.innerText = txt;
-        };
-
-        const elSelect = document.getElementById(type === 'dep' ? 'select-port-dep' : 'select-port-arr')
-            || document.getElementById(type === 'dep' ? 'select-dep' : 'select-arr');
-        const elDate = document.getElementById(type === 'dep' ? 'inp-etd' : 'inp-eta');
-
-        const id = elSelect ? elSelect.value : "";
-        let dateVal = elDate ? elDate.value : "";
-
-        // Fallback Date: REMOVED. Strict Check.
-        if (!dateVal) {
-            setTxt(`disp-tide-${type}`, "-");
-            setTxt(`disp-wind-${type}`, "-");
-            setTxt(`disp-wx-${type}`, "-");
-            return;
-        }
-
-        let tideTxt = "-";
-        let windTxt = "-";
-        let wxTxt = "-";
-
-        if (id && window.TideJSONService) {
-            const port = PortDatabase.find(p => p.id === id);
-            const portName = port ? port.name : "";
-
-            // Check valid date
-            const dateObj = new Date(dateVal);
-
-            if (!isNaN(dateObj.getTime())) {
-                const h = window.TideJSONService.getHeightAt(portName, dateObj);
-                const w = window.TideJSONService.getWeather(portName, dateObj);
-
-                if (h !== null && !isNaN(h)) tideTxt = `${h.toFixed(2)} m`;
-                if (w) {
-                    windTxt = `${w.windSpeed} ${w.windDir}`;
-                    wxTxt = w.condition;
-                }
-            }
-        }
-
-        setTxt(`disp-tide-${type}`, tideTxt);
-        setTxt(`disp-wind-${type}`, windTxt);
-        setTxt(`disp-wx-${type}`, wxTxt);
-    },
 
     autoFindRoute: function (depId, arrId) {
         const pDep = PortDatabase.find(p => p.id === depId);
