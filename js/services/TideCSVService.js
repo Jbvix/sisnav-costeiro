@@ -173,30 +173,45 @@ const TideCSVService = {
 
     getWeatherAt: function (csvStationName, dateObj) {
         if (!this.isLoaded) return null;
-        const dateStr = this._getDateKey(dateObj);
+
         const stationMap = this.weatherCache.get(csvStationName);
         if (!stationMap) return null;
 
-        const dayData = stationMap.get(dateStr);
-        if (!dayData) return null;
+        // Search in Prev, Current, and Next days to find the absolute closest record
+        const candidates = [];
+        const d = new Date(dateObj);
 
-        // Find closest hour
-        // time matches HH:MM. Weather is usually hourly or 3-hourly
-        const targetMin = dateObj.getHours() * 60 + dateObj.getMinutes();
+        // Helper to add day's records to candidates
+        const addRecords = (offset) => {
+            const tempDate = new Date(d);
+            tempDate.setDate(tempDate.getDate() + offset);
+            const key = this._getDateKey(tempDate);
 
-        let closest = null;
-        let minDiff = 9999;
-
-        for (const w of dayData) {
-            const [h, m] = w.time.split(':').map(Number);
-            const wMinutes = h * 60 + m;
-            const diff = Math.abs(targetMin - wMinutes);
-            if (diff < minDiff) {
-                minDiff = diff;
-                closest = w;
+            if (stationMap.has(key)) {
+                stationMap.get(key).forEach(w => {
+                    const [h, m] = w.time.split(':').map(Number);
+                    const recDate = new Date(tempDate);
+                    recDate.setHours(h, m, 0, 0);
+                    candidates.push({
+                        record: w,
+                        diff: Math.abs(dateObj.getTime() - recDate.getTime())
+                    });
+                });
             }
-        }
-        return closest;
+        };
+
+        addRecords(-1); // Yesterday
+        addRecords(0);  // Today
+        addRecords(1);  // Tomorrow
+
+        if (candidates.length === 0) return null;
+
+        // Sort by time difference
+        candidates.sort((a, b) => a.diff - b.diff);
+
+        // Return the closest (Approximation)
+        // If the closest is too far (e.g. > 6 hours), maybe warn? But requirement says "approximate", so we return it.
+        return candidates[0].record;
     },
 
     // Interpolation Logic
