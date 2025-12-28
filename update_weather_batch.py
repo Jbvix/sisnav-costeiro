@@ -29,7 +29,7 @@ STATIONS_MAP = [
     {'id': 'BR_VIT', 'url_suffix': 'espirito-santo/vitoria', 'name': 'Vitória'},
     {'id': 'BR_SAL', 'url_suffix': 'bahia/salvador', 'name': 'Salvador'},
     {'id': 'BR_REC', 'url_suffix': 'pernambuco/recife', 'name': 'Recife'},
-    {'id': 'BR_SUA', 'url_suffix': 'pernambuco/porto-de-suape', 'name': 'Suape'},
+    {'id': 'BR_SUA', 'url_suffix': 'pernambuco/suape', 'name': 'Suape'},
     {'id': 'BR_FOR', 'url_suffix': 'ceara/fortaleza', 'name': 'Fortaleza'},
     {'id': 'BR_BEL', 'url_suffix': 'para/belem', 'name': 'Belém'},
     {'id': 'BR_VDC', 'url_suffix': 'para/vila-do-conde', 'name': 'Vila do Conde'},
