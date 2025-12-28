@@ -82,7 +82,38 @@ def upload_gpx():
         except Exception as e:
             return jsonify({'error': str(e)}), 500
             
-    return jsonify({'error': 'Invalid file type'}), 400
+# In-Memory Storage for High-Frequency Position Updates
+current_position = {
+    "lat": None,
+    "lon": None,
+    "sog": 0,
+    "cog": 0,
+    "timestamp": 0
+}
+
+@app.route('/api/position', methods=['GET', 'POST'])
+def handle_position():
+    global current_position
+    
+    if request.method == 'POST':
+        # AUTH: Simple Check (Optional, ideally use a token)
+        # For now, we assume the POST comes from the authenticated Master App
+        try:
+            data = request.json
+            current_position = {
+                "lat": data.get('lat'),
+                "lon": data.get('lon'),
+                "sog": data.get('sog'),
+                "cog": data.get('cog'),
+                "timestamp": time.time()
+            }
+            return jsonify({"status": "success", "monitor_count": 0}), 200
+        except Exception as e:
+            return jsonify({"error": str(e)}), 400
+
+    else: # GET
+        # Viewer fetches this
+        return jsonify(current_position)
 
 
 if __name__ == '__main__':

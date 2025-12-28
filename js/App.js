@@ -55,8 +55,84 @@ const App = {
         this.populateLighthousesDropdown();
         this.populateSheltersDropdown();
         this.populateSheltersDropdown();
+        this.populateSheltersDropdown();
         this.populateTidePorts(); // New
+
+        // CHECK MODE: MONITOR (Web/Repeater)
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('mode') === 'monitor') {
+            this.initViewerMode();
+        }
+
         this.updateWeatherStatusUI();
+    },
+
+    initViewerMode: function () {
+        console.log("App: Iniciando modo VISUALIZADOR (Remoto)");
+        // 1. Hide Controls (Controls are now in .mt-4 class below map)
+        const controls = document.querySelector('#view-monitoring .mt-4');
+        if (controls) controls.classList.add('hidden');
+
+        // 2. Hide Navbar (Optional, maybe just lock to Tab 3)
+        // Switch to Monitor Tab immediately
+        UIManager.switchTab('view-monitoring');
+
+        // Lock Tabs (Disable clicks or hide)
+        document.querySelector('nav').style.display = 'none';
+
+        // 3. Start Polling
+        this.startRemoteMonitoring();
+
+        // Add "Live" Badge
+        const mapContainer = document.getElementById('map-container');
+        const badge = document.createElement('div');
+        badge.className = "absolute top-2 left-2 z-[400] bg-red-600 text-white px-2 py-1 rounded text-xs font-bold animate-pulse shadow-lg";
+        badge.innerHTML = '<i class="fas fa-satellite-dish"></i> AO VIVO';
+        mapContainer.parentNode.insertBefore(badge, mapContainer.nextSibling); // Insert relative to map
+    },
+
+    startRemoteMonitoring: function () {
+        setInterval(() => {
+            fetch('/api/position')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.lat && data.lon) {
+                        // Update Map
+                        if (MapService) {
+                            MapService.updateShipPosition(data.lat, data.lon);
+                            // Center map on first fix
+                            if (!this.hasFixedMap) {
+                                MapService.map.setView([data.lat, data.lon], 12);
+                                this.hasFixedMap = true;
+                            }
+                        }
+                        // Update UI/Dashboard
+                        const sogEl = document.getElementById('stat-live-sog');
+                        if (sogEl) sogEl.innerHTML = `${(data.sog || 0).toFixed(1)} <span class="text-[9px] font-sans font-normal text-gray-400">kts</span>`;
+
+                        const cogEl = document.getElementById('stat-live-cog');
+                        if (cogEl) cogEl.innerText = `${Math.round(data.cog || 0)}°`;
+
+                        // BROADCAST POSITION (Server Sync)
+                        // Send every 3s to avoid spamming
+                        const now = Date.now();
+                        if (!this.lastBroadcast || (now - this.lastBroadcast > 3000)) {
+                            this.lastBroadcast = now;
+                            fetch('/api/position', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    lat: data.lat,
+                                    lon: data.lon,
+                                    sog: data.sog,
+                                    cog: data.cog
+                                })
+                            }).catch(e => console.warn("Broadcast Fail:", e));
+                        }
+                    }
+                })
+                .catch(err => console.error("Monitor Poll Error:", err));
+        }, 5000); // Poll every 5s
     },
 
     setupEventListeners: function () {
@@ -1866,6 +1942,91 @@ const App = {
                 panel.classList.add('border-yellow-500');
             }
         }
+    },
+
+    startRealTimeNavigation: function () {
+        if (!navigator.geolocation) {
+            alert("Seu navegador não suporta Geolocalização.");
+            return;
+        }
+
+        const btn = document.getElementById('btn-activate-gps');
+        if (btn) {
+            btn.innerHTML = '<i class="fas fa-satellite-dish animate-pulse"></i> Buscando GPS...';
+            btn.classList.replace('bg-green-600', 'bg-orange-500');
+        }
+
+        const options = {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        };
+
+        const success = (pos) => {
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+            const speed = (pos.coords.speed || 0) * 1.94384; // m/s to knots
+            const heading = pos.coords.heading || 0;
+
+            // Update Map
+            if (MapService) {
+                MapService.updateShipPosition(lat, lon, heading);
+                // Center map on first fix
+                if (!this.hasFixedMap) {
+                    MapService.map.setView([lat, lon], 12);
+                    this.hasFixedMap = true;
+                }
+            }
+
+            // Update UI/Dashboard
+            const sogEl = document.getElementById('stat-live-sog');
+            if (sogEl) sogEl.innerHTML = `${speed.toFixed(1)} <span class="text-[9px] font-sans font-normal text-gray-400">kts</span>`;
+
+            const cogEl = document.getElementById('stat-live-cog');
+            if (cogEl) cogEl.innerText = `${Math.round(heading)}°`;
+
+            // BROADCAST POSITION (Server Sync)
+            // Send every 3s to avoid spamming
+            const now = Date.now();
+            if (!this.lastBroadcast || (now - this.lastBroadcast > 3000)) {
+                this.lastBroadcast = now;
+                fetch('/api/position', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        lat: lat,
+                        lon: lon,
+                        sog: speed,
+                        cog: heading
+                    })
+                }).catch(e => console.warn("Broadcast Fail:", e));
+            }
+
+            // Change button state to Active
+            if (btn && btn.classList.contains('bg-orange-500')) {
+                btn.innerHTML = '<i class="fas fa-crosshairs fa-spin"></i> GPS ATIVO';
+                btn.classList.replace('bg-orange-500', 'bg-red-600');
+                btn.onclick = () => {
+                    navigator.geolocation.clearWatch(this.watchId);
+                    btn.innerHTML = '<i class="fas fa-location-arrow"></i> GPS Real';
+                    btn.classList.replace('bg-red-600', 'bg-green-600');
+                    btn.onclick = () => this.startRealTimeNavigation(); // Reset handler
+                    alert("Navegação GPS Encerrada.");
+                };
+            }
+        };
+
+        const error = (err) => {
+            console.warn(`ERROR(${err.code}): ${err.message}`);
+            alert("Erro ao obter GPS: " + err.message);
+            if (btn) {
+                btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Erro GPS';
+                btn.classList.replace('bg-orange-500', 'bg-red-600');
+            }
+        };
+
+        this.watchId = navigator.geolocation.watchPosition(success, error, options);
+        console.log("App: GPS Watch started ID " + this.watchId);
     },
 
     startSimulation: function () {
