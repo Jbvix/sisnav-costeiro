@@ -754,22 +754,23 @@
                     </div>
                 </div>
             </div>
-            <div class="absolute bottom-6 left-4 z-[400] flex gap-2">
+            <div class="mt-4 flex flex-wrap justify-center items-center gap-3 w-full pb-8">
                 <button id="btn-simulate"
-                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded shadow-lg font-bold text-sm flex items-center gap-2 transition-transform active:scale-95"><i
-                        class="fas fa-play"></i> Simular Viagem</button>
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded shadow-lg font-bold text-sm flex items-center gap-2 transition-transform active:scale-95 flex-grow md:flex-grow-0 justify-center">
+                    <i class="fas fa-play"></i> Simular
+                </button>
 
                 <button id="btn-activate-gps"
-                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow-lg font-bold text-sm flex items-center gap-2 transition-transform active:scale-95">
+                    class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded shadow-lg font-bold text-sm flex items-center gap-2 transition-transform active:scale-95 flex-grow md:flex-grow-0 justify-center">
                     <i class="fas fa-location-arrow"></i> GPS Real
                 </button>
 
                 <!-- Speed Slider -->
                 <div
-                    class="bg-slate-900/90 text-white px-4 py-2 rounded shadow-lg flex items-center gap-3 border border-slate-700 backdrop-blur">
-                    <span class="text-[10px] uppercase font-bold text-gray-400">Velocidade</span>
+                    class="bg-slate-800 text-white px-4 py-3 rounded shadow-lg flex items-center gap-3 border border-slate-700 flex-grow md:flex-grow-0 justify-center">
+                    <span class="text-[10px] uppercase font-bold text-gray-400">Vel.</span>
                     <input type="range" id="inp-sim-speed" min="1" max="100" value="10"
-                        class="w-24 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+                        class="w-24 md:w-32 h-1 bg-gray-600 rounded-lg appearance-none cursor-pointer">
                     <span id="lbl-sim-speed" class="text-xs font-mono font-bold w-8 text-right">10x</span>
                 </div>
             </div>
