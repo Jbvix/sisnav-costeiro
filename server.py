@@ -83,7 +83,9 @@ def upload_gpx():
             return jsonify({'error': str(e)}), 500
             
 # File-Based Persistence (Solves Multi-Process/Worker Sync on cPanel)
-FLEET_FILE = os.path.join(os.getcwd(), 'fleet_data.json')
+# Use __file__ to anchor relative to this script, not CWD (which varies in Passenger)
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+FLEET_FILE = os.path.join(BASE_DIR, 'fleet_data.json')
 
 def load_fleet_data():
     try:
@@ -91,7 +93,8 @@ def load_fleet_data():
             with open(FLEET_FILE, 'r') as f:
                 return json.load(f)
     except Exception as e:
-        logger.error(f"Error loading fleet data: {e}")
+        # Log to stderr for cPanel logs
+        sys.stderr.write(f"Error loading fleet data: {e}\n")
     return {}
 
 def save_fleet_data(data):
@@ -101,8 +104,11 @@ def save_fleet_data(data):
         with open(temp_file, 'w') as f:
             json.dump(data, f)
         os.replace(temp_file, FLEET_FILE)
+        return True, None
     except Exception as e:
-        logger.error(f"Error saving fleet data: {e}")
+        err_msg = f"Save Error ({FLEET_FILE}): {str(e)}"
+        sys.stderr.write(err_msg + "\n")
+        return False, err_msg
 
 @app.route('/api/fleet', methods=['GET'])
 def get_fleet():
@@ -162,7 +168,10 @@ def handle_position():
             }
             
             # 3. Save state
-            save_fleet_data(fleet)
+            success, err = save_fleet_data(fleet)
+            
+            if not success:
+                return jsonify({"error": err}), 500
             
             return jsonify({"status": "success", "id": vessel_id}), 200
         except Exception as e:

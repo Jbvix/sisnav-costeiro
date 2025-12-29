@@ -2083,7 +2083,18 @@ const App = {
                         sog: speed,
                         cog: heading
                     })
-                }).catch(e => console.warn("Broadcast Fail:", e));
+                }).then(res => {
+                    if (!res.ok) return res.json().then(e => { throw new Error(e.error || res.statusText) });
+                    return res.json();
+                }).catch(e => {
+                    console.warn("Broadcast Fail:", e);
+                    // ALERT USER OF SERVER ERROR
+                    alert(`ERRO DE TRANSMISSÃO:\n${e.message}`);
+                    const btn = document.getElementById('btn-activate-gps');
+                    if (btn && btn.classList.contains('bg-red-600')) {
+                        btn.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ERRO SERVIDOR';
+                    }
+                });
             }
 
             // Change button state to Active
