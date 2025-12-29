@@ -1,9 +1,19 @@
 import sys
 import os
 
-# Adiciona o diretório atual ao path do Python
-sys.path.append(os.getcwd())
+# 1. Obter o diretório ONDE este script está rodando
+project_home = u'/home/SEU_USUARIO/public_html/sisnav' # Exemplo genérico, melhor usar dinâmico
+if 'HOME' in os.environ:
+    # Tenta inferir o path real
+    project_home = os.getcwd()
 
-# Importa a aplicação principal do arquivo server.py
-# NUNCA defina rotas aqui. Defina tudo em server.py
+# 2. Adicionar ao Path do Python
+if project_home not in sys.path:
+    sys.path = [project_home] + sys.path
+
+# 3. Debug (Opcional - grava num arquivo para sabermos se rodou)
+# with open("passenger_log.txt", "a") as f:
+#     f.write(f"Iniciando em: {project_home}\n")
+
+# 4. Importar o app FLASK
 from server import app as application
