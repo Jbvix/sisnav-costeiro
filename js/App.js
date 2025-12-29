@@ -2084,7 +2084,14 @@ const App = {
                         cog: heading
                     })
                 }).then(res => {
-                    if (!res.ok) return res.json().then(e => { throw new Error(e.error || res.statusText) });
+                    if (!res.ok) {
+                        return res.text().then(html => {
+                            // Extract title if possible
+                            const match = html.match(/<title>(.*?)<\/title>/i);
+                            const title = match ? match[1] : html.substring(0, 100);
+                            throw new Error(`Status ${res.status}: ${title}`);
+                        });
+                    }
                     return res.json();
                 }).catch(e => {
                     console.warn("Broadcast Fail:", e);
