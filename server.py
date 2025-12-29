@@ -82,43 +82,77 @@ def upload_gpx():
         except Exception as e:
             return jsonify({'error': str(e)}), 500
             
-# In-Memory Storage for Multi-Vessel Fleet
-# Format: { "VESSEL_ID": { "lat":..., "lon":..., "name":..., "updated":... } }
-fleet_positions = {}
+# File-Based Persistence (Solves Multi-Process/Worker Sync on cPanel)
+FLEET_FILE = os.path.join(os.getcwd(), 'fleet_data.json')
+
+def load_fleet_data():
+    try:
+        if os.path.exists(FLEET_FILE):
+            with open(FLEET_FILE, 'r') as f:
+                return json.load(f)
+    except Exception as e:
+        logger.error(f"Error loading fleet data: {e}")
+    return {}
+
+def save_fleet_data(data):
+    try:
+        # Atomic Write (Write to temp then rename) prevents corruption
+        temp_file = FLEET_FILE + '.tmp'
+        with open(temp_file, 'w') as f:
+            json.dump(data, f)
+        os.replace(temp_file, FLEET_FILE)
+    except Exception as e:
+        logger.error(f"Error saving fleet data: {e}")
 
 @app.route('/api/fleet', methods=['GET'])
 def get_fleet():
+    fleet_positions = load_fleet_data()
+    
     # Return list of active vessels (seen in last 24h)
     now = time.time()
     active_fleet = []
-    for vid, data in fleet_positions.items():
-        # Filter stale data (optional, e.g., > 24h)
-        if now - data.get('timestamp', 0) < 86400:
+    
+    # Clean up stale data while we are at it
+    clean_needed = False
+    
+    for vid, data in list(fleet_positions.items()):
+        timestamp = data.get('timestamp', 0)
+        # Filter active (e.g., seen in last 24h)
+        if now - timestamp < 86400:
              active_fleet.append({
                  "id": vid,
                  "name": data.get('name', vid),
                  "lat": data.get('lat'),
                  "lon": data.get('lon'),
                  "sog": data.get('sog'),
-                 "last_seen": data.get('timestamp')
+                 "last_seen": timestamp
              })
+        else:
+            # Mark for cleanup if very old (> 48h) to keep file small
+            if now - timestamp > 172800: 
+                del fleet_positions[vid]
+                clean_needed = True
+    
+    if clean_needed:
+        save_fleet_data(fleet_positions)
+        
     return jsonify(active_fleet)
 
 @app.route('/api/position', methods=['GET', 'POST'])
 def handle_position():
-    global fleet_positions
-    
     if request.method == 'POST':
-        # AUTH: Simple PIN check (can be upgraded later)
-        # For now, relying on obscure URL or known clients
         try:
             data = request.json
-            vessel_id = data.get('id') # Unique ID (e.g. IMO or Name)
+            vessel_id = data.get('id') 
             
             if not vessel_id:
                 return jsonify({"error": "Missing vessel ID"}), 400
 
-            fleet_positions[vessel_id] = {
+            # 1. Load current state
+            fleet = load_fleet_data()
+            
+            # 2. Update vessel
+            fleet[vessel_id] = {
                 "name": data.get('name', vessel_id),
                 "lat": data.get('lat'),
                 "lon": data.get('lon'),
@@ -126,6 +160,10 @@ def handle_position():
                 "cog": data.get('cog'),
                 "timestamp": time.time()
             }
+            
+            # 3. Save state
+            save_fleet_data(fleet)
+            
             return jsonify({"status": "success", "id": vessel_id}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 400
@@ -134,7 +172,8 @@ def handle_position():
         # Get specific vessel
         vessel_id = request.args.get('id')
         if vessel_id:
-            data = fleet_positions.get(vessel_id)
+            fleet = load_fleet_data()
+            data = fleet.get(vessel_id)
             if data:
                 return jsonify(data)
             else:
