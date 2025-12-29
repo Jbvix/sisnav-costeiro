@@ -2024,8 +2024,12 @@ const App = {
 
         const btn = document.getElementById('btn-activate-gps');
         if (btn) {
+            // Prevent double-click re-entry if already active/searching
+            if (btn.classList.contains('bg-orange-500') || btn.classList.contains('bg-red-600')) return;
+
             btn.innerHTML = '<i class="fas fa-satellite-dish animate-pulse"></i> Buscando GPS...';
-            btn.classList.replace('bg-green-600', 'bg-orange-500');
+            btn.classList.remove('bg-green-600', 'd-none');
+            btn.classList.add('bg-orange-500');
         }
 
         const options = {
@@ -2083,13 +2087,20 @@ const App = {
             }
 
             // Change button state to Active
-            if (btn && btn.classList.contains('bg-orange-500')) {
+            if (btn && !btn.classList.contains('bg-red-600')) {
                 btn.innerHTML = '<i class="fas fa-crosshairs fa-spin"></i> GPS ATIVO';
-                btn.classList.replace('bg-orange-500', 'bg-red-600');
+                btn.classList.remove('bg-orange-500', 'bg-green-600');
+                btn.classList.add('bg-red-600');
+
                 btn.onclick = () => {
                     navigator.geolocation.clearWatch(this.watchId);
+                    this.watchId = null;
+                    this.lastBroadcast = 0;
+
                     btn.innerHTML = '<i class="fas fa-location-arrow"></i> GPS Real';
-                    btn.classList.replace('bg-red-600', 'bg-green-600');
+                    btn.classList.remove('bg-red-600', 'bg-orange-500');
+                    btn.classList.add('bg-green-600');
+
                     btn.onclick = () => this.startRealTimeNavigation(); // Reset handler
                     alert("Navegação GPS Encerrada.");
                 };
