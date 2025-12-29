@@ -2045,7 +2045,7 @@ const App = {
                 MapService.updateShipPosition(lat, lon, heading);
                 // Center map on first fix
                 if (!this.hasFixedMap) {
-                    MapService.map.setView([lat, lon], 12);
+                    if (State.mapInstance) State.mapInstance.setView([lat, lon], 12);
                     this.hasFixedMap = true;
                 }
             }
