@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory, jsonify, Response, safe_join
+from flask import Flask, send_from_directory, jsonify, Response
 import os
 import sys
 import logging
