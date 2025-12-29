@@ -82,10 +82,10 @@ def upload_gpx():
         except Exception as e:
             return jsonify({'error': str(e)}), 500
             
-# File-Based Persistence (Solves Multi-Process/Worker Sync on cPanel)
-# Use __file__ to anchor relative to this script, not CWD (which varies in Passenger)
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-FLEET_FILE = os.path.join(BASE_DIR, 'fleet_data.json')
+# File-Based Persistence
+# Using /tmp ensures write permissions on Linux/cPanel environments
+import tempfile
+FLEET_FILE = os.path.join(tempfile.gettempdir(), 'sisnav_fleet_data.json')
 
 def load_fleet_data():
     try:
@@ -93,20 +93,16 @@ def load_fleet_data():
             with open(FLEET_FILE, 'r') as f:
                 return json.load(f)
     except Exception as e:
-        # Log to stderr for cPanel logs
-        sys.stderr.write(f"Error loading fleet data: {e}\n")
+        sys.stderr.write(f"Error loading: {e}\n")
     return {}
 
 def save_fleet_data(data):
     try:
-        # Atomic Write (Write to temp then rename) prevents corruption
-        temp_file = FLEET_FILE + '.tmp'
-        with open(temp_file, 'w') as f:
+        with open(FLEET_FILE, 'w') as f:
             json.dump(data, f)
-        os.replace(temp_file, FLEET_FILE)
         return True, None
     except Exception as e:
-        err_msg = f"Save Error ({FLEET_FILE}): {str(e)}"
+        err_msg = f"Save Error: {str(e)}"
         sys.stderr.write(err_msg + "\n")
         return False, err_msg
 
