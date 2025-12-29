@@ -1,6 +1,6 @@
 # Manual do Usuário - SISNAV Costeiro P-14
 
-**Versão:** 3.0 (Dezembro 2025)
+**Versão:** 3.1 (Dezembro 2025)
 **Destinatário:** Comandantes e Oficiais de Navegação
 
 ---
@@ -75,3 +75,27 @@ R: Os dados de maré são atualizados via script Python (`rebuild_csv.py`) quand
 
 **P: Posso colar texto formatado do Meteomarinha?**
 R: Sim, o sistema aceita texto simples. Copie do site da Marinha ou email e cole diretamente. O formato será ajustado no relatório final.
+
+---
+
+## 6. Monitoramento em Tempo Real (Fleet Tracking)
+
+O sistema permite que o navio transmita sua posição em tempo real para o escritório ou para outros navios da frota.
+
+### 6.1 A Bordo (Rebocador - Transmissão)
+Para iniciar a transmissão de dados:
+1.  Na aba **1. Appraisal**, certifique-se de que o **Rebocador e Filial** corretos estão selecionados (Ex: SAAM CHILE / PECÉM). O sistema usa este nome para identificar o sinal.
+2.  Prossiga para a aba **3. Monitor**.
+3.  Clique no botão **"GPS Real"** (Verde).
+4.  Aguarde a conexão. O botão ficará **VERMELHO** com o texto **"GPS ATIVO"**.
+    *   **Nota:** Se o botão ficar vermelho, significa que o sinal está sendo enviado com sucesso para a nuvem.
+
+### 6.2 Em Terra (Escritório - Visualização)
+Para monitorar a frota sem acessar as ferramentas de planejamento:
+1.  Acesse o link do sistema adicionando `?mode=viewer` ao final do endereço.
+    *   Exemplo: `https://tuglife.live/sisnav/?mode=viewer`
+    *   Alternativamente, abra o sistema normal e vá para aba Monitor.
+2.  O sistema entrará em **Modo Visualizador** (Tela Cheia).
+3.  Se houver navios transmitindo, um painel **"Frota SISNAV"** aparecerá automaticamente.
+4.  Clique no nome do navio para focar o mapa em sua posição atual.
+5.  O painel exibe SOG (Velocidade) e Atualização (Último sinal recebido) em tempo real.
