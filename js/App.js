@@ -69,70 +69,142 @@ const App = {
 
     initViewerMode: function () {
         console.log("App: Iniciando modo VISUALIZADOR (Remoto)");
-        // 1. Hide Controls (Controls are now in .mt-4 class below map)
+        // 1. Hide Controls
         const controls = document.querySelector('#view-monitoring .mt-4');
         if (controls) controls.classList.add('hidden');
 
-        // 2. Hide Navbar (Optional, maybe just lock to Tab 3)
-        // Switch to Monitor Tab immediately
+        // 2. Hide Navbar
         UIManager.switchTab('view-monitoring');
-
-        // Lock Tabs (Disable clicks or hide)
         document.querySelector('nav').style.display = 'none';
 
-        // 3. Start Polling
-        this.startRemoteMonitoring();
+        // FIX: Ensure map has size after tab switch
+        setTimeout(() => {
+            if (MapService) MapService.invalidateSize();
+        }, 500);
 
-        // Add "Live" Badge
-        const mapContainer = document.getElementById('map-container');
-        const badge = document.createElement('div');
-        badge.className = "absolute top-2 left-2 z-[400] bg-red-600 text-white px-2 py-1 rounded text-xs font-bold animate-pulse shadow-lg";
-        badge.innerHTML = '<i class="fas fa-satellite-dish"></i> AO VIVO';
-        mapContainer.parentNode.insertBefore(badge, mapContainer.nextSibling); // Insert relative to map
+        // 3. Determine Target
+        const urlParams = new URLSearchParams(window.location.search);
+        const targetID = urlParams.get('id');
+
+        if (targetID) {
+            // Monitor Specific Vessel
+            this.startRemoteMonitoring(targetID);
+            this.addLiveBadge(targetID);
+        } else {
+            // Show Fleet List
+            this.showFleetDashboard();
+        }
     },
 
-    startRemoteMonitoring: function () {
-        setInterval(() => {
-            fetch('/api/position')
+    addLiveBadge: function (label) {
+        const mapContainer = document.getElementById('map-container');
+        // Remove existing
+        const old = document.getElementById('live-badge');
+        if (old) old.remove();
+
+        const badge = document.createElement('div');
+        badge.id = 'live-badge';
+        badge.className = "absolute top-2 left-2 z-[400] bg-red-600 text-white px-3 py-1 rounded text-xs font-bold animate-pulse shadow-lg flex items-center gap-2";
+        badge.innerHTML = `<i class="fas fa-satellite-dish"></i> AO VIVO: ${label}`;
+        mapContainer.parentNode.insertBefore(badge, mapContainer.nextSibling);
+    },
+
+    showFleetDashboard: function () {
+        // Create Modal Overlay
+        const overlay = document.createElement('div');
+        overlay.className = "fixed inset-0 z-[1000] bg-slate-900/90 flex flex-col items-center justify-center p-4 backdrop-blur-sm";
+        overlay.innerHTML = `
+            <div class="bg-white rounded-lg shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up">
+                <header class="bg-blue-900 text-white p-4 border-b border-blue-800">
+                    <h2 class="text-xl font-bold flex items-center gap-2"><i class="fas fa-ship"></i> Frota SISNAV</h2>
+                    <p class="text-xs text-blue-300">Selecione uma embarcação para monitorar</p>
+                </header>
+                <div id="fleet-list" class="p-2 max-h-[60vh] overflow-y-auto bg-gray-50 divide-y divide-gray-200">
+                    <div class="p-8 text-center text-gray-400"><i class="fas fa-circle-notch fa-spin text-2xl"></i><br>Buscando navios...</div>
+                </div>
+                <footer class="p-3 bg-gray-100 text-center text-[10px] text-gray-500 border-t">
+                    Atualizado automaticamente
+                </footer>
+            </div>
+        `;
+        document.body.appendChild(overlay);
+
+        // Fetch Loop
+        const fetchFleet = () => {
+            fetch('api/fleet')
+                .then(res => res.json())
+                .then(data => {
+                    const container = document.getElementById('fleet-list');
+                    if (!container) return;
+
+                    if (data.length === 0) {
+                        container.innerHTML = `<div class="p-8 text-center text-gray-500 italic">Nenhuma embarcação transmitindo no momento.</div>`;
+                        return;
+                    }
+
+                    container.innerHTML = data.map(vessel => `
+                        <div class="flex items-center justify-between p-3 hover:bg-blue-50 cursor-pointer transition-colors rounded border border-transparent hover:border-blue-200"
+                             onclick="window.App.selectVessel('${vessel.id}')">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700">
+                                    <i class="fas fa-ship"></i>
+                                </div>
+                                <div>
+                                    <div class="font-bold text-slate-800">${vessel.name}</div>
+                                    <div class="text-xs text-gray-500">SOG: <span class="font-mono font-bold text-slate-700">${(vessel.sog || 0).toFixed(1)} kn</span></div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-[10px] text-green-600 font-bold uppercase"><i class="fas fa-wifi"></i> Online</div>
+                                <div class="text-[10px] text-gray-400">${new Date(vessel.last_seen * 1000).toLocaleTimeString()}</div>
+                            </div>
+                        </div>
+                    `).join('');
+                })
+                .catch(err => console.error("Fleet Error:", err));
+        };
+
+        fetchFleet();
+        this.fleetTimer = setInterval(fetchFleet, 5000);
+
+        // Global handler for click
+        window.App.selectVessel = (id) => {
+            clearInterval(this.fleetTimer);
+            overlay.remove();
+            this.startRemoteMonitoring(id);
+            this.addLiveBadge(id);
+            // Optionally update URL without reload
+            window.history.pushState({}, '', `?mode=monitor&id=${id}`);
+        };
+    },
+
+    startRemoteMonitoring: function (targetID) {
+        if (this.monitorTimer) clearInterval(this.monitorTimer);
+
+        const poll = () => {
+            fetch(`api/position?id=${targetID}`)
                 .then(res => res.json())
                 .then(data => {
                     if (data.lat && data.lon) {
-                        // Update Map
                         if (MapService) {
-                            MapService.updateShipPosition(data.lat, data.lon);
-                            // Center map on first fix
+                            MapService.updateShipPosition(data.lat, data.lon, data.cog);
                             if (!this.hasFixedMap) {
                                 MapService.map.setView([data.lat, data.lon], 12);
                                 this.hasFixedMap = true;
                             }
                         }
-                        // Update UI/Dashboard
                         const sogEl = document.getElementById('stat-live-sog');
                         if (sogEl) sogEl.innerHTML = `${(data.sog || 0).toFixed(1)} <span class="text-[9px] font-sans font-normal text-gray-400">kts</span>`;
 
                         const cogEl = document.getElementById('stat-live-cog');
                         if (cogEl) cogEl.innerText = `${Math.round(data.cog || 0)}°`;
-
-                        // BROADCAST POSITION (Server Sync)
-                        // Send every 3s to avoid spamming
-                        const now = Date.now();
-                        if (!this.lastBroadcast || (now - this.lastBroadcast > 3000)) {
-                            this.lastBroadcast = now;
-                            fetch('/api/position', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({
-                                    lat: data.lat,
-                                    lon: data.lon,
-                                    sog: data.sog,
-                                    cog: data.cog
-                                })
-                            }).catch(e => console.warn("Broadcast Fail:", e));
-                        }
                     }
                 })
-                .catch(err => console.error("Monitor Poll Error:", err));
-        }, 5000); // Poll every 5s
+                .catch(err => console.warn("Monitor Poll Error (Offline?):", err));
+        };
+
+        poll();
+        this.monitorTimer = setInterval(poll, 3000);
     },
 
     setupEventListeners: function () {
@@ -1995,7 +2067,7 @@ const App = {
                 const shipBranch = (State.shipProfile && State.shipProfile.branch) ? State.shipProfile.branch : "";
                 const uniqueID = shipName.replace(/\s+/g, '_').toUpperCase(); // Simple ID generation
 
-                fetch('/api/position', {
+                fetch('api/position', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
