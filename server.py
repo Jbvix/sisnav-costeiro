@@ -82,38 +82,65 @@ def upload_gpx():
         except Exception as e:
             return jsonify({'error': str(e)}), 500
             
-# In-Memory Storage for High-Frequency Position Updates
-current_position = {
-    "lat": None,
-    "lon": None,
-    "sog": 0,
-    "cog": 0,
-    "timestamp": 0
-}
+# In-Memory Storage for Multi-Vessel Fleet
+# Format: { "VESSEL_ID": { "lat":..., "lon":..., "name":..., "updated":... } }
+fleet_positions = {}
+
+@app.route('/api/fleet', methods=['GET'])
+def get_fleet():
+    # Return list of active vessels (seen in last 24h)
+    now = time.time()
+    active_fleet = []
+    for vid, data in fleet_positions.items():
+        # Filter stale data (optional, e.g., > 24h)
+        if now - data.get('timestamp', 0) < 86400:
+             active_fleet.append({
+                 "id": vid,
+                 "name": data.get('name', vid),
+                 "lat": data.get('lat'),
+                 "lon": data.get('lon'),
+                 "sog": data.get('sog'),
+                 "last_seen": data.get('timestamp')
+             })
+    return jsonify(active_fleet)
 
 @app.route('/api/position', methods=['GET', 'POST'])
 def handle_position():
-    global current_position
+    global fleet_positions
     
     if request.method == 'POST':
-        # AUTH: Simple Check (Optional, ideally use a token)
-        # For now, we assume the POST comes from the authenticated Master App
+        # AUTH: Simple PIN check (can be upgraded later)
+        # For now, relying on obscure URL or known clients
         try:
             data = request.json
-            current_position = {
+            vessel_id = data.get('id') # Unique ID (e.g. IMO or Name)
+            
+            if not vessel_id:
+                return jsonify({"error": "Missing vessel ID"}), 400
+
+            fleet_positions[vessel_id] = {
+                "name": data.get('name', vessel_id),
                 "lat": data.get('lat'),
                 "lon": data.get('lon'),
                 "sog": data.get('sog'),
                 "cog": data.get('cog'),
                 "timestamp": time.time()
             }
-            return jsonify({"status": "success", "monitor_count": 0}), 200
+            return jsonify({"status": "success", "id": vessel_id}), 200
         except Exception as e:
             return jsonify({"error": str(e)}), 400
 
     else: # GET
-        # Viewer fetches this
-        return jsonify(current_position)
+        # Get specific vessel
+        vessel_id = request.args.get('id')
+        if vessel_id:
+            data = fleet_positions.get(vessel_id)
+            if data:
+                return jsonify(data)
+            else:
+                return jsonify({"error": "Vessel not found"}), 404
+        else:
+            return jsonify({"error": "Please specify vessel ID"}), 400
 
 
 if __name__ == '__main__':

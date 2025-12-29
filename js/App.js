@@ -1986,14 +1986,22 @@ const App = {
             if (cogEl) cogEl.innerText = `${Math.round(heading)}°`;
 
             // BROADCAST POSITION (Server Sync)
-            // Send every 3s to avoid spamming
             const now = Date.now();
             if (!this.lastBroadcast || (now - this.lastBroadcast > 3000)) {
                 this.lastBroadcast = now;
+
+                // Get Identity
+                const shipName = (State.shipProfile && State.shipProfile.name) ? State.shipProfile.name : "DESCONHECIDO";
+                const shipBranch = (State.shipProfile && State.shipProfile.branch) ? State.shipProfile.branch : "";
+                const uniqueID = shipName.replace(/\s+/g, '_').toUpperCase(); // Simple ID generation
+
                 fetch('/api/position', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
+                        id: uniqueID,
+                        name: shipName,
+                        branch: shipBranch,
                         lat: lat,
                         lon: lon,
                         sog: speed,
