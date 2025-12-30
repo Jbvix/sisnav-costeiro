@@ -1,5 +1,6 @@
 import NavMath from '../core/NavMath.js';
 import TideCSVService from './TideCSVService.js';
+import ChartService from './ChartService.js';
 
 const METEO_AREAS = [
     { id: 'ALFA', limits: 'Arroio Chuí (RS) até Farol de Santa Marta (SC)', states: 'RS e Sul de SC' },
@@ -978,8 +979,9 @@ const ReportService = {
                         h = window.TideJSONService.getHeightAt(station, d);
                     }
                     // Fallback to CSV
-                    if (h === null && window.TideCSVService && typeof window.TideCSVService.getInterpolatedTide === 'function') {
-                        const res = window.TideCSVService.getInterpolatedTide(station, d);
+                    // Fallback to CSV
+                    if (h === null && TideCSVService && typeof TideCSVService.getInterpolatedTide === 'function') {
+                        const res = TideCSVService.getInterpolatedTide(station, d);
                         if (res) h = parseFloat(res.height);
                     }
 
@@ -1029,8 +1031,8 @@ const ReportService = {
                 if (window.TideJSONService && window.TideJSONService.isLoaded) {
                     centerH = window.TideJSONService.getHeightAt(station, centerDate);
                 }
-                if (centerH === null && window.TideCSVService && typeof window.TideCSVService.getInterpolatedTide === 'function') {
-                    const res = window.TideCSVService.getInterpolatedTide(station, centerDate);
+                if (centerH === null && TideCSVService && typeof TideCSVService.getInterpolatedTide === 'function') {
+                    const res = TideCSVService.getInterpolatedTide(station, centerDate);
                     if (res) centerH = parseFloat(res.height);
                 }
 
@@ -1172,9 +1174,12 @@ const ReportService = {
                         }
                     }
 
+                    // Chart Logic
+                    const chartId = ChartService.getChartForPosition(p2.lat, p2.lon);
+
                     routeData.push([
                         (i + 2).toString(),
-                        "BR-23100", // Carta Placeholder (User requested manual or auto?) "Carta N°"
+                        chartId, // Dynamic Lookup
                         refTxt,
                         `${p2.lat.toFixed(4)}\n${p2.lon.toFixed(4)}`,
                         `${crs.toFixed(1)}°`,
