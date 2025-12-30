@@ -400,7 +400,8 @@ const renderRouteAndDistances = (doc, y, state) => {
 
     const routeData = [];
     const safePoints = state.routePoints || [];
-    let NavMath = window.NavMath; // Ensure access
+    // Use imported NavMath or window.NavMath if imported is missing (legacy)
+    const Calc = window.NavMath || NavMath;
 
     if (safePoints.length > 0) {
         // Start
@@ -412,9 +413,11 @@ const renderRouteAndDistances = (doc, y, state) => {
             const p2 = safePoints[i + 1];
             // Calc
             let crs = 0, legDist = 0;
-            if (NavMath) {
-                const leg = NavMath.calcLeg(p1.lat, p1.lon, p2.lat, p2.lon);
+            if (Calc && typeof Calc.calcLeg === 'function') {
+                const leg = Calc.calcLeg(p1.lat, p1.lon, p2.lat, p2.lon);
                 crs = leg.crs; legDist = leg.dist;
+            } else {
+                console.warn("ReportService: NavMath not available for route calculation.");
             }
             cumulativeDist += legDist;
             const legHours = (speed > 0) ? (legDist / speed) : 0;
