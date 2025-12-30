@@ -711,7 +711,7 @@ const ReportService = {
             doc.setFontSize(28);
             doc.setFont(undefined, 'bold');
             doc.setTextColor(0, 51, 102); // Dark Blue (SAAM color-ish)
-            doc.text("PLANO DE PASSAGEM", 105, 140, { align: "center" });
+            doc.text("PLANO DE VIAGEM", 105, 140, { align: "center" });
 
             doc.setFontSize(14);
             doc.setTextColor(100);
@@ -736,7 +736,7 @@ const ReportService = {
 
             const checkBool = (val) => val ? "OK" : "PENDENTE";
 
-            // --- HEADER V2 (SIMPLIFIED) ---
+            // --- HEADER V2 (Page 2) ---
             doc.setFontSize(18);
             doc.setFont(undefined, 'bold');
             doc.text("PLANO DE VIAGEM", 105, 15, { align: "center" }); // Centered Title
