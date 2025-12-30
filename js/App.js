@@ -901,8 +901,12 @@ const App = {
                     if (!line || line.startsWith('NAME')) return;
                     const parts = line.split('\t');
                     if (parts.length >= 3) {
+                        let name = parts[0].trim();
+                        // Clean leading dashes/bullets often found in copy-pasted lists
+                        name = name.replace(/^[–-]\s*/, '').trim();
+
                         const lh = {
-                            name: parts[0].trim(),
+                            name: name,
                             lat: parts[1].trim(),
                             lon: parts[2].trim(),
                             char: parts[3] ? parts[3].trim() : '',
