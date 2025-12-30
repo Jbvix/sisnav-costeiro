@@ -411,10 +411,17 @@ const renderRouteAndDistances = (doc, y, state) => {
         for (let i = 0; i < safePoints.length - 1; i++) {
             const p1 = safePoints[i];
             const p2 = safePoints[i + 1];
+
+            // Normalize Coordinates (Handle .lon vs .lng)
+            const lat1 = p1.lat;
+            const lon1 = (p1.lon !== undefined) ? p1.lon : p1.lng;
+            const lat2 = p2.lat;
+            const lon2 = (p2.lon !== undefined) ? p2.lon : p2.lng;
+
             // Calc
             let crs = 0, legDist = 0;
             if (Calc && typeof Calc.calcLeg === 'function') {
-                const leg = Calc.calcLeg(p1.lat, p1.lon, p2.lat, p2.lon);
+                const leg = Calc.calcLeg(lat1, lon1, lat2, lon2);
                 crs = leg.crs; legDist = leg.dist;
             } else {
                 console.warn("ReportService: NavMath not available for route calculation.");
