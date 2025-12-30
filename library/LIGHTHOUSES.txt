@@ -3,8 +3,8 @@ Orange	04°25.86' N	51°32.52' W	Lp (2) B.	Torre quadrangular Setor de visibili�
 Calçoene	02°30.41' N	50°48.38' W	Lp. B.	Armação quadran­
 Guará	01°11.26' N	49°53.97' W	Lp. B.	Armação tronco pi­ Racon Q (– – . –)
 Bailique	00°59.40' N	49°56.83' W	Lp. B.	Armação tronco pi­ Racon M (– –)
-Ilha do Pará	00°52.80' N	49°59.27' W	Lp (3) B.	Torre quadrangular Racon B (– ...)
-Pau Cavado	00°11.51' N	50°47.25' W	Lp. B.	Pau a Pino .......................................................................... 2720 Ponta da Calheta Posterior ................................................. 2086
+Ilha do Pará	00°52.80' N	49°59.27' W	Lp (3) B.	Torre quadrangular Racon B (–
+Pau Cavado	00°11.51' N	50°47.25' W	Lp. B.	Pau a Pino
 Ilha Camaleão	00°09.14' N	48°54.72' W	LpL. B.	Torre tronco pirami­
 Simão Grande	00°15.41' N	48°24.19' W	Lp. B.	Armação tronco pi­ Setor de visibi­
 Ponta da Tijoca	00°33.44' N	47°53.85' W	Lp (2) B.	Torre quadrangular Setor de visibi­
@@ -19,10 +19,10 @@ Ponta da Praia	01°10.02' S	45°38.10' W	Lp (5) B.	Torre quadrangular Interferê
 São João	01°16.92' S	44°54.20' W	LpL. B.	Torre cilíndrica de Visibilidade
 Mangunça	01°36.92' S	44°39.23' W	Lp. B.	Torre tronco pira­
 Pirarema	02°20.29' S	44°21.71' W	Lp. B.	Torre octogonal de
-Alcântara	02°24.59' S	44°25.06' W	R (2) B.	
+Alcântara	02°24.59' S	44°25.06' W	R (2) B.
 São Marcos	02°29.31' S	44°18.12' W	Lp. B.	Torre com metade Radiofarol
 Ilha do Medo	02°31.34' S	44°21.92' W	Lp (3) B.	Armação quadran­ Interferência de
-Araçagi	02°27.03' S	44°08.90' W	Lp (4) B.	Alinh. Ilha do Pita Posterior ............................................ 2503.3
+Araçagi	02°27.03' S	44°08.90' W	Lp (4) B.	Alinh. Ilha do Pita Posterior
 Lençóis Grandes	02°22.78' S	43°16.18' W	LpL. B.	Armação tronco pi­
 Preguiças	02°35.55' S	42°42.44' W	Lp. B.	Torre troncônica de
 Pontal das	02°53.46' S	41°16.27' W	Lp. B.	Torre cilíndrica de
@@ -40,7 +40,7 @@ Calcanhar	05°09.65' S	35°29.21' W	Lp. B.	Torre troncônica de Farol aeromarí-
 Rata	03°48.76' S	32°23.21' W	Lp. B.	Torre quadrangular Setor de visibi-
 São Roque	05°29.32' S	35°15.71' W	Lp (3) B.	Estrutura quadran-
 Natal	05°47.71' S	35°11.12' W	Lp (5) B.	Torre troncônica de Setor de visibi-
-Ponta da	06°02.70' S	35°06.76' W	Lp (5) B.	Posterior ................................................. 2086
+Ponta da	06°02.70' S	35°06.76' W	Lp (5) B.	Posterior
 Bacopari	06°22.47' S	34°59.53' W	Lp (2) B.	Torre octogonal de
 Cabo Branco	07°08.96' S	34°47.77' W	Lp. B.	Torre tronco pira-
 Ponta de Pedras	07°37.80' S	34°48.72' W	Lp (3) B.	Armação tronco pi-
@@ -75,23 +75,23 @@ Ponta do Retiro	21°21.58' S	40°57.76' W	Lp (3) B.	Torre cilíndrica de
 Atafona	21°37.52' S	41°00.88' W	Lp (2) B.	Torre quadrangular
 São Tomé	22°02.52' S	41°03.17' W	LpL (2) B.	Armação metálica Racon O (– – –)
 Quissamã	22°09.68' S	41°17.82' W	LpL. B.	Torre ciíndrica de
-Ilha Branca	22°43.80' S	41°52.45' W	Lp. B.	
+Ilha Branca	22°43.80' S	41°52.45' W	Lp. B.
 Lajinha	22°53.35' S	42°00.12' W	Lp. E.	Torre tronco pira­
 Cabo Frio	23°00.81' S	42°00.05' W	Lp. B.	Torre troncônica Setor de visibi­
-Ponta Negra	22°57.64' S	42°41.56' W	Lp (2) B.	Alinh. Alumar Posterior ....................................................... 788
+Ponta Negra	22°57.64' S	42°41.56' W	Lp (2) B.	Alinh. Alumar Posterior
 Maricás	23°00.91' S	42°55.21' W	LpL. B.	Torre troncônica
-Ilha Redonda	22°48.21' S	43°07.16' W	Iso. B.	
-Ponte	22°48.25' S	43°07.28' W	Iso. B.	
+Ilha Redonda	22°48.21' S	43°07.16' W	Iso. B.
+Ponte	22°48.25' S	43°07.28' W	Iso. B.
 Alinhamento	22°48.06' S	43°07.09' W	Lp. E.	Torre em treliça, Luz particular
 Guaratiba	23°04.86' S	43°33.74' W	Lp. B.	Torre quadrangular
 Castelhanos	23°10.07' S	44°05.57' W	N/D	Torre quadrangu­ Setor de visibi­
 Itacuatiba	23°04.25' S	44°15.14' W	Lp. B.	Torre quadrangular
-Ponta dos Meros	23°13.57' S	44°20.83' W	Lp (2) B.	Posterior ..................... 2028
+Ponta dos Meros	23°13.57' S	44°20.83' W	Lp (2) B.	Posterior
 Ilha Rapada	23°09.61' S	44°39.82' W	Lp. E.	Armação tronco pi- Marca de tope
 Juatinga	23°17.62' S	44°30.32' W	Lp. B.	Torre tronco pira- Setor de visibi-
-Ubatuba	23°27.61' S	45°01.15' W	Lp (3) B.	
+Ubatuba	23°27.61' S	45°01.15' W	Lp (3) B.
 Massaguaçu	23°37.72' S	45°22.18' W	Lp (2) B.	Torre quadrangular
-Vitória	23°45.08' S	45°00.67' W	Lp. B.	Posterior, Vitória, canal, acesso ao Porto ...... 2036.06
+Vitória	23°45.08' S	45°00.67' W	Lp. B.	Posterior, Vitória, canal, acesso ao Porto
 Ponta Grossa	23°46.60' S	45°13.84' W	LpL. B.	Armação quadran-
 Ponta do Boi	23°57.99' S	45°15.08' W	LpL. B.	Torre quadrangular Setor de visibi-
 Toque-Toque	23°51.34' S	45°31.50' W	Lp. B.	Estrutura quadrangu- Setor de visibi-
@@ -103,24 +103,24 @@ Caraguatá	25°34.37' S	48°19.19' W	LpL. B.	Torre quadrangular
 Ilha da Paz	26°10.63' S	48°29.09' W	Lp. B.	Torre quadrangu-
 Ponta do Varrido	26°47.10' S	48°35.15' W	Lp. B.	Armação tronco pi-
 Galé	27°10.90' S	48°24.46' W	Lp. B.	Torre quadrangular
-Arvoredo	27°17.76' S	48°21.39' W	N/D	Alinh. “C” – Rio do Meio nº 6 Posterior .......................... 3316
+Arvoredo	27°17.76' S	48°21.39' W	N/D	Alinh. “C” – Rio do Meio nº 6 Posterior
 Ponta da Galheta	27°34.55' S	48°24.99' W	Lp. B.	Torre cilíndrica de
 Anhatomirim	27°25.67' S	48°33.86' W	Lp. E.	Armação metálica,
 Naufragados	27°50.13' S	48°34.12' W	Lp (2) B.	Torre troncônica de Setor de visibi-
 Coral	27°56.00' S	48°32.59' W	Lp. B.	Torre tronco pira-
-Ponta do	28°12.53' S	48°39.75' W	Lp. E.	Posterior ..................... 2028
+Ponta do	28°12.53' S	48°39.75' W	Lp. E.	Posterior
 Imbituba	28°14.00' S	48°38.76' W	Lp (3) B.	Torre tronco pirami-
 Araras	28°19.27' S	48°38.88' W	R (2) B.	Torre cilíndrica de
 Ilha dos Lobos	28°26.77' S	48°42.45' W	Lp. B.	Torre troncônica de
-Araranguá	28°56.04' S	49°21.66' W	Lp (3) B.	Alinh. Tubarão Posterior .....................................................1940
-Torres	29°20.68' S	49°43.77' W	LpL. B.	Torres ................................................................................. 3972
+Araranguá	28°56.04' S	49°21.66' W	Lp (3) B.	Alinh. Tubarão Posterior
+Torres	29°20.68' S	49°43.77' W	LpL. B.	Torres
 Arroio do Sal	29°33.40' S	49°53.37' W	Lp (5) B.	Torre quadrangular
 Cidreira	30°09.47' S	50°11.84' W	Lp. B.	Torre cilíndrica de
 Berta	30°24.02' S	50°17.42' W	Lp. B.	Torre quadrangular
 Capão da Marca	31°30.11' S	51°11.30' W	Lp (3) B.	Torre troncônica
 Conceição	31°43.83' S	51°28.90' W	Lp (2) B.	Torre quadrangular
 Estreito	31°52.88' S	51°46.35' W	LpL. B.	Armação quadran-
-Barra	32°07.07' S	52°04.61' W	N/D	Posterior .................................... 1839.9
+Barra	32°07.07' S	52°04.61' W	N/D	Posterior
 Sarita	32°37.81' S	52°25.76' W	Lp (3) B.	Torre quadrangular
 Albardão	33°12.15' S	52°42.31' W	Lp (4) B.	Torre cilíndrica de
 Chuí	33°44.57' S	53°22.48' W	Lp (2) B.	Torre troncônica de Radiofarol
