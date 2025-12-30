@@ -717,6 +717,45 @@ const ReportService = {
             doc.setTextColor(100);
             doc.text(`${new Date().getFullYear()}`, 105, 150, { align: "center" });
 
+            // --- VOYAGE CALCULATIONS (Moved Up) ---
+            const voyage = state.voyage || {};
+            const totalDist = (state.totalDistance / 1852) || 0;
+            const speed = state.shipProfile.speed || 10;
+            const totalHours = (speed > 0) ? (totalDist / speed) : 0;
+
+            const formatDuration = (hrs) => {
+                const h = Math.floor(hrs);
+                const m = Math.round((hrs - h) * 60);
+                return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+            };
+
+            const days = Math.floor(totalHours / 24);
+            const remHrs = Math.floor(totalHours % 24);
+            const durationStr = `${Math.floor(totalHours)}h (${days}d ${remHrs}h)`;
+
+            const summaryData = [
+                ["REBOCADOR:", (state.shipProfile.name || "SAAM CHILE").toUpperCase()],
+                ["DE:", (voyage.depPort || "MUCURIPE").toUpperCase()],
+                ["PARA:", (voyage.arrPort || "SUAPE").toUpperCase()],
+                ["DISTÂNCIA (MN):", totalDist.toFixed(1)],
+                ["TEMPO ESTIMADO:", durationStr]
+            ];
+
+            // --- FOOTER (COVER PAGE) ---
+            // Render summary data at the bottom of Page 1
+            doc.autoTable({
+                startY: 230,
+                body: summaryData,
+                theme: 'striped',
+                headStyles: { fillColor: [41, 128, 185] },
+                styles: { fontSize: 11, cellPadding: 2 },
+                columnStyles: {
+                    0: { fontStyle: 'bold', width: 50, halign: 'right' },
+                    1: { width: 80 }
+                },
+                margin: { left: 40 } // Centered-ish
+            });
+
             // Add Start Page
             doc.addPage();
             doc.setTextColor(0); // Reset color
@@ -739,37 +778,11 @@ const ReportService = {
             // --- HEADER V2 (Page 2) ---
             doc.setFontSize(18);
             doc.setFont(undefined, 'bold');
-            doc.text("PLANO DE VIAGEM", 105, 15, { align: "center" }); // Centered Title
+            doc.text("PLANO DE VIAGEM", 105, 15, { align: "center" });
 
             doc.setFontSize(9);
             doc.setFont(undefined, 'normal');
             doc.text(`Emissão: ${new Date().toLocaleString('pt-BR')}`, 105, 20, { align: "center" });
-
-            // SUMMARY TABLE (Header)
-            const voyage = state.voyage || {};
-            const totalDist = (state.totalDistance / 1852) || 0;
-            const speed = state.shipProfile.speed || 10;
-            const totalHours = (speed > 0) ? (totalDist / speed) : 0;
-
-            // Format HH:MM from decimal hours
-            const formatDuration = (hrs) => {
-                const h = Math.floor(hrs);
-                const m = Math.round((hrs - h) * 60);
-                return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
-            };
-
-            // Calculate Total Duration String "HH (DD:HH)"
-            const days = Math.floor(totalHours / 24);
-            const remHrs = Math.floor(totalHours % 24);
-            const durationStr = `${Math.floor(totalHours)}h (${days}d ${remHrs}h)`;
-
-            const summaryData = [
-                ["REBOCADOR:", (state.shipProfile.name || "SAAM CHILE").toUpperCase()],
-                ["DE:", (voyage.depPort || "MUCURIPE").toUpperCase()],
-                ["PARA:", (voyage.arrPort || "SUAPE").toUpperCase()],
-                ["DISTÂNCIA (MN):", totalDist.toFixed(1)],
-                ["TEMPO ESTIMADO:", durationStr]
-            ];
 
             doc.autoTable({
                 startY: 25,
@@ -780,7 +793,7 @@ const ReportService = {
                     0: { fontStyle: 'bold', width: 40, halign: 'right', fillColor: [240, 240, 240] },
                     1: { fontStyle: 'bold', width: 60 }
                 },
-                margin: { left: 55 } // Center the table roughly
+                margin: { left: 55 }
             });
 
             let currentY = doc.lastAutoTable.finalY + 10;
