@@ -99,3 +99,36 @@ Para monitorar a frota sem acessar as ferramentas de planejamento:
 3.  Se houver navios transmitindo, um painel **"Frota SISNAV"** aparecerÃ¡ automaticamente.
 4.  Clique no nome do navio para focar o mapa em sua posiÃ§Ã£o atual.
 5.  O painel exibe SOG (Velocidade) e AtualizaÃ§Ã£o (Ãšltimo sinal recebido) em tempo real.
+
+
+---
+
+## 7. Gestão Técnica de Dados de Maré (2026+)
+
+O SISNAV Costeiro opera com uma base de dados interna de marés. Caso necessite inserir dados de novos portos ou atualizar para o próximo ano (ex: 2026), siga o procedimento oficial garantido pela ferramenta de importação.
+
+### 7.1 Como Inserir Novos Dados
+1.  **Formatamento**: Crie um arquivo CSV (Ex: mares_2026.csv) com o seguinte layout padrão:
+    `csv
+    porto,data,hora,altura_m,tipo_mare,fonte
+    SUAPE,01/01/2026,02:01,2.09,preamar,DHN
+    SUAPE,01/01/2026,08:14,0.38,baixa-mar,DHN
+    ...
+    ` 
+    *Nota: Respeite a alternância física entre PREAMAR e BAIXA-MAR. Duas marés iguais seguidas serão rejeitadas pelo validador.*
+
+2.  **Execução da Ferramenta**:
+    *   Coloque o arquivo csv na pasta raiz do sistema.
+    *   Execute o script de importação segura:
+        `ash
+        python tools/import_mares_2026.py
+        ` 
+
+3.  **Resultado**:
+    *   O script fará o backup da base atual.
+    *   Validará a integridade (Regra de Ouro).
+    *   Inserirá os novos dados e correlacionará automaticamente com os IDs do sistema (ex: PORTO DE SUAPE -> BR_SUA).
+
+### 7.2 Em Caso de Ausência de Dados
+Se não houver dados oficiais carregados para um porto específico, o sistema **não deixará o relatório em branco**.
+Ele entrará automaticamente no **Modo de Simulação Harmônica**, gerando uma curva de maré matemática aproximada para permitir a visualização da tendência (Enchente/Vazante) e garantir a continuidade do planejamento.
