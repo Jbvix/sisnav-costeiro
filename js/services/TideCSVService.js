@@ -85,7 +85,7 @@ const TideCSVService = {
             stationMap.get(dateISO).push({
                 time: timeStr,
                 height: height,
-                type: typeRaw.includes('preia') ? 'HIGH' : 'LOW'
+                type: (typeRaw.includes('preia') || typeRaw.includes('preamar')) ? 'HIGH' : 'LOW'
             });
         }
     },

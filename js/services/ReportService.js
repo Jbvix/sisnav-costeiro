@@ -1009,6 +1009,17 @@ const ReportService = {
                         if (res) h = parseFloat(res.height);
                     }
 
+                    // FINAL FALLBACK: Synthetic Data (Mock)
+                    // Requested to avoid "Dados não disponíveis" for demo purposes
+                    if (h === null) {
+                        const phase = (queryStation.length * 300000);
+                        const period = 12.42 * 3600 * 1000;
+                        const time = d.getTime() + phase;
+                        const angle = (time % period) / period * 2 * Math.PI;
+                        h = 1.3 + 0.8 * Math.cos(angle);
+                        h = parseFloat(h.toFixed(2));
+                    }
+
                     if (h !== null) {
                         if (h < minH) minH = h;
                         if (h > maxH) maxH = h;
@@ -1016,6 +1027,7 @@ const ReportService = {
                     }
                 }
 
+                // Fallback warning (though we shouldn't hit it now)
                 if (points.length < 2) {
                     doc.text("Dados de maré não disponíveis.", x + width / 2, y + height / 2, { align: 'center' });
                     return;
@@ -1058,6 +1070,15 @@ const ReportService = {
                 if (centerH === null && TideCSVService && typeof TideCSVService.getInterpolatedTide === 'function') {
                     const res = TideCSVService.getInterpolatedTide(queryStation, centerDate);
                     if (res) centerH = parseFloat(res.height);
+                }
+
+                // Fallback Mock Center Height
+                if (centerH === null) {
+                    const phase = (queryStation.length * 300000);
+                    const period = 12.42 * 3600 * 1000;
+                    const time = centerDate.getTime() + phase;
+                    const angle = (time % period) / period * 2 * Math.PI;
+                    centerH = parseFloat((1.3 + 0.8 * Math.cos(angle)).toFixed(2));
                 }
 
                 if (centerH !== null) {
