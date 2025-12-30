@@ -332,7 +332,10 @@ const App = {
                     const pDep = PortDatabase.find(p => p.id === depPortId);
                     if (pDep) {
                         const res = TideLocator.findNearest(pDep.lat, pDep.lon);
-                        if (res && res.found) State.tides.dep.station = res.station.id;
+                        if (res && res.found) {
+                            // Use csvName because TideCSVService uses keys from the CSV file (e.g. "Suape") not the ID ("BR_SUA")
+                            State.tides.dep.station = res.station.csvName;
+                        }
                     }
                 }
 
@@ -342,7 +345,7 @@ const App = {
                     if (pArr) {
                         const res = TideLocator.findNearest(pArr.lat, pArr.lon);
                         if (res && res.found) {
-                            State.tides.arr.station = res.station.id;
+                            State.tides.arr.station = res.station.csvName;
                             console.log(`App: Maré Chegada definida para estação ${res.station.id} -> ${res.station.csvName}`);
                         }
                     }
