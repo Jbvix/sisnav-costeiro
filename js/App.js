@@ -18,6 +18,7 @@ import UpdateService from './services/UpdateService.js?v=1';
 import { tideJSONService } from './services/TideJSONService.js'; // NEW
 import TideCSVService from './services/TideCSVService.js?v=7';
 import ReportService from './services/ReportService.js?v=7';
+import TideLocator from './services/TideLocator.js';
 
 const App = {
     init: function () {
@@ -316,7 +317,34 @@ const App = {
 
         const btnPdf = document.getElementById('btn-export-pdf-plan');
         if (btnPdf) btnPdf.addEventListener('click', () => {
-            if (window.ReportService) window.ReportService.generatePDF(State);
+            if (window.ReportService) {
+                // Ensure Tide Station IDs are set correctly before generating
+                const depPortId = document.getElementById('select-dep').value;
+                const arrPortId = document.getElementById('select-arr').value;
+
+                // Lookup Departure Tide Station
+                if (depPortId) {
+                    const pDep = PortDatabase.find(p => p.id === depPortId);
+                    if (pDep) {
+                        const tStation = TideLocator.findNearestStation(pDep.lat, pDep.lon);
+                        if (tStation && State.tides.dep) State.tides.dep.station = tStation.id;
+                    }
+                }
+
+                // Lookup Arrival Tide Station (Fix for Suape/N/A)
+                if (arrPortId) {
+                    const pArr = PortDatabase.find(p => p.id === arrPortId);
+                    if (pArr) {
+                        const tStation = TideLocator.findNearestStation(pArr.lat, pArr.lon);
+                        if (tStation && State.tides.arr) {
+                            State.tides.arr.station = tStation.id;
+                            console.log(`App: Maré Chegada definida para estação ${tStation.id} (${tStation.station})`);
+                        }
+                    }
+                }
+
+                window.ReportService.generatePDF(State);
+            }
             else console.error("ReportService nao carregado");
         });
 

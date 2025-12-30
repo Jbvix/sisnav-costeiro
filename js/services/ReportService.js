@@ -807,16 +807,23 @@ const ReportService = {
             // Fuel Autonomy Calc
             const stock = parseFloat(ship.fuelStock) || 0;
             const rate = parseFloat(ship.fuelRate) || 1;
-            const autonomyHours = (stock / rate).toFixed(1);
+            const autonomyHoursVal = (stock / rate);
+            const autoDays = Math.floor(autonomyHoursVal / 24);
+            const autoRemHrs = Math.round(autonomyHoursVal % 24);
+            const autonomyStr = `${autonomyHoursVal.toFixed(0)}h (${autoDays}d ${autoRemHrs}h)`;
+
             const engineStatusMap = { 'ok': 'Full Power', 'restricted': 'Restrito', 'no-go': 'NO-GO' };
+            // FIX: Read status from APPRAISAL (Dynamic) not Ship Profile (Static)
+            const appEngine = (state.appraisal && state.appraisal.engine) ? state.appraisal.engine : {};
+            const currentStatus = engineStatusMap[appEngine.status] || "N/A";
 
             const vesselData = [
                 ["Navio:", ship.name, "IMO:", ship.imo],
                 ["Comandante:", ship.commander || "-", "Tripulação:", ship.crew],
-                ["Calado (Popa/Proa):", `${drafts.aft}m / ${drafts.fwd}m`, "Rebocado:", `${drafts.towAft || 0}m`],
-                ["Status Máquinas:", engineStatusMap[engine.status] || "N/A", "", ""],
+                ["Calado (Popa/Proa):", `${drafts.aft}m / ${drafts.fwd}m`, "Rebocado:", "N/A"],
+                ["Status Máquinas:", currentStatus, "", ""],
                 ["Estoque Combustível:", `${stock} L`, "Consumo:", `${rate} L/h`],
-                ["Autonomia Est.:", `${autonomyHours} horas`, "Vel. Cruzeiro:", `${ship.speed} kn`]
+                ["Raio de Alcance:", autonomyStr, "Vel. Cruzeiro:", `${ship.speed} kn`]
             ];
 
             doc.autoTable({
