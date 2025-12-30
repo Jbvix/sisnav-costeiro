@@ -1153,13 +1153,13 @@ const ReportService = {
                 currentY = doc.lastAutoTable.finalY + 5;
             }
 
-            // --- 4. ROTA PLANEJADA V2 ---
+            // --- 4. ROTA PLANEJADA ---
             if (currentY > 180) { // Aggressive Page Break
                 doc.addPage();
                 currentY = 20;
             }
 
-            currentY = addSectionTitle("3. ROTA PLANEJADA", currentY);
+            currentY = addSectionTitle("3. ROTA PLANEJADA E DISTÂNCIAS", currentY);
 
             // Calculation helpers
             let cumulativeDist = 0;
@@ -1172,10 +1172,11 @@ const ReportService = {
             }
 
             const routeData = [];
+            const safePoints = state.routePoints || [];
 
-            if (state.routePoints && state.routePoints.length > 0) {
+            if (safePoints.length > 0) {
                 // First Row (Start)
-                const p0 = state.routePoints[0];
+                const p0 = safePoints[0];
                 routeData.push([
                     "1",
                     "-", // Carta
@@ -1189,9 +1190,9 @@ const ReportService = {
                     "0.0" // Total Time
                 ]);
 
-                for (let i = 0; i < state.routePoints.length - 1; i++) {
-                    const p1 = state.routePoints[i];
-                    const p2 = state.routePoints[i + 1];
+                for (let i = 0; i < safePoints.length - 1; i++) {
+                    const p1 = safePoints[i];
+                    const p2 = safePoints[i + 1];
 
                     // Calc Leg
                     let crs = 0, legDist = 0;
@@ -1212,15 +1213,23 @@ const ReportService = {
 
                     // Lighthouse Logic (Ref)
                     let refTxt = "-";
+                    // Safe access to App
                     if (window.App && typeof window.App.getNearestLighthouse === 'function') {
-                        const lh = window.App.getNearestLighthouse(p2.lat, p2.lon);
-                        if (lh && lh.dist < 50) {
-                            refTxt = `${lh.name}\n(${lh.dist.toFixed(1)}mn)`;
+                        try {
+                            const lh = window.App.getNearestLighthouse(p2.lat, p2.lon);
+                            if (lh && lh.dist < 50) {
+                                refTxt = `${lh.name}\n(${lh.dist.toFixed(1)}mn)`;
+                            }
+                        } catch (e) {
+                            console.warn("LH Error", e);
                         }
                     }
 
                     // Chart Logic
-                    const chartId = ChartService.getChartForPosition(p2.lat, p2.lon);
+                    let chartId = "-";
+                    try {
+                        if (ChartService) chartId = ChartService.getChartForPosition(p2.lat, p2.lon);
+                    } catch (e) { }
 
                     routeData.push([
                         (i + 2).toString(),
@@ -1261,16 +1270,17 @@ const ReportService = {
                 }
             });
 
-            // --- 3.2 SCREENSHOTS (NOVO) ---
-            if (state.appraisal.prints && state.appraisal.prints.length > 0) {
+            // --- 3.1 SCREENSHOTS ---
+            const safePrints = (state.appraisal && state.appraisal.prints) ? state.appraisal.prints : [];
+            if (safePrints.length > 0) {
                 currentY = doc.lastAutoTable.finalY + 10;
 
                 doc.setFont(undefined, 'bold');
                 doc.setFontSize(10);
-                doc.text("3.2. REGISTROS DA CARTA NÁUTICA (PRINTS)", 14, currentY);
+                doc.text("3.1. REGISTROS DA CARTA NÁUTICA (PRINTS)", 14, currentY);
                 currentY += 5;
 
-                state.appraisal.prints.forEach((printItem, idx) => {
+                safePrints.forEach((printItem, idx) => {
                     // Check logic for page break
                     if (currentY + 80 > 280) {
                         doc.addPage();
@@ -1297,12 +1307,13 @@ const ReportService = {
                 });
             }
 
-            // --- 5. AUXÍLIOS À NAVEGAÇÃO (FARÓIS) ---
-            if (state.appraisal.lighthouses.length > 0) {
+            // --- 4. AUXÍLIOS À NAVEGAÇÃO (FARÓIS) ---
+            const safeLighthouses = (state.appraisal && state.appraisal.lighthouses) ? state.appraisal.lighthouses : [];
+            if (safeLighthouses.length > 0) {
                 doc.addPage();
                 currentY = addSectionTitle("4. FARÓIS E AUXÍLIOS VISUAIS", 20);
 
-                const lhData = state.appraisal.lighthouses.map(lh => [
+                const lhData = safeLighthouses.map(lh => [
                     lh.name,
                     lh.lat + '\n' + lh.lon,
                     lh.char,
