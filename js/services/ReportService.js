@@ -955,12 +955,30 @@ const ReportService = {
             const drawTideGraph = (doc, x, y, width, height, station, dateStr, title) => {
                 if (!station || !dateStr) return;
 
+                // MAPPING FIX: Ensure BR_XX codes map to CSV Names
+                const proxyMap = {
+                    'BR_SUA': 'Recife',
+                    'BR_FOR': 'Fortaleza',
+                    'BR_REC': 'Recife',
+                    'BR_SAL': 'Salvador',
+                    'BR_VIT': 'Vitória',
+                    'BR_RIO': 'Rio de Janeiro',
+                    'BR_PNG': 'Paranaguá',
+                    'BR_RIG': 'Rio Grande',
+                    'BR_ITQ': 'Itaqui',
+                    'BR_BEL': 'Belém',
+                    'BR_VDC': 'Belém'
+                };
+                // If station is "BR_SUA", queryStation becomes "Recife".
+                // If station is "Suape", queryStation remains "Suape" (unless we map that too? TideLocator maps to Recife now).
+                let queryStation = proxyMap[station] || station;
+
                 // Parse Time
                 const centerDate = new Date(dateStr);
                 if (isNaN(centerDate.getTime())) return;
 
-                const startDate = new Date(centerDate.getTime() - 3 * 3600 * 1000);
-                const endDate = new Date(centerDate.getTime() + 3 * 3600 * 1000);
+                const startDate = new Date(centerDate.getTime() - 6 * 3600 * 1000); // +/- 6h
+                const endDate = new Date(centerDate.getTime() + 6 * 3600 * 1000);
 
                 // Setup Box
                 doc.setDrawColor(0);
@@ -976,19 +994,18 @@ const ReportService = {
                 const points = [];
                 let minH = 99, maxH = -99;
 
-                const step = 900 * 1000; // 15 min in ms
+                const step = 15 * 60 * 1000; // 15 min
                 for (let t = startDate.getTime(); t <= endDate.getTime(); t += step) {
                     const d = new Date(t);
                     let h = null;
 
                     // NEW: Prioritize JSON Service
                     if (window.TideJSONService && window.TideJSONService.isLoaded) {
-                        h = window.TideJSONService.getHeightAt(station, d);
+                        h = window.TideJSONService.getHeightAt(queryStation, d);
                     }
                     // Fallback to CSV
-                    // Fallback to CSV
                     if (h === null && TideCSVService && typeof TideCSVService.getInterpolatedTide === 'function') {
-                        const res = TideCSVService.getInterpolatedTide(station, d);
+                        const res = TideCSVService.getInterpolatedTide(queryStation, d);
                         if (res) h = parseFloat(res.height);
                     }
 
