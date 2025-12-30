@@ -1472,32 +1472,35 @@ const ReportService = {
             for (let i = 1; i <= pageCount; i++) {
                 doc.setPage(i);
 
+                const pageSize = doc.internal.pageSize;
+                const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+                const pageWidth = pageSize.width ? pageSize.width : pageSize.getWidth();
+
                 if (i === pageCount) {
-                    const y = 260;
+                    // Position at bottom minus margin (e.g., 40 units from bottom)
+                    // Landscape A4 height ~210, Portrait ~297.
+                    // If Landscape, 260 is out of bounds.
+                    const y = pageHeight - 40;
+
                     doc.setDrawColor(0);
 
-                    // Signature Lines
-                    // Signature Lines
-                    // doc.line(20, y, 90, y); // Left (Removed Chief)
-
-                    // Centering Commander? Or keeping right?
-                    // User said "Only Commander".
-                    // Let's Center it for better look.
-                    doc.line(75, y, 135, y); // Center (Width 60)
+                    // Center Line
+                    const lineW = 60;
+                    const lineX = (pageWidth - lineW) / 2;
+                    doc.line(lineX, y, lineX + lineW, y);
 
                     doc.setFontSize(10);
                     doc.setFont(undefined, 'bold');
-                    // doc.text("Chefe de Máquinas", 55, y + 5, { align: "center" });
-                    doc.text("Comandante", 105, y + 5, { align: "center" });
+                    doc.text("Comandante", pageWidth / 2, y + 5, { align: "center" });
 
                     doc.setFontSize(8);
                     doc.setFont(undefined, 'normal');
-                    // doc.text("Visto / Carimbo", 55, y + 10, { align: "center" });
-                    doc.text("Visto / Carimbo", 105, y + 10, { align: "center" });
+                    doc.text("Visto / Carimbo", pageWidth / 2, y + 10, { align: "center" });
                 }
 
                 doc.setFontSize(8);
-                doc.text(`SISNAV Costeiro - Pág ${i}/${pageCount}`, 105, 290, { align: "center" });
+                // Footer Page Number
+                doc.text(`SISNAV Costeiro - Pág ${i}/${pageCount}`, pageWidth / 2, pageHeight - 10, { align: "center" });
             }
 
             doc.save(`Plano_Viagem_${ship.name || 'Export'}.pdf`);
