@@ -346,7 +346,7 @@ const App = {
                         const res = TideLocator.findNearest(pArr.lat, pArr.lon);
                         if (res && res.found) {
                             State.tides.arr.station = res.station.csvName;
-                            console.log(`App: Maré Chegada definida para estação ${res.station.id} -> ${res.station.csvName}`);
+
                         }
                     }
                 }
