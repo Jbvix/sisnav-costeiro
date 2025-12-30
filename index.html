@@ -289,6 +289,34 @@
                                 </div>
                             </div>
 
+                            <!-- 1.1 PRINT SCREENS (NOVO) -->
+                            <div class="bg-gray-50 p-3 rounded border border-gray-200">
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase">Print Screens da
+                                        Carta</label>
+                                    <span class="text-[9px] text-gray-400 italic">Anexos ao Relatório</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex gap-2">
+                                        <input type="text" id="inp-print-title"
+                                            placeholder="Título (Ex: Canal de Acesso)"
+                                            class="flex-1 p-1 border rounded text-[10px] bg-white">
+                                        <button id="btn-add-print"
+                                            class="px-3 bg-blue-600 text-white rounded hover:bg-blue-700 text-[10px] font-bold shadow flex items-center gap-1">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                    <input type="file" id="inp-print-file" accept="image/*"
+                                        class="w-full text-[10px] text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                                    <ul id="list-prints"
+                                        class="space-y-1 mt-1 max-h-32 overflow-y-auto divide-y divide-gray-100">
+                                        <!-- Items injected by JS -->
+                                        <li class="text-[9px] text-gray-400 italic text-center p-1">Nenhuma imagem
+                                            adicionada.</li>
+                                    </ul>
+                                </div>
+                            </div>
+
                             <!-- 2. METEO -->
                             <div class="bg-gray-50 p-3 rounded border border-gray-200">
                                 <label

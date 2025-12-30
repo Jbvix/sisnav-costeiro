@@ -55,7 +55,9 @@ const State = {
         },
         shoreContacts: [], // [{name, phone, email}]
         lighthouses: [],   // [{name, lat, lon, char}]
-        shelters: []       // [{name, type, details}]
+        lighthouses: [],   // [{name, lat, lon, char}]
+        shelters: [],      // [{name, type, details}]
+        prints: []         // [{title, dataUrl}] NEW
     },
 
     // Instâncias de Mapa (Leaflet)

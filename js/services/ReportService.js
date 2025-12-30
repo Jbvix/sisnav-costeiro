@@ -736,17 +736,54 @@ const ReportService = {
 
             const checkBool = (val) => val ? "OK" : "PENDENTE";
 
-            // --- HEADER ---
-            doc.setFontSize(16);
+            // --- HEADER V2 (SIMPLIFIED) ---
+            doc.setFontSize(18);
             doc.setFont(undefined, 'bold');
-            doc.text("PLANO DE VIAGEM - SISNAV COSTEIRO", 105, 15, { align: "center" });
+            doc.text("PLANO DE VIAGEM", 105, 15, { align: "center" }); // Centered Title
+
             doc.setFontSize(9);
             doc.setFont(undefined, 'normal');
-            doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 105, 20, { align: "center" });
+            doc.text(`Emissão: ${new Date().toLocaleString('pt-BR')}`, 105, 20, { align: "center" });
 
-            let currentY = 30;
+            // SUMMARY TABLE (Header)
+            const voyage = state.voyage || {};
+            const totalDist = (state.totalDistance / 1852) || 0;
+            const speed = state.shipProfile.speed || 10;
+            const totalHours = (speed > 0) ? (totalDist / speed) : 0;
 
-            // --- 1. DADOS DA EMBARCAÇÃO & MÁQUINAS ---
+            // Format HH:MM from decimal hours
+            const formatDuration = (hrs) => {
+                const h = Math.floor(hrs);
+                const m = Math.round((hrs - h) * 60);
+                return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}`;
+            };
+
+            // Calculate Total Duration String "HH (DD:HH)"
+            const days = Math.floor(totalHours / 24);
+            const remHrs = Math.floor(totalHours % 24);
+            const durationStr = `${Math.floor(totalHours)}h (${days}d ${remHrs}h)`;
+
+            const summaryData = [
+                ["REBOCADOR:", (state.shipProfile.name || "SAAM CHILE").toUpperCase()],
+                ["DE:", (voyage.depPort || "MUCURIPE").toUpperCase()],
+                ["PARA:", (voyage.arrPort || "SUAPE").toUpperCase()],
+                ["DISTÂNCIA (MN):", totalDist.toFixed(1)],
+                ["TEMPO ESTIMADO:", durationStr]
+            ];
+
+            doc.autoTable({
+                startY: 25,
+                body: summaryData,
+                theme: 'plain',
+                styles: { fontSize: 10, cellPadding: 1 },
+                columnStyles: {
+                    0: { fontStyle: 'bold', width: 40, halign: 'right', fillColor: [240, 240, 240] },
+                    1: { fontStyle: 'bold', width: 60 }
+                },
+                margin: { left: 55 } // Center the table roughly
+            });
+
+            let currentY = doc.lastAutoTable.finalY + 10;
             currentY = addSectionTitle("1. DADOS DA EMBARCAÇÃO E MÁQUINAS", currentY);
 
             const ship = state.shipProfile || {};
@@ -858,7 +895,7 @@ const ReportService = {
             const splitObs = doc.splitTextToSize(obs, 180);
             doc.text(splitObs, 14, currentY + 9);
             currentY += 10 + (splitObs.length * 4);
-            currentY = addSectionTitle("2. DOCUMENTAÇÃO E REFERÊNCIAS", currentY);
+            currentY = addSectionTitle("6. DOCUMENTAÇÃO E REFERÊNCIAS", currentY);
 
             const files = state.appraisal.files || {};
             const pdfData = [
@@ -997,12 +1034,12 @@ const ReportService = {
                 doc.setDrawColor(0); // Reset
             };
 
-            const voyage = state.voyage || {};
+            // const voyage = state.voyage || {}; // Removed duplicate
             const showDep = voyage.depPort && voyage.depTime;
             const showArr = voyage.arrPort && voyage.arrTime;
 
             if (showDep || showArr) {
-                currentY = addSectionTitle("3. ANÁLISE DE MARÉ (JANELA +/- 3h)", currentY);
+                currentY = addSectionTitle("7. ANÁLISE DE MARÉ (JANELA +/- 3h)", currentY);
                 if (currentY + 50 > 280) { doc.addPage(); currentY = 20; }
 
                 const graphY = currentY + 5;
@@ -1019,8 +1056,8 @@ const ReportService = {
             // --- ANEXOS DE TEXTO (METEO/NAVAREA) ---
 
 
-            // --- 3. CONTATOS E ABRIGOS ---
-            currentY = addSectionTitle("3. APOIO E CONTINGÊNCIA", currentY);
+            // --- 5. SEGURANÇA ---
+            currentY = addSectionTitle("5. SEGURANÇA (CONTATOS E ABRIGOS)", currentY);
 
             // Contatos
             const contacts = state.appraisal.shoreContacts || [];
@@ -1056,69 +1093,151 @@ const ReportService = {
                 currentY = doc.lastAutoTable.finalY + 5;
             }
 
-            // --- 4. ROTA PLANEJADA ---
-            // New Page if low on space
-            if (currentY > 200) {
+            // --- 4. ROTA PLANEJADA V2 ---
+            if (currentY > 180) { // Aggressive Page Break
                 doc.addPage();
                 currentY = 20;
             }
 
-            currentY = addSectionTitle("4. ROTA PLANEJADA", currentY);
-            const totalDistNm = (state.totalDistance / 1852).toFixed(1);
-            doc.text(`Distância Total: ${totalDistNm} NM  |  Pernas: ${(state.routePoints.length > 0 ? state.routePoints.length - 1 : 0)}`, 14, currentY + 5);
+            currentY = addSectionTitle("3. ROTA PLANEJADA", currentY);
 
-            // Build Route Data matching Plan Screen (Legs)
+            // Calculation helpers
+            let cumulativeDist = 0;
+            let cumulativeHours = 0;
+            let currentEta = new Date(); // Default
+            if (voyage.depTime) {
+                currentEta = new Date(voyage.depTime);
+            } else if (state.shipProfile.date) {
+                currentEta = new Date(state.shipProfile.date + "T08:00:00"); // Default 08:00
+            }
+
             const routeData = [];
-            if (state.routePoints && state.routePoints.length > 1) {
+
+            if (state.routePoints && state.routePoints.length > 0) {
+                // First Row (Start)
+                const p0 = state.routePoints[0];
+                routeData.push([
+                    "1",
+                    "-", // Carta
+                    "-", // Ref
+                    `${p0.lat.toFixed(4)}\n${p0.lon.toFixed(4)}`, // Lat/Lon
+                    "-", // Rumo
+                    "-", // Dist Leg
+                    "-", // Tempo Leg
+                    currentEta.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }), // ETA
+                    "0.0", // Total Dist
+                    "0.0" // Total Time
+                ]);
+
                 for (let i = 0; i < state.routePoints.length - 1; i++) {
                     const p1 = state.routePoints[i];
                     const p2 = state.routePoints[i + 1];
 
                     // Calc Leg
                     let crs = 0, legDist = 0;
-                    if (NavMath) {
-                        const leg = NavMath.calcLeg(p1.lat, p1.lon, p2.lat, p2.lon);
+                    if (window.NavMath) {
+                        const leg = window.NavMath.calcLeg(p1.lat, p1.lon, p2.lat, p2.lon);
                         crs = leg.crs;
                         legDist = leg.dist;
                     }
 
-                    // Lighthouse Info (Near p2, matching UI)
-                    let farolTxt = "-";
+                    // Update Cumulative
+                    cumulativeDist += legDist;
+                    const legHours = (speed > 0) ? (legDist / speed) : 0;
+                    cumulativeHours += legHours;
+
+                    // Update ETA
+                    currentEta = new Date(currentEta.getTime() + (legHours * 3600 * 1000));
+                    const etaStr = currentEta.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
+
+                    // Lighthouse Logic (Ref)
+                    let refTxt = "-";
                     if (window.App && typeof window.App.getNearestLighthouse === 'function') {
                         const lh = window.App.getNearestLighthouse(p2.lat, p2.lon);
                         if (lh && lh.dist < 50) {
-                            farolTxt = `${lh.name}\n(${lh.dist.toFixed(1)} NM)`;
+                            refTxt = `${lh.name}\n(${lh.dist.toFixed(1)}mn)`;
                         }
                     }
 
                     routeData.push([
-                        (i + 1).toString(),
-                        `${p1.name}\n(to ${p2.name})`,
-                        `${p1.lat.toFixed(4)}\n${p1.lon.toFixed(4)}`, // Lat/Long stacked
+                        (i + 2).toString(),
+                        "BR-23100", // Carta Placeholder (User requested manual or auto?) "Carta N°"
+                        refTxt,
+                        `${p2.lat.toFixed(4)}\n${p2.lon.toFixed(4)}`,
                         `${crs.toFixed(1)}°`,
                         legDist.toFixed(1),
-                        farolTxt
+                        formatDuration(legHours), // "04:30"
+                        etaStr,
+                        cumulativeDist.toFixed(1),
+                        formatDuration(cumulativeHours)
                     ]);
                 }
             }
 
             doc.autoTable({
-                startY: currentY + 8,
-                head: [['#', 'Waypoint', 'Lat / Long', 'Rumo', 'Dist.', 'Farol']],
+                startY: currentY + 5,
+                head: [['WP', 'Carta', 'Ref. Farol', 'Posição', 'Rumo', 'Dist.', 'Tempo', 'ETA', 'Total', 'Horas']],
                 body: routeData,
                 theme: 'grid',
-                headStyles: { fillColor: [52, 152, 219], halign: 'center' },
-                styles: { fontSize: 8, valign: 'middle', halign: 'center' },
+                headStyles: {
+                    fillColor: [52, 152, 219],
+                    fontSize: 7,
+                    halign: 'center',
+                    valign: 'middle'
+                },
+                styles: {
+                    fontSize: 7,
+                    valign: 'middle',
+                    halign: 'center',
+                    cellPadding: 1
+                },
                 columnStyles: {
-                    1: { halign: 'left' }, // Waypoint name left aligned
-                    5: { fontSize: 7 }     // Lighthouse smaller
+                    2: { fontSize: 6, cellWidth: 25 }, // Ref Farol (Small)
+                    3: { font: 'courier' }, // Coords
+                    7: { fontStyle: 'bold' } // ETA
                 }
             });
+
+            // --- 3.2 SCREENSHOTS (NOVO) ---
+            if (state.appraisal.prints && state.appraisal.prints.length > 0) {
+                currentY = doc.lastAutoTable.finalY + 10;
+
+                doc.setFont(undefined, 'bold');
+                doc.setFontSize(10);
+                doc.text("3.2. REGISTROS DA CARTA NÁUTICA (PRINTS)", 14, currentY);
+                currentY += 5;
+
+                state.appraisal.prints.forEach((printItem, idx) => {
+                    // Check logic for page break
+                    if (currentY + 80 > 280) {
+                        doc.addPage();
+                        currentY = 20;
+                    }
+
+                    doc.setFontSize(9);
+                    doc.setFont(undefined, 'bold');
+                    doc.text(`Imagem ${idx + 1}: ${printItem.title}`, 14, currentY + 5);
+
+                    try {
+                        // Image Dimensions (Fit Width)
+                        const imgProps = doc.getImageProperties(printItem.dataUrl);
+                        const pdfWidth = 180;
+                        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+                        doc.addImage(printItem.dataUrl, 'PNG', 14, currentY + 7, pdfWidth, pdfHeight);
+                        currentY += pdfHeight + 15;
+                    } catch (e) {
+                        console.warn("Erro ao add imagem PDF:", e);
+                        doc.text("(Erro ao renderizar imagem)", 14, currentY + 10);
+                        currentY += 20;
+                    }
+                });
+            }
 
             // --- 5. AUXÍLIOS À NAVEGAÇÃO (FARÓIS) ---
             if (state.appraisal.lighthouses.length > 0) {
                 doc.addPage();
-                addSectionTitle("5. FARÓIS E AUXÍLIOS VISUAIS", 20);
+                currentY = addSectionTitle("4. FARÓIS E AUXÍLIOS VISUAIS", 20);
 
                 const lhData = state.appraisal.lighthouses.map(lh => [
                     lh.name,
@@ -1154,7 +1273,7 @@ const ReportService = {
                     // Landscape Page for Meteomarinha
                     doc.addPage('a4', 'l');
                     currentY = 20;
-                    currentY = addSectionTitle("ANEXO: PREVISÃO METEOMARINHA (Paisagem)", currentY);
+                    currentY = addSectionTitle("8.1. ANEXO: PREVISÃO METEOMARINHA (Paisagem)", currentY);
 
                     // 1. Header Information (Date/Time/Validity)
                     const headerInfo = extractMeteoHeader(state.appraisal.meteoText);
@@ -1238,7 +1357,7 @@ const ReportService = {
                     // Landscape Page for Navarea V
                     doc.addPage('a4', 'l');
                     currentY = 20;
-                    currentY = addSectionTitle("ANEXO: AVISOS NAVAREA V (Paisagem)", currentY);
+                    currentY = addSectionTitle("8.2. ANEXO: AVISOS NAVAREA V (Paisagem)", currentY);
 
                     const navareaData = parseNavareaText(state.appraisal.navareaText);
 

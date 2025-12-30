@@ -287,6 +287,12 @@ const App = {
             });
         }
 
+        // --- SCREENSHOTS HANDLER ---
+        const btnAddPrint = document.getElementById('btn-add-print');
+        if (btnAddPrint) {
+            btnAddPrint.addEventListener('click', () => this.handleAddPrint());
+        }
+
         const btnSimulate = document.getElementById('btn-simulate');
         if (btnSimulate) btnSimulate.addEventListener('click', () => this.startSimulation());
 
@@ -2136,6 +2142,65 @@ const App = {
 
         this.watchId = navigator.geolocation.watchPosition(success, error, options);
         console.log("App: GPS Watch started ID " + this.watchId);
+    },
+
+    handleAddPrint: function () {
+        const titleInput = document.getElementById('inp-print-title');
+        const fileInput = document.getElementById('inp-print-file');
+
+        if (!fileInput.files || fileInput.files.length === 0) {
+            alert("Selecione uma imagem.");
+            return;
+        }
+
+        const file = fileInput.files[0];
+        const title = titleInput.value || file.name;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const dataUrl = e.target.result;
+
+            // Add to State
+            if (!State.appraisal.prints) State.appraisal.prints = [];
+            State.appraisal.prints.push({ title, dataUrl });
+
+            // Update UI
+            this.renderPrintList();
+
+            // Clear inputs
+            titleInput.value = "";
+            fileInput.value = "";
+        };
+        reader.readAsDataURL(file);
+    },
+
+    renderPrintList: function () {
+        const list = document.getElementById('list-prints');
+        if (!list) return;
+        list.innerHTML = "";
+
+        if (!State.appraisal.prints || State.appraisal.prints.length === 0) {
+            list.innerHTML = '<li class="text-[9px] text-gray-400 italic text-center p-1">Nenhuma imagem adicionada.</li>';
+            return;
+        }
+
+        State.appraisal.prints.forEach((p, index) => {
+            const li = document.createElement('li');
+            li.className = "flex justify-between items-center p-1 bg-white border border-gray-100 rounded mb-1";
+            li.innerHTML = `
+                <div class="flex items-center gap-2 overflow-hidden">
+                    <img src="${p.dataUrl}" class="w-6 h-6 object-cover rounded border">
+                    <span class="text-[9px] font-bold text-gray-600 truncate max-w-[150px]">${p.title}</span>
+                </div>
+                <button onclick="window.App.removePrint(${index})" class="text-red-500 hover:text-red-700 text-[10px] w-4 h-4"><i class="fas fa-times"></i></button>
+            `;
+            list.appendChild(li);
+        });
+    },
+
+    removePrint: function (index) {
+        State.appraisal.prints.splice(index, 1);
+        this.renderPrintList();
     },
 
     startSimulation: function () {
