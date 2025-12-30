@@ -1036,10 +1036,10 @@ const ReportService = {
                 // Annotate Center Height
                 let centerH = null;
                 if (window.TideJSONService && window.TideJSONService.isLoaded) {
-                    centerH = window.TideJSONService.getHeightAt(station, centerDate);
+                    centerH = window.TideJSONService.getHeightAt(queryStation, centerDate);
                 }
                 if (centerH === null && TideCSVService && typeof TideCSVService.getInterpolatedTide === 'function') {
-                    const res = TideCSVService.getInterpolatedTide(station, centerDate);
+                    const res = TideCSVService.getInterpolatedTide(queryStation, centerDate);
                     if (res) centerH = parseFloat(res.height);
                 }
 
