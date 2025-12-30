@@ -322,12 +322,17 @@ const App = {
                 const depPortId = document.getElementById('select-dep').value;
                 const arrPortId = document.getElementById('select-arr').value;
 
+                // Ensure State.tides exists
+                if (!State.tides) State.tides = { dep: {}, arr: {} };
+                if (!State.tides.dep) State.tides.dep = {};
+                if (!State.tides.arr) State.tides.arr = {};
+
                 // Lookup Departure Tide Station
                 if (depPortId) {
                     const pDep = PortDatabase.find(p => p.id === depPortId);
                     if (pDep) {
                         const res = TideLocator.findNearest(pDep.lat, pDep.lon);
-                        if (res && res.found && State.tides.dep) State.tides.dep.station = res.station.id;
+                        if (res && res.found) State.tides.dep.station = res.station.id;
                     }
                 }
 
@@ -336,7 +341,7 @@ const App = {
                     const pArr = PortDatabase.find(p => p.id === arrPortId);
                     if (pArr) {
                         const res = TideLocator.findNearest(pArr.lat, pArr.lon);
-                        if (res && res.found && State.tides.arr) {
+                        if (res && res.found) {
                             State.tides.arr.station = res.station.id;
                             console.log(`App: Maré Chegada definida para estação ${res.station.id} -> ${res.station.csvName}`);
                         }
