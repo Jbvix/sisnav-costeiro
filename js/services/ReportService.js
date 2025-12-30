@@ -667,6 +667,30 @@ const renderMachineryChecklist = (doc, y, state) => {
     return y + 10 + (splitObs.length * 4);
 };
 
+const renderSignatures = (doc) => {
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        const pageSize = doc.internal.pageSize;
+        const pageHeight = pageSize.height ? pageSize.height : pageSize.getHeight();
+        const pageWidth = pageSize.width ? pageSize.width : pageSize.getWidth();
+
+        if (i === pageCount) {
+            const y = pageHeight - 40;
+            doc.setDrawColor(0);
+            const lineW = 60;
+            const lineX = (pageWidth - lineW) / 2;
+            doc.line(lineX, y, lineX + lineW, y);
+            doc.setFontSize(10); doc.setFont(undefined, 'bold');
+            doc.text("Comandante", pageWidth / 2, y + 5, { align: "center" });
+            doc.setFontSize(8); doc.setFont(undefined, 'normal');
+            doc.text("Visto / Carimbo", pageWidth / 2, y + 10, { align: "center" });
+        }
+        doc.setFontSize(8);
+        doc.text(`SISNAV Costeiro - Pág ${i}/${pageCount}`, pageWidth / 2, pageHeight - 10, { align: "center" });
+    }
+};
+
 const ReportService = {
     generatePDF: async function (state) {
         if (!state) { alert("Erro: Estado da aplicação vazio (State is null)."); return; }
