@@ -719,8 +719,8 @@ const ReportService = {
 
             // --- VOYAGE CALCULATIONS (Moved Up) ---
             const voyage = state.voyage || {};
-            const totalDist = (state.totalDistance / 1852) || 0;
-            const speed = state.shipProfile.speed || 10;
+            const totalDist = parseFloat(state.totalDistance) || 0; // Already in NM
+            const speed = parseFloat(state.shipProfile.speed) || 10;
             const totalHours = (speed > 0) ? (totalDist / speed) : 0;
 
             const formatDuration = (hrs) => {
@@ -1148,8 +1148,8 @@ const ReportService = {
 
                     // Calc Leg
                     let crs = 0, legDist = 0;
-                    if (window.NavMath) {
-                        const leg = window.NavMath.calcLeg(p1.lat, p1.lon, p2.lat, p2.lon);
+                    if (NavMath) {
+                        const leg = NavMath.calcLeg(p1.lat, p1.lon, p2.lat, p2.lon);
                         crs = leg.crs;
                         legDist = leg.dist;
                     }
