@@ -143,11 +143,20 @@ const App = {
                         return;
                     }
 
-                    container.innerHTML = data.map(vessel => `
+                    container.innerHTML = data.map(vessel => {
+                        const now = Date.now() / 1000;
+                        const diff = now - vessel.last_seen;
+                        const isOnline = diff < 60; // 60 seconds timeout
+
+                        const statusHtml = isOnline
+                            ? `<div class="text-[10px] text-green-600 font-bold uppercase"><i class="fas fa-wifi"></i> Online</div>`
+                            : `<div class="text-[10px] text-gray-400 font-bold uppercase"><i class="fas fa-slash"></i> Offline</div>`;
+
+                        return `
                         <div class="flex items-center justify-between p-3 hover:bg-blue-50 cursor-pointer transition-colors rounded border border-transparent hover:border-blue-200"
                              onclick="window.App.selectVessel('${vessel.id}')">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-700">
+                                <div class="w-10 h-10 rounded-full ${isOnline ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-400'} flex items-center justify-center">
                                     <i class="fas fa-ship"></i>
                                 </div>
                                 <div>
@@ -156,11 +165,11 @@ const App = {
                                 </div>
                             </div>
                             <div class="text-right">
-                                <div class="text-[10px] text-green-600 font-bold uppercase"><i class="fas fa-wifi"></i> Online</div>
-                                <div class="text-[10px] text-gray-400">${new Date(vessel.last_seen * 1000).toLocaleTimeString()}</div>
+                                ${statusHtml}
+                                <div class="text-[10px] text-gray-400">Visto: ${new Date(vessel.last_seen * 1000).toLocaleTimeString()}</div>
                             </div>
                         </div>
-                    `).join('');
+                    `}).join('');
                 })
                 .catch(err => console.error("Fleet Error:", err));
         };
