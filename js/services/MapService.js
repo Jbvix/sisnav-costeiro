@@ -192,7 +192,7 @@ const MapService = {
      * @param {number} lon - Longitude atual.
      * @param {number} heading - Proa (Opcional, futuro uso).
      */
-    updateShipPosition: function (lat, lon, heading = 0) {
+    updateShipPosition: function (lat, lon, heading = 0, data = {}) {
         if (!State.mapInstance) return;
 
         // Remove navio anterior se existir (Limpa layer específica do navio)
@@ -200,19 +200,47 @@ const MapService = {
             State.layers.ship.clearLayers();
         }
 
-        // Ícone Customizado (Seta de Navegação usando FontAwesome)
+        // Ícone Customizado (Seta de Navegação - Rotacionada)
+        // O ícone fa-location-arrow aponta para 45 graus (NE) por padrão.
+        // Subtraímos 45 do heading para alinhar com o norte (0 graus).
+        const rotation = heading - 45;
+
         const shipIcon = L.divIcon({
             className: 'bg-transparent',
             html: `<i class="fas fa-location-arrow text-red-600 text-3xl" 
-                      style="transform: rotate(45deg); 
+                      style="transform: rotate(${rotation}deg); display: block;
                       filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.5));">
                    </i>`,
             iconSize: [30, 30],
             iconAnchor: [15, 15] // Centro do ícone para precisão
         });
 
+        // Monta Conteúdo do Popup
+        let popupContent = `
+            <div class="text-sm">
+                <strong class="text-blue-800 uppercase">${data.name || "Minha Embarcação"}</strong><hr class="my-1">
+                <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-xs text-gray-700">
+                    <span>Rumo:</span> <span class="font-bold">${heading.toFixed(0)}°</span>
+                    <span>Consumo:</span> <span class="font-bold">${(data.fuelRate || 0).toFixed(1)} L/h</span>
+                    <span>Saldo (ROB):</span> <span class="font-bold">${(data.fuelStock || 0).toLocaleString('pt-BR')} L</span>
+                </div>
+        `;
+
+        // Lógica condicional para consumo de 12h
+        if (data.elapsedHours > 12) {
+            const cons12h = (data.fuelRate || 0) * 12;
+            popupContent += `
+                <div class="mt-1 pt-1 border-t text-xs text-red-600 font-bold">
+                    Consumo 12h: ${cons12h.toFixed(1)} L
+                </div>
+            `;
+        }
+
+        popupContent += `</div>`;
+
         // Adiciona novo marcador do navio
         L.marker([lat, lon], { icon: shipIcon, zIndexOffset: 1000 })
+            .bindPopup(popupContent)
             .addTo(State.layers.ship);
 
         // (Opcional) Pan para o navio para seguir a embarcação

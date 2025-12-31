@@ -2099,9 +2099,30 @@ const App = {
             const speed = (pos.coords.speed || 0) * 1.94384; // m/s to knots
             const heading = pos.coords.heading || 0;
 
+            const name = State.shipProfile?.name || "Minha Embarcação";
+            const fuelRate = parseFloat(State.shipProfile?.fuelRate || 0);
+            let fuelStock = parseFloat(State.shipProfile?.fuelStock || 0);
+
+            // Calculate Elapsed Time
+            let elapsedHours = 0;
+            if (State.voyage?.depTime) {
+                const dep = new Date(State.voyage.depTime);
+                const now = new Date();
+                elapsedHours = (now - dep) / (1000 * 60 * 60); // ms to hours
+            }
+
+            // Estimate Current ROB (stock - consumption)
+            const consumed = elapsedHours * fuelRate;
+            const currentROB = fuelStock - consumed;
+
             // Update Map
             if (MapService) {
-                MapService.updateShipPosition(lat, lon, heading);
+                MapService.updateShipPosition(lat, lon, heading, {
+                    name: name,
+                    fuelRate: fuelRate,
+                    fuelStock: currentROB,
+                    elapsedHours: elapsedHours
+                });
                 // Center map on first fix
                 if (!this.hasFixedMap) {
                     if (State.mapInstance) State.mapInstance.setView([lat, lon], 12);
@@ -2301,10 +2322,42 @@ const App = {
             const curLat = p1.lat + (p2.lat - p1.lat) * progress;
             const curLon = p1.lon + (p2.lon - p1.lon) * progress;
 
-            // Update Map
-            MapService.updateShipPosition(curLat, curLon);
+            // Calculate Heading for Icon Rotation
+            let crs = 0;
+            if (window.NavMath || NavMath) {
+                const calc = window.NavMath || NavMath;
+                crs = calc.calcLeg(p1.lat, p1.lon, p2.lat, p2.lon).crs;
+            }
 
-            // Check Beam Visibility
+            // Calculate Simulation State (Time/Fuel)
+            const speedKnots = parseFloat(State.shipProfile?.speed || 10);
+            const fuelRate = parseFloat(State.shipProfile?.fuelRate || 0);
+            let fuelStock = parseFloat(State.shipProfile?.fuelStock || 0);
+
+            // Distance from Start (Approximate for simple sim)
+            // Dist = (Index * LegAvg + Progress * LegDist) - simplified
+            // Better: just calc dist from p0 to current
+            // For sim visual, we just estimate:
+            const hoursPerPoint = 1; // Arbitrary 1 hour between WPs for visual sim if not calc'd
+            // Let's use real math if possible, but expensive in loop.
+            // Simple approach: Accumulate time based on i
+
+            const estElapsedHours = i + progress; // Rough estimate: 1h per leg? No, let's use valid data if possible.
+            // Let's just pass a dummy incrementing hour for the visual effect of the "12h" alert
+            const simulatedElapsed = (i * 2 + progress * 2); // 2 hours per leg
+
+            const consumed = simulatedElapsed * fuelRate;
+            const currentROB = fuelStock - consumed;
+
+            // Update Map
+            if (MapService) {
+                MapService.updateShipPosition(curLat, curLon, crs, {
+                    name: State.shipProfile?.name || "Simulação",
+                    fuelRate: fuelRate,
+                    fuelStock: currentROB,
+                    elapsedHours: simulatedElapsed
+                });
+            }  // Check Beam Visibility
             this.checkBeamVisibility(curLat, curLon);
 
             // Update Dashboard Data (Fake SOG/COG for demo)
