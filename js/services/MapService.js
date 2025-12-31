@@ -12,6 +12,7 @@
  */
 
 import State from '../core/State.js';
+import NavMath from '../core/NavMath.js';
 
 const MapService = {
 
@@ -125,34 +126,63 @@ const MapService = {
         // Extrai apenas as coordenadas [lat, lon] para a polilinha do Leaflet
         const latlngs = routePoints.map(p => [p.lat, p.lon]);
 
-        // 1. Desenha o "XTE corridor" (Linha grossa transparente vermelha - Corredor de segurança)
+        // 1. Desenha o "XTE corridor" (Linha grossa transparente vermelha - Background)
         L.polyline(latlngs, {
             color: 'red',
             weight: 30,
             opacity: 0.15
         }).addTo(State.layers.track);
 
-        // 2. Desenha a linha de rota (Tracejada azul - Rota Planejada)
-        const polyline = L.polyline(latlngs, {
-            color: 'blue',
-            weight: 3,
-            dashArray: '5, 10'
-        }).addTo(State.layers.track);
+        // 2. Loop principal: Waypoints e Segmentos
+        routePoints.forEach((p, index) => {
+            // A. Marcador Numerado
+            const wpIcon = L.divIcon({
+                className: 'bg-transparent',
+                html: `<div class="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-md border-2 border-white" style="transform: translate(-50%, -50%);">
+                         ${index + 1}
+                       </div>`,
+                iconSize: [24, 24],
+                iconAnchor: [12, 12]
+            });
 
-        // 3. Adiciona marcadores para cada Waypoint
-        routePoints.forEach(p => {
-            L.circleMarker([p.lat, p.lon], {
-                radius: 4,
-                color: '#333',
-                fillColor: '#fff',
-                fillOpacity: 1,
-                weight: 1
-            })
-                .bindPopup(`<b>${p.name}</b>`)
+            L.marker([p.lat, p.lon], { icon: wpIcon })
+                .bindPopup(`
+                    <div class="text-xs text-center">
+                        <strong class="text-blue-800 text-sm">${index + 1}. ${p.name}</strong><br>
+                        ${p.lat.toFixed(4)}, ${p.lon.toFixed(4)}
+                    </div>
+                `)
                 .addTo(State.layers.waypoints);
+
+            // B. Segmento de Linha (Perna)
+            if (index < routePoints.length - 1) {
+                const pNext = routePoints[index + 1];
+                const segmentLine = L.polyline([[p.lat, p.lon], [pNext.lat, pNext.lon]], {
+                    color: 'blue',
+                    weight: 3,
+                    dashArray: '5, 10'
+                }).addTo(State.layers.track);
+
+                // Cálculo de Rumo e Distância do Segmento
+                if (NavMath && typeof NavMath.calcLeg === 'function') {
+                    const leg = NavMath.calcLeg(p.lat, p.lon, pNext.lat, pNext.lon);
+                    segmentLine.bindPopup(`
+                        <div class="text-center text-sm">
+                            <strong class="text-blue-700">Perna ${index + 1}</strong><br>
+                            Rumo: <strong>${leg.crs.toFixed(1)}°</strong><br>
+                            Dist: <strong>${leg.dist.toFixed(1)} NM</strong>
+                        </div>
+                    `);
+
+                    // Mouseover visual effect
+                    segmentLine.on('mouseover', function () { this.setStyle({ weight: 5, color: '#2563eb' }); });
+                    segmentLine.on('mouseout', function () { this.setStyle({ weight: 3, color: 'blue' }); });
+                }
+            }
         });
 
         // Ajusta o zoom para caber toda a rota na tela (Fit Bounds)
+        const polyline = L.polyline(latlngs); // Objeto temporário apenas para geometria
         State.mapInstance.fitBounds(polyline.getBounds(), { padding: [50, 50] });
     },
 
