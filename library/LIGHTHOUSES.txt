@@ -6,7 +6,7 @@ Bailique	00°59.40' N	49°56.83' W	Lp. B.	Armação tronco pi­ Racon M (– –
 Ilha do Pará	00°52.80' N	49°59.27' W	Lp (3) B.	Torre quadrangular Racon B (–
 Pau Cavado	00°11.51' N	50°47.25' W	Lp. B.	Pau a Pino
 Ilha Camaleão	00°09.14' S	48°54.72' W	LpL. B.	Torre tronco pirami­
-Simão Grande	00°15.41' N	48°24.19' W	Lp. B.	Armação tronco pi­ Setor de visibi­
+Simão Grande	00°15.43' N	48°24.19' W	Lp. B.	Armação tronco pi­ Setor de visibi­
 Ponta da Tijoca	00°33.44' S	47°53.85' W	Lp (2) B.	Torre quadrangular Setor de visibi­
 Taipu	00°39.71' S	48°02.63' W	Lp (3) B.	Torre quadrangular
 Ponta Maria	00°46.56' S	48°09.14' W	Lp. B.	Torre quadrangular Setor de visibi­
@@ -326,7 +326,6 @@ Sao Lourenço (Curva)	31°22.70' S	51°57.95' W	Lp E.	Farol vermelha, Altura 8m
 Sao Mateus	18°36.96' S	39°44.01' W	Lp (2) B.	Farol branca, Altura 14m
 Sapata	03°52.49' S	32°27.69' W	Al.Fl.	Farol white;red, Altura 203m
 Saubara	12°44.40' S	38°43.10' W	Lp B.	Farol branca, Altura 8m
-Simao Grande	00°15.43' S	48°24.09' W	N/D	Farol
 Sol	05°45.04' S	35°11.80' W	Lp E.	Farol vermelha, Altura 8m
 Subauma	12°14.40' S	37°46.80' W	Lp B.	Farol branca, Altura 48m
 Sucuraca	19°05.82' S	39°43.38' W	Lp (2) B.	Farol branca, Altura 64m
