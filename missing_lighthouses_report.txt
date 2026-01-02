@@ -1,0 +1,213 @@
+Total entries in JSON: 408
+Missing in MONITOR: 209
+
+--- Missing Lighthouses ---
+Amapa
+Andreza
+Antigo Farol de Capão da Canoa
+Aquipelago de Alcatrazes
+Arambare
+Araquari
+Araquari
+Aratu
+Baia da Traicao
+Baixio de Madre de Deus
+Baixio do Capeta
+Baixio do Rio do Fogo
+Baixo da Teresa Panca
+Banco Coroa Grande
+Barra de Itabapoana
+Barra do Pote
+Barra do Tombo
+Barreiras do Prado
+Boco do Furo
+Boiucu
+Cabeca de Negro
+Cabo Orange
+Cabo de Santo Agostinho
+Cabo de São Roque
+Caete
+Calheta
+Camaleao
+Camapijo
+Camaçari
+Canal da Feitoria No 5
+Canal da Setia No 4
+Cascalheira
+Colares
+Coroa Vermelha
+Coroa do Meio No 12
+Coroa dos Patos No 4
+Desertas
+Desertores
+Diamante No 6
+Enseada dos Portugueses
+FAROL
+Farol Arpoador
+Farol Atalaia
+Farol Cristóvão Pereira
+Farol Garcia d'Avila
+Farol Ilha do Arvoredo
+Farol Moronas
+Farol Norte
+Farol Ponto do Malhado
+Farol Rotativo
+Farol Sul
+Farol da Fortaleza de Santa Cruz
+Farol da Gameleira
+Farol da Ilha Rasa
+Farol da Ilha da Moela
+Farol da Lua Cheia
+Farol da Pedra Seca
+Farol da Pedra da Galé
+Farol da Ponta Alegre
+Farol da Sapata
+Farol das Conchas
+Farol das Rocas
+Farol de Belém
+Farol de Boa Esperança
+Farol de Camamu
+Farol de Capao da Canoa
+Farol de Ilhéu Grande
+Farol de Itapuã
+Farol de Itapuã
+Farol de Itaqui
+Farol de Mãe Luiza
+Farol de Pau-a-Pino
+Farol de Ponta Verde
+Farol de Porto Seguro
+Farol de Santa Marta
+Farol de Tramandaí
+Farol desativado
+Farol do Bojuru
+Farol do Bom Abrigo
+Farol do Calombo
+Farol do Cruzeiro
+Farol do Morro
+Farol do Morro dos Conventos
+Farol do Recife
+Farol do Sol
+Farol dos Castelhanos
+Farolete Baleias No 7
+Farolete Barba Negra
+Farolete Calhau de São Pedro
+Farolete Propriá
+Fugitivo
+Gambeta No 9
+Guarau
+Guaxindiba
+Ilha Caiobá
+Ilha Cameleao
+Ilha Cotijuba
+Ilha Escalvada
+Ilha Joroca
+Ilha Jupatituba
+Ilha Jutuba
+Ilha Maiau
+Ilha Mandi
+Ilha Queimada Grande
+Ilha Rata
+Ilha Santana
+Ilha Tatuoca
+Ilha da Vitoria
+Ilha das Araras
+Ilha de Coral
+Ilha de Guarapirá
+Ilha de Santana
+Ilha do Apeu
+Ilha do Capim
+Ilha do Frade, Ponta de Nossa Senhora de Guadalupe
+Ilha do Machadinho
+Ilha do Mangunca
+Ilha do Pacotes
+Ilha do Toque-Toque
+Ilha dos Amores, Salvaterra
+Ilha dos Papagaios
+Ilhas Maricá
+Ilhas das Araras
+Itaguary
+Itamoabo
+Itapeva
+Itauna
+Joanes
+Laje da Conceicao
+Machadinho
+Maragogi
+Marcação Ponta do Coral
+Morro do Pico
+Mucuri
+No 102
+No 106
+No 106
+No 11
+No 11
+No 15
+No 17
+No 3
+No 32
+No 4
+No 50
+No 6
+No 7
+No 8
+No 8
+No 9
+No 9
+No 97
+No 99
+Novo Farol do Cabeço do São Francisco
+Número 10
+Número 13
+Oureis
+Papagaio
+Pedra da Baleia
+Pedra da Manteiga
+Pedra de Baleia
+Pedra do Sal
+Pedras Brancas No 5
+Penedos de São Pedro e São Paulo
+Pirajuba
+Pitimbu
+Point Ubu
+Ponta Alambique
+Ponta Catoeiro
+Ponta Corumbau
+Ponta Coruripe
+Ponta Marapanim
+Ponta Maria Teresa
+Ponta Paracuru
+Ponta Pecem
+Ponta da Baleia
+Ponta da Sela
+Ponta da Tabatinga
+Ponta das Almas
+Ponta das Cabeçudas
+Ponta das Canas
+Ponta de Itapage
+Ponta de Pirabura
+Ponta do Catalão
+Ponta do Ceu
+Ponta do Chapeu Virado
+Ponta do Forte
+Ponta do Mutá
+Ponta do Santarem
+Ponta do Tubarao
+Ponta do Valado
+Pontal
+Ponto de Santana
+Porto de Suape
+Potengi
+Quatipuru
+Quilombo
+Recife de Natal
+Rio Arari
+Rio Arrozal
+Rio Calçoene
+Rio de São Miguel
+Salamina
+Sao Lourenço (Curva)
+Sao Mateus
+Saubara
+Taia
+Tamandare
+Verga

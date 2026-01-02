@@ -1,0 +1,248 @@
+Missing Lighthouses Grouped by State
+====================================
+
+## AP (7)
+- Amapa
+- Cabo Orange
+- Fugitivo
+- Ponta do Ceu
+- Ponta do Santarem
+- Rio Calçoene
+- Taia
+
+## PA (32)
+- Banco Coroa Grande
+- Boco do Furo
+- Boiucu
+- Caete
+- Camaleao
+- Camapijo
+- Cascalheira
+- Colares
+- Farol de Belém
+- Ilha Cameleao
+- Ilha Cotijuba
+- Ilha Joroca
+- Ilha Jupatituba
+- Ilha Jutuba
+- Ilha Mandi
+- Ilha Tatuoca
+- Ilha das Araras
+- Ilha do Apeu
+- Ilha do Capim
+- Ilha do Machadinho
+- Ilha dos Amores, Salvaterra
+- Itaguary
+- Joanes
+- Machadinho
+- Pedra da Manteiga
+- Ponta Marapanim
+- Ponta Maria Teresa
+- Ponta do Chapeu Virado
+- Ponto de Santana
+- Quatipuru
+- Rio Arari
+- Rio Arrozal
+
+## MA (12)
+- Andreza
+- Farol Arpoador
+- Farol Moronas
+- Farol de Itaqui
+- Ilha Maiau
+- Ilha de Guarapirá
+- Ilha de Santana
+- Ilha do Mangunca
+- Itauna
+- Papagaio
+- Pedra do Sal
+- Pirajuba
+
+## CE (4)
+- Ponta Paracuru
+- Ponta Pecem
+- Ponta das Almas
+- Ponta de Itapage
+
+## RN (11)
+- Baixio do Rio do Fogo
+- Baixo da Teresa Panca
+- Cabo de São Roque
+- Farol da Gameleira
+- Farol de Mãe Luiza
+- Farol do Sol
+- Ponta da Tabatinga
+- Ponta do Tubarao
+- Pontal
+- Potengi
+- Recife de Natal
+
+## RN (Rocas/Noronha) (4)
+- Farol da Sapata
+- Farol das Rocas
+- Ilha Rata
+- Morro do Pico
+
+## PB (3)
+- Baia da Traicao
+- Farol da Pedra Seca
+- Pitimbu
+
+## PE (7)
+- Cabo de Santo Agostinho
+- Farol Norte
+- Farol Sul
+- Farol da Lua Cheia
+- Farol do Recife
+- Porto de Suape
+- Tamandare
+
+## PE (Arquipelago - St Peter) (1)
+- Penedos de São Pedro e São Paulo
+
+## AL (5)
+- Farol de Ponta Verde
+- Maragogi
+- Novo Farol do Cabeço do São Francisco
+- Ponta Coruripe
+- Rio de São Miguel
+
+## SE (1)
+- Farolete Propriá
+
+## BA (29)
+- Aratu
+- Baixio de Madre de Deus
+- Baixio do Capeta
+- Barra do Pote
+- Barra do Tombo
+- Barreiras do Prado
+- Cabeca de Negro
+- Camaçari
+- Coroa Vermelha
+- Farol Garcia d'Avila
+- Farol Ponto do Malhado
+- Farol de Camamu
+- Farol de Ilhéu Grande
+- Farol de Itapuã
+- Farol de Porto Seguro
+- Farol do Morro
+- Ilha do Frade, Ponta de Nossa Senhora de Guadalupe
+- Itamoabo
+- Mucuri
+- Oureis
+- Pedra da Baleia
+- Ponta Alambique
+- Ponta Catoeiro
+- Ponta Corumbau
+- Ponta da Baleia
+- Ponta do Forte
+- Ponta do Mutá
+- Salamina
+- Saubara
+
+## ES (9)
+- Calheta
+- Enseada dos Portugueses
+- Farol de Boa Esperança
+- Ilha Escalvada
+- Ilha do Pacotes
+- Pedra de Baleia
+- Point Ubu
+- Ponta do Valado
+- Sao Mateus
+
+## RJ (11)
+- Barra de Itabapoana
+- Farol Rotativo
+- Farol da Fortaleza de Santa Cruz
+- Farol da Ilha Rasa
+- Farol de Pau-a-Pino
+- Farol do Calombo
+- Farol dos Castelhanos
+- Guaxindiba
+- Ilha Santana
+- Ilha dos Papagaios
+- Ilhas Maricá
+
+## SP (15)
+- Aquipelago de Alcatrazes
+- FAROL
+- Farol da Ilha da Moela
+- Farol desativado
+- Farol do Bom Abrigo
+- Farol do Cruzeiro
+- Guarau
+- Ilha Queimada Grande
+- Ilha da Vitoria
+- Ilha do Toque-Toque
+- Laje da Conceicao
+- No 4
+- Ponta da Sela
+- Ponta das Canas
+- Ponta de Pirabura
+
+## PR (2)
+- Farol das Conchas
+- Ilha Caiobá
+
+## SC (17)
+- Araquari
+- Araquari
+- Farol Ilha do Arvoredo
+- Farol da Pedra da Galé
+- Farol de Santa Marta
+- Farol do Morro dos Conventos
+- Farolete Calhau de São Pedro
+- Ilha de Coral
+- Ilhas das Araras
+- Marcação Ponta do Coral
+- No 15
+- No 7
+- No 8
+- Número 10
+- Número 13
+- Ponta das Cabeçudas
+- Ponta do Catalão
+
+## RS (39)
+- Antigo Farol de Capão da Canoa
+- Arambare
+- Canal da Feitoria No 5
+- Canal da Setia No 4
+- Coroa do Meio No 12
+- Coroa dos Patos No 4
+- Desertas
+- Desertores
+- Diamante No 6
+- Farol Atalaia
+- Farol Cristóvão Pereira
+- Farol da Ponta Alegre
+- Farol de Capao da Canoa
+- Farol de Itapuã
+- Farol de Tramandaí
+- Farol do Bojuru
+- Farolete Baleias No 7
+- Farolete Barba Negra
+- Gambeta No 9
+- Itapeva
+- No 102
+- No 106
+- No 106
+- No 11
+- No 11
+- No 17
+- No 3
+- No 32
+- No 50
+- No 6
+- No 8
+- No 9
+- No 9
+- No 97
+- No 99
+- Pedras Brancas No 5
+- Quilombo
+- Sao Lourenço (Curva)
+- Verga
+
