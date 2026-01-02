@@ -5,16 +5,16 @@ Guará	01°11.26' N	49°53.97' W	Lp. B.	Armação tronco pi­ Racon Q (– – .
 Bailique	00°59.40' N	49°56.83' W	Lp. B.	Armação tronco pi­ Racon M (– –)
 Ilha do Pará	00°52.80' N	49°59.27' W	Lp (3) B.	Torre quadrangular Racon B (–
 Pau Cavado	00°11.51' N	50°47.25' W	Lp. B.	Pau a Pino
-Ilha Camaleão	00°09.14' N	48°54.72' W	LpL. B.	Torre tronco pirami­
+Ilha Camaleão	00°09.14' S	48°54.72' W	LpL. B.	Torre tronco pirami­
 Simão Grande	00°15.41' N	48°24.19' W	Lp. B.	Armação tronco pi­ Setor de visibi­
-Ponta da Tijoca	00°33.44' N	47°53.85' W	Lp (2) B.	Torre quadrangular Setor de visibi­
-Taipu	00°39.71' N	48°02.63' W	Lp (3) B.	Torre quadrangular
-Ponta Maria	00°46.56' N	48°09.14' W	Lp. B.	Torre quadrangular Setor de visibi­
-Soure	00°44.53' N	48°30.37' W	Lp (2) B.	Torre quadrangular
-Salvaterra	00°45.16' N	48°30.48' W	Lp. B.	Armação tronco pi­
-Curuçá	00°33.88' N	47°45.98' W	Lp (3) B.	Armação em treliça Setor de visibi­
-Salinópolis	00°36.93' N	47°21.39' W	Lp. B.	Armação cônica em
-Apeú	00°54.62' N	46°11.34' W	Lp (2) B.	Armação tronco pi­
+Ponta da Tijoca	00°33.44' S	47°53.85' W	Lp (2) B.	Torre quadrangular Setor de visibi­
+Taipu	00°39.71' S	48°02.63' W	Lp (3) B.	Torre quadrangular
+Ponta Maria	00°46.56' S	48°09.14' W	Lp. B.	Torre quadrangular Setor de visibi­
+Soure	00°44.53' S	48°30.37' W	Lp (2) B.	Torre quadrangular
+Salvaterra	00°45.16' S	48°30.48' W	Lp. B.	Armação tronco pi­
+Curuçá	00°33.88' S	47°45.98' W	Lp (3) B.	Armação em treliça Setor de visibi­
+Salinópolis	00°36.93' S	47°21.39' W	Lp. B.	Armação cônica em
+Apeú	00°54.62' S	46°11.34' W	Lp (2) B.	Armação tronco pi­
 Ponta da Praia	01°10.02' S	45°38.10' W	Lp (5) B.	Torre quadrangular Interferência de
 São João	01°16.92' S	44°54.20' W	LpL. B.	Torre cilíndrica de Visibilidade
 Mangunça	01°36.92' S	44°39.23' W	Lp. B.	Torre tronco pira­
@@ -124,220 +124,218 @@ Barra	32°07.07' S	52°04.61' W	N/D	Posterior
 Sarita	32°37.81' S	52°25.76' W	Lp (3) B.	Torre quadrangular
 Albardão	33°12.15' S	52°42.31' W	Lp (4) B.	Torre cilíndrica de
 Chuí	33°44.57' S	53°22.48' W	Lp (2) B.	Torre troncônica de Radiofarol
-Atalaia	32°07.11' S	52°04.64' W	N/D	Importado do OSM
-Bojuru	31°29.16' S	51°25.23' W	N/D	Importado do OSM
-Capao da Canoa	29°44.70' S	50°00.28' W	Lp (2) B.	Importado do OSM
-Itapuã	30°23.11' S	51°03.57' W	Lp B.	Importado do OSM
-Ponta Alegre	32°24.88' S	52°45.49' W	N/D	Importado do OSM
-Cristóvão Pereira	31°03.81' S	51°09.91' W	Lp B.	Importado do OSM
-Tramandaí	30°00.51' S	50°08.15' W	LpL B.	Importado do OSM
-Albardao	33°12.15' S	52°42.36' W	Lp (4) B.	Importado do OSM
-Alcantara	02°24.60' S	44°25.06' W	Q (2) B.	Importado do OSM
-Amapa	02°04.60' N	50°51.60' W	Al.Fl.	Importado do OSM
-Andreza	02°45.80' S	42°15.70' W	Lp E.	Importado do OSM
-Antigo Farol de Capão da Canoa	29°45.74' S	50°00.93' W	N/D	Importado do OSM
-Aquipelago de Alcatrazes	24°05.70' S	45°42.20' W	N/D	Importado do OSM
-Arambare	30°56.14' S	51°27.59' W	Lp V.	Importado do OSM
-Araquari	26°27.14' S	48°35.66' W	F A.	Importado do OSM
-Aratu	12°47.56' S	38°29.42' W	Mo (N) A.	Importado do OSM
-Arpoador	02°43.59' S	42°22.42' W	Lp B.	Importado do OSM
-Baia da Traicao	06°40.54' S	34°55.95' W	Lp B.	Importado do OSM
-Baixio de Madre de Deus	12°44.86' S	38°37.59' W	Lp (2+1) V.	Importado do OSM
-Baixio do Capeta	12°45.02' S	38°38.05' W	Lp (2) B.	Importado do OSM
-Baixio do Rio do Fogo	05°13.74' S	35°20.86' W	Lp E.	Importado do OSM
-Baixo da Teresa Panca	05°24.09' S	35°17.79' W	Lp B.	Importado do OSM
-Banco Coroa Grande	01°01.70' S	48°35.70' W	N/D	Importado do OSM
-Barra de Itabapoana	21°18.83' S	40°57.96' W	Lp V.	Importado do OSM
-Barra do Pote	13°01.16' S	38°38.66' W	Q (2) B.	Importado do OSM
-Barra do Tombo	17°46.00' S	39°12.28' W	Lp B.	Importado do OSM
-Barreiras do Prado	17°17.24' S	39°13.32' W	Lp (2) B.	Importado do OSM
-Belém	01°27.92' S	48°30.33' W	N/D	Importado do OSM
-Boa Esperança	20°43.08' S	45°41.55' W	N/D	Importado do OSM
-Boco do Furo	01°27.84' S	48°42.59' W	Lp (2) B.	Importado do OSM
-Boiucu	01°48.50' S	50°18.40' W	N/D	Importado do OSM
-Bom Abrigo	25°07.39' S	47°51.73' W	Al.Fl (2+1).	Importado do OSM
-Cabeca de Negro	12°49.65' S	38°51.35' W	Lp E.	Importado do OSM
-Cabo Orange	04°25.78' N	51°33.35' W	N/D	Importado do OSM
-Cabo de Santo Agostinho	08°21.09' S	34°56.84' W	Lp B.	Importado do OSM
-Cabo de São Roque	05°29.35' S	35°15.69' W	Lp (3) B.	Importado do OSM
-Caete	00°48.38' S	46°37.22' W	Q (2) B.	Importado do OSM
-Calheta	20°30.49' S	29°18.58' W	Q B.	Importado do OSM
-Calombo	23°01.65' S	44°18.78' W	Lp E.	Importado do OSM
-Camaleao	00°09.10' S	48°54.70' W	LpL B.	Importado do OSM
-Camamu	13°53.48' S	38°59.94' W	N/D	Importado do OSM
-Camapijo	01°21.81' S	48°38.82' W	Lp (2) B.	Importado do OSM
-Camaçari	12°44.53' S	38°08.95' W	Lp B.	Importado do OSM
-Canal da Feitoria No 5	31°43.45' S	52°00.22' W	Lp E.	Importado do OSM
-Canal da Setia No 4	31°53.12' S	52°09.07' W	Lp V.	Importado do OSM
-Cascalheira	00°01.35' S	51°03.72' W	Lp (2) B.	Importado do OSM
-Colares	00°55.08' S	48°17.53' W	Lp (2) B.	Importado do OSM
-Coroa Vermelha	17°58.04' S	39°12.48' W	Lp (3) B.	Importado do OSM
-Coroa do Meio No 12	31°44.35' S	52°09.30' W	Lp V.	Importado do OSM
-Coroa dos Patos No 4	31°43.00' S	52°04.33' W	Lp V.	Importado do OSM
-Cruzeiro	23°25.99' S	45°04.10' W	N/D	Importado do OSM
-Desertas	30°33.00' S	50°50.23' W	Lp V.	Importado do OSM
-Desertores	30°57.83' S	51°14.84' W	Lp V.	Importado do OSM
-Diamante No 6	31°57.28' S	52°04.76' W	Lp V.	Importado do OSM
-Enseada dos Portugueses	20°30.49' S	29°18.92' W	Q E.	Importado do OSM
-FAROL	23°10.86' S	46°56.51' W	N/D	Importado do OSM
-Farolete Baleias No 7	31°55.09' S	52°07.13' W	Lp E.	Importado do OSM
-Farolete Barba Negra	30°32.02' S	51°08.48' W	Lp V.	Importado do OSM
-Farolete Calhau de São Pedro	27°15.07' S	48°25.33' W	Lp B.	Importado do OSM
-Farolete Propriá	10°56.80' S	37°01.86' W	N/D	Importado do OSM
-Fortaleza de Santa Cruz	22°56.28' S	43°08.06' W	Iso E.	Importado do OSM
-Fugitivo	00°10.21' N	50°55.11' W	Lp (2) B.	Importado do OSM
-Gambeta No 9	31°43.92' S	52°08.14' W	Lp E.	Importado do OSM
-Gameleira	05°13.20' S	35°25.36' W	N/D	Importado do OSM
-Garcia d'Avila	12°34.65' S	38°00.10' W	Lp (2) B.	Importado do OSM
-Guarau	24°22.90' S	46°59.20' W	N/D	Importado do OSM
-Guaxindiba	21°27.90' S	41°02.60' W	Lp (2) B.	Importado do OSM
-Ilha Caiobá	25°51.17' S	48°32.13' W	N/D	Importado do OSM
-Ilha Cameleao	01°49.16' S	49°56.81' W	N/D	Importado do OSM
-Ilha Cotijuba	01°16.00' S	48°33.80' W	N/D	Importado do OSM
-Ilha Escalvada	20°42.02' S	40°24.41' W	Q (2) B.	Importado do OSM
-Ilha Joroca	01°38.80' S	49°13.70' W	N/D	Importado do OSM
-Ilha Jupatituba	01°41.00' S	49°14.10' W	N/D	Importado do OSM
-Ilha Jutuba	01°15.00' S	48°30.30' W	Lp B.	Importado do OSM
-Ilha Maiau	01°16.90' S	44°54.21' W	N/D	Importado do OSM
-Ilha Mandi	01°36.70' S	49°08.60' W	N/D	Importado do OSM
-Ilha Queimada Grande	24°28.79' S	46°40.56' W	N/D	Importado do OSM
-Ilha Rasa	23°03.84' S	43°08.75' W	N/D	Importado do OSM
-Ilha Rata	03°48.77' S	32°23.20' W	N/D	Importado do OSM
-Ilha Santana	22°25.03' S	41°42.27' W	Al.LFl.	Importado do OSM
-Ilha Tatuoca	01°11.97' S	48°30.34' W	N/D	Importado do OSM
-Ilha da Moela	24°03.05' S	46°15.82' W	Al.Oc (3+1).	Importado do OSM
-Ilha da Vitoria	23°45.10' S	45°00.70' W	N/D	Importado do OSM
-Ilha das Araras	01°48.65' S	50°08.93' W	N/D	Importado do OSM
-Ilha de Coral	27°55.98' S	48°32.56' W	Lp B.	Importado do OSM
-Ilha de Guarapirá	02°34.74' S	44°22.40' W	N/D	Importado do OSM
-Ilha de Santana	02°16.23' S	43°37.44' W	Al.LFl.	Importado do OSM
-Ilha do Apeu	00°54.62' S	46°11.17' W	Lp (2) B.	Importado do OSM
-Ilha do Arvoredo	27°17.77' S	48°21.41' W	N/D	Importado do OSM
-Ilha do Capim	01°33.30' S	48°51.90' W	N/D	Importado do OSM
-Ilha do Frade, Ponta de Nossa Senhora de Guadalupe	12°48.85' S	38°38.48' W	N/D	Importado do OSM
-Ilha do Frances	20°55.65' S	40°45.31' W	LpL B.	Importado do OSM
-Ilha do Machadinho	00°10.80' S	48°45.90' W	N/D	Importado do OSM
-Ilha do Mangunca	01°36.94' S	44°39.29' W	Lp B.	Importado do OSM
-Ilha do Pacotes	20°21.12' S	40°15.03' W	Lp B.	Importado do OSM
-Ilha do Para	00°52.83' N	49°59.27' W	Lp (3) B.	Importado do OSM
-Ilha do Toque-Toque	23°51.34' S	45°31.49' W	N/D	Importado do OSM
-Ilha dos Amores, Salvaterra	00°45.17' S	48°30.48' W	Lp B.	Importado do OSM
-Ilha dos Papagaios	22°22.98' S	41°45.52' W	N/D	Importado do OSM
-Ilhas Maricá	23°01.04' S	42°55.35' W	LpL B.	Importado do OSM
-Ilhas das Araras	28°19.30' S	48°38.91' W	Q (2) B.	Importado do OSM
-Ilhéu Grande	14°46.21' S	39°01.06' W	Lp (3) B.	Importado do OSM
-Itaguary	01°25.50' S	48°49.00' W	Lp B.	Importado do OSM
-Itamoabo	12°47.73' S	38°32.04' W	Q (2) B.	Importado do OSM
-Itapeva	29°33.41' S	49°53.37' W	Lp (5) B.	Importado do OSM
-Itaqui	02°54.07' S	41°33.35' W	Lp B.	Importado do OSM
-Itauna	02°32.07' S	44°30.75' W	Lp B.	Importado do OSM
-Joanes	00°52.87' S	48°30.46' W	Lp B.	Importado do OSM
-Laje da Conceicao	24°14.22' S	46°41.43' W	N/D	Importado do OSM
-Lencois Grandes	02°22.78' S	43°16.20' W	LpL B.	Importado do OSM
-Lua Cheia	08°02.82' S	34°51.55' W	LpL V.	Importado do OSM
-Machadinho	01°22.57' S	48°38.60' W	Lp (3) B.	Importado do OSM
-Maragogi	09°00.80' S	35°13.40' W	F E.	Importado do OSM
-Marcação Ponta do Coral	27°33.98' S	48°32.21' W	N/D	Importado do OSM
-Massaguacu	23°37.74' S	45°22.20' W	Lp (2) B.	Importado do OSM
-Moronas	03°04.27' S	59°46.23' W	Lp V.	Importado do OSM
-Morro	13°22.56' S	38°54.92' W	N/D	Importado do OSM
-Morro Taipus	13°57.36' S	38°56.52' W	Lp (3) B.	Importado do OSM
-Morro do Pico	03°50.70' S	32°25.28' W	Al.Fl.	Importado do OSM
-Morro dos Conventos	28°56.08' S	49°21.76' W	Lp (3) B.	Importado do OSM
-Mucuri	18°03.61' S	39°32.06' W	Lp B.	Importado do OSM
-Mundau	03°10.59' S	39°21.72' W	Lp B.	Importado do OSM
-Mãe Luiza	05°47.71' S	35°11.12' W	N/D	Importado do OSM
-No 102	30°20.69' S	51°03.90' W	Lp V.	Importado do OSM
-No 106	30°19.92' S	51°05.52' W	Lp V.	Importado do OSM
-No 11	31°42.60' S	51°58.11' W	Lp E.	Importado do OSM
-No 15	26°54.12' S	48°39.21' W	Lp (3) E.	Importado do OSM
-No 17	31°41.95' S	51°56.50' W	Lp E.	Importado do OSM
-No 3	31°47.83' S	52°11.59' W	Lp E.	Importado do OSM
-No 32	31°52.13' S	52°09.61' W	Lp V.	Importado do OSM
-No 4	23°59.06' S	46°18.60' W	N/D	Importado do OSM
-No 50	31°46.39' S	52°10.72' W	Lp V.	Importado do OSM
-No 6	31°43.31' S	52°00.10' W	Lp V.	Importado do OSM
-No 7	26°54.73' S	48°38.27' W	Lp (3) E.	Importado do OSM
-No 8	31°42.98' S	51°59.27' W	Lp V.	Importado do OSM
-No 9	31°43.05' S	51°59.24' W	Lp E.	Importado do OSM
-No 97	30°20.81' S	51°03.58' W	Lp E.	Importado do OSM
-No 99	30°20.62' S	51°03.85' W	Lp E.	Importado do OSM
-Norte	08°02.67' S	34°51.02' W	Lp V.	Importado do OSM
-Novo Farol do Cabeço do São Francisco	10°29.41' S	36°23.19' W	Lp B.	Importado do OSM
-Número 10	26°54.86' S	48°38.48' W	Q (2) V.	Importado do OSM
-Número 13	26°54.29' S	48°39.07' W	Q (2) E.	Importado do OSM
-Oureis	12°43.20' S	38°39.30' W	Lp (2) B.	Importado do OSM
-Papagaio	02°33.70' S	43°55.74' W	Lp B.	Importado do OSM
-Pau-a-Pino	23°05.92' S	44°07.15' W	Q (3) B.	Importado do OSM
-Pedra Seca	06°57.38' S	34°49.36' W	Lp (3) B.	Importado do OSM
-Pedra da Baleia	12°36.83' S	38°57.57' W	N/D	Importado do OSM
-Pedra da Galé	27°10.90' S	48°24.47' W	Lp B.	Importado do OSM
-Pedra da Manteiga	01°28.47' S	48°42.54' W	Lp V.	Importado do OSM
-Pedra de Baleia	20°19.12' S	40°16.33' W	Lp V.	Importado do OSM
-Pedra do Sal	02°48.23' S	41°43.76' W	Lp B.	Importado do OSM
-Pedras Brancas No 5	30°05.91' S	51°16.27' W	Lp E.	Importado do OSM
-Penedos de São Pedro e São Paulo	00°55.01' N	29°20.76' W	Lp B.	Importado do OSM
-Pirajuba	02°12.70' S	44°24.20' W	Lp (3) B.	Importado do OSM
-Pitimbu	07°27.90' S	34°47.60' W	Lp B.	Importado do OSM
-Point Ubu	20°46.82' S	40°34.68' W	Lp B.	Importado do OSM
-Ponta Alambique	12°50.38' S	38°47.63' W	Lp B.	Importado do OSM
-Ponta Catoeiro	17°52.02' S	39°16.18' W	Lp B.	Importado do OSM
-Ponta Corumbau	16°53.75' S	39°06.83' W	Lp B.	Importado do OSM
-Ponta Coruripe	10°09.50' S	36°08.10' W	Lp (2) B.	Importado do OSM
-Ponta Marapanim	00°34.81' S	47°35.04' W	N/D	Importado do OSM
-Ponta Maria Teresa	00°46.55' S	48°09.14' W	N/D	Importado do OSM
-Ponta Paracuru	03°23.90' S	39°00.70' W	Lp B.	Importado do OSM
-Ponta Pecem	03°33.02' S	38°49.27' W	Al.Fl.	Importado do OSM
-Ponta Tijoca	00°33.42' S	47°53.85' W	N/D	Importado do OSM
-Ponta Verde	09°39.96' S	35°41.53' W	Lp B.	Importado do OSM
-Ponta da Baleia	17°41.31' S	39°08.28' W	Lp B.	Importado do OSM
-Ponta da Sela	23°53.30' S	45°27.70' W	N/D	Importado do OSM
-Ponta da Tabatinga	06°02.70' S	35°06.70' W	Lp (5) B.	Importado do OSM
-Ponta das Almas	02°53.47' S	41°16.28' W	Lp B.	Importado do OSM
-Ponta das Cabeçudas	26°55.57' S	48°37.36' W	Al.Fl (2+1).	Importado do OSM
-Ponta das Canas	23°43.68' S	45°20.49' W	N/D	Importado do OSM
-Ponta de Itapage	02°52.30' S	39°56.60' W	Lp (2) B.	Importado do OSM
-Ponta de Pirabura	23°56.56' S	45°13.62' W	N/D	Importado do OSM
-Ponta do Catalão	28°12.56' S	48°39.79' W	Lp E.	Importado do OSM
-Ponta do Ceu	00°45.64' N	50°07.05' W	Lp B.	Importado do OSM
-Ponta do Chapeu Virado	01°08.13' S	48°28.16' W	Iso V.	Importado do OSM
-Ponta do Forte	12°47.41' S	38°29.10' W	Lp B.	Importado do OSM
-Ponta do Mutá	13°52.77' S	38°56.75' W	Lp V.	Importado do OSM
-Ponta do Santarem	00°38.80' N	50°05.66' W	Lp (2) B.	Importado do OSM
-Ponta do Tubarao	05°03.98' S	36°29.72' W	Lp B.	Importado do OSM
-Ponta do Valado	20°29.96' S	29°19.30' W	Lp B.	Importado do OSM
-Pontal	04°56.40' S	37°08.71' W	Lp B.	Importado do OSM
-Ponto de Santana	00°03.46' S	51°10.85' W	F A.	Importado do OSM
-Ponto do Malhado	14°46.13' S	39°01.56' W	Lp V.	Importado do OSM
-Porto Seguro	16°26.17' S	39°03.84' W	N/D	Importado do OSM
-Porto de Suape	08°23.55' S	34°56.83' W	Iso V.	Importado do OSM
-Potengi	05°46.94' S	35°12.59' W	Lp V.	Importado do OSM
-Quatipuru	00°42.70' S	46°57.60' W	Lp (3) B.	Importado do OSM
-Quilombo	31°26.56' S	51°46.59' W	Lp V.	Importado do OSM
-Quissama	22°09.70' S	41°17.84' W	LpL B.	Importado do OSM
-Recife	08°03.27' S	34°51.92' W	Al.Fl.	Importado do OSM
-Recife de Natal	05°45.08' S	35°11.68' W	Lp V.	Importado do OSM
-Rio Arari	01°11.50' S	48°44.60' W	N/D	Importado do OSM
-Rio Arrozal	01°27.55' S	48°42.16' W	N/D	Importado do OSM
-Rio Calçoene	02°30.40' N	50°48.40' W	Lp B.	Importado do OSM
-Rio de São Miguel	09°52.01' S	35°54.37' W	Lp B.	Importado do OSM
-Rotativo	22°59.23' S	43°22.10' W	N/D	Importado do OSM
-Salamina	12°47.94' S	38°51.32' W	Lp E.	Importado do OSM
-Santa Marta	28°36.25' S	48°48.84' W	N/D	Importado do OSM
-Sao Lourenço (Curva)	31°22.70' S	51°57.95' W	Lp E.	Importado do OSM
-Sao Mateus	18°36.96' S	39°44.01' W	Lp (2) B.	Importado do OSM
-Sapata	03°52.49' S	32°27.69' W	Al.Fl.	Importado do OSM
-Saubara	12°44.40' S	38°43.10' W	Lp B.	Importado do OSM
-Simao Grande	00°15.43' S	48°24.09' W	N/D	Importado do OSM
-Sol	05°45.04' S	35°11.80' W	Lp E.	Importado do OSM
-Subauma	12°14.40' S	37°46.80' W	Lp B.	Importado do OSM
-Sucuraca	19°05.82' S	39°43.38' W	Lp (2) B.	Importado do OSM
-Sul	08°03.24' S	34°51.23' W	Lp E.	Importado do OSM
-Taia	00°39.23' N	50°17.56' W	Lp (3) B.	Importado do OSM
-Tamandare	08°45.60' S	35°06.10' W	N/D	Importado do OSM
-Verga	32°58.59' S	52°33.50' W	Lp B.	Importado do OSM
-Vitoria	20°15.16' S	40°17.19' W	Al.Fl.	Importado do OSM
-das Conchas	25°32.35' S	48°17.45' W	N/D	Importado do OSM
-das Rocas	03°51.45' S	33°48.89' W	Q (2) B.	Importado do OSM
-desativado	23°59.18' S	46°18.80' W	N/D	Importado do OSM
-dos Castelhanos	23°10.10' S	44°05.60' W	N/D	Importado do OSM
+Atalaia	32°07.11' S	52°04.64' W	N/D	Farol
+Bojuru	31°29.16' S	51°25.23' W	N/D	Farol
+Capao da Canoa	29°44.70' S	50°00.28' W	Lp (2) B.	Farol branca, Altura 27m
+Itapuã	30°23.11' S	51°03.57' W	Lp B.	Farol branca, Altura 17m
+Ponta Alegre	32°24.88' S	52°45.49' W	N/D	Farol
+Cristóvão Pereira	31°03.81' S	51°09.91' W	Lp B.	Farol branca, Altura 30m
+Tramandaí	30°00.51' S	50°08.15' W	LpL B.	Farol branca, Altura 25m
+Albardao	33°12.15' S	52°42.36' W	Lp (4) B.	Farol branca, Altura 50m
+Alcantara	02°24.60' S	44°25.06' W	Q (2) B.	Farol branca, Altura 38m
+Amapa	02°04.60' N	50°51.60' W	Al.Fl.	Farol white;green, Altura 30m
+Andreza	02°45.80' S	42°15.70' W	Lp E.	Farol vermelha, Altura 24m
+Antigo Farol de Capão da Canoa	29°45.74' S	50°00.93' W	N/D	Farol
+Aquipelago de Alcatrazes	24°05.70' S	45°42.20' W	N/D	Farol
+Arambare	30°56.14' S	51°27.59' W	Lp V.	Farol verde, Altura 8m
+Araquari	26°27.14' S	48°35.66' W	F A.	Farol amarela, Altura 6m
+Aratu	12°47.56' S	38°29.42' W	Mo (N) A.	Farol amarela, Altura 5m
+Arpoador	02°43.59' S	42°22.42' W	Lp B.	Farol branca, Altura 18m
+Baia da Traicao	06°40.54' S	34°55.95' W	Lp B.	Farol branca, Altura 12m
+Baixio de Madre de Deus	12°44.86' S	38°37.59' W	Lp (2+1) V.	Farol verde
+Baixio do Capeta	12°45.02' S	38°38.05' W	Lp (2) B.	Farol branca
+Baixio do Rio do Fogo	05°13.74' S	35°20.86' W	Lp E.	Farol vermelha, Altura 12m
+Baixo da Teresa Panca	05°24.09' S	35°17.79' W	Lp B.	Farol branca, Altura 10m
+Banco Coroa Grande	01°01.70' S	48°35.70' W	N/D	Farol
+Barra de Itabapoana	21°18.83' S	40°57.96' W	Lp V.	Farol verde, Altura 35m
+Barra do Pote	13°01.16' S	38°38.66' W	Q (2) B.	Farol branca, Altura 6m
+Barra do Tombo	17°46.00' S	39°12.28' W	Lp B.	Farol branca, Altura 12m
+Barreiras do Prado	17°17.24' S	39°13.32' W	Lp (2) B.	Farol branca, Altura 42m
+Belém	01°27.92' S	48°30.33' W	N/D	Farol
+Boa Esperança	20°43.08' S	45°41.55' W	N/D	Farol
+Boco do Furo	01°27.84' S	48°42.59' W	Lp (2) B.	Farol branca, Altura 11m
+Boiucu	01°48.50' S	50°18.40' W	N/D	Farol
+Bom Abrigo	25°07.39' S	47°51.73' W	Al.Fl (2+1).	Farol white;red, Altura 146m
+Cabeca de Negro	12°49.65' S	38°51.35' W	Lp E.	Farol vermelha, Altura 7m
+Cabo Orange	04°25.78' N	51°33.35' W	N/D	Farol branca
+Cabo de Santo Agostinho	08°21.09' S	34°56.84' W	Lp B.	Farol branca, Altura 91m
+Cabo de São Roque	05°29.35' S	35°15.69' W	Lp (3) B.	Farol branca, Altura 50m
+Caete	00°48.38' S	46°37.22' W	Q (2) B.	Farol branca, Altura 20m
+Calheta	20°30.49' S	29°18.58' W	Q B.	Farol branca, Altura 5m
+Calombo	23°01.65' S	44°18.78' W	Lp E.	Farol vermelha, Altura 3m
+Camamu	13°53.48' S	38°59.94' W	N/D	Farol
+Camapijo	01°21.81' S	48°38.82' W	Lp (2) B.	Farol branca, Altura 8m
+Camaçari	12°44.53' S	38°08.95' W	Lp B.	Farol branca, Altura 20m
+Canal da Feitoria No 5	31°43.45' S	52°00.22' W	Lp E.	Farol vermelha, Altura 6m
+Canal da Setia No 4	31°53.12' S	52°09.07' W	Lp V.	Farol verde, Altura 7m
+Cascalheira	00°01.35' S	51°03.72' W	Lp (2) B.	Farol branca, Altura 13m
+Colares	00°55.08' S	48°17.53' W	Lp (2) B.	Farol branca, Altura 14m
+Coroa Vermelha	17°58.04' S	39°12.48' W	Lp (3) B.	Farol branca, Altura 16m
+Coroa do Meio No 12	31°44.35' S	52°09.30' W	Lp V.	Farol verde, Altura 7m
+Coroa dos Patos No 4	31°43.00' S	52°04.33' W	Lp V.	Farol verde, Altura 7m
+Cruzeiro	23°25.99' S	45°04.10' W	N/D	Farol
+Desertas	30°33.00' S	50°50.23' W	Lp V.	Farol verde, Altura 6m
+Desertores	30°57.83' S	51°14.84' W	Lp V.	Farol verde, Altura 8m
+Diamante No 6	31°57.28' S	52°04.76' W	Lp V.	Farol verde, Altura 6m
+Enseada dos Portugueses	20°30.49' S	29°18.92' W	Q E.	Farol vermelha, Altura 45m
+FAROL	23°10.86' S	46°56.51' W	N/D	Farol
+Farolete Baleias No 7	31°55.09' S	52°07.13' W	Lp E.	Farol vermelha, Altura 8m
+Farolete Barba Negra	30°32.02' S	51°08.48' W	Lp V.	Farol verde, Altura 8m
+Farolete Calhau de São Pedro	27°15.07' S	48°25.33' W	Lp B.	Farol branca, Altura 19m
+Farolete Propriá	10°56.80' S	37°01.86' W	N/D	Farol
+Fortaleza de Santa Cruz	22°56.28' S	43°08.06' W	Iso E.	Farol vermelha, Altura 26m
+Fugitivo	00°10.21' N	50°55.11' W	Lp (2) B.	Farol branca, Altura 13m
+Gambeta No 9	31°43.92' S	52°08.14' W	Lp E.	Farol vermelha, Altura 7m
+Gameleira	05°13.20' S	35°25.36' W	N/D	Farol
+Garcia d'Avila	12°34.65' S	38°00.10' W	Lp (2) B.	Farol branca, Altura 28m
+Guarau	24°22.90' S	46°59.20' W	N/D	Farol
+Guaxindiba	21°27.90' S	41°02.60' W	Lp (2) B.	Farol branca, Altura 23m
+Ilha Caiobá	25°51.17' S	48°32.13' W	N/D	Farol
+Ilha Cameleao	01°49.16' S	49°56.81' W	N/D	Farol
+Ilha Cotijuba	01°16.00' S	48°33.80' W	N/D	Farol
+Ilha Escalvada	20°42.02' S	40°24.41' W	Q (2) B.	Farol branca, Altura 27m
+Ilha Joroca	01°38.80' S	49°13.70' W	N/D	Farol
+Ilha Jupatituba	01°41.00' S	49°14.10' W	N/D	Farol
+Ilha Jutuba	01°15.00' S	48°30.30' W	Lp B.	Farol branca, Altura 12m
+Ilha Maiau	01°16.90' S	44°54.21' W	N/D	Farol
+Ilha Mandi	01°36.70' S	49°08.60' W	N/D	Farol
+Ilha Queimada Grande	24°28.79' S	46°40.56' W	N/D	Farol
+Ilha Rasa	23°03.84' S	43°08.75' W	N/D	Farol, Altura 26m
+Ilha Rata	03°48.77' S	32°23.20' W	N/D	Farol
+Ilha Santana	22°25.03' S	41°42.27' W	Al.LFl.	Farol white;red, Altura 156m
+Ilha Tatuoca	01°11.97' S	48°30.34' W	N/D	Farol
+Ilha da Moela	24°03.05' S	46°15.82' W	Al.Oc (3+1).	Farol white;red, Altura 110m
+Ilha da Vitoria	23°45.10' S	45°00.70' W	N/D	Farol
+Ilha das Araras	01°48.65' S	50°08.93' W	N/D	Farol
+Ilha de Coral	27°55.98' S	48°32.56' W	Lp B.	Farol branca, Altura 81m
+Ilha de Guarapirá	02°34.74' S	44°22.40' W	N/D	Farol
+Ilha de Santana	02°16.23' S	43°37.44' W	Al.LFl.	Farol white;white;red, Altura 57m
+Ilha do Apeu	00°54.62' S	46°11.17' W	Lp (2) B.	Farol branca, Altura 41m
+Ilha do Arvoredo	27°17.77' S	48°21.41' W	N/D	Farol
+Ilha do Capim	01°33.30' S	48°51.90' W	N/D	Farol
+Ilha do Frade, Ponta de Nossa Senhora de Guadalupe	12°48.85' S	38°38.48' W	N/D	Farol
+Ilha do Frances	20°55.65' S	40°45.31' W	LpL B.	Farol branca, Altura 48m
+Ilha do Machadinho	00°10.80' S	48°45.90' W	N/D	Farol
+Ilha do Mangunca	01°36.94' S	44°39.29' W	Lp B.	Farol branca, Altura 46m
+Ilha do Pacotes	20°21.12' S	40°15.03' W	Lp B.	Farol branca, Altura 7m
+Ilha do Para	00°52.83' N	49°59.27' W	Lp (3) B.	Farol branca, Altura 33m
+Ilha do Toque-Toque	23°51.34' S	45°31.49' W	N/D	Farol
+Ilha dos Amores, Salvaterra	00°45.17' S	48°30.48' W	Lp B.	Farol branca, Altura 14m
+Ilha dos Papagaios	22°22.98' S	41°45.52' W	N/D	Farol
+Ilhas Maricá	23°01.04' S	42°55.35' W	LpL B.	Farol branca, Altura 80m
+Ilhas das Araras	28°19.30' S	48°38.91' W	Q (2) B.	Farol branca, Altura 54m
+Ilhéu Grande	14°46.21' S	39°01.06' W	Lp (3) B.	Farol branca, Altura 20m
+Itaguary	01°25.50' S	48°49.00' W	Lp B.	Farol branca, Altura 12m
+Itamoabo	12°47.73' S	38°32.04' W	Q (2) B.	Farol branca, Altura 50m
+Itapeva	29°33.41' S	49°53.37' W	Lp (5) B.	Farol branca, Altura 42m
+Itaqui	02°54.07' S	41°33.35' W	Lp B.	Farol branca, Altura 29m
+Itauna	02°32.07' S	44°30.75' W	Lp B.	Farol branca, Altura 25m
+Joanes	00°52.87' S	48°30.46' W	Lp B.	Farol branca, Altura 23m
+Laje da Conceicao	24°14.22' S	46°41.43' W	N/D	Farol
+Lencois Grandes	02°22.78' S	43°16.20' W	LpL B.	Farol branca, Altura 72m
+Lua Cheia	08°02.82' S	34°51.55' W	LpL V.	Farol verde, Altura 12m
+Machadinho	01°22.57' S	48°38.60' W	Lp (3) B.	Farol branca, Altura 8m
+Maragogi	09°00.80' S	35°13.40' W	F E.	Farol vermelha, Altura 134m
+Marcação Ponta do Coral	27°33.98' S	48°32.21' W	N/D	Farol
+Massaguacu	23°37.74' S	45°22.20' W	Lp (2) B.	Farol branca, Altura 75m
+Moronas	03°04.27' S	59°46.23' W	Lp V.	Farol verde, Altura 16m
+Morro	13°22.56' S	38°54.92' W	N/D	Farol
+Morro Taipus	13°57.36' S	38°56.52' W	Lp (3) B.	Farol branca, Altura 76m
+Morro do Pico	03°50.70' S	32°25.28' W	Al.Fl.	Farol white;green, Altura 329m
+Morro dos Conventos	28°56.08' S	49°21.76' W	Lp (3) B.	Farol branca, Altura 85m
+Mucuri	18°03.61' S	39°32.06' W	Lp B.	Farol branca, Altura 24m
+Mundau	03°10.59' S	39°21.72' W	Lp B.	Farol branca, Altura 33m
+Mãe Luiza	05°47.71' S	35°11.12' W	N/D	Farol
+No 102	30°20.69' S	51°03.90' W	Lp V.	Farol verde
+No 106	30°19.92' S	51°05.52' W	Lp V.	Farol vermelha
+No 11	31°42.60' S	51°58.11' W	Lp E.	Farol vermelha, Altura 6m
+No 15	26°54.12' S	48°39.21' W	Lp (3) E.	Farol vermelha, Altura 6m
+No 17	31°41.95' S	51°56.50' W	Lp E.	Farol vermelha, Altura 7m
+No 3	31°47.83' S	52°11.59' W	Lp E.	Farol vermelha, Altura 6m
+No 32	31°52.13' S	52°09.61' W	Lp V.	Farol verde
+No 4	23°59.06' S	46°18.60' W	N/D	Farol
+No 50	31°46.39' S	52°10.72' W	Lp V.	Farol verde, Altura 7m
+No 6	31°43.31' S	52°00.10' W	Lp V.	Farol verde, Altura 6m
+No 7	26°54.73' S	48°38.27' W	Lp (3) E.	Farol vermelha, Altura 15m
+No 8	31°42.98' S	51°59.27' W	Lp V.	Farol verde, Altura 16m
+No 9	31°43.05' S	51°59.24' W	Lp E.	Farol vermelha, Altura 6m
+No 97	30°20.81' S	51°03.58' W	Lp E.	Farol vermelha, Altura 6m
+No 99	30°20.62' S	51°03.85' W	Lp E.	Farol vermelha
+Norte	08°02.67' S	34°51.02' W	Lp V.	Farol verde, Altura 12m
+Novo Farol do Cabeço do São Francisco	10°29.41' S	36°23.19' W	Lp B.	Farol branca, Altura 43m
+Número 10	26°54.86' S	48°38.48' W	Q (2) V.	Farol verde, Altura 6m
+Número 13	26°54.29' S	48°39.07' W	Q (2) E.	Farol vermelha, Altura 6m
+Oureis	12°43.20' S	38°39.30' W	Lp (2) B.	Farol branca, Altura 8m
+Papagaio	02°33.70' S	43°55.74' W	Lp B.	Farol branca, Altura 30m
+Pau-a-Pino	23°05.92' S	44°07.15' W	Q (3) B.	Farol branca, Altura 25m
+Pedra Seca	06°57.38' S	34°49.36' W	Lp (3) B.	Farol branca, Altura 16m
+Pedra da Baleia	12°36.83' S	38°57.57' W	N/D	Farol
+Pedra da Galé	27°10.90' S	48°24.47' W	Lp B.	Farol branca, Altura 78m
+Pedra da Manteiga	01°28.47' S	48°42.54' W	Lp V.	Farol verde, Altura 5m
+Pedra de Baleia	20°19.12' S	40°16.33' W	Lp V.	Farol verde, Altura 5m
+Pedra do Sal	02°48.23' S	41°43.76' W	Lp B.	Farol branca, Altura 15m
+Pedras Brancas No 5	30°05.91' S	51°16.27' W	Lp E.	Farol vermelha, Altura 5m
+Penedos de São Pedro e São Paulo	00°55.01' N	29°20.76' W	Lp B.	Farol branca, Altura 29m
+Pirajuba	02°12.70' S	44°24.20' W	Lp (3) B.	Farol branca, Altura 64m
+Pitimbu	07°27.90' S	34°47.60' W	Lp B.	Farol branca, Altura 5m
+Point Ubu	20°46.82' S	40°34.68' W	Lp B.	Farol branca, Altura 27m
+Ponta Alambique	12°50.38' S	38°47.63' W	Lp B.	Farol branca, Altura 11m
+Ponta Catoeiro	17°52.02' S	39°16.18' W	Lp B.	Farol branca, Altura 20m
+Ponta Corumbau	16°53.75' S	39°06.83' W	Lp B.	Farol branca, Altura 15m
+Ponta Coruripe	10°09.50' S	36°08.10' W	Lp (2) B.	Farol branca, Altura 20m
+Ponta Marapanim	00°34.81' S	47°35.04' W	N/D	Farol
+Ponta Paracuru	03°23.90' S	39°00.70' W	Lp B.	Farol branca, Altura 80m
+Ponta Pecem	03°33.02' S	38°49.27' W	Al.Fl.	Farol white;white;red, Altura 75m
+Ponta Tijoca	00°33.42' S	47°53.85' W	N/D	Farol
+Ponta Verde	09°39.96' S	35°41.53' W	Lp B.	Farol branca, Altura 13m
+Ponta da Baleia	17°41.31' S	39°08.28' W	Lp B.	Farol branca, Altura 19m
+Ponta da Sela	23°53.30' S	45°27.70' W	N/D	Farol
+Ponta da Tabatinga	06°02.70' S	35°06.70' W	Lp (5) B.	Farol branca, Altura 96m
+Ponta das Almas	02°53.47' S	41°16.28' W	Lp B.	Farol branca, Altura 28m
+Ponta das Cabeçudas	26°55.57' S	48°37.36' W	Al.Fl (2+1).	Farol white;red, Altura 58m
+Ponta das Canas	23°43.68' S	45°20.49' W	N/D	Farol
+Ponta de Itapage	02°52.30' S	39°56.60' W	Lp (2) B.	Farol branca, Altura 46m
+Ponta de Pirabura	23°56.56' S	45°13.62' W	N/D	Farol
+Ponta do Catalão	28°12.56' S	48°39.79' W	Lp E.	Farol vermelha, Altura 63m
+Ponta do Ceu	00°45.64' N	50°07.05' W	Lp B.	Farol branca, Altura 11m
+Ponta do Chapeu Virado	01°08.13' S	48°28.16' W	Iso V.	Farol verde, Altura 11m
+Ponta do Forte	12°47.41' S	38°29.10' W	Lp B.	Farol branca, Altura 7m
+Ponta do Mutá	13°52.77' S	38°56.75' W	Lp V.	Farol verde, Altura 11m
+Ponta do Santarem	00°38.80' N	50°05.66' W	Lp (2) B.	Farol branca, Altura 13m
+Ponta do Tubarao	05°03.98' S	36°29.72' W	Lp B.	Farol branca, Altura 7m
+Ponta do Valado	20°29.96' S	29°19.30' W	Lp B.	Farol branca, Altura 14m
+Pontal	04°56.40' S	37°08.71' W	Lp B.	Farol branca, Altura 10m
+Ponto de Santana	00°03.46' S	51°10.85' W	F A.	Farol amarela
+Ponto do Malhado	14°46.13' S	39°01.56' W	Lp V.	Farol verde, Altura 14m
+Porto Seguro	16°26.17' S	39°03.84' W	N/D	Farol
+Porto de Suape	08°23.55' S	34°56.83' W	Iso V.	Farol verde, Altura 16m
+Potengi	05°46.94' S	35°12.59' W	Lp V.	Farol verde, Altura 7m
+Quatipuru	00°42.70' S	46°57.60' W	Lp (3) B.	Farol branca, Altura 27m
+Quilombo	31°26.56' S	51°46.59' W	Lp V.	Farol verde, Altura 7m
+Quissama	22°09.70' S	41°17.84' W	LpL B.	Farol branca, Altura 40m
+Recife	08°03.27' S	34°51.92' W	Al.Fl.	Farol white;red, Altura 20m
+Recife de Natal	05°45.08' S	35°11.68' W	Lp V.	Farol verde, Altura 13m
+Rio Arari	01°11.50' S	48°44.60' W	N/D	Farol
+Rio Arrozal	01°27.55' S	48°42.16' W	N/D	Farol
+Rio Calçoene	02°30.40' N	50°48.40' W	Lp B.	Farol branca, Altura 24m
+Rio de São Miguel	09°52.01' S	35°54.37' W	Lp B.	Farol branca, Altura 15m
+Rotativo	22°59.23' S	43°22.10' W	N/D	Farol, Altura 20m
+Salamina	12°47.94' S	38°51.32' W	Lp E.	Farol vermelha, Altura 14m
+Santa Marta	28°36.25' S	48°48.84' W	N/D	Farol, Altura 29m
+Sao Lourenço (Curva)	31°22.70' S	51°57.95' W	Lp E.	Farol vermelha, Altura 8m
+Sao Mateus	18°36.96' S	39°44.01' W	Lp (2) B.	Farol branca, Altura 14m
+Sapata	03°52.49' S	32°27.69' W	Al.Fl.	Farol white;red, Altura 203m
+Saubara	12°44.40' S	38°43.10' W	Lp B.	Farol branca, Altura 8m
+Simao Grande	00°15.43' S	48°24.09' W	N/D	Farol
+Sol	05°45.04' S	35°11.80' W	Lp E.	Farol vermelha, Altura 8m
+Subauma	12°14.40' S	37°46.80' W	Lp B.	Farol branca, Altura 48m
+Sucuraca	19°05.82' S	39°43.38' W	Lp (2) B.	Farol branca, Altura 64m
+Sul	08°03.24' S	34°51.23' W	Lp E.	Farol vermelha, Altura 12m
+Taia	00°39.23' N	50°17.56' W	Lp (3) B.	Farol branca, Altura 13m
+Tamandare	08°45.60' S	35°06.10' W	N/D	Farol
+Verga	32°58.59' S	52°33.50' W	Lp B.	Farol branca, Altura 15m
+Vitoria	20°15.16' S	40°17.19' W	Al.Fl.	Farol white;green, Altura 18m
+das Conchas	25°32.35' S	48°17.45' W	N/D	Farol, Altura 18m
+das Rocas	03°51.45' S	33°48.89' W	Q (2) B.	Farol branca, Altura 18m
+desativado	23°59.18' S	46°18.80' W	N/D	Farol
+dos Castelhanos	23°10.10' S	44°05.60' W	N/D	Farol
