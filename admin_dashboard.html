@@ -184,47 +184,53 @@
         document.getElementById('btn-regen-pass').addEventListener('click', () => passGen.value = generatePass());
 
         // Render List
-        function render() {
-            const invites = DatabaseService.getInvites();
-            list.innerHTML = '';
+        async function render() {
+            list.innerHTML = '<tr><td colspan="4" class="p-3 text-center text-slate-500"><i class="fas fa-spinner fa-spin"></i> Carregando...</td></tr>';
+            try {
+                const invites = await DatabaseService.getInvites();
+                list.innerHTML = '';
 
-            if (invites.length === 0) {
-                empty.classList.remove('hidden');
-                return;
+                if (invites.length === 0) {
+                    empty.classList.remove('hidden');
+                    return;
+                }
+                empty.classList.add('hidden');
+
+                invites.reverse().forEach(inv => { // Newest first
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-800/50 transition";
+
+                    const roleBadge = inv.type === 'planning'
+                        ? `<span class="bg-cyan-900 text-cyan-300 text-[10px] px-2 py-0.5 rounded uppercase font-bold">Planejamento</span>`
+                        : `<span class="bg-purple-900 text-purple-300 text-[10px] px-2 py-0.5 rounded uppercase font-bold">Monitor</span>`;
+
+                    const statusColor = inv.status === 'active' ? 'text-green-400' : (inv.status === 'revoked' ? 'text-red-500 line-through' : 'text-yellow-400');
+
+                    tr.innerHTML = `
+                        <td class="p-3">
+                            <div class="font-bold text-white">${inv.email || 'Sem email'}</div>
+                            <div class="text-[10px] text-slate-500 font-mono select-all">Token: ...${inv.token.substr(-8)}</div>
+                        </td>
+                        <td class="p-3">${roleBadge}</td>
+                        <td class="p-3 ${statusColor} text-xs font-bold uppercase">${inv.status}</td>
+                        <td class="p-3 text-right">
+                             <button class="text-green-500 hover:text-green-400 mx-1" onclick="window.sendWa('${inv.token}')" title="Enviar WhatsApp"><i class="fab fa-whatsapp"></i></button>
+                             <button class="text-slate-400 hover:text-white mx-1" onclick="window.reShare('${inv.token}')" title="Ver Detalhes"><i class="fas fa-eye"></i></button>
+                             ${inv.status !== 'revoked' ? `<button class="text-red-400 hover:text-red-600 mx-1" onclick="window.revoke('${inv.token}')" title="Revogar"><i class="fas fa-ban"></i></button>` : ''}
+                        </td>
+                    `;
+                    list.appendChild(tr);
+                });
+            } catch (err) {
+                list.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-red-500">Erro ao carregar convites.</td></tr>`;
+                console.error(err);
             }
-            empty.classList.add('hidden');
-
-            invites.reverse().forEach(inv => { // Newest first
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-800/50 transition";
-
-                const roleBadge = inv.type === 'planning'
-                    ? `<span class="bg-cyan-900 text-cyan-300 text-[10px] px-2 py-0.5 rounded uppercase font-bold">Planejamento</span>`
-                    : `<span class="bg-purple-900 text-purple-300 text-[10px] px-2 py-0.5 rounded uppercase font-bold">Monitor</span>`;
-
-                const statusColor = inv.status === 'active' ? 'text-green-400' : (inv.status === 'revoked' ? 'text-red-500 line-through' : 'text-yellow-400');
-
-                tr.innerHTML = `
-                    <td class="p-3">
-                        <div class="font-bold text-white">${inv.email || 'Sem email'}</div>
-                        <div class="text-[10px] text-slate-500 font-mono select-all">Token: ...${inv.token.substr(-8)}</div>
-                    </td>
-                    <td class="p-3">${roleBadge}</td>
-                    <td class="p-3 ${statusColor} text-xs font-bold uppercase">${inv.status}</td>
-                    <td class="p-3 text-right">
-                         <button class="text-green-500 hover:text-green-400 mx-1" onclick="window.sendWa('${inv.token}')" title="Enviar WhatsApp"><i class="fab fa-whatsapp"></i></button>
-                         <button class="text-slate-400 hover:text-white mx-1" onclick="window.reShare('${inv.token}')" title="Ver Detalhes"><i class="fas fa-eye"></i></button>
-                         ${inv.status !== 'revoked' ? `<button class="text-red-400 hover:text-red-600 mx-1" onclick="window.revoke('${inv.token}')" title="Revogar"><i class="fas fa-ban"></i></button>` : ''}
-                    </td>
-                `;
-                list.appendChild(tr);
-            });
         }
 
         render();
 
         // Create Invite
-        form.addEventListener('submit', (e) => {
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const role = document.querySelector('input[name="role"]:checked').value;
@@ -232,7 +238,7 @@
             const pass = document.getElementById('inp-pass-gen').value;
             const token = generateId() + generateId(); // Long token
 
-            DatabaseService.saveInvite({
+            const saved = await DatabaseService.saveInvite({
                 token: token,
                 email: email,
                 password: pass,
@@ -241,30 +247,34 @@
                 createdAt: Date.now()
             });
 
-            // Open Share Modal
-            openShareModal(token, pass, role);
+            if (saved) {
+                // Open Share Modal
+                openShareModal(token, pass, role);
 
-            // Reset & Refresh
-            passGen.value = generatePass();
-            document.getElementById('inp-email').value = '';
-            render();
+                // Reset & Refresh
+                passGen.value = generatePass();
+                document.getElementById('inp-email').value = '';
+                await render();
+            } else {
+                alert('Erro ao criar convite. Verifique a conexão.');
+            }
         });
 
         // Global Actions
-        window.revoke = (token) => {
+        window.revoke = async (token) => {
             if (confirm('Tem certeza que deseja revogar este acesso? O usuário será desconectado.')) {
-                DatabaseService.updateInvite(token, { status: 'revoked' });
-                render();
+                await DatabaseService.updateInvite(token, { status: 'revoked' });
+                await render();
             }
         };
 
-        window.reShare = (token) => {
-            const inv = DatabaseService.findInviteByToken(token);
+        window.reShare = async (token) => {
+            const inv = await DatabaseService.findInviteByToken(token);
             if (inv) openShareModal(inv.token, inv.password, inv.type);
         };
 
-        window.sendWa = (token) => {
-            const inv = DatabaseService.findInviteByToken(token);
+        window.sendWa = async (token) => {
+            const inv = await DatabaseService.findInviteByToken(token);
             if (inv) {
                 const msg = formatMessage(inv.token, inv.password, inv.type);
                 const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;

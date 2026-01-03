@@ -14,17 +14,17 @@ const DatabaseService = {
         SETTINGS: 'sisnav_settings_v1'
     },
 
-    // SPRINT (HOTFIX): Convites Hardcoded para funcionar em qualquer PC sem Backend
+    // SPRINT (HOTFIX): Convites Hardcoded como Fallback (Backup)
     STATIC_INVITES: [
         {
-            token: 'tmtk5s1hwm6vtv2iw3', // Token de Produção
+            token: 'tmtk5s1hwm6vtv2iw3',
             password: '2WR-N3U',
-            type: 'planning', // Ou 'monitor', dependendo do uso desejado (User disse link de planejamento no exemplo)
+            type: 'planning',
             status: 'active',
             email: 'usuario.producao@sisnav.com'
         },
         {
-            token: 'vts-monitor-access', // Token dedicado para Monitoramento
+            token: 'vts-monitor-access',
             password: 'VIEW-ONLY',
             type: 'monitor',
             status: 'active',
@@ -33,73 +33,114 @@ const DatabaseService = {
     ],
 
     /**
-     * Inicializa o banco de dados com valores padrão se vazio.
+     * Inicializa o banco de dados.
      */
     init: function () {
-        if (!localStorage.getItem(this.KEYS.INVITES)) {
-            localStorage.setItem(this.KEYS.INVITES, JSON.stringify([]));
-        }
-
-        // Configura Admin padrão se não existir
+        // Admin Local (Simplificado)
         if (!localStorage.getItem(this.KEYS.ADMIN)) {
             const defaultAdmin = {
                 username: 'admin',
-                passwordHash: 'admin123' // Em produção usar hash real. Aqui é simplificado.
+                passwordHash: 'admin123'
             };
             localStorage.setItem(this.KEYS.ADMIN, JSON.stringify(defaultAdmin));
         }
     },
 
     /**
-     * Retorna a lista de convites (Local + Estáticos).
+     * [ASYNC] Retorna a lista de convites do SERVIDOR.
      */
-    getInvites: function () {
-        const localData = localStorage.getItem(this.KEYS.INVITES);
-        const localList = localData ? JSON.parse(localData) : [];
+    getInvites: async function () {
+        try {
+            const response = await fetch('/api/invites/list', { cache: 'no-store' });
+            if (!response.ok) throw new Error('Falha ao buscar convites');
+            const serverInvites = await response.json();
 
-        // Merge evitando duplicatas (prioriza local se houver conflito, mas aqui são disjuntos por prefixo)
-        // Apenas para visualização no Admin, mostramos todos
-        return [...this.STATIC_INVITES, ...localList];
-    },
-
-    /**
-     * Salva um novo convite.
-     * @param {object} invite - Objeto invite { token, email, pass, type, status }
-     */
-    saveInvite: function (invite) {
-        const list = this.getInvites();
-        list.push(invite);
-        localStorage.setItem(this.KEYS.INVITES, JSON.stringify(list));
-    },
-
-    /**
-     * Atualiza um convite existente (ex: marcar como usado).
-     */
-    updateInvite: function (token, updates) {
-        const list = this.getInvites();
-        const index = list.findIndex(i => i.token === token);
-        if (index !== -1) {
-            list[index] = { ...list[index], ...updates };
-            localStorage.setItem(this.KEYS.INVITES, JSON.stringify(list));
-            return true;
+            // Merge visual para Admin (Server + Static)
+            return [...this.STATIC_INVITES, ...serverInvites];
+        } catch (e) {
+            console.warn("Backend offline/inacessível. Mostrando apenas estáticos.", e);
+            return this.STATIC_INVITES;
         }
-        return false;
     },
 
     /**
-     * Busca convite por Token.
+     * [ASYNC] Salva um novo convite no SERVIDOR.
      */
-    findInviteByToken: function (token) {
-        const list = this.getInvites();
+    saveInvite: async function (invite) {
+        try {
+            const response = await fetch('/api/invites/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(invite)
+            });
+            return response.ok;
+        } catch (e) {
+            console.error("Erro ao salvar convite:", e);
+            return false;
+        }
+    },
+
+    /**
+     * [ASYNC] Atualiza um convite no SERVIDOR (ex: revogar).
+     */
+    updateInvite: async function (token, updates) {
+        try {
+            const response = await fetch('/api/invites/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token, updates })
+            });
+            return response.ok;
+        } catch (e) {
+            console.error("Erro ao atualizar convite:", e);
+            return false;
+        }
+    },
+
+    /**
+     * [ASYNC] Valida token diretamente no servidor.
+     */
+    validateInvite: async function (token, password) {
+        // 1. Check Static First (Local Fallback)
+        const staticInvite = this.STATIC_INVITES.find(i => i.token === token);
+        if (staticInvite) {
+            if (staticInvite.status !== 'active') return { valid: false, error: 'Revogado/Inativo (Static)' };
+            if (staticInvite.password !== password) return { valid: false, error: 'Senha incorreta (Static)' };
+            return { valid: true, type: staticInvite.type, email: staticInvite.email };
+        }
+
+        // 2. Check Server
+        try {
+            const response = await fetch('/api/invites/validate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token, password })
+            });
+
+            if (response.ok) {
+                return await response.json();
+            } else {
+                const err = await response.json();
+                return { valid: false, error: err.error || 'Erro de validação' };
+            }
+        } catch (e) {
+            return { valid: false, error: 'Erro de conexão com servidor' };
+        }
+    },
+
+    /**
+     * [ASYNC] Busca convite por Token.
+     */
+    findInviteByToken: async function (token) {
+        const list = await this.getInvites();
         return list.find(i => i.token === token);
     },
 
     /**
-     * Valida credenciais de Admin.
+     * Valida admin (Mantido Local por enquanto).
      */
     validateAdmin: function (user, pass) {
         const stored = JSON.parse(localStorage.getItem(this.KEYS.ADMIN));
-        // Comparação direta simplificada para protótipo
         return (stored.username === user && stored.passwordHash === pass);
     }
 };

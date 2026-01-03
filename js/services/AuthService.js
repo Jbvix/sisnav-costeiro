@@ -17,35 +17,24 @@ const AuthService = {
     },
 
     /**
-     * Tenta realizar login com Token e Senha.
-     * @returns {object|null} Sessão criada ou null se falhar.
+     * [ASYNC] Tenta realizar login com Token e Senha.
+     * @returns {Promise<object>} Sessão criada ou erro.
      */
-    login: function (token, password) {
-        const invite = DatabaseService.findInviteByToken(token);
+    login: async function (token, password) {
+        // Validação no Servidor (ou fallback estático)
+        const validation = await DatabaseService.validateInvite(token, password);
 
-        if (!invite) {
-            return { success: false, error: 'Token inválido ou expirado.' };
-        }
-
-        if (invite.status !== 'active' && invite.status !== 'pending') {
-            return { success: false, error: 'Convite revogado.' };
-        }
-
-        if (invite.password !== password) {
-            return { success: false, error: 'Senha incorreta.' };
+        if (!validation.valid) {
+            return { success: false, error: validation.error };
         }
 
         // Login Sucesso
         const session = {
             token: token,
-            type: invite.type, // 'planning' ou 'monitor'
+            type: validation.type, // 'planning' ou 'monitor'
+            email: validation.email,
             loginTime: Date.now()
         };
-
-        // Atualiza status se for primeira vez
-        if (invite.status === 'pending') {
-            DatabaseService.updateInvite(token, { status: 'active', firstAccess: Date.now() });
-        }
 
         sessionStorage.setItem(this.SESSION_KEY, JSON.stringify(session));
         return { success: true, session: session };

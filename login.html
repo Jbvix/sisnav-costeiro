@@ -219,7 +219,7 @@
         }
 
         // Handle Login
-        elForm.addEventListener('submit', (e) => {
+        elForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             // Loading on Button
@@ -228,9 +228,9 @@
             btnAccess.disabled = true;
             btnAccess.classList.add('opacity-75', 'cursor-not-allowed');
 
-            setTimeout(() => {
+            try {
                 const pass = inpPass.value;
-                const result = AuthService.login(token, pass);
+                const result = await AuthService.login(token, pass);
 
                 if (result.success) {
                     btnAccess.innerHTML = '<i class="fas fa-check"></i> SUCESSO';
@@ -242,19 +242,21 @@
                         window.location.href = 'index.html';
                     }, 500);
                 } else {
-                    // Reset Button
-                    btnAccess.innerHTML = originalBtn;
-                    btnAccess.disabled = false;
-                    btnAccess.classList.remove('opacity-75', 'cursor-not-allowed');
-
-                    // Show Feedback
-                    alert(result.error); // Or better: visual shake
-                    inpPass.value = '';
-                    inpPass.focus();
-                    inpPass.classList.add('border-red-500');
-                    setTimeout(() => inpPass.classList.remove('border-red-500'), 1000);
+                    throw new Error(result.error);
                 }
-            }, 800); // Fake network delay
+            } catch (err) {
+                // Reset Button
+                btnAccess.innerHTML = originalBtn;
+                btnAccess.disabled = false;
+                btnAccess.classList.remove('opacity-75', 'cursor-not-allowed');
+
+                // Show Feedback
+                alert(err.message || 'Erro de conexão.');
+                inpPass.value = '';
+                inpPass.focus();
+                inpPass.classList.add('border-red-500');
+                setTimeout(() => inpPass.classList.remove('border-red-500'), 1000);
+            }
         });
 
     </script>

@@ -187,9 +187,122 @@ def handle_position():
             return jsonify({"error": "Please specify vessel ID"}), 400
 
 
-if __name__ == '__main__':
-    print("="*60)
-    print(" SISNAV COSTEIRO - SERVIDOR LOCAL")
-    print(" Acesso: http://localhost:5000")
-    print("="*60)
-    app.run(host='0.0.0.0', port=5000, debug=True)
+# -------------------------------------------------------------------
+# INVITES SYSTEM (Backend Persistence)
+# -------------------------------------------------------------------
+
+INVITES_FILE = os.path.join(tempfile.gettempdir(), 'sisnav_invites_db.json')
+
+def load_invites():
+    try:
+        if os.path.exists(INVITES_FILE):
+            with open(INVITES_FILE, 'r') as f:
+                return json.load(f)
+    except Exception as e:
+        logger.error(f"Error loading invites: {e}")
+    return []
+
+def save_invites(data):
+    try:
+        with open(INVITES_FILE, 'w') as f:
+            json.dump(data, f)
+        return True
+    except Exception as e:
+        logger.error(f"Error saving invites: {e}")
+        return False
+
+@app.route('/api/invites/create', methods=['POST'])
+def create_invite():
+    try:
+        data = request.json
+        if not data or 'token' not in data:
+            return jsonify({'error': 'Invalid data'}), 400
+            
+        invites = load_invites()
+        
+        # Check duplicate
+        if any(i['token'] == data['token'] for i in invites):
+             return jsonify({'error': 'Token already exists'}), 409
+
+        invites.append(data)
+        
+        if save_invites(invites):
+            return jsonify({'status': 'success'})
+        else:
+            return jsonify({'error': 'Failed to save'}), 500
+            
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/invites/list', methods=['GET'])
+def list_invites():
+    # In production, check for Admin Session here!
+    return jsonify(load_invites())
+
+@app.route('/api/invites/update', methods=['POST'])
+def update_invite():
+    try:
+        data = request.json
+        token = data.get('token')
+        updates = data.get('updates')
+        
+        if not token or not updates:
+            return jsonify({'error': 'Missing params'}), 400
+            
+        invites = load_invites()
+        found = False
+        
+        for i in range(len(invites)):
+            if invites[i]['token'] == token:
+                invites[i].update(updates)
+                found = True
+                break
+        
+        if found:
+            save_invites(invites)
+            return jsonify({'status': 'success'})
+        else:
+            return jsonify({'error': 'Token not found'}), 404
+            
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/invites/validate', methods=['POST'])
+def validate_invite():
+    try:
+        data = request.json
+        token = data.get('token')
+        password = data.get('password')
+        
+        # 1. Check Static/Hardcoded first (Fallback/Recovery)
+        # Note: We can implement static check in Python too if we want backend to be single source of truth, 
+        # but for now let's focus on the dynamic DB.
+        
+        # 2. Check Dynamic DB
+        invites = load_invites()
+        invite = next((i for i in invites if i['token'] == token), None)
+        
+        if not invite:
+            return jsonify({'valid': False, 'error': 'Token inválido'}), 404
+            
+        if invite.get('status') != 'active' and invite.get('status') != 'pending':
+            return jsonify({'valid': False, 'error': 'Convite revogado ou inativo'}), 403
+            
+        if invite.get('password') != password:
+            return jsonify({'valid': False, 'error': 'Senha incorreta'}), 401
+            
+        # Success
+        # Auto-activate pending
+        if invite.get('status') == 'pending':
+            invite['status'] = 'active'
+            invite['firstAccess'] = time.time()
+            save_invites(invites)
+            
+        return jsonify({
+            'valid': True, 
+            'type': invite.get('type'), 
+            'email': invite.get('email')
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
