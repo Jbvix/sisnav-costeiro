@@ -1,0 +1,3017 @@
+[
+  {
+    "name": "Farol de Orange",
+    "lat": "04°25.86' N",
+    "lon": "051°32.52' W",
+    "height": 50,
+    "range": 18,
+    "character": "Lp (2) B. 15s",
+    "description": "Torre quadrangular Setor de visibili em treliça metálica, dade"
+  },
+  {
+    "name": "Farol de Calçoene",
+    "lat": "02°30.41' N",
+    "lon": "050°48.38' W",
+    "height": 24,
+    "range": 13,
+    "character": "Lp. B. 3s",
+    "description": "Armação quadran gular em treliça me"
+  },
+  {
+    "name": "Farol de Guará",
+    "lat": "01°11.26' N",
+    "lon": "049°53.97' W",
+    "height": 44,
+    "range": 16,
+    "character": "Lp. B. 6s",
+    "description": "Armação tronco pi Racon Q (– – . –) ramidal quadran Bandas S e X"
+  },
+  {
+    "name": "Farol de Bailique",
+    "lat": "00°59.40' N",
+    "lon": "049°56.83' W",
+    "height": 41,
+    "range": 14,
+    "character": "Lp. B. 10s",
+    "description": "Armação tronco pi Racon M (– –) ra midal quadrangu Bandas S e X"
+  },
+  {
+    "name": "Farol de Ilha do Pará",
+    "lat": "00°52.80' N",
+    "lon": "049°59.27' W",
+    "height": 33,
+    "range": 16,
+    "character": "Lp (3) B. 10s",
+    "description": "Torre quadrangular Racon B (– ...) me tálica em treliça, Bandas S e X BACIA AMAZÔNICA – Rio Amazonas"
+  },
+  {
+    "name": "Farol de Pau Cavado",
+    "lat": "00°11.51' N",
+    "lon": "050°47.25' W",
+    "height": 47,
+    "range": 11,
+    "character": "Lp. B. 6s",
+    "description": "Armação tronco pi Racon X (_.._) ramidal quadrangu Bandas S e X"
+  },
+  {
+    "name": "Farol de Ilha Camaleão",
+    "lat": "00°09.14' S",
+    "lon": "048°54.72' W",
+    "height": 37,
+    "range": 16,
+    "character": "LpL. B. 15s",
+    "description": "Torre tronco pirami dal quadrangular"
+  },
+  {
+    "name": "Farol de Simão Grande",
+    "lat": "00°15.41' S",
+    "lon": "048°24.19' W",
+    "height": 42,
+    "range": 16,
+    "character": "Lp. B. 5s",
+    "description": "Armação tronco pi Setor de visibi rami dal quadrangu lidade"
+  },
+  {
+    "name": "Farol de Ponta da Tijoca",
+    "lat": "00°33.44' S",
+    "lon": "047°53.85' W",
+    "height": 35,
+    "range": 18,
+    "character": "Lp (2) B. 10s",
+    "description": "Torre quadrangular Setor de visibi em treliça metálica, lidade"
+  },
+  {
+    "name": "Farol de Taipu",
+    "lat": "00°39.71' S",
+    "lon": "048°02.63' W",
+    "height": 39,
+    "range": 16,
+    "character": "Lp (3) B. 15s",
+    "description": "Armação tronco pi rami dal quadrangu"
+  },
+  {
+    "name": "Farol de Ponta Maria",
+    "lat": "00°46.56' S",
+    "lon": "048°09.14' W",
+    "height": 42,
+    "range": 15,
+    "character": "Lp. B. 6s",
+    "description": "Torre quadrangular Setor de visibi em treliça metálica lidade"
+  },
+  {
+    "name": "Farol de Soure",
+    "lat": "00°44.53' S",
+    "lon": "048°30.37' W",
+    "height": 35,
+    "range": 16,
+    "character": "Lp (2) B. 10s",
+    "description": "Torre quadrangular de concreto armado,"
+  },
+  {
+    "name": "Farol de Salvaterra",
+    "lat": "00°45.16' S",
+    "lon": "048°30.48' W",
+    "height": 14,
+    "range": 5,
+    "character": "Lp. B. 3s",
+    "description": "Armação tronco pi rami dal quadrangu"
+  },
+  {
+    "name": "Farol de Curuçá",
+    "lat": "00°33.88' S",
+    "lon": "047°45.98' W",
+    "height": 44,
+    "range": 18,
+    "character": "Lp (3) B. 15s",
+    "description": "Armação em treliça Setor de visibi metálica com faixas lidade"
+  },
+  {
+    "name": "Farol de Salinópolis",
+    "lat": "00°36.93' S",
+    "lon": "047°21.39' W",
+    "height": 61,
+    "range": 46,
+    "character": "Lp. B. 6s",
+    "description": "Armação cônica em tre liça metálica com"
+  },
+  {
+    "name": "Farol de Apeú",
+    "lat": "00°54.62' S",
+    "lon": "046°11.34' W",
+    "height": 41,
+    "range": 15,
+    "character": "Lp (2) B. 15s",
+    "description": "Armação tronco pi rami dal quadrangu"
+  },
+  {
+    "name": "Farol de Ponta da Praia",
+    "lat": "01°10.02' S",
+    "lon": "045°38.10' W",
+    "height": 48,
+    "range": 24,
+    "character": "Lp (5) B. 60s",
+    "description": "Torre quadrangular me tálica em treliça,"
+  },
+  {
+    "name": "Farol de São João",
+    "lat": "01°16.92' S",
+    "lon": "044°54.20' W",
+    "height": 38,
+    "range": 20,
+    "character": "LpL. B. 10s",
+    "description": "Torre cilíndrica de Visibilidade concreto armado, obscurecida"
+  },
+  {
+    "name": "Farol de Mangunça",
+    "lat": "01°36.92' S",
+    "lon": "044°39.23' W",
+    "height": 46,
+    "range": 28,
+    "character": "Lp. B. 10s",
+    "description": "Torre tronco pira midal quadrangular"
+  },
+  {
+    "name": "Farol de Pirarema",
+    "lat": "02°20.29' S",
+    "lon": "044°21.71' W",
+    "height": 55,
+    "range": 20,
+    "character": "Lp. B. 6s",
+    "description": "Torre octogonal de alvenaria revestida"
+  },
+  {
+    "name": "Farol de Alcântara",
+    "lat": "02°24.59' S",
+    "lon": "044°25.06' W",
+    "height": 38,
+    "range": 10,
+    "character": "R (2) B. 6s",
+    "description": "Tubo metálico, bran co"
+  },
+  {
+    "name": "Farol de São Marcos",
+    "lat": "02°29.31' S",
+    "lon": "044°18.12' W",
+    "height": 36,
+    "range": 23,
+    "character": "Lp. B. 10s",
+    "description": "Torre com metade Radiofarol quadrangular e outra"
+  },
+  {
+    "name": "Farol de Ilha do Medo",
+    "lat": "02°31.34' S",
+    "lon": "044°21.92' W",
+    "height": 60,
+    "range": 25,
+    "character": "Lp (3) B. 15s",
+    "description": "Armação quadran Interferência de gu lar em treliça luzes de fundo"
+  },
+  {
+    "name": "Farol de Araçagi",
+    "lat": "02°27.03' S",
+    "lon": "044°08.90' W",
+    "height": 91,
+    "range": 33,
+    "character": "Lp (4) B. 10s",
+    "description": "Torre tronco pira midal quadrangular"
+  },
+  {
+    "name": "Farol de Lençóis Grandes",
+    "lat": "02°22.78' S",
+    "lon": "043°16.18' W",
+    "height": 72,
+    "range": 17,
+    "character": "LpL. B. 15s",
+    "description": "Armação tronco pi rami dal quadrangu"
+  },
+  {
+    "name": "Farol de Preguiças",
+    "lat": "02°35.55' S",
+    "lon": "042°42.44' W",
+    "height": 46,
+    "range": 43,
+    "character": "Lp. B. 3s",
+    "description": "Torre troncônica de concreto armado,"
+  },
+  {
+    "name": "Farol de Pontal das",
+    "lat": "02°53.46' S",
+    "lon": "041°16.27' W",
+    "height": 28,
+    "range": 16,
+    "character": "Lp. B. 10s",
+    "description": "Torre cilíndrica de fibra de vidro, bran"
+  },
+  {
+    "name": "Farol de Jericoacoara",
+    "lat": "02°47.28' S",
+    "lon": "040°29.98' W",
+    "height": 101,
+    "range": 19,
+    "character": "LpL. B. 10s",
+    "description": "Torre quadrangular de concreto armado,"
+  },
+  {
+    "name": "Farol de Itapajé",
+    "lat": "02°51.42' S",
+    "lon": "039°57.48' W",
+    "height": 67,
+    "range": 20,
+    "character": "Lp (2) B. 15s",
+    "description": "Armação metálica Instalado na torre cônica branca, com de um aeroge"
+  },
+  {
+    "name": "Farol de Mundaú",
+    "lat": "03°10.58' S",
+    "lon": "039°21.72' W",
+    "height": 33,
+    "range": 14,
+    "character": "Lp. B. 3s",
+    "description": "Torre quadrangular de concreto armado,"
+  },
+  {
+    "name": "Farol de Paracuru",
+    "lat": "03°24.02' S",
+    "lon": "039°00.72' W",
+    "height": 80,
+    "range": 27,
+    "character": "Lp. B. 10s",
+    "description": "Armação tronco pi rami dal quadrangu"
+  },
+  {
+    "name": "Farol de Mucuripe",
+    "lat": "03°43.58' S",
+    "lon": "038°28.30' W",
+    "height": 134,
+    "range": 43,
+    "character": "Lp (2) B. 10s",
+    "description": "Torre cilíndrica de alvenaria, com fai-"
+  },
+  {
+    "name": "Farol de Morro Branco",
+    "lat": "04°09.51' S",
+    "lon": "038°06.45' W",
+    "height": 107,
+    "range": 24,
+    "character": "Lp (5) B. 60s",
+    "description": "Torre quadrangular em alvenaria, branca"
+  },
+  {
+    "name": "Farol de Aracati",
+    "lat": "04°24.52' S",
+    "lon": "037°46.19' W",
+    "height": 34,
+    "range": 14,
+    "character": "Lp. B. 6s",
+    "description": "Torre cilíndrica de alvenaria sobre uma"
+  },
+  {
+    "name": "Farol de Ponta Cajuais",
+    "lat": "04°42.60' S",
+    "lon": "037°21.66' W",
+    "height": 64,
+    "range": 19,
+    "character": "Lp (3) B. 15s",
+    "description": "Torre cilíndrica de fibra de vidro, com"
+  },
+  {
+    "name": "Farol de Ponta do Mel",
+    "lat": "04°57.67' S",
+    "lon": "036°52.60' W",
+    "height": 106,
+    "range": 41,
+    "character": "LpL. B. 30s",
+    "description": "Torre cilíndrica me- Estação de tálica envolvida por radiocomunicação"
+  },
+  {
+    "name": "Farol de Santo Alberto",
+    "lat": "05°03.14' S",
+    "lon": "036°02.28' W",
+    "height": 42,
+    "range": 20,
+    "character": "Lp (2) B. 15s",
+    "description": "Torre hexagonal de concreto armado, en-"
+  },
+  {
+    "name": "Farol de Calcanhar",
+    "lat": "05°09.65' S",
+    "lon": "035°29.21' W",
+    "height": 74,
+    "range": 38,
+    "character": "Lp. B. 10s",
+    "description": "Torre troncônica de Farol aeromarí- concreto armado, timo Radiofarol"
+  },
+  {
+    "name": "Farol de Rata",
+    "lat": "03°48.76' S",
+    "lon": "032°23.21' W",
+    "height": 63,
+    "range": 16,
+    "character": "Lp. B. 15s",
+    "description": "Torre quadrangular Setor de visibi- de alvenaria, branca lidade"
+  },
+  {
+    "name": "Farol de São Roque",
+    "lat": "05°29.32' S",
+    "lon": "035°15.71' W",
+    "height": 50,
+    "range": 21,
+    "character": "Lp (3) B. 10s",
+    "description": "Estrutura quadran- gular de vigas de"
+  },
+  {
+    "name": "Farol de Natal",
+    "lat": "05°47.71' S",
+    "lon": "035°11.12' W",
+    "height": 87,
+    "range": 39,
+    "character": "Lp (5) B. 25s",
+    "description": "Torre troncônica de Setor de visibi- alvenaria, branca lidade"
+  },
+  {
+    "name": "Farol de Ponta da",
+    "lat": "06°02.70' S",
+    "lon": "035°06.76' W",
+    "height": 96,
+    "range": 24,
+    "character": "Lp (5) B. 60s",
+    "description": "Torre cilíndrica de concreto armado,"
+  },
+  {
+    "name": "Farol de Bacopari",
+    "lat": "06°22.47' S",
+    "lon": "034°59.53' W",
+    "height": 30,
+    "range": 15,
+    "character": "Lp (2) B. 10s",
+    "description": "Torre octogonal de al venaria, com re-"
+  },
+  {
+    "name": "Farol de Cabo Branco",
+    "lat": "07°08.96' S",
+    "lon": "034°47.77' W",
+    "height": 46,
+    "range": 27,
+    "character": "Lp. B. 10s",
+    "description": "Torre tronco pira- mi dal triangular de"
+  },
+  {
+    "name": "Farol de Ponta de Pedras",
+    "lat": "07°37.80' S",
+    "lon": "034°48.72' W",
+    "height": 56,
+    "range": 18,
+    "character": "Lp (3) B. 15s",
+    "description": "Armação tronco pi- ra midal quadrangu-"
+  },
+  {
+    "name": "Farol de Olinda",
+    "lat": "08°00.66' S",
+    "lon": "034°50.84' W",
+    "height": 90,
+    "range": 46,
+    "character": "Lp (2) B. 35s",
+    "description": "Torre troncônica de concreto armado,"
+  },
+  {
+    "name": "Farol de Santo Agostinho",
+    "lat": "08°21.09' S",
+    "lon": "034°56.84' W",
+    "height": 91,
+    "range": 22,
+    "character": "Lp. B. 10s",
+    "description": "Torre cilíndrica de concreto armado,"
+  },
+  {
+    "name": "Farol de Porto de Pedras",
+    "lat": "09°09.39' S",
+    "lon": "035°17.89' W",
+    "height": 90,
+    "range": 24,
+    "character": "Lp (2) B. 15s",
+    "description": "Torre troncônica de concreto armado,"
+  },
+  {
+    "name": "Farol de Santa Isabel",
+    "lat": "10°49.67' S",
+    "lon": "036°56.10' W",
+    "height": 68,
+    "range": 17,
+    "character": "Lp. B. 15s",
+    "description": "Torre cilíndrica de concreto com uma"
+  },
+  {
+    "name": "Farol de Sergipe",
+    "lat": "10°58.18' S",
+    "lon": "037°02.17' W",
+    "height": 41,
+    "range": 39,
+    "character": "Oc (6) B. 60s",
+    "description": "Torre quadrangular de concreto armado,"
+  },
+  {
+    "name": "Farol de São Cristovão",
+    "lat": "11°07.79' S",
+    "lon": "037°08.71' W",
+    "height": 42,
+    "range": 23,
+    "character": "LpL. B. 20s",
+    "description": "Torre quadrangular de concreto armado,"
+  },
+  {
+    "name": "Farol de Mangue Seco",
+    "lat": "11°27.77' S",
+    "lon": "037°21.94' W",
+    "height": 55,
+    "range": 15,
+    "character": "Lp. B. 6s",
+    "description": "Torre quadrangular em treliça metálica,"
+  },
+  {
+    "name": "Farol de Itariri",
+    "lat": "11°57.33' S",
+    "lon": "037°37.34' W",
+    "height": 75,
+    "range": 18,
+    "character": "Lp. B. 15s",
+    "description": "Torre quadrangular de concreto armado,"
+  },
+  {
+    "name": "Farol de Subaúma",
+    "lat": "12°14.38' S",
+    "lon": "037°46.39' W",
+    "height": 48,
+    "range": 23,
+    "character": "Lp. B. 10s",
+    "description": "Torre quadrangular de concreto armado,"
+  },
+  {
+    "name": "Farol de Morro de",
+    "lat": "13°22.53' S",
+    "lon": "038°54.92' W",
+    "height": 89,
+    "range": 23,
+    "character": "Lp (2) B. 15s",
+    "description": "Torre troncônica de Visibilidade alvenaria, branca obscurecida"
+  },
+  {
+    "name": "Farol de Morro de Taipus",
+    "lat": "13°57.35' S",
+    "lon": "038°56.57' W",
+    "height": 76,
+    "range": 23,
+    "character": "Lp (3) B. 15s",
+    "description": "Torre quadrangular de concreto armado"
+  },
+  {
+    "name": "Farol de Ilhéus",
+    "lat": "14°48.34' S",
+    "lon": "039°01.54' W",
+    "height": 35,
+    "range": 23,
+    "character": "Lp. B. 10s",
+    "description": "Torre cilíndrica de Limite sul do alve naria, branca setor de visibi-"
+  },
+  {
+    "name": "Farol de Comandatuba",
+    "lat": "15°21.11' S",
+    "lon": "038°58.85' W",
+    "height": 45,
+    "range": 23,
+    "character": "Lp (3) B. 15s",
+    "description": "Torre quadrangular Exibe no tope luz de concreto armado, fixa encar nada"
+  },
+  {
+    "name": "Farol de Belmonte",
+    "lat": "15°51.80' S",
+    "lon": "038°52.60' W",
+    "height": 36,
+    "range": 21,
+    "character": "Lp. B. 6s",
+    "description": "Armação cônica em tre liça metálica com"
+  },
+  {
+    "name": "Farol de Araripe",
+    "lat": "16°08.09' S",
+    "lon": "038°57.86' W",
+    "height": 70,
+    "range": 17,
+    "character": "LpL. B. 10s",
+    "description": "Torre quadrangular de concreto armado,"
+  },
+  {
+    "name": "Farol de Barreiras do",
+    "lat": "17°17.23' S",
+    "lon": "039°13.31' W",
+    "height": 42,
+    "range": 16,
+    "character": "Lp (2) B. 12s",
+    "description": "Armação tronco pi- ramidal em treliça"
+  },
+  {
+    "name": "Farol de Nova Viçosa",
+    "lat": "17°53.65' S",
+    "lon": "039°22.32' W",
+    "height": 64,
+    "range": 23,
+    "character": "LpL. B. 15s",
+    "description": "Armação tronco pi- Torre retransmis- ra midal quadrangu- sora de microon-"
+  },
+  {
+    "name": "Farol de Abrolhos",
+    "lat": "17°57.85' S",
+    "lon": "038°41.63' W",
+    "height": 60,
+    "range": 51,
+    "character": "Lp. B. 6s",
+    "description": "Torre troncônica Racon Q (– –.–) metál ica, com faixas Bandas S e X"
+  },
+  {
+    "name": "Farol de Suçuraca",
+    "lat": "19°05.80' S",
+    "lon": "039°43.38' W",
+    "height": 64,
+    "range": 24,
+    "character": "Lp (2) B. 30s",
+    "description": "Torre quadrangular de concreto armado,"
+  },
+  {
+    "name": "Farol de Rio Doce",
+    "lat": "19°39.07' S",
+    "lon": "039°49.53' W",
+    "height": 46,
+    "range": 18,
+    "character": "Lp. B. 6s",
+    "description": "Torre quadrangular de concreto armado,"
+  },
+  {
+    "name": "Farol de Barra do Riacho",
+    "lat": "19°50.04' S",
+    "lon": "040°03.80' W",
+    "height": 34,
+    "range": 14,
+    "character": "Lp (2) B. 10s",
+    "description": "Torre cilíndrica de concreto armado,"
+  },
+  {
+    "name": "Farol de Morro Grande",
+    "lat": "20°18.15' S",
+    "lon": "040°18.60' W",
+    "height": 208,
+    "range": 20,
+    "character": "Iso. B. 2s",
+    "description": "Armação tronco pi- Alinh. “A” ramidal quadrangu- Aos 287º"
+  },
+  {
+    "name": "Farol de Alinh. “B” –",
+    "lat": "20°19.44' S",
+    "lon": "040°17.29' W",
+    "height": 34,
+    "range": 16,
+    "character": "Iso. E. 2s",
+    "description": "Torre quadrangular de concreto armado, Aos 245,5° e 2988 triangular encarnada na dist. de no tope 120m do Ante- 4 rior"
+  },
+  {
+    "name": "Farol de Enseada dos",
+    "lat": "20°30.31' S",
+    "lon": "029°18.87' W",
+    "height": 45,
+    "range": 4,
+    "character": "R. E. 1s",
+    "description": "Armação em treliça Funcionamento quadrangular me- ocasional"
+  },
+  {
+    "name": "Farol de Enseada dos",
+    "lat": "20°30.33' S",
+    "lon": "029°18.88' W",
+    "height": 46,
+    "range": 4,
+    "character": "Iso. E. 2s",
+    "description": "Armação em treliça Funcionamento quadrangular me ocasional Aos 194º 21 com placa de visibi lidade e na dist. de lidade 147° – 286° 65m do 3 (139°) Anterior"
+  },
+  {
+    "name": "Farol de Ilha do Francês",
+    "lat": "20°55.65' S",
+    "lon": "040°45.31' W",
+    "height": 48,
+    "range": 18,
+    "character": "LpL. B. 15s",
+    "description": "Torre quadrangular de alvenaria, mar"
+  },
+  {
+    "name": "Farol de Barra de",
+    "lat": "21°18.82' S",
+    "lon": "040°57.95' W",
+    "height": 35,
+    "range": 11,
+    "character": "Lp. V. 6s",
+    "description": "Torre quadrangular em treliça metálica,"
+  },
+  {
+    "name": "Farol de Ponta do Retiro",
+    "lat": "21°21.58' S",
+    "lon": "040°57.76' W",
+    "height": 40,
+    "range": 23,
+    "character": "Lp (3) B. 15s",
+    "description": "Torre cilíndrica de concreto armado,"
+  },
+  {
+    "name": "Farol de Atafona",
+    "lat": "21°37.52' S",
+    "lon": "041°00.88' W",
+    "height": 30,
+    "range": 16,
+    "character": "Lp (2) B. 15s",
+    "description": "Torre quadrangular de treliça metálica,"
+  },
+  {
+    "name": "Farol de São Tomé",
+    "lat": "22°02.52' S",
+    "lon": "041°03.17' W",
+    "height": 49,
+    "range": 40,
+    "character": "LpL (2) B. 67.5s",
+    "description": "Armação metálica Racon O (– – –) com coluna central, Bandas S e X"
+  },
+  {
+    "name": "Farol de Quissamã",
+    "lat": "22°09.68' S",
+    "lon": "041°17.82' W",
+    "height": 40,
+    "range": 17,
+    "character": "LpL. B. 10s",
+    "description": "Torre ciíndrica de concreto armado,"
+  },
+  {
+    "name": "Farol de Ilha Branca",
+    "lat": "22°43.80' S",
+    "lon": "041°52.45' W",
+    "height": 38,
+    "range": 8,
+    "character": "Lp. B. 5s",
+    "description": "Tubo metálico sobre ba se quadrangular"
+  },
+  {
+    "name": "Farol de Lajinha",
+    "lat": "22°53.35' S",
+    "lon": "042°00.12' W",
+    "height": 49,
+    "range": 9,
+    "character": "Lp. E. 3s",
+    "description": "Torre tronco pira midal quadrangular"
+  },
+  {
+    "name": "Farol de Cabo Frio",
+    "lat": "23°00.81' S",
+    "lon": "042°00.05' W",
+    "height": 140,
+    "range": 49,
+    "character": "Lp. B. 10s",
+    "description": "Torre troncônica Setor de visibi metálica, branca lidade"
+  },
+  {
+    "name": "Farol de Ponta Negra",
+    "lat": "22°57.64' S",
+    "lon": "042°41.56' W",
+    "height": 71,
+    "range": 21,
+    "character": "Lp (2) B. 10s",
+    "description": "Torre cilíndrica de concreto armado,"
+  },
+  {
+    "name": "Farol de Maricás",
+    "lat": "23°00.91' S",
+    "lon": "042°55.21' W",
+    "height": 80,
+    "range": 16,
+    "character": "LpL. B. 15s",
+    "description": "Torre troncônica de alvenaria, com"
+  },
+  {
+    "name": "Farol de Ilha Redonda",
+    "lat": "22°48.21' S",
+    "lon": "043°07.16' W",
+    "height": 6,
+    "range": 8,
+    "character": "Iso. B.",
+    "description": "Torre quadrangular de concreto arma"
+  },
+  {
+    "name": "Farol de Ponte",
+    "lat": "22°48.25' S",
+    "lon": "043°07.28' W",
+    "height": 7,
+    "range": 5,
+    "character": "Iso. B.",
+    "description": "Poste metálico, pre to com faixas largas"
+  },
+  {
+    "name": "Farol de Alinhamento",
+    "lat": "22°48.06' S",
+    "lon": "043°07.09' W",
+    "height": 6,
+    "range": 8,
+    "character": "Lp. E.",
+    "description": "Torre quadrangular de concreto arma"
+  },
+  {
+    "name": "Farol de Guaratiba",
+    "lat": "23°04.86' S",
+    "lon": "043°33.74' W",
+    "height": 42,
+    "range": 18,
+    "character": "Lp. B. 6s",
+    "description": "Torre quadrangular de concreto armado,"
+  },
+  {
+    "name": "Farol de Castelhanos",
+    "lat": "23°10.07' S",
+    "lon": "044°05.57' W",
+    "height": 121,
+    "range": 27,
+    "character": "Oc (3) B. 10s",
+    "description": "Torre quadrangu Setor de visibi lar de alvenaria, no lidade"
+  },
+  {
+    "name": "Farol de Itacuatiba",
+    "lat": "23°04.25' S",
+    "lon": "044°15.14' W",
+    "height": 50,
+    "range": 7,
+    "character": "Lp. B. 6s",
+    "description": "Torre quadrangular de alvenaria sobre"
+  },
+  {
+    "name": "Farol de Ponta dos Meros",
+    "lat": "23°13.57' S",
+    "lon": "044°20.83' W",
+    "height": 45,
+    "range": 15,
+    "character": "Lp (2) B. 15s",
+    "description": "Tubo metálico com faixas horizontais"
+  },
+  {
+    "name": "Farol de Ilha Rapada",
+    "lat": "23°09.61' S",
+    "lon": "044°39.82' W",
+    "height": 55,
+    "range": 5,
+    "character": "Lp. E. 3s",
+    "description": "Armação tronco pi- Marca de tope ra midal quadrangu-"
+  },
+  {
+    "name": "Farol de Juatinga",
+    "lat": "23°17.62' S",
+    "lon": "044°30.32' W",
+    "height": 175,
+    "range": 17,
+    "character": "Lp. B. 10s",
+    "description": "Torre tronco pira- Setor de visibi- midal quadrangular lidade"
+  },
+  {
+    "name": "Farol de Ubatuba",
+    "lat": "23°27.61' S",
+    "lon": "045°01.15' W",
+    "height": 65,
+    "range": 16,
+    "character": "Lp (3) B. 10s",
+    "description": "Tubo metálico sobre Setor de visibi- base quadrangular lidade"
+  },
+  {
+    "name": "Farol de Massaguaçu",
+    "lat": "23°37.72' S",
+    "lon": "045°22.18' W",
+    "height": 75,
+    "range": 12,
+    "character": "Lp (2) B. 12s",
+    "description": "Torre quadrangular de alvenaria, branca"
+  },
+  {
+    "name": "Farol de Vitória",
+    "lat": "23°45.08' S",
+    "lon": "045°00.67' W",
+    "height": 101,
+    "range": 16,
+    "character": "Lp. B. 6s",
+    "description": "Torre quadrangular Setor de visibi- de alvenaria, branca lidade"
+  },
+  {
+    "name": "Farol de Ponta Grossa",
+    "lat": "23°46.60' S",
+    "lon": "045°13.84' W",
+    "height": 60,
+    "range": 16,
+    "character": "LpL. B. 15s",
+    "description": "Armação quadran- gular em treliça me-"
+  },
+  {
+    "name": "Farol de Ponta do Boi",
+    "lat": "23°57.99' S",
+    "lon": "045°15.08' W",
+    "height": 70,
+    "range": 22,
+    "character": "LpL. B. 10s",
+    "description": "Torre quadrangular Setor de visibi- de alvenaria, branca lidade"
+  },
+  {
+    "name": "Farol de Toque-Toque",
+    "lat": "23°51.34' S",
+    "lon": "045°31.50' W",
+    "height": 35,
+    "range": 12,
+    "character": "Lp. B. 6s",
+    "description": "Estrutura quadrangu- Setor de visibi- lar em treliça, reves- lidade"
+  },
+  {
+    "name": "Farol de Laje de Santos",
+    "lat": "24°19.19' S",
+    "lon": "046°10.92' W",
+    "height": 38,
+    "range": 14,
+    "character": "Lp. B. 3s",
+    "description": "Torre cilíndrica de alvenaria, com faixas"
+  },
+  {
+    "name": "Farol de Queimada Grande",
+    "lat": "24°28.74' S",
+    "lon": "046°40.61' W",
+    "height": 83,
+    "range": 23,
+    "character": "Lp. B. 10s",
+    "description": "Torre quadrangular Setor de visibi- de concreto armado, lidade"
+  },
+  {
+    "name": "Farol de Icapara",
+    "lat": "24°40.95' S",
+    "lon": "047°27.18' W",
+    "height": 73,
+    "range": 19,
+    "character": "LpL. B. 15s",
+    "description": "Armação quadran- gular metálica com"
+  },
+  {
+    "name": "Farol de Conchas",
+    "lat": "25°32.35' S",
+    "lon": "048°17.45' W",
+    "height": 67,
+    "range": 25,
+    "character": "Lp. B. 10s",
+    "description": "Torre troncônica Setor de visibi- metálica, branca lidade"
+  },
+  {
+    "name": "Farol de Caraguatá",
+    "lat": "25°34.37' S",
+    "lon": "048°19.19' W",
+    "height": 43,
+    "range": 8,
+    "character": "LpL. B. 6s",
+    "description": "Torre quadrangular de alvenaria, branca"
+  },
+  {
+    "name": "Farol de Ilha da Paz",
+    "lat": "26°10.63' S",
+    "lon": "048°29.09' W",
+    "height": 84,
+    "range": 26,
+    "character": "Lp. B. 20s",
+    "description": "Torre quadrangu- lar de alvenaria no"
+  },
+  {
+    "name": "Farol de Ponta do Varrido",
+    "lat": "26°47.10' S",
+    "lon": "048°35.15' W",
+    "height": 50,
+    "range": 18,
+    "character": "Lp. B. 6s",
+    "description": "Armação tronco pi- ra midal quadrangu-"
+  },
+  {
+    "name": "Farol de Galé",
+    "lat": "27°10.90' S",
+    "lon": "048°24.46' W",
+    "height": 78,
+    "range": 8,
+    "character": "Lp. B. 10s",
+    "description": "Torre quadrangular de alvenaria, com"
+  },
+  {
+    "name": "Farol de Arvoredo",
+    "lat": "27°17.76' S",
+    "lon": "048°21.39' W",
+    "height": 90,
+    "range": 24,
+    "character": "Oc (4) B. 60s",
+    "description": "Torre troncônica Setor de visibi- metálica, com faixas lidade B. 237000 intensidades di- B. 79000 ferentes. Estação de radiocomu- ni cação"
+  },
+  {
+    "name": "Farol de Ponta da Galheta",
+    "lat": "27°34.55' S",
+    "lon": "048°24.99' W",
+    "height": 150,
+    "range": 16,
+    "character": "Lp. B. 10s",
+    "description": "Torre cilíndrica de concreto armado,"
+  },
+  {
+    "name": "Farol de Anhatomirim",
+    "lat": "27°25.67' S",
+    "lon": "048°33.86' W",
+    "height": 39,
+    "range": 9,
+    "character": "Lp. E. 6s",
+    "description": "Armação metálica, branca"
+  },
+  {
+    "name": "Farol de Naufragados",
+    "lat": "27°50.13' S",
+    "lon": "048°34.12' W",
+    "height": 43,
+    "range": 18,
+    "character": "Lp (2) B. 15s",
+    "description": "Torre troncônica de Setor de visibi- alvenaria, branca lidade"
+  },
+  {
+    "name": "Farol de Coral",
+    "lat": "27°56.00' S",
+    "lon": "048°32.59' W",
+    "height": 81,
+    "range": 14,
+    "character": "Lp. B. 3s",
+    "description": "Torre tronco pira- midal quadrangular"
+  },
+  {
+    "name": "Farol de Ponta do",
+    "lat": "28°12.53' S",
+    "lon": "048°39.75' W",
+    "height": 63,
+    "range": 10,
+    "character": "Lp. E. 3s",
+    "description": "Torre tronco pira- midal de alvenaria,"
+  },
+  {
+    "name": "Farol de Imbituba",
+    "lat": "28°14.00' S",
+    "lon": "048°38.76' W",
+    "height": 69,
+    "range": 21,
+    "character": "Lp (3) B. 15s",
+    "description": "Torre tronco pirami- dal quadrangular de"
+  },
+  {
+    "name": "Farol de Araras",
+    "lat": "28°19.27' S",
+    "lon": "048°38.88' W",
+    "height": 54,
+    "range": 11,
+    "character": "R (2) B. 6s",
+    "description": "Torre cilíndrica de concreto armado,"
+  },
+  {
+    "name": "Farol de Ilha dos Lobos",
+    "lat": "28°26.77' S",
+    "lon": "048°42.45' W",
+    "height": 50,
+    "range": 11,
+    "character": "Lp. B. 5s",
+    "description": "Torre troncônica de alvenaria, branca PORTO DE LAGUNA"
+  },
+  {
+    "name": "Farol de Araranguá",
+    "lat": "28°56.04' S",
+    "lon": "049°21.66' W",
+    "height": 82,
+    "range": 25,
+    "character": "Lp (3) B. 20s",
+    "description": "Torre troncônica de Racon Y (–.– –) alvenaria, com uma Bandas S e X"
+  },
+  {
+    "name": "Farol de Torres",
+    "lat": "29°20.68' S",
+    "lon": "049°43.77' W",
+    "height": 85,
+    "range": 23,
+    "character": "LpL. B. 10s",
+    "description": "Torre cilíndrica de Torre do antigo concreto armado, farol e várias"
+  },
+  {
+    "name": "Farol de Arroio do Sal",
+    "lat": "29°33.40' S",
+    "lon": "049°53.37' W",
+    "height": 42,
+    "range": 24,
+    "character": "Lp (5) B. 30s",
+    "description": "Torre quadrangular de alvenaria, bran-"
+  },
+  {
+    "name": "Farol de Cidreira",
+    "lat": "30°09.47' S",
+    "lon": "050°11.84' W",
+    "height": 33,
+    "range": 20,
+    "character": "Lp. B. 6s",
+    "description": "Torre cilíndrica de concreto armado,"
+  },
+  {
+    "name": "Farol de Berta",
+    "lat": "30°24.02' S",
+    "lon": "050°17.42' W",
+    "height": 42,
+    "range": 23,
+    "character": "Lp. B. 10s",
+    "description": "Torre quadrangular de alvenaria, branca"
+  },
+  {
+    "name": "Farol de Capão da Marca",
+    "lat": "31°30.11' S",
+    "lon": "051°11.30' W",
+    "height": 42,
+    "range": 17,
+    "character": "Lp (3) B. 10s",
+    "description": "Torre cilíndrica de concreto armado,"
+  },
+  {
+    "name": "Farol de Conceição",
+    "lat": "31°43.83' S",
+    "lon": "051°28.90' W",
+    "height": 33,
+    "range": 16,
+    "character": "Lp (2) B. 10s",
+    "description": "Torre quadrangular em treliça metálica,"
+  },
+  {
+    "name": "Farol de Estreito",
+    "lat": "31°52.88' S",
+    "lon": "051°46.35' W",
+    "height": 42,
+    "range": 17,
+    "character": "LpL. B. 15s",
+    "description": "Armação quadran- gular em treliça me-"
+  },
+  {
+    "name": "Farol de Barra",
+    "lat": "32°07.07' S",
+    "lon": "052°04.61' W",
+    "height": 32,
+    "range": 30,
+    "character": "Oc (6) B. 21s",
+    "description": "Torre troncônica me- Racon K (– . – ) tálica, com faixas Bandas S e X CANAL DE ACESSO AOS TERMINAIS"
+  },
+  {
+    "name": "Farol de Sarita",
+    "lat": "32°37.81' S",
+    "lon": "052°25.76' W",
+    "height": 40,
+    "range": 18,
+    "character": "Lp (3) B. 15s",
+    "description": "Torre quadrangular de alvenaria, com"
+  },
+  {
+    "name": "Farol de Albardão",
+    "lat": "33°12.15' S",
+    "lon": "052°42.31' W",
+    "height": 50,
+    "range": 42,
+    "character": "Lp (4) B. 25s",
+    "description": "Torre cilíndrica de concreto armado,"
+  },
+  {
+    "name": "Farol de Chuí",
+    "lat": "33°44.57' S",
+    "lon": "053°22.48' W",
+    "height": 43,
+    "range": 46,
+    "character": "Lp (2) B. 35s",
+    "description": "Torre troncônica de Radiofarol concreto armado, com Racon O (– – –)"
+  },
+  {
+    "name": "Farol de Atalaia",
+    "lat": "32°07.11' S",
+    "lon": "052°04.64' W",
+    "height": 32,
+    "range": 30,
+    "character": "N/D",
+    "description": "Torre troncônica me- Racon K (– . – ) tálica, com faixas Bandas S e X CANAL DE ACESSO AOS TERMINAIS"
+  },
+  {
+    "name": "Farol de Bojuru",
+    "lat": "31°29.16' S",
+    "lon": "051°25.23' W",
+    "height": 8,
+    "range": 6,
+    "character": "N/D",
+    "description": "Armação metálica sobre estacas, en-"
+  },
+  {
+    "name": "Farol de Capao da Canoa",
+    "lat": "29°44.70' S",
+    "lon": "050°00.28' W",
+    "height": 27,
+    "range": 15,
+    "character": "Lp (2) B.",
+    "description": "Torre quadrangular de concreto armado,"
+  },
+  {
+    "name": "Farol de Itapuã",
+    "lat": "30°23.11' S",
+    "lon": "051°03.57' W",
+    "height": 17,
+    "range": 12,
+    "character": "Lp B.",
+    "description": "Torre octogonal de alvenaria cercada de"
+  },
+  {
+    "name": "Farol de Cristóvão Pereira",
+    "lat": "31°03.81' S",
+    "lon": "051°09.91' W",
+    "height": 30,
+    "range": 13,
+    "character": "Lp B.",
+    "description": "Torre quadrangular de alvenaria, branca"
+  },
+  {
+    "name": "Farol de Tramandaí",
+    "lat": "30°00.51' S",
+    "lon": "050°08.15' W",
+    "height": 25,
+    "range": 23,
+    "character": "LpL B.",
+    "description": "Torre troncônica Racon Z (– – . .) de alvenaria, com Bandas S e X"
+  },
+  {
+    "name": "Farol de Albardao",
+    "lat": "33°12.15' S",
+    "lon": "052°42.36' W",
+    "height": 50,
+    "range": 42,
+    "character": "Lp (4) B.",
+    "description": "Torre cilíndrica de concreto armado,"
+  },
+  {
+    "name": "Farol de Alcantara",
+    "lat": "02°24.60' S",
+    "lon": "044°25.06' W",
+    "height": 38,
+    "range": 10,
+    "character": "Q (2) B.",
+    "description": "Tubo metálico, bran co"
+  },
+  {
+    "name": "Farol de Amapa",
+    "lat": "02°04.60' N",
+    "lon": "050°51.60' W",
+    "height": null,
+    "range": null,
+    "character": "Al.Fl.",
+    "description": "Farol white;green, Altura 30m"
+  },
+  {
+    "name": "Farol de Andreza",
+    "lat": "02°45.80' S",
+    "lon": "042°15.70' W",
+    "height": 24,
+    "range": 6,
+    "character": "Lp E.",
+    "description": "Tubos metálicos dis pos tos em forma pi"
+  },
+  {
+    "name": "Farol de Antigo Farol de Capão da Canoa",
+    "lat": "29°45.74' S",
+    "lon": "050°00.93' W",
+    "height": 27,
+    "range": 15,
+    "character": "N/D",
+    "description": "Torre quadrangular de concreto armado,"
+  },
+  {
+    "name": "Farol de Aquipelago de Alcatrazes",
+    "lat": "24°05.70' S",
+    "lon": "045°42.20' W",
+    "height": 24,
+    "range": 15,
+    "character": "N/D",
+    "description": "Torre tronco pira- Setor de visibi- midal quadrangular lidade"
+  },
+  {
+    "name": "Farol de Arambare",
+    "lat": "30°56.14' S",
+    "lon": "051°27.59' W",
+    "height": 8,
+    "range": 5,
+    "character": "Lp V.",
+    "description": "Armação metálica, verde"
+  },
+  {
+    "name": "Farol de Araquari",
+    "lat": "26°27.14' S",
+    "lon": "048°35.66' W",
+    "height": 8,
+    "range": 8,
+    "character": "F A.",
+    "description": "Torre cilíndrica de alvenaria, branca"
+  },
+  {
+    "name": "Farol de Aratu",
+    "lat": "12°47.56' S",
+    "lon": "038°29.42' W",
+    "height": 5,
+    "range": 6,
+    "character": "Mo (N) A.",
+    "description": "Poste metálico, amarelo"
+  },
+  {
+    "name": "Farol de Arpoador",
+    "lat": "02°43.59' S",
+    "lon": "042°22.42' W",
+    "height": 18,
+    "range": 12,
+    "character": "Lp B.",
+    "description": "Armação tronco pi rami dal quadrangu"
+  },
+  {
+    "name": "Farol de Baia da Traicao",
+    "lat": "06°40.54' S",
+    "lon": "034°55.95' W",
+    "height": 12,
+    "range": 12,
+    "character": "Lp B.",
+    "description": "Torre quadrangular de alvenaria tendo a"
+  },
+  {
+    "name": "Farol de Baixio de Madre de Deus",
+    "lat": "12°44.86' S",
+    "lon": "038°37.59' W",
+    "height": null,
+    "range": null,
+    "character": "Lp (2+1) V.",
+    "description": "Farol verde"
+  },
+  {
+    "name": "Farol de Baixio do Capeta",
+    "lat": "12°45.02' S",
+    "lon": "038°38.05' W",
+    "height": null,
+    "range": null,
+    "character": "Lp (2) B.",
+    "description": "Farol branco"
+  },
+  {
+    "name": "Farol de Baixio do Rio do Fogo",
+    "lat": "05°13.74' S",
+    "lon": "035°20.86' W",
+    "height": 12,
+    "range": 10,
+    "character": "Lp E.",
+    "description": "Torre quadrangular de concreto armado,"
+  },
+  {
+    "name": "Farol de Baixo da Teresa Panca",
+    "lat": "05°24.09' S",
+    "lon": "035°17.79' W",
+    "height": 10,
+    "range": 11,
+    "character": "Lp B.",
+    "description": "Torre cilíndrica de concreto armado,"
+  },
+  {
+    "name": "Farol de Banco Coroa Grande",
+    "lat": "01°01.70' S",
+    "lon": "048°35.70' W",
+    "height": 18,
+    "range": 10,
+    "character": "N/D",
+    "description": "Estrutura tubular Setor de visibi metálica, branca lidade"
+  },
+  {
+    "name": "Farol de Barra de Itabapoana",
+    "lat": "21°18.83' S",
+    "lon": "040°57.96' W",
+    "height": 35,
+    "range": 11,
+    "character": "Lp V.",
+    "description": "Torre quadrangular em treliça metálica,"
+  },
+  {
+    "name": "Farol de Barra do Pote",
+    "lat": "13°01.16' S",
+    "lon": "038°38.66' W",
+    "height": 6,
+    "range": 6,
+    "character": "Q (2) B.",
+    "description": "Tubo metálico fixa- do em base de con-"
+  },
+  {
+    "name": "Farol de Barra do Tombo",
+    "lat": "17°46.00' S",
+    "lon": "039°12.28' W",
+    "height": null,
+    "range": null,
+    "character": "Lp B.",
+    "description": "Farol branco, Altura 12m"
+  },
+  {
+    "name": "Farol de Barreiras do Prado",
+    "lat": "17°17.24' S",
+    "lon": "039°13.32' W",
+    "height": 42,
+    "range": 16,
+    "character": "Lp (2) B.",
+    "description": "Armação tronco pi- ramidal em treliça"
+  },
+  {
+    "name": "Farol de Belém",
+    "lat": "01°27.92' S",
+    "lon": "048°30.33' W",
+    "height": 45,
+    "range": 15,
+    "character": "N/D",
+    "description": "Torre quadrangular metálica com duas de"
+  },
+  {
+    "name": "Farol de Boco do Furo",
+    "lat": "01°27.84' S",
+    "lon": "048°42.59' W",
+    "height": 5,
+    "range": 5,
+    "character": "Lp (2) B.",
+    "description": "Torre tronco pira midal quadrangular"
+  },
+  {
+    "name": "Farol de Boiucu",
+    "lat": "01°48.50' S",
+    "lon": "050°18.40' W",
+    "height": 13,
+    "range": 4,
+    "character": "N/D",
+    "description": "Tubo metálico com Setor de visibi placa de visibilida lidade"
+  },
+  {
+    "name": "Farol de Bom Abrigo",
+    "lat": "25°07.39' S",
+    "lon": "047°51.73' W",
+    "height": null,
+    "range": null,
+    "character": "Al.Fl (2+1).",
+    "description": "Farol white;red, Altura 146m"
+  },
+  {
+    "name": "Farol de Cabeca de Negro",
+    "lat": "12°49.65' S",
+    "lon": "038°51.35' W",
+    "height": 7,
+    "range": 5,
+    "character": "Lp E.",
+    "description": "Tubo metálico sobre base quadrangular"
+  },
+  {
+    "name": "Farol de Cabo Orange",
+    "lat": "04°25.78' N",
+    "lon": "051°33.35' W",
+    "height": 50,
+    "range": 18,
+    "character": "N/D",
+    "description": "Torre quadrangular Setor de visibili em treliça metálica, dade"
+  },
+  {
+    "name": "Farol de Cabo de Santo Agostinho",
+    "lat": "08°21.09' S",
+    "lon": "034°56.84' W",
+    "height": 91,
+    "range": 22,
+    "character": "Lp B.",
+    "description": "Torre cilíndrica de concreto armado,"
+  },
+  {
+    "name": "Farol de Cabo de São Roque",
+    "lat": "05°29.35' S",
+    "lon": "035°15.69' W",
+    "height": 50,
+    "range": 21,
+    "character": "Lp (3) B.",
+    "description": "Estrutura quadran- gular de vigas de"
+  },
+  {
+    "name": "Farol de Caete",
+    "lat": "00°48.38' S",
+    "lon": "046°37.22' W",
+    "height": 20,
+    "range": 15,
+    "character": "Q (2) B.",
+    "description": "Torre metálica retan gular, branca"
+  },
+  {
+    "name": "Farol de Calheta",
+    "lat": "20°30.49' S",
+    "lon": "029°18.58' W",
+    "height": 14,
+    "range": 8,
+    "character": "Q B.",
+    "description": "Torre tronco pira- Funcionamento midal quadrangular ocasional"
+  },
+  {
+    "name": "Farol de Calombo",
+    "lat": "23°01.65' S",
+    "lon": "044°18.78' W",
+    "height": 3,
+    "range": 5,
+    "character": "Lp. E. 3s",
+    "description": "Poste quadrangular de concreto armado,"
+  },
+  {
+    "name": "Farol de Camamu",
+    "lat": "13°53.48' S",
+    "lon": "038°59.94' W",
+    "height": null,
+    "range": null,
+    "character": "N/D",
+    "description": "Farol"
+  },
+  {
+    "name": "Farol de Camapijo",
+    "lat": "01°21.81' S",
+    "lon": "048°38.82' W",
+    "height": 8,
+    "range": 8,
+    "character": "Lp (2) B.",
+    "description": "Tubo metálico sobre base de concreto ar"
+  },
+  {
+    "name": "Farol de Camaçari",
+    "lat": "12°44.53' S",
+    "lon": "038°08.95' W",
+    "height": 20,
+    "range": 16,
+    "character": "Lp B.",
+    "description": "Torre cilíndrica de Na extremidade con creto armado, de um píer"
+  },
+  {
+    "name": "Farol de Canal da Feitoria No 5",
+    "lat": "31°43.45' S",
+    "lon": "052°00.22' W",
+    "height": 6,
+    "range": 7,
+    "character": "Lp E.",
+    "description": "Armação metálica sobre estacas, en-"
+  },
+  {
+    "name": "Farol de Canal da Setia No 4",
+    "lat": "31°53.12' S",
+    "lon": "052°09.07' W",
+    "height": 7,
+    "range": 9,
+    "character": "Lp V.",
+    "description": "Armação metálica sobre estacas, verde"
+  },
+  {
+    "name": "Farol de Cascalheira",
+    "lat": "00°01.35' S",
+    "lon": "051°03.72' W",
+    "height": null,
+    "range": null,
+    "character": "Lp (2) B.",
+    "description": "Farol branco, Altura 13m"
+  },
+  {
+    "name": "Farol de Colares",
+    "lat": "00°55.08' S",
+    "lon": "048°17.53' W",
+    "height": 14,
+    "range": 10,
+    "character": "Lp (2) B.",
+    "description": "Tubo metálico bran co, sobre base de"
+  },
+  {
+    "name": "Farol de Coroa Vermelha",
+    "lat": "17°58.04' S",
+    "lon": "039°12.48' W",
+    "height": 16,
+    "range": 13,
+    "character": "Lp (3) B.",
+    "description": "Torre octogonal de alvenaria, encarnada"
+  },
+  {
+    "name": "Farol de Coroa do Meio No 12",
+    "lat": "31°44.35' S",
+    "lon": "052°09.30' W",
+    "height": 7,
+    "range": 9,
+    "character": "Lp V.",
+    "description": "Armação metálica sobre estacas, verde"
+  },
+  {
+    "name": "Farol de Coroa dos Patos No 4",
+    "lat": "31°43.00' S",
+    "lon": "052°04.33' W",
+    "height": 7,
+    "range": 9,
+    "character": "Lp V.",
+    "description": "Armação metálica sobre estacas, verde"
+  },
+  {
+    "name": "Farol de Cruzeiro",
+    "lat": "23°25.99' S",
+    "lon": "045°04.10' W",
+    "height": null,
+    "range": null,
+    "character": "N/D",
+    "description": "Farol"
+  },
+  {
+    "name": "Farol de Desertas",
+    "lat": "30°33.00' S",
+    "lon": "050°50.23' W",
+    "height": 6,
+    "range": 9,
+    "character": "Lp V.",
+    "description": "Armação metálica, verde"
+  },
+  {
+    "name": "Farol de Desertores",
+    "lat": "30°57.83' S",
+    "lon": "051°14.84' W",
+    "height": 8,
+    "range": 9,
+    "character": "Lp V.",
+    "description": "Armação metálica sobre estacas, verde"
+  },
+  {
+    "name": "Farol de Diamante No 6",
+    "lat": "31°57.28' S",
+    "lon": "052°04.76' W",
+    "height": 6,
+    "range": 9,
+    "character": "Lp V.",
+    "description": "Armação metálica sobre estacas, verde"
+  },
+  {
+    "name": "Farol de Enseada dos Portugueses",
+    "lat": "20°30.49' S",
+    "lon": "029°18.92' W",
+    "height": 45,
+    "range": 4,
+    "character": "Q E.",
+    "description": "Armação em treliça Funcionamento quadrangular me- ocasional"
+  },
+  {
+    "name": "Farol de Farolete Baleias No 7",
+    "lat": "31°55.09' S",
+    "lon": "052°07.13' W",
+    "height": 8,
+    "range": 7,
+    "character": "Lp E.",
+    "description": "Armação metálica sobre estacas, en- CANAL DA SETIA"
+  },
+  {
+    "name": "Farol de Farolete Barba Negra",
+    "lat": "30°32.02' S",
+    "lon": "051°08.48' W",
+    "height": 8,
+    "range": 9,
+    "character": "Lp V.",
+    "description": "Armação metálica, verde"
+  },
+  {
+    "name": "Farol de Farolete Calhau de São Pedro",
+    "lat": "27°15.07' S",
+    "lon": "048°25.33' W",
+    "height": 19,
+    "range": 8,
+    "character": "Lp B.",
+    "description": "Torre tronco pira- midal quadrangular"
+  },
+  {
+    "name": "Farol de Farolete Propriá",
+    "lat": "10°56.80' S",
+    "lon": "037°01.86' W",
+    "height": null,
+    "range": null,
+    "character": "N/D",
+    "description": "Farol"
+  },
+  {
+    "name": "Farol de Fortaleza de Santa Cruz",
+    "lat": "22°56.28' S",
+    "lon": "043°08.06' W",
+    "height": 26,
+    "range": 14,
+    "character": "Iso E.",
+    "description": "Torre hexagonal envi draçada, sobre"
+  },
+  {
+    "name": "Farol de Fugitivo",
+    "lat": "00°10.21' N",
+    "lon": "050°55.11' W",
+    "height": null,
+    "range": null,
+    "character": "Lp (2) B.",
+    "description": "Farol branco, Altura 13m"
+  },
+  {
+    "name": "Farol de Gambeta No 9",
+    "lat": "31°43.92' S",
+    "lon": "052°08.14' W",
+    "height": 7,
+    "range": 7,
+    "character": "Lp E.",
+    "description": "Armação metálica sobre estacas, en- CANAL DO NASCIMENTO"
+  },
+  {
+    "name": "Farol de Gameleira",
+    "lat": "05°13.20' S",
+    "lon": "035°25.36' W",
+    "height": null,
+    "range": null,
+    "character": "N/D",
+    "description": "Farol"
+  },
+  {
+    "name": "Farol de Garcia d'Avila",
+    "lat": "12°34.65' S",
+    "lon": "038°00.10' W",
+    "height": 28,
+    "range": 21,
+    "character": "Lp (2) B.",
+    "description": "Torre cilíndrica de al venaria, branca"
+  },
+  {
+    "name": "Farol de Guarau",
+    "lat": "24°22.90' S",
+    "lon": "046°59.20' W",
+    "height": null,
+    "range": null,
+    "character": "N/D",
+    "description": "Farol"
+  },
+  {
+    "name": "Farol de Guaxindiba",
+    "lat": "21°27.90' S",
+    "lon": "041°02.60' W",
+    "height": null,
+    "range": null,
+    "character": "Lp (2) B.",
+    "description": "Farol branco, Altura 23m"
+  },
+  {
+    "name": "Farol de Ilha Caiobá",
+    "lat": "25°51.17' S",
+    "lon": "048°32.13' W",
+    "height": 27,
+    "range": 15,
+    "character": "N/D",
+    "description": "Armação tronco pira- Setor de visibi- midal quadrangular lidade"
+  },
+  {
+    "name": "Farol de Ilha Cameleao",
+    "lat": "01°49.16' S",
+    "lon": "049°56.81' W",
+    "height": 13,
+    "range": 10,
+    "character": "N/D",
+    "description": "Torre tronco pirami Setor de visibi dal quadrangular em lidade"
+  },
+  {
+    "name": "Farol de Ilha Cotijuba",
+    "lat": "01°16.00' S",
+    "lon": "048°33.80' W",
+    "height": 10,
+    "range": 9,
+    "character": "N/D",
+    "description": "Tubo metálico sobre Setor de visibi base de concreto ar lidade"
+  },
+  {
+    "name": "Farol de Ilha Escalvada",
+    "lat": "20°42.02' S",
+    "lon": "040°24.41' W",
+    "height": 27,
+    "range": 15,
+    "character": "Q (2) B.",
+    "description": "Torre cilíndrica me tálica, encarnada CANAL DE ACESSO AO TERMINAL DA PONTA DO UBU"
+  },
+  {
+    "name": "Farol de Ilha Joroca",
+    "lat": "01°38.80' S",
+    "lon": "049°13.70' W",
+    "height": null,
+    "range": null,
+    "character": "N/D",
+    "description": "Farol"
+  },
+  {
+    "name": "Farol de Ilha Jupatituba",
+    "lat": "01°41.00' S",
+    "lon": "049°14.10' W",
+    "height": null,
+    "range": null,
+    "character": "N/D",
+    "description": "Farol"
+  },
+  {
+    "name": "Farol de Ilha Jutuba",
+    "lat": "01°15.00' S",
+    "lon": "048°30.30' W",
+    "height": null,
+    "range": null,
+    "character": "Lp B.",
+    "description": "Farol branco, Altura 12m"
+  },
+  {
+    "name": "Farol de Ilha Maiau",
+    "lat": "01°16.90' S",
+    "lon": "044°54.21' W",
+    "height": 38,
+    "range": 20,
+    "character": "N/D",
+    "description": "Torre cilíndrica de Visibilidade concreto armado, obscurecida"
+  },
+  {
+    "name": "Farol de Ilha Mandi",
+    "lat": "01°36.70' S",
+    "lon": "049°08.60' W",
+    "height": 15,
+    "range": 12,
+    "character": "N/D",
+    "description": "Torre tronco pira Setor de visibi midal quadrangular lidade"
+  },
+  {
+    "name": "Farol de Ilha Queimada Grande",
+    "lat": "24°28.79' S",
+    "lon": "046°40.56' W",
+    "height": 83,
+    "range": 23,
+    "character": "N/D",
+    "description": "Torre quadrangular Setor de visibi- de concreto armado, lidade"
+  },
+  {
+    "name": "Farol de Ilha Rasa",
+    "lat": "23°03.84' S",
+    "lon": "043°08.75' W",
+    "height": null,
+    "range": null,
+    "character": "N/D",
+    "description": "Farol, Altura 26m"
+  },
+  {
+    "name": "Farol de Ilha Rata",
+    "lat": "03°48.77' S",
+    "lon": "032°23.20' W",
+    "height": 63,
+    "range": 16,
+    "character": "N/D",
+    "description": "Torre quadrangular Setor de visibi- de alvenaria, branca lidade"
+  },
+  {
+    "name": "Farol de Ilha Santana",
+    "lat": "22°25.03' S",
+    "lon": "041°42.27' W",
+    "height": null,
+    "range": null,
+    "character": "Al.LFl.",
+    "description": "Farol white;red, Altura 156m"
+  },
+  {
+    "name": "Farol de Ilha Tatuoca",
+    "lat": "01°11.97' S",
+    "lon": "048°30.34' W",
+    "height": 12,
+    "range": 9,
+    "character": "N/D",
+    "description": "Armação tronco Setor de visibi pira midal quadran lidade"
+  },
+  {
+    "name": "Farol de Ilha da Moela",
+    "lat": "24°03.05' S",
+    "lon": "046°15.82' W",
+    "height": null,
+    "range": null,
+    "character": "Al.Oc (3+1).",
+    "description": "Farol white;red, Altura 110m"
+  },
+  {
+    "name": "Farol de Ilha da Vitoria",
+    "lat": "23°45.10' S",
+    "lon": "045°00.70' W",
+    "height": 101,
+    "range": 16,
+    "character": "N/D",
+    "description": "Torre quadrangular Setor de visibi- de alvenaria, branca lidade"
+  },
+  {
+    "name": "Farol de Ilha das Araras",
+    "lat": "01°48.65' S",
+    "lon": "050°08.93' W",
+    "height": 13,
+    "range": 8,
+    "character": "N/D",
+    "description": "Torre quadrangular Setor de visibi metálica com pla lidade"
+  },
+  {
+    "name": "Farol de Ilha de Coral",
+    "lat": "27°55.98' S",
+    "lon": "048°32.56' W",
+    "height": 81,
+    "range": 14,
+    "character": "Lp B.",
+    "description": "Torre tronco pira- midal quadrangular"
+  },
+  {
+    "name": "Farol de Ilha de Guarapirá",
+    "lat": "02°34.74' S",
+    "lon": "044°22.40' W",
+    "height": 17,
+    "range": 9,
+    "character": "N/D",
+    "description": "Tubo metálico, Setor de visibi branco lidade"
+  },
+  {
+    "name": "Farol de Ilha de Santana",
+    "lat": "02°16.23' S",
+    "lon": "043°37.44' W",
+    "height": null,
+    "range": null,
+    "character": "Al.LFl.",
+    "description": "Farol white;white;red, Altura 57m"
+  },
+  {
+    "name": "Farol de Ilha do Apeu",
+    "lat": "00°54.62' S",
+    "lon": "046°11.17' W",
+    "height": 41,
+    "range": 15,
+    "character": "Lp (2) B.",
+    "description": "Armação tronco pi rami dal quadrangu"
+  },
+  {
+    "name": "Farol de Ilha do Arvoredo",
+    "lat": "27°17.77' S",
+    "lon": "048°21.41' W",
+    "height": 90,
+    "range": 24,
+    "character": "N/D",
+    "description": "Torre troncônica Setor de visibi- metálica, com faixas lidade B. 237000 intensidades di- B. 79000 ferentes. Estação de radiocomu- ni cação"
+  },
+  {
+    "name": "Farol de Ilha do Capim",
+    "lat": "01°33.30' S",
+    "lon": "048°51.90' W",
+    "height": 8,
+    "range": 10,
+    "character": "N/D",
+    "description": "Tubo metálico com Setor de visibi placa de visibilida lidade"
+  },
+  {
+    "name": "Farol de Ilha do Frade, Ponta de Nossa Senhora de Guadalupe",
+    "lat": "12°48.85' S",
+    "lon": "038°38.48' W",
+    "height": 35,
+    "range": 10,
+    "character": "N/D",
+    "description": "Torre quadrangular Setor de visibi- de concreto armado, lidade"
+  },
+  {
+    "name": "Farol de Ilha do Frances",
+    "lat": "20°55.65' S",
+    "lon": "040°45.31' W",
+    "height": 48,
+    "range": 18,
+    "character": "LpL. B. 15s",
+    "description": "Torre quadrangular de alvenaria, mar"
+  },
+  {
+    "name": "Farol de Ilha do Machadinho",
+    "lat": "00°10.80' S",
+    "lon": "048°45.90' W",
+    "height": 23,
+    "range": 11,
+    "character": "N/D",
+    "description": "Armação tronco pi Setor de visibi rami dal quadrangu lidade"
+  },
+  {
+    "name": "Farol de Ilha do Mangunca",
+    "lat": "01°36.94' S",
+    "lon": "044°39.29' W",
+    "height": 46,
+    "range": 28,
+    "character": "Lp B.",
+    "description": "Torre tronco pira midal quadrangular"
+  },
+  {
+    "name": "Farol de Ilha do Pacotes",
+    "lat": "20°21.12' S",
+    "lon": "040°15.03' W",
+    "height": 7,
+    "range": 8,
+    "character": "Lp B.",
+    "description": "Torre cilíndrica de Racon N (—.) alvenaria, branca Bandas S e X CANAL DE ACESSO AO PORTO DE VITÓRIA"
+  },
+  {
+    "name": "Farol de Ilha do Para",
+    "lat": "00°52.83' N",
+    "lon": "049°59.27' W",
+    "height": 33,
+    "range": 16,
+    "character": "Lp (3) B.",
+    "description": "Torre quadrangular Racon B (– ...) me tálica em treliça, Bandas S e X BACIA AMAZÔNICA – Rio Amazonas"
+  },
+  {
+    "name": "Farol de Ilha do Toque-Toque",
+    "lat": "23°51.34' S",
+    "lon": "045°31.49' W",
+    "height": 35,
+    "range": 12,
+    "character": "N/D",
+    "description": "Estrutura quadrangu- Setor de visibi- lar em treliça, reves- lidade"
+  },
+  {
+    "name": "Farol de Ilha dos Amores, Salvaterra",
+    "lat": "00°45.17' S",
+    "lon": "048°30.48' W",
+    "height": 14,
+    "range": 5,
+    "character": "Lp B.",
+    "description": "Armação tronco pi rami dal quadrangu"
+  },
+  {
+    "name": "Farol de Ilha dos Papagaios",
+    "lat": "22°22.98' S",
+    "lon": "041°45.52' W",
+    "height": null,
+    "range": null,
+    "character": "N/D",
+    "description": "Farol"
+  },
+  {
+    "name": "Farol de Ilhas Maricá",
+    "lat": "23°01.04' S",
+    "lon": "042°55.35' W",
+    "height": 80,
+    "range": 16,
+    "character": "LpL B.",
+    "description": "Torre troncônica de alvenaria, com"
+  },
+  {
+    "name": "Farol de Ilhas das Araras",
+    "lat": "28°19.30' S",
+    "lon": "048°38.91' W",
+    "height": 54,
+    "range": 11,
+    "character": "Q (2) B.",
+    "description": "Torre cilíndrica de concreto armado,"
+  },
+  {
+    "name": "Farol de Ilhéu Grande",
+    "lat": "14°46.21' S",
+    "lon": "039°01.06' W",
+    "height": 20,
+    "range": 8,
+    "character": "Lp (3) B.",
+    "description": "Torre quadrangular Interferência de de alvenaria, branca luzes de fundo"
+  },
+  {
+    "name": "Farol de Itaguary",
+    "lat": "01°25.50' S",
+    "lon": "048°49.00' W",
+    "height": 12,
+    "range": 9,
+    "character": "Lp B.",
+    "description": "Torre quadrangular Tem pequena de concreto armado, inclinação"
+  },
+  {
+    "name": "Farol de Itamoabo",
+    "lat": "12°47.73' S",
+    "lon": "038°32.04' W",
+    "height": 50,
+    "range": 15,
+    "character": "Lp (2) B. 3s",
+    "description": "Torre cilíndrica de alvenaria, branca"
+  },
+  {
+    "name": "Farol de Itapeva",
+    "lat": "29°33.41' S",
+    "lon": "049°53.37' W",
+    "height": 42,
+    "range": 24,
+    "character": "Lp (5) B.",
+    "description": "Torre quadrangular de alvenaria, bran-"
+  },
+  {
+    "name": "Farol de Itaqui",
+    "lat": "02°54.07' S",
+    "lon": "041°33.35' W",
+    "height": 29,
+    "range": 15,
+    "character": "Lp B.",
+    "description": "Torre cilíndrica em fibra de vidro, bran"
+  },
+  {
+    "name": "Farol de Itauna",
+    "lat": "02°32.07' S",
+    "lon": "044°30.75' W",
+    "height": 25,
+    "range": 11,
+    "character": "Lp B.",
+    "description": "Torre troncônica de alvenaria, branca"
+  },
+  {
+    "name": "Farol de Joanes",
+    "lat": "00°52.87' S",
+    "lon": "048°30.46' W",
+    "height": 23,
+    "range": 14,
+    "character": "Lp B.",
+    "description": "Armação tronco pi rami dal quadrangu"
+  },
+  {
+    "name": "Farol de Laje da Conceicao",
+    "lat": "24°14.22' S",
+    "lon": "046°41.43' W",
+    "height": null,
+    "range": null,
+    "character": "N/D",
+    "description": "Farol"
+  },
+  {
+    "name": "Farol de Lencois Grandes",
+    "lat": "02°22.78' S",
+    "lon": "043°16.20' W",
+    "height": 72,
+    "range": 17,
+    "character": "LpL B.",
+    "description": "Armação tronco pi rami dal quadrangu"
+  },
+  {
+    "name": "Farol de Lua Cheia",
+    "lat": "08°02.82' S",
+    "lon": "034°51.55' W",
+    "height": 12,
+    "range": 5,
+    "character": "LpL V.",
+    "description": "Torre cilíndrica de concreto armado,"
+  },
+  {
+    "name": "Farol de Machadinho",
+    "lat": "01°22.57' S",
+    "lon": "048°38.60' W",
+    "height": 8,
+    "range": 7,
+    "character": "Lp (3) B.",
+    "description": "Tubo metálico so bre base de con"
+  },
+  {
+    "name": "Farol de Maragogi",
+    "lat": "09°00.80' S",
+    "lon": "035°13.40' W",
+    "height": null,
+    "range": null,
+    "character": "F E.",
+    "description": "Farol vermelho, Altura 134m"
+  },
+  {
+    "name": "Farol de Marcação Ponta do Coral",
+    "lat": "27°33.98' S",
+    "lon": "048°32.21' W",
+    "height": null,
+    "range": null,
+    "character": "N/D",
+    "description": "Farol"
+  },
+  {
+    "name": "Farol de Massaguacu",
+    "lat": "23°37.74' S",
+    "lon": "045°22.20' W",
+    "height": 75,
+    "range": 12,
+    "character": "Lp (2) B.",
+    "description": "Torre quadrangular de alvenaria, branca"
+  },
+  {
+    "name": "Farol de Morro",
+    "lat": "13°22.56' S",
+    "lon": "038°54.92' W",
+    "height": 89,
+    "range": 23,
+    "character": "N/D",
+    "description": "Torre troncônica de Visibilidade alvenaria, branca obscurecida"
+  },
+  {
+    "name": "Farol de Morro Taipus",
+    "lat": "13°57.36' S",
+    "lon": "038°56.52' W",
+    "height": 76,
+    "range": 23,
+    "character": "Lp (3) B.",
+    "description": "Torre quadrangular de concreto armado"
+  },
+  {
+    "name": "Farol de Morro do Pico",
+    "lat": "03°50.70' S",
+    "lon": "032°25.28' W",
+    "height": null,
+    "range": null,
+    "character": "Al.Fl.",
+    "description": "Farol white;green, Altura 329m"
+  },
+  {
+    "name": "Farol de Morro dos Conventos",
+    "lat": "28°56.08' S",
+    "lon": "049°21.76' W",
+    "height": 82,
+    "range": 25,
+    "character": "Lp (3) B.",
+    "description": "Torre troncônica de Racon Y (–.– –) alvenaria, com uma Bandas S e X"
+  },
+  {
+    "name": "Farol de Mucuri",
+    "lat": "18°03.61' S",
+    "lon": "039°32.06' W",
+    "height": 24,
+    "range": 16,
+    "character": "Lp. B. 6s",
+    "description": "Torre cilíndrica de concreto armado,"
+  },
+  {
+    "name": "Farol de Mundau",
+    "lat": "03°10.59' S",
+    "lon": "039°21.72' W",
+    "height": 33,
+    "range": 14,
+    "character": "Lp B.",
+    "description": "Torre quadrangular de concreto armado,"
+  },
+  {
+    "name": "Farol de Mãe Luiza",
+    "lat": "05°47.71' S",
+    "lon": "035°11.12' W",
+    "height": 87,
+    "range": 39,
+    "character": "N/D",
+    "description": "Torre troncônica de Setor de visibi- alvenaria, branca lidade"
+  },
+  {
+    "name": "Farol de No 102",
+    "lat": "30°20.69' S",
+    "lon": "051°03.90' W",
+    "height": 6,
+    "range": 7,
+    "character": "Lp V.",
+    "description": "Armação metálica sobre estacas, encar-"
+  },
+  {
+    "name": "Farol de No 106",
+    "lat": "30°19.92' S",
+    "lon": "051°05.52' W",
+    "height": 5,
+    "range": 9,
+    "character": "Lp V.",
+    "description": "Armação metálica, verde"
+  },
+  {
+    "name": "Farol de No 11",
+    "lat": "31°42.60' S",
+    "lon": "051°58.11' W",
+    "height": 6,
+    "range": 7,
+    "character": "Lp E.",
+    "description": "Armação metálica sobre estacas, encar-"
+  },
+  {
+    "name": "Farol de No 15",
+    "lat": "26°54.12' S",
+    "lon": "048°39.21' W",
+    "height": 5,
+    "range": 5,
+    "character": "Lp (3) E.",
+    "description": "Torre cilíndrica de fibra de vidro, sobre"
+  },
+  {
+    "name": "Farol de No 17",
+    "lat": "31°41.95' S",
+    "lon": "051°56.50' W",
+    "height": 7,
+    "range": 7,
+    "character": "Lp E.",
+    "description": "Armação metálica sobre estacas, en-"
+  },
+  {
+    "name": "Farol de No 3",
+    "lat": "31°47.83' S",
+    "lon": "052°11.59' W",
+    "height": 6,
+    "range": 7,
+    "character": "Lp E.",
+    "description": "Armação metálica"
+  },
+  {
+    "name": "Farol de No 32",
+    "lat": "31°52.13' S",
+    "lon": "052°09.61' W",
+    "height": 6,
+    "range": 7,
+    "character": "Lp V.",
+    "description": "Armação metálica sobre estacas, encar-"
+  },
+  {
+    "name": "Farol de No 4",
+    "lat": "23°59.06' S",
+    "lon": "046°18.60' W",
+    "height": 8,
+    "range": 10,
+    "character": "N/D",
+    "description": "Torre cilíndrica de concreto armado, nº 1 Anterior 1867 faixa ho rizontal en-"
+  },
+  {
+    "name": "Farol de No 50",
+    "lat": "31°46.39' S",
+    "lon": "052°10.72' W",
+    "height": 7,
+    "range": 9,
+    "character": "Lp V.",
+    "description": "Armação metálica sobre estacas, verde"
+  },
+  {
+    "name": "Farol de No 6",
+    "lat": "31°43.31' S",
+    "lon": "052°00.10' W",
+    "height": 6,
+    "range": 9,
+    "character": "Lp V.",
+    "description": "Armação metálica sobre estacas, verde"
+  },
+  {
+    "name": "Farol de No 7",
+    "lat": "26°54.73' S",
+    "lon": "048°38.27' W",
+    "height": 15,
+    "range": 10,
+    "character": "Lp (3) E.",
+    "description": "Torre cilíndrica de fibra de vidro, sobre"
+  },
+  {
+    "name": "Farol de No 8",
+    "lat": "31°42.98' S",
+    "lon": "051°59.27' W",
+    "height": 6,
+    "range": 7,
+    "character": "Lp V.",
+    "description": "Armação metálica sobre estacas, encar-"
+  },
+  {
+    "name": "Farol de No 9",
+    "lat": "31°43.05' S",
+    "lon": "051°59.24' W",
+    "height": 6,
+    "range": 7,
+    "character": "Lp E.",
+    "description": "Armação metálica sobre estacas, encar-"
+  },
+  {
+    "name": "Farol de No 97",
+    "lat": "30°20.81' S",
+    "lon": "051°03.58' W",
+    "height": 6,
+    "range": 7,
+    "character": "Lp E.",
+    "description": "Armação metálica sobre estacas, encar-"
+  },
+  {
+    "name": "Farol de No 99",
+    "lat": "30°20.62' S",
+    "lon": "051°03.85' W",
+    "height": 6,
+    "range": 7,
+    "character": "Lp E.",
+    "description": "Armação metálica sobre estacas, encar-"
+  },
+  {
+    "name": "Farol de Norte",
+    "lat": "08°02.67' S",
+    "lon": "034°51.02' W",
+    "height": 12,
+    "range": 11,
+    "character": "Lp V.",
+    "description": "Torre quadrangular de concreto armado,"
+  },
+  {
+    "name": "Farol de Novo Farol do Cabeço do São Francisco",
+    "lat": "10°29.41' S",
+    "lon": "036°23.19' W",
+    "height": null,
+    "range": null,
+    "character": "Lp B.",
+    "description": "Farol branco, Altura 43m"
+  },
+  {
+    "name": "Farol de Número 10",
+    "lat": "26°54.86' S",
+    "lon": "048°38.48' W",
+    "height": 6,
+    "range": 5,
+    "character": "Q (2) V.",
+    "description": "Torre cilíndrica de fibra de vidro, sobre"
+  },
+  {
+    "name": "Farol de Número 13",
+    "lat": "26°54.29' S",
+    "lon": "048°39.07' W",
+    "height": 6,
+    "range": 5,
+    "character": "Q (2) E.",
+    "description": "Torre cilíndrica de fibra de vidro, sobre"
+  },
+  {
+    "name": "Farol de Oureis",
+    "lat": "12°43.20' S",
+    "lon": "038°39.30' W",
+    "height": 8,
+    "range": 8,
+    "character": "Lp (2) B.",
+    "description": "Torre quadrangular de alvenaria, preta"
+  },
+  {
+    "name": "Farol de Papagaio",
+    "lat": "02°33.70' S",
+    "lon": "043°55.74' W",
+    "height": 30,
+    "range": 9,
+    "character": "Lp B.",
+    "description": "Poste metálico, branco"
+  },
+  {
+    "name": "Farol de Pau-a-Pino",
+    "lat": "23°05.92' S",
+    "lon": "044°07.15' W",
+    "height": 25,
+    "range": 10,
+    "character": "Q (3) B.",
+    "description": "Torre cilíndrica de alvenaria, branca CANAL DE ACESSO À ILHA GUAÍBA"
+  },
+  {
+    "name": "Farol de Pedra Seca",
+    "lat": "06°57.38' S",
+    "lon": "034°49.36' W",
+    "height": 16,
+    "range": 16,
+    "character": "Lp (3) B.",
+    "description": "Torre tronco pirami- Cerca de 1,8M dal octogonal me- a SSW é exibida"
+  },
+  {
+    "name": "Farol de Pedra da Baleia",
+    "lat": "12°36.83' S",
+    "lon": "038°57.57' W",
+    "height": null,
+    "range": null,
+    "character": "N/D",
+    "description": "Farol"
+  },
+  {
+    "name": "Farol de Pedra da Galé",
+    "lat": "27°10.90' S",
+    "lon": "048°24.47' W",
+    "height": 78,
+    "range": 8,
+    "character": "Lp B.",
+    "description": "Torre quadrangular de alvenaria, com"
+  },
+  {
+    "name": "Farol de Pedra da Manteiga",
+    "lat": "01°28.47' S",
+    "lon": "048°42.54' W",
+    "height": 5,
+    "range": 5,
+    "character": "Lp V.",
+    "description": "Torre tronco pira midal quadrangular"
+  },
+  {
+    "name": "Farol de Pedra de Baleia",
+    "lat": "20°19.12' S",
+    "lon": "040°16.33' W",
+    "height": 5,
+    "range": 9,
+    "character": "Lp V.",
+    "description": "Torre cilíndrica de alvenaria, branca"
+  },
+  {
+    "name": "Farol de Pedra do Sal",
+    "lat": "02°48.23' S",
+    "lon": "041°43.76' W",
+    "height": 15,
+    "range": 10,
+    "character": "Lp B.",
+    "description": "Torre octogonal de con creto armado,"
+  },
+  {
+    "name": "Farol de Pedras Brancas No 5",
+    "lat": "30°05.91' S",
+    "lon": "051°16.27' W",
+    "height": null,
+    "range": null,
+    "character": "Lp E.",
+    "description": "Farol vermelho, Altura 5m"
+  },
+  {
+    "name": "Farol de Penedos de São Pedro e São Paulo",
+    "lat": "00°55.01' N",
+    "lon": "029°20.76' W",
+    "height": null,
+    "range": null,
+    "character": "Lp B.",
+    "description": "Farol branco, Altura 29m"
+  },
+  {
+    "name": "Farol de Pirajuba",
+    "lat": "02°12.70' S",
+    "lon": "044°24.20' W",
+    "height": null,
+    "range": null,
+    "character": "Lp (3) B.",
+    "description": "Farol branco, Altura 64m"
+  },
+  {
+    "name": "Farol de Pitimbu",
+    "lat": "07°27.90' S",
+    "lon": "034°47.60' W",
+    "height": 5,
+    "range": 5,
+    "character": "Lp B.",
+    "description": "Tubo metálico, bran- co"
+  },
+  {
+    "name": "Farol de Point Ubu",
+    "lat": "20°46.82' S",
+    "lon": "040°34.68' W",
+    "height": 27,
+    "range": 14,
+    "character": "Lp B.",
+    "description": "Torre de alvenaria tronco piramidal,"
+  },
+  {
+    "name": "Farol de Ponta Alambique",
+    "lat": "12°50.38' S",
+    "lon": "038°47.63' W",
+    "height": 11,
+    "range": 14,
+    "character": "Lp B.",
+    "description": "Armação tronco pi- ramidal quadrangu-"
+  },
+  {
+    "name": "Farol de Ponta Catoeiro",
+    "lat": "17°52.02' S",
+    "lon": "039°16.18' W",
+    "height": null,
+    "range": null,
+    "character": "Lp B.",
+    "description": "Farol branco, Altura 20m"
+  },
+  {
+    "name": "Farol de Ponta Corumbau",
+    "lat": "16°53.75' S",
+    "lon": "039°06.83' W",
+    "height": 15,
+    "range": 12,
+    "character": "Lp B.",
+    "description": "Torre tronco pirami- dal quadrangular de"
+  },
+  {
+    "name": "Farol de Ponta Coruripe",
+    "lat": "10°09.50' S",
+    "lon": "036°08.10' W",
+    "height": 20,
+    "range": 14,
+    "character": "Lp (2) B.",
+    "description": "Torre cilíndrica de alvenaria sobre base"
+  },
+  {
+    "name": "Farol de Ponta Marapanim",
+    "lat": "00°34.81' S",
+    "lon": "047°35.04' W",
+    "height": 26,
+    "range": 16,
+    "character": "N/D",
+    "description": "Armação em treliça Setor de visibi metálica com uma lidade"
+  },
+  {
+    "name": "Farol de Ponta Paracuru",
+    "lat": "03°23.90' S",
+    "lon": "039°00.70' W",
+    "height": 80,
+    "range": 27,
+    "character": "Lp B.",
+    "description": "Armação tronco pi rami dal quadrangu"
+  },
+  {
+    "name": "Farol de Ponta Pecem",
+    "lat": "03°33.02' S",
+    "lon": "038°49.27' W",
+    "height": null,
+    "range": null,
+    "character": "Al.Fl.",
+    "description": "Farol white;white;red, Altura 75m"
+  },
+  {
+    "name": "Farol de Ponta Tijoca",
+    "lat": "00°33.42' S",
+    "lon": "047°53.85' W",
+    "height": 35,
+    "range": 18,
+    "character": "N/D",
+    "description": "Torre quadrangular Setor de visibi em treliça metálica, lidade"
+  },
+  {
+    "name": "Farol de Ponta Verde",
+    "lat": "09°39.96' S",
+    "lon": "035°41.53' W",
+    "height": 13,
+    "range": 13,
+    "character": "Lp B.",
+    "description": "Torre cilíndrica de Interferência de alvenaria, com fai- luzes de fundo"
+  },
+  {
+    "name": "Farol de Ponta da Baleia",
+    "lat": "17°41.31' S",
+    "lon": "039°08.28' W",
+    "height": 19,
+    "range": 14,
+    "character": "Lp B.",
+    "description": "Armação tronco pi- ra midal quadrangu-"
+  },
+  {
+    "name": "Farol de Ponta da Sela",
+    "lat": "23°53.30' S",
+    "lon": "045°27.70' W",
+    "height": 17,
+    "range": 9,
+    "character": "N/D",
+    "description": "Torre cilíndrica de Setor de visibi- con creto armado, lidade"
+  },
+  {
+    "name": "Farol de Ponta da Tabatinga",
+    "lat": "06°02.70' S",
+    "lon": "035°06.70' W",
+    "height": 96,
+    "range": 24,
+    "character": "Lp (5) B.",
+    "description": "Torre cilíndrica de concreto armado,"
+  },
+  {
+    "name": "Farol de Ponta das Almas",
+    "lat": "02°53.47' S",
+    "lon": "041°16.28' W",
+    "height": 28,
+    "range": 16,
+    "character": "Lp B.",
+    "description": "Torre cilíndrica de fibra de vidro, bran"
+  },
+  {
+    "name": "Farol de Ponta das Cabeçudas",
+    "lat": "26°55.57' S",
+    "lon": "048°37.36' W",
+    "height": 6,
+    "range": 5,
+    "character": "Al.Fl (2+1).",
+    "description": "Torre cilíndrica de fibra de vidro, sobre"
+  },
+  {
+    "name": "Farol de Ponta das Canas",
+    "lat": "23°43.68' S",
+    "lon": "045°20.49' W",
+    "height": 13,
+    "range": 9,
+    "character": "N/D",
+    "description": "Torre cilíndrica de Setor de visibi- concreto armado, lidade"
+  },
+  {
+    "name": "Farol de Ponta de Itapage",
+    "lat": "02°52.30' S",
+    "lon": "039°56.60' W",
+    "height": 67,
+    "range": 20,
+    "character": "Lp (2) B.",
+    "description": "Armação metálica Instalado na torre cônica branca, com de um aeroge"
+  },
+  {
+    "name": "Farol de Ponta de Pirabura",
+    "lat": "23°56.56' S",
+    "lon": "045°13.62' W",
+    "height": 15,
+    "range": 10,
+    "character": "N/D",
+    "description": "Torre quadrangular Setor de visibi- de concreto armado, lidade"
+  },
+  {
+    "name": "Farol de Ponta do Catalão",
+    "lat": "28°12.56' S",
+    "lon": "048°39.79' W",
+    "height": 63,
+    "range": 10,
+    "character": "Lp E.",
+    "description": "Torre tronco pira- midal de alvenaria,"
+  },
+  {
+    "name": "Farol de Ponta do Ceu",
+    "lat": "00°45.64' N",
+    "lon": "050°07.05' W",
+    "height": 11,
+    "range": 9,
+    "character": "Lp B.",
+    "description": "Armação tronco pi ramidal quadrangu"
+  },
+  {
+    "name": "Farol de Ponta do Chapeu Virado",
+    "lat": "01°08.13' S",
+    "lon": "048°28.16' W",
+    "height": 11,
+    "range": 13,
+    "character": "Iso V.",
+    "description": "Tubo metálico bran co, sobre base de"
+  },
+  {
+    "name": "Farol de Ponta do Forte",
+    "lat": "12°47.41' S",
+    "lon": "038°29.10' W",
+    "height": 7,
+    "range": 8,
+    "character": "Lp. B. 5s",
+    "description": "Poste metálico com base em concreto"
+  },
+  {
+    "name": "Farol de Ponta do Mutá",
+    "lat": "13°52.77' S",
+    "lon": "038°56.75' W",
+    "height": 11,
+    "range": 11,
+    "character": "Lp V.",
+    "description": "Torre quadrangular de concreto arma-"
+  },
+  {
+    "name": "Farol de Ponta do Santarem",
+    "lat": "00°38.80' N",
+    "lon": "050°05.66' W",
+    "height": null,
+    "range": null,
+    "character": "Lp (2) B.",
+    "description": "Farol branco, Altura 13m"
+  },
+  {
+    "name": "Farol de Ponta do Tubarao",
+    "lat": "05°03.98' S",
+    "lon": "036°29.72' W",
+    "height": 9,
+    "range": 8,
+    "character": "Lp B.",
+    "description": "Armação quadran- gular em treliça"
+  },
+  {
+    "name": "Farol de Ponta do Valado",
+    "lat": "20°29.96' S",
+    "lon": "029°19.30' W",
+    "height": 45,
+    "range": 4,
+    "character": "Lp B.",
+    "description": "Armação em treliça Funcionamento quadrangular me- ocasional"
+  },
+  {
+    "name": "Farol de Pontal",
+    "lat": "04°56.40' S",
+    "lon": "037°08.71' W",
+    "height": 21,
+    "range": 10,
+    "character": "Lp B.",
+    "description": "Torre cilíndrica de fibra de vidro, com"
+  },
+  {
+    "name": "Farol de Ponto de Santana",
+    "lat": "00°03.46' S",
+    "lon": "051°10.85' W",
+    "height": null,
+    "range": null,
+    "character": "F A.",
+    "description": "Farol amarelo"
+  },
+  {
+    "name": "Farol de Ponto do Malhado",
+    "lat": "14°46.13' S",
+    "lon": "039°01.56' W",
+    "height": 14,
+    "range": 5,
+    "character": "Lp V.",
+    "description": "Armação tronco pi- rami dal quadrangu-"
+  },
+  {
+    "name": "Farol de Porto Seguro",
+    "lat": "16°26.17' S",
+    "lon": "039°03.84' W",
+    "height": 7,
+    "range": 8,
+    "character": "N/D",
+    "description": "Poste cilíndrico em concreto armado,"
+  },
+  {
+    "name": "Farol de Porto de Suape",
+    "lat": "08°23.55' S",
+    "lon": "034°56.83' W",
+    "height": 16,
+    "range": 8,
+    "character": "Iso V.",
+    "description": "Poste quadrangular de concreto armado,"
+  },
+  {
+    "name": "Farol de Potengi",
+    "lat": "05°46.94' S",
+    "lon": "035°12.59' W",
+    "height": 7,
+    "range": 5,
+    "character": "Lp. V. 3s",
+    "description": "Torre quadrangular de alvenaria, ver-"
+  },
+  {
+    "name": "Farol de Quatipuru",
+    "lat": "00°42.70' S",
+    "lon": "046°57.60' W",
+    "height": null,
+    "range": null,
+    "character": "Lp (3) B.",
+    "description": "Farol branco, Altura 27m"
+  },
+  {
+    "name": "Farol de Quilombo",
+    "lat": "31°26.56' S",
+    "lon": "051°46.59' W",
+    "height": 7,
+    "range": 7,
+    "character": "Lp V.",
+    "description": "Armação metálica sobre estacas, verde"
+  },
+  {
+    "name": "Farol de Quissama",
+    "lat": "22°09.70' S",
+    "lon": "041°17.84' W",
+    "height": 40,
+    "range": 17,
+    "character": "LpL B.",
+    "description": "Torre ciíndrica de concreto armado,"
+  },
+  {
+    "name": "Farol de Recife",
+    "lat": "08°03.27' S",
+    "lon": "034°51.92' W",
+    "height": 12,
+    "range": 11,
+    "character": "Al.Fl.",
+    "description": "Torre quadrangular de concreto armado,"
+  },
+  {
+    "name": "Farol de Recife de Natal",
+    "lat": "05°45.08' S",
+    "lon": "035°11.68' W",
+    "height": 13,
+    "range": 17,
+    "character": "Lp V.",
+    "description": "Torre quadrangular de alvenaria, verde"
+  },
+  {
+    "name": "Farol de Rio Arari",
+    "lat": "01°11.50' S",
+    "lon": "048°44.60' W",
+    "height": 12,
+    "range": 10,
+    "character": "N/D",
+    "description": "Tubo metálico sobre Setor de visibi base de concreto ar lidade"
+  },
+  {
+    "name": "Farol de Rio Arrozal",
+    "lat": "01°27.55' S",
+    "lon": "048°42.16' W",
+    "height": 10,
+    "range": 10,
+    "character": "N/D",
+    "description": "Tubo metálico com Setor de visibi placa de visibilida lidade"
+  },
+  {
+    "name": "Farol de Rio Calçoene",
+    "lat": "02°30.40' N",
+    "lon": "050°48.40' W",
+    "height": 24,
+    "range": 13,
+    "character": "Lp B.",
+    "description": "Armação quadran gular em treliça me"
+  },
+  {
+    "name": "Farol de Rio de São Miguel",
+    "lat": "09°52.01' S",
+    "lon": "035°54.37' W",
+    "height": 15,
+    "range": 13,
+    "character": "Lp B.",
+    "description": "Torre tronco pira- midal, branca, sobre"
+  },
+  {
+    "name": "Farol de Rotativo",
+    "lat": "22°59.23' S",
+    "lon": "043°22.10' W",
+    "height": null,
+    "range": null,
+    "character": "N/D",
+    "description": "Farol, Altura 20m"
+  },
+  {
+    "name": "Farol de Salamina",
+    "lat": "12°47.94' S",
+    "lon": "038°51.32' W",
+    "height": 14,
+    "range": 6,
+    "character": "Lp. E. 5s",
+    "description": "Tubo metálico, com faixas horizon-"
+  },
+  {
+    "name": "Farol de Santa Marta",
+    "lat": "28°36.25' S",
+    "lon": "048°48.84' W",
+    "height": null,
+    "range": null,
+    "character": "N/D",
+    "description": "Farol, Altura 29m"
+  },
+  {
+    "name": "Farol de Sao Lourenço (Curva)",
+    "lat": "31°22.70' S",
+    "lon": "051°57.95' W",
+    "height": 8,
+    "range": 7,
+    "character": "Lp E.",
+    "description": "Armação metálica sobre estacas, en-"
+  },
+  {
+    "name": "Farol de Sao Mateus",
+    "lat": "18°36.96' S",
+    "lon": "039°44.01' W",
+    "height": 14,
+    "range": 15,
+    "character": "Lp (2) B.",
+    "description": "Torre cilíndrica de fibra de vidro, bran-"
+  },
+  {
+    "name": "Farol de Sapata",
+    "lat": "03°52.49' S",
+    "lon": "032°27.69' W",
+    "height": null,
+    "range": null,
+    "character": "Al.Fl.",
+    "description": "Farol white;red, Altura 203m"
+  },
+  {
+    "name": "Farol de Saubara",
+    "lat": "12°44.40' S",
+    "lon": "038°43.10' W",
+    "height": 8,
+    "range": 11,
+    "character": "Lp B.",
+    "description": "Torre quadrangular de alvenaria, branca RIO PARAGUAÇU"
+  },
+  {
+    "name": "Farol de Sol",
+    "lat": "05°45.04' S",
+    "lon": "035°11.80' W",
+    "height": 8,
+    "range": 7,
+    "character": "Lp E.",
+    "description": "Torre troncônica de Interferência de concreto armado luzes de fundo"
+  },
+  {
+    "name": "Farol de Subauma",
+    "lat": "12°14.40' S",
+    "lon": "037°46.80' W",
+    "height": 48,
+    "range": 23,
+    "character": "Lp B.",
+    "description": "Torre quadrangular de concreto armado,"
+  },
+  {
+    "name": "Farol de Sucuraca",
+    "lat": "19°05.82' S",
+    "lon": "039°43.38' W",
+    "height": 64,
+    "range": 24,
+    "character": "Lp (2) B.",
+    "description": "Torre quadrangular de concreto armado,"
+  },
+  {
+    "name": "Farol de Sul",
+    "lat": "08°03.24' S",
+    "lon": "034°51.23' W",
+    "height": 12,
+    "range": 11,
+    "character": "Lp E.",
+    "description": "Torre quadrangular de concreto armado,"
+  },
+  {
+    "name": "Farol de Taia",
+    "lat": "00°39.23' N",
+    "lon": "050°17.56' W",
+    "height": 13,
+    "range": 10,
+    "character": "Lp (3) B.",
+    "description": "Armação tronco pi rami dal quadrangu"
+  },
+  {
+    "name": "Farol de Tamandare",
+    "lat": "08°45.60' S",
+    "lon": "035°06.10' W",
+    "height": 27,
+    "range": 18,
+    "character": "N/D",
+    "description": "Torre cilíndrica de Limite N de concreto armado, visibilidade 236°"
+  },
+  {
+    "name": "Farol de Verga",
+    "lat": "32°58.59' S",
+    "lon": "052°33.50' W",
+    "height": null,
+    "range": null,
+    "character": "Lp B.",
+    "description": "Farol branco, Altura 15m"
+  },
+  {
+    "name": "Farol de Vitoria",
+    "lat": "20°15.16' S",
+    "lon": "040°17.19' W",
+    "height": null,
+    "range": null,
+    "character": "Al.Fl.",
+    "description": "Farol white;green, Altura 18m"
+  },
+  {
+    "name": "Farol de das Conchas",
+    "lat": "25°32.35' S",
+    "lon": "048°17.45' W",
+    "height": 67,
+    "range": 25,
+    "character": "N/D",
+    "description": "Torre troncônica Setor de visibi- metálica, branca lidade"
+  },
+  {
+    "name": "Farol de das Rocas",
+    "lat": "03°51.45' S",
+    "lon": "033°48.89' W",
+    "height": 18,
+    "range": 13,
+    "character": "Q (2) B.",
+    "description": "Armação tronco pi- Refletor radar ramidal quadrangu-"
+  },
+  {
+    "name": "Farol de desativado",
+    "lat": "23°59.18' S",
+    "lon": "046°18.80' W",
+    "height": 4,
+    "range": 6,
+    "character": "N/D",
+    "description": "Armação metálica, encarnada"
+  },
+  {
+    "name": "Farol de dos Castelhanos",
+    "lat": "23°10.10' S",
+    "lon": "044°05.60' W",
+    "height": 121,
+    "range": 27,
+    "character": "N/D",
+    "description": "Torre quadrangu Setor de visibi lar de alvenaria, no lidade"
+  }
+]
