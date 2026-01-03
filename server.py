@@ -22,6 +22,19 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+@app.route('/api/debug-info')
+def debug_info():
+    try:
+        files = os.listdir(BASE_DIR)
+        return jsonify({
+            'cwd': os.getcwd(),
+            'base_dir': BASE_DIR,
+            'files_in_base': files,
+            'stat_login': str(os.stat(os.path.join(BASE_DIR, 'login.html'))) if 'login.html' in files else 'Not Found'
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
 # Serve Static Files (Default)
 @app.route('/')
 def index():
