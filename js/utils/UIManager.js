@@ -29,18 +29,26 @@ const UIManager = {
         weatherArr: document.getElementById('card-weather-arr'),
         weatherArr: document.getElementById('card-weather-arr'),
         planningDashboard: document.getElementById('planning-dashboard'),
-        coverScreen: document.getElementById('view-cover'),
-        btnStart: document.getElementById('btn-start-app')
+        planningDashboard: document.getElementById('planning-dashboard'),
+        coverScreen: document.getElementById('view-cover')
+        // btnStart loaded in init()
     },
 
     /**
      * Inicializa a UI (Listeners de Eventos)
      */
     init: function () {
+        // Fetch button dynamically on init (to avoid null in module scope)
+        this.elements.btnStart = document.getElementById('btn-start-app');
+        this.elements.coverScreen = document.getElementById('view-cover'); // Ensure cover is also fresh
+
         if (this.elements.btnStart) {
+            console.log("UIManager: Botão Iniciar encontrado e ativado.");
             this.elements.btnStart.addEventListener('click', () => {
                 this.dismissCover();
             });
+        } else {
+            console.error("UIManager: Botão Iniciar NÃO encontrado!");
         }
     },
 
