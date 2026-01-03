@@ -14,18 +14,23 @@ except ImportError as e:
     print(f"Warning: Update scripts not found: {e}")
 
 app = Flask(__name__)
+# Enable CORS for all domains (Production/Development)
+CORS(app)
+
+# Base Directory for absolute paths
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Serve Static Files (Default)
 @app.route('/')
 def index():
-    return send_from_directory('.', 'index.html')
+    return send_from_directory(BASE_DIR, 'index.html')
 
-# @app.route('/<path:path>')
-# def serve_static(path):
-#    # Moved to bottom to prevent blocking API routes
-#    return send_from_directory('.', path)
+@app.route('/<path:path>')
+def serve_static(path):
+    # Security: Ensure path is within current directory
+    return send_from_directory(BASE_DIR, path)
 
 @app.route('/api/update-data', methods=['POST'])
 def update_data():
