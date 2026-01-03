@@ -1,4 +1,5 @@
 from flask import Flask, send_from_directory, jsonify, Response, request
+from flask_cors import CORS
 import os
 import sys
 import logging
