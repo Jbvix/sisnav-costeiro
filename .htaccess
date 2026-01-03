@@ -1,14 +1,18 @@
 # DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
-PassengerAppRoot "/home/sisnav/public_html" 
+PassengerAppRoot "/home/c62gtwye66po/public_html"
 PassengerBaseURI "/"
-PassengerPython "/home/sisnav/virtualenv/public_html/3.9/bin/python"
+PassengerPython "/home/c62gtwye66po/virtualenv/public_html/3.9/bin/python"
 # DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
 
-# Redirect API calls to Python
-RewriteEngine On
-RewriteCond %{REQUEST_URI} ^/api/ [NC]
-RewriteRule ^ http://127.0.0.1:5000%{REQUEST_URI} [P,L]
+# Configuração para garantir que o Python assuma tudo
+Options +ExecCGI
+AddHandler cgi-script .py
 
-# Optional: Force HTTPS
-RewriteCond %{HTTPS} off
-RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Se NÃO for arquivo real (imagem, css, js), manda pro Python
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^(.*)$ http://127.0.0.1:5000/$1 [P,L]
+</IfModule>
