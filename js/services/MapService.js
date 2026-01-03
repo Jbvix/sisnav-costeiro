@@ -91,10 +91,10 @@ const MapService = {
 
             const lhIcon = L.divIcon({
                 className: 'bg-transparent',
-                html: `<div class="text-center" style="transform: translate(-50%, -50%);">
-                         <i class="fas fa-lightbulb text-yellow-500 text-lg drop-shadow-md"></i>
+                html: `<div class="flex items-center justify-center w-3 h-3 bg-white rounded-full border border-red-600 shadow-sm transition-transform hover:scale-150" style="transform: translate(-50%, -50%);">
+                         <div class="w-1 h-1 bg-red-600 rounded-full"></div>
                        </div>`,
-                iconSize: [20, 20]
+                iconSize: [12, 12]
             });
 
             L.marker([lh.latDec, lh.lonDec], { icon: lhIcon })
