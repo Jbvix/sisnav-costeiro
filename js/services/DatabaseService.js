@@ -22,6 +22,13 @@ const DatabaseService = {
             type: 'planning', // Ou 'monitor', dependendo do uso desejado (User disse link de planejamento no exemplo)
             status: 'active',
             email: 'usuario.producao@sisnav.com'
+        },
+        {
+            token: 'vts-monitor-access', // Token dedicado para Monitoramento
+            password: 'VIEW-ONLY',
+            type: 'monitor',
+            status: 'active',
+            email: 'ponte.comando@sisnav.com'
         }
     ],
 
