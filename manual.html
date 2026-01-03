@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISNAV Costeiro - Manual do Usuário</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;700&display=swap" rel="stylesheet">
+    <style>
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+
+            body {
+                background: white !important;
+                color: black !important;
+            }
+
+            a {
+                text-decoration: none !important;
+                color: black !important;
+            }
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #0f172a;
+            font-weight: bold;
+        }
+
+        p {
+            margin-bottom: 1em;
+            line-height: 1.6;
+        }
+
+        .chapter {
+            break-before: page;
+            margin-bottom: 4rem;
+        }
+    </style>
+</head>
+
+<body class="max-w-4xl mx-auto p-8 md:p-12 bg-white shadow-xl my-8 print:shadow-none print:my-0">
+
+    <!-- Controls -->
+    <div class="fixed top-4 right-4 flex gap-2 no-print">
+        <button onclick="window.print()"
+            class="bg-cyan-600 hover:bg-cyan-700 text-white px-4 py-2 rounded shadow flex items-center gap-2">
+            <i class="fas fa-print"></i> Imprimir PDF
+        </button>
+        <button onclick="window.close()"
+            class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded shadow">
+            Fechar
+        </button>
+    </div>
+
+    <!-- Cover -->
+    <header class="text-center py-20 border-b-4 border-cyan-500 mb-12">
+        <div class="inline-block p-4 bg-slate-900 rounded-2xl mb-6">
+            <i class="fas fa-location-crosshairs text-4xl text-cyan-400"></i>
+        </div>
+        <h1 class="text-5xl mb-2">SISNAV Costeiro</h1>
+        <p class="text-xl text-slate-500 uppercase tracking-widest mb-12">Manual do Usuário v1.0</p>
+        <div class="text-sm text-slate-400">
+            <p>Data de Emissão: Janeiro 2026</p>
+            <p>Departamento de Navegação</p>
+        </div>
+    </header>
+
+    <!-- TOC -->
+    <div class="mb-16 p-8 bg-slate-50 rounded-xl chapter">
+        <h2 class="text-2xl mb-6 border-b pb-2">Índice</h2>
+        <ul class="space-y-2">
+            <li><a href="#cap1" class="hover:text-cyan-600 block"><span class="font-bold text-slate-400 mr-2">01</span>
+                    Introdução</a></li>
+            <li><a href="#cap2" class="hover:text-cyan-600 block"><span class="font-bold text-slate-400 mr-2">02</span>
+                    Acesso e Segurança</a></li>
+            <li><a href="#cap3" class="hover:text-cyan-600 block"><span class="font-bold text-slate-400 mr-2">03</span>
+                    Módulo de Planejamento</a></li>
+            <li><a href="#cap4" class="hover:text-cyan-600 block"><span class="font-bold text-slate-400 mr-2">04</span>
+                    Módulo de Monitoramento</a></li>
+            <li><a href="#anexo" class="hover:text-cyan-600 block"><span
+                        class="font-bold text-slate-400 mr-2">ANEXO</span> Glossário de Ícones</a></li>
+        </ul>
+    </div>
+
+    <!-- Content -->
+    <section id="cap1" class="chapter">
+        <h2 class="text-3xl mb-6 flex items-center gap-3"><span class="text-cyan-500 text-4xl">01</span> Introdução</h2>
+        <p>Bem-vindo ao <strong>SISNAV Costeiro</strong>, a solução integrada para planejamento de viagens costeiras e
+            monitoramento de frota. Este sistema foi desenhado para oferecer simplicidade operacional com alta precisão
+            de dados náuticos.</p>
+        <p>O sistema é dividido em dois ambientes principais:</p>
+        <ul class="list-disc pl-6 mb-4 space-y-2">
+            <li><strong>Planejamento:</strong> Para criação de rotas, consulta de marés e exportação de planos de
+                viagem.</li>
+            <li><strong>Monitoramento:</strong> Para acompanhamento em tempo real (VTS/Ponte) das embarcações.</li>
+        </ul>
+    </section>
+
+    <section id="cap2" class="chapter">
+        <h2 class="text-3xl mb-6 flex items-center gap-3"><span class="text-cyan-500 text-4xl">02</span> Acesso e
+            Segurança</h2>
+        <h3 class="text-xl mt-6 mb-3">Login Seguro</h3>
+        <p>O acesso é realizado estritamente via <strong>Link de Convite</strong>. Não existe página pública de
+            cadastro.</p>
+        <ol class="list-decimal pl-6 mb-4 space-y-2">
+            <li>O Administrador envia um link único para seu e-mail ou WhatsApp.</li>
+            <li>Ao clicar no link, o sistema valida seu token de segurança.</li>
+            <li>Digite a senha fornecida junto com o convite para desbloquear a sessão.</li>
+        </ol>
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 text-sm text-yellow-800 my-4">
+            <strong>Atenção:</strong> Nunca compartilhe seu link de acesso. Ele é pessoal e intransferível.
+        </div>
+    </section>
+
+    <section id="cap3" class="chapter">
+        <h2 class="text-3xl mb-6 flex items-center gap-3"><span class="text-cyan-500 text-4xl">03</span> Módulo de
+            Planejamento</h2>
+        <p>Destinado a Comandantes e Oficiais de Navegação.</p>
+
+        <h3 class="text-xl mt-6 mb-3">3.1 Criando uma Rota</h3>
+        <p>Utilize a barra lateral "Appraisal" para definir Porto de Partida (ETD) e Porto de Chegada (ETA). O sistema
+            calculará automaticamente o trajeto preliminar usando a Malha de Navegação segura.</p>
+
+        <h3 class="text-xl mt-6 mb-3">3.2 Tábuas de Marés Integradas</h3>
+        <p>O Planejador cruza a data/hora da viagem com os dados de maré dos portos. Verifique o painel lateral para
+            alertas de maré baixa ou restrições de calado.</p>
+    </section>
+
+    <section id="cap4" class="chapter">
+        <h2 class="text-3xl mb-6 flex items-center gap-3"><span class="text-cyan-500 text-4xl">04</span> Módulo de
+            Monitoramento</h2>
+        <p>Destinado a Armadores, CCO e displays repetidores na ponte.</p>
+        <p>Neste modo, o mapa ocupa 100% da tela ("Moving Map"). A embarcação selecionada permanece centralizada, e os
+            dados de telemetria (SOG, COG, Heading) são exibidos em destaque no topo da tela.</p>
+    </section>
+
+    <section id="anexo"
+        class="chapter bg-slate-900 text-white p-8 rounded-xl -mx-8 md:-mx-12 mb-0 rounded-b-none print:bg-white print:text-black">
+        <h2 class="text-2xl mb-6 text-cyan-400">ANEXO: Glossário de Ícones</h2>
+        <div class="grid grid-cols-2 gap-4">
+            <div class="flex items-center gap-4">
+                <div class="w-8 h-8 rounded bg-red-600 flex items-center justify-center border border-white">
+                    <div class="w-2 h-2 bg-white rounded-full"></div>
+                </div>
+                <div>
+                    <strong class="block">Farol (Nautical Dot)</strong>
+                    <span class="text-xs text-slate-400">Indica faróis principais. Passe o mouse para detalhes.</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 flex items-center justify-center"><i
+                        class="fas fa-ship"></i></div>
+                <div>
+                    <strong class="block">Embarcação (AIS)</strong>
+                    <span class="text-xs text-slate-400">Posição em tempo real de navios da frota.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</body>
+
+</html>

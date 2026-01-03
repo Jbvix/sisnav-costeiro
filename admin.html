@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISNAV Admin Console</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #0f172a;
+        }
+    </style>
+</head>
+
+<body class="flex items-center justify-center h-screen text-slate-200">
+
+    <div class="bg-slate-800 p-8 rounded border border-slate-700 w-full max-w-sm shadow-xl">
+        <h1 class="text-xl font-bold mb-6 text-red-400 border-b border-slate-700 pb-2">
+            <i class="fas fa-user-shield"></i> Admin Console
+        </h1>
+
+        <form id="admin-form">
+            <div class="mb-4">
+                <label class="block text-xs uppercase font-bold text-slate-500 mb-1">Usuário</label>
+                <input type="text" id="admin-user"
+                    class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white focus:border-red-500 outline-none">
+            </div>
+
+            <div class="mb-6">
+                <label class="block text-xs uppercase font-bold text-slate-500 mb-1">Senha Mestre</label>
+                <input type="password" id="admin-pass"
+                    class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white focus:border-red-500 outline-none">
+            </div>
+
+            <button type="submit"
+                class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded transition-colors">
+                Entrar
+            </button>
+        </form>
+    </div>
+
+    <script type="module">
+        import AuthService from './js/services/AuthService.js';
+
+        AuthService.init();
+
+        // Check if already logged as admin
+        if (AuthService.isAdmin()) {
+            // In Sprint 2, this would redirect to dashboard.
+            // For Sprint 1, we just alert or show "Logged in".
+            window.location.href = 'admin_dashboard.html'; // Future file
+        }
+
+        document.getElementById('admin-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const user = document.getElementById('admin-user').value;
+            const pass = document.getElementById('admin-pass').value;
+
+            const res = AuthService.adminLogin(user, pass);
+            if (res.success) {
+                // Redirect to Dashboard (Sprint 2)
+                window.location.href = 'admin_dashboard.html';
+            } else {
+                alert("Acesso Negado.");
+            }
+        });
+    </script>
+</body>
+
+</html>

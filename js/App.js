@@ -19,10 +19,15 @@ import { tideJSONService } from './services/TideJSONService.js'; // NEW
 import TideCSVService from './services/TideCSVService.js?v=7';
 import ReportService from './services/ReportService.js?v=7';
 import TideLocator from './services/TideLocator.js';
+import AuthService from './services/AuthService.js'; // SPRINT 4
+import HelpService from './services/HelpService.js'; // SPRINT 6
 
 const App = {
     init: function () {
         console.log("App: Inicializando v3.4.0...");
+
+        // Init Help (Sprint 6)
+        HelpService.init();
 
         window.TideCSVService = TideCSVService;
         window.TideJSONService = tideJSONService; // Expose new service
@@ -60,8 +65,18 @@ const App = {
         this.populateTidePorts(); // New
 
         // CHECK MODE: MONITOR (Web/Repeater)
+        // SPRINT 4: Check Session Role OR URL Param
+        const session = AuthService.getSession();
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('mode') === 'monitor') {
+
+        let isMonitor = (urlParams.get('mode') === 'monitor');
+
+        if (session && session.type === 'monitor') {
+            isMonitor = true;
+            console.log("App: Perfil MONITOR detectado via Sessão.");
+        }
+
+        if (isMonitor) {
             this.initViewerMode();
         }
 

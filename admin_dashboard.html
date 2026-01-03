@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SISNAV - Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #0f172a;
+        }
+
+        .glass {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+
+<body class="text-slate-300">
+
+    <!-- Header -->
+    <header class="bg-slate-900 border-b border-slate-800 p-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <i class="fas fa-shield-alt text-red-500 text-xl"></i>
+            <h1 class="font-bold text-white text-lg tracking-wider">SISNAV <span class="text-slate-500">ADMIN</span>
+            </h1>
+        </div>
+        <button id="btn-logout" class="text-xs text-red-400 hover:text-red-300 font-bold uppercase">
+            <i class="fas fa-power-off"></i> Sair
+        </button>
+    </header>
+
+    <main class="p-6 max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- Left: Invite Generator -->
+        <section class="glass rounded-xl p-6 h-fit md:col-span-1">
+            <h2 class="text-white font-bold mb-4 border-b border-slate-700 pb-2 flex items-center gap-2">
+                <i class="fas fa-user-plus text-cyan-500"></i> Novo Convite
+            </h2>
+
+            <form id="invite-form" class="space-y-4">
+                <div>
+                    <label class="block text-xs uppercase font-bold text-slate-500 mb-1">Tipo de Acesso</label>
+                    <div class="grid grid-cols-2 gap-2">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="role" value="planning" class="peer sr-only" checked>
+                            <div
+                                class="p-2 border border-slate-700 rounded text-center text-sm peer-checked:bg-cyan-900/50 peer-checked:border-cyan-500 peer-checked:text-cyan-400 hover:bg-slate-800 transition">
+                                <i class="fas fa-map-marked-alt mb-1 block"></i> Planejamento
+                            </div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="role" value="monitor" class="peer sr-only">
+                            <div
+                                class="p-2 border border-slate-700 rounded text-center text-sm peer-checked:bg-purple-900/50 peer-checked:border-purple-500 peer-checked:text-purple-400 hover:bg-slate-800 transition">
+                                <i class="fas fa-desktop mb-1 block"></i> Monitor
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs uppercase font-bold text-slate-500 mb-1">Link para</label>
+                    <input type="email" id="inp-email" placeholder="email@exemplo.com (Opcional)"
+                        class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white focus:border-cyan-500 outline-none text-sm">
+                </div>
+
+                <div class="bg-slate-900/50 p-3 rounded border border-slate-700 border-dashed">
+                    <label class="block text-xs uppercase font-bold text-slate-500 mb-1">Senha Gerada</label>
+                    <div class="flex gap-2">
+                        <input type="text" id="inp-pass-gen"
+                            class="w-full bg-transparent border-none text-white font-mono text-center tracking-widest focus:ring-0"
+                            readonly value="---">
+                        <button type="button" id="btn-regen-pass" class="text-slate-500 hover:text-white"><i
+                                class="fas fa-sync"></i></button>
+                    </div>
+                </div>
+
+                <button type="submit"
+                    class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3 rounded shadow-lg shadow-cyan-900/50 transition-all click-scale">
+                    <i class="fas fa-bolt"></i> GERAR CONVITE
+                </button>
+            </form>
+        </section>
+
+        <!-- Right: List -->
+        <section class="glass rounded-xl p-6 md:col-span-2 overflow-hidden flex flex-col min-h-[500px]">
+            <h2 class="text-white font-bold mb-4 border-b border-slate-700 pb-2 flex items-center justify-between">
+                <span class="flex items-center gap-2"><i class="fas fa-list text-slate-400"></i> Convites Ativos</span>
+                <button onclick="window.location.reload()" class="text-xs text-slate-500 hover:text-white"><i
+                        class="fas fa-refresh"></i></button>
+            </h2>
+
+            <div class="overflow-x-auto flex-1">
+                <table class="w-full text-left text-sm">
+                    <thead class="text-xs text-slate-500 uppercase bg-slate-800">
+                        <tr>
+                            <th class="p-3">Destinatário / Token</th>
+                            <th class="p-3">Perfil</th>
+                            <th class="p-3">Status</th>
+                            <th class="p-3 text-right">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="invite-list" class="divide-y divide-slate-700">
+                        <!-- Filled by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="empty-state" class="hidden flex flex-col items-center justify-center h-full text-slate-600">
+                <i class="far fa-folder-open text-4xl mb-2"></i>
+                <p>Nenhum convite gerado.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Modal Share -->
+    <div id="modal-share" class="fixed inset-0 bg-slate-900/90 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-slate-800 rounded-xl max-w-md w-full p-6 shadow-2xl border border-slate-600 animate-fade-in-up">
+            <h3 class="text-white font-bold text-lg mb-4 text-center">Convite Gerado!</h3>
+
+            <div class="bg-slate-900 p-4 rounded mb-4 break-all font-mono text-xs text-cyan-300 border border-cyan-900/50"
+                id="share-link-box">
+                <!-- Link goes here -->
+            </div>
+
+            <div class="bg-black/20 p-3 rounded mb-6 text-center">
+                <p class="text-xs text-slate-400 uppercase font-bold mb-1">Senha de Acesso</p>
+                <div id="share-pass-box" class="text-xl text-white font-mono font-bold tracking-wider">ABC-123</div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-3">
+                <button id="btn-copy" class="bg-slate-700 hover:bg-slate-600 text-white py-2 rounded font-bold text-sm">
+                    <i class="far fa-copy"></i> Copiar Link & Senha
+                </button>
+                <a id="btn-whatsapp" href="#" target="_blank"
+                    class="bg-green-600 hover:bg-green-500 text-white py-2 rounded font-bold text-sm text-center flex items-center justify-center gap-2">
+                    <i class="fab fa-whatsapp"></i> Enviar por WhatsApp
+                </a>
+            </div>
+
+            <button onclick="document.getElementById('modal-share').classList.add('hidden')"
+                class="mt-4 w-full text-slate-500 text-xs hover:text-white uppercase font-bold">Fechar</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import AuthService from './js/services/AuthService.js';
+        import DatabaseService from './js/services/DatabaseService.js';
+
+        // 1. Auth Check
+        AuthService.init();
+        if (!AuthService.isAdmin()) {
+            window.location.href = 'admin.html';
+        }
+
+        document.getElementById('btn-logout').addEventListener('click', () => {
+            AuthService.logout();
+            window.location.href = 'admin.html';
+        });
+
+        // 2. Dashboard Logic
+        const form = document.getElementById('invite-form');
+        const list = document.getElementById('invite-list');
+        const empty = document.getElementById('empty-state');
+        const passGen = document.getElementById('inp-pass-gen');
+
+        // Utils
+        const generateId = () => Math.random().toString(36).substr(2, 9);
+        const generatePass = () => {
+            const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+            let pass = "";
+            for (let i = 0; i < 6; i++) pass += chars.charAt(Math.floor(Math.random() * chars.length));
+            return pass.match(/.{1,3}/g).join('-'); // ABC-123
+        };
+
+        // Init Pass
+        passGen.value = generatePass();
+        document.getElementById('btn-regen-pass').addEventListener('click', () => passGen.value = generatePass());
+
+        // Render List
+        function render() {
+            const invites = DatabaseService.getInvites();
+            list.innerHTML = '';
+
+            if (invites.length === 0) {
+                empty.classList.remove('hidden');
+                return;
+            }
+            empty.classList.add('hidden');
+
+            invites.reverse().forEach(inv => { // Newest first
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-800/50 transition";
+
+                const roleBadge = inv.type === 'planning'
+                    ? `<span class="bg-cyan-900 text-cyan-300 text-[10px] px-2 py-0.5 rounded uppercase font-bold">Planejamento</span>`
+                    : `<span class="bg-purple-900 text-purple-300 text-[10px] px-2 py-0.5 rounded uppercase font-bold">Monitor</span>`;
+
+                const statusColor = inv.status === 'active' ? 'text-green-400' : (inv.status === 'revoked' ? 'text-red-500 line-through' : 'text-yellow-400');
+
+                tr.innerHTML = `
+                    <td class="p-3">
+                        <div class="font-bold text-white">${inv.email || 'Sem email'}</div>
+                        <div class="text-[10px] text-slate-500 font-mono select-all">Token: ...${inv.token.substr(-8)}</div>
+                    </td>
+                    <td class="p-3">${roleBadge}</td>
+                    <td class="p-3 ${statusColor} text-xs font-bold uppercase">${inv.status}</td>
+                    <td class="p-3 text-right">
+                         <button class="text-green-500 hover:text-green-400 mx-1" onclick="window.sendWa('${inv.token}')" title="Enviar WhatsApp"><i class="fab fa-whatsapp"></i></button>
+                         <button class="text-slate-400 hover:text-white mx-1" onclick="window.reShare('${inv.token}')" title="Ver Detalhes"><i class="fas fa-eye"></i></button>
+                         ${inv.status !== 'revoked' ? `<button class="text-red-400 hover:text-red-600 mx-1" onclick="window.revoke('${inv.token}')" title="Revogar"><i class="fas fa-ban"></i></button>` : ''}
+                    </td>
+                `;
+                list.appendChild(tr);
+            });
+        }
+
+        render();
+
+        // Create Invite
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const role = document.querySelector('input[name="role"]:checked').value;
+            const email = document.getElementById('inp-email').value;
+            const pass = document.getElementById('inp-pass-gen').value;
+            const token = generateId() + generateId(); // Long token
+
+            DatabaseService.saveInvite({
+                token: token,
+                email: email,
+                password: pass,
+                type: role,
+                status: 'pending',
+                createdAt: Date.now()
+            });
+
+            // Open Share Modal
+            openShareModal(token, pass, role);
+
+            // Reset & Refresh
+            passGen.value = generatePass();
+            document.getElementById('inp-email').value = '';
+            render();
+        });
+
+        // Global Actions
+        window.revoke = (token) => {
+            if (confirm('Tem certeza que deseja revogar este acesso? O usuário será desconectado.')) {
+                DatabaseService.updateInvite(token, { status: 'revoked' });
+                render();
+            }
+        };
+
+        window.reShare = (token) => {
+            const inv = DatabaseService.findInviteByToken(token);
+            if (inv) openShareModal(inv.token, inv.password, inv.type);
+        };
+
+        window.sendWa = (token) => {
+            const inv = DatabaseService.findInviteByToken(token);
+            if (inv) {
+                const msg = formatMessage(inv.token, inv.password, inv.type);
+                const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+                window.open(url, '_blank');
+            }
+        };
+
+        function formatMessage(token, pass, type) {
+            const link = `${window.location.origin}/login.html?token=${token}`;
+            const roleName = type === 'planning' ? 'PLANEJAMENTO 🗺️' : 'MONITORAMENTO 📡';
+
+            return `⚓ *SISNAV Costeiro* - Convite de Acesso\n\n` +
+                `Você recebeu acesso ao módulo de *${roleName}*.\n\n` +
+                `🔑 *Link de Acesso:* \n${link}\n\n` +
+                `🔒 *Senha Pessoal:* *${pass}*\n\n` +
+                `_Toque no link e use a senha acima para entrar._`;
+        }
+
+        // Modal Logic
+        function openShareModal(token, pass, type) {
+            const msg = formatMessage(token, pass, type);
+
+            document.getElementById('share-link-box').innerText = `${window.location.origin}/login.html?token=${token}`;
+            document.getElementById('share-pass-box').innerText = pass;
+            document.getElementById('modal-share').classList.remove('hidden');
+
+            // WhatsApp Link
+            const waUrl = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+            document.getElementById('btn-whatsapp').href = waUrl;
+
+            // Copy
+            document.getElementById('btn-copy').onclick = () => {
+                navigator.clipboard.writeText(msg).then(() => alert('Mensagem copiada! Cole no email ou chat.'));
+            };
+        }
+
+    </script>
+</body>
+
+</html>
