@@ -22,10 +22,10 @@ logger = logging.getLogger(__name__)
 def index():
     return send_from_directory('.', 'index.html')
 
-@app.route('/<path:path>')
-def serve_static(path):
-    # Security: Ensure path is within current directory
-    return send_from_directory('.', path)
+# @app.route('/<path:path>')
+# def serve_static(path):
+#    # Moved to bottom to prevent blocking API routes
+#    return send_from_directory('.', path)
 
 @app.route('/api/update-data', methods=['POST'])
 def update_data():

@@ -51,7 +51,8 @@ const DatabaseService = {
      */
     getInvites: async function () {
         try {
-            const response = await fetch('/api/invites/list', { cache: 'no-store' });
+            // Use relative path to support subdirectories
+            const response = await fetch('api/invites/list', { cache: 'no-store' });
             if (!response.ok) throw new Error('Falha ao buscar convites');
             const serverInvites = await response.json();
 
@@ -68,7 +69,7 @@ const DatabaseService = {
      */
     saveInvite: async function (invite) {
         try {
-            const response = await fetch('/api/invites/create', {
+            const response = await fetch('api/invites/create', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(invite)
@@ -85,7 +86,7 @@ const DatabaseService = {
      */
     updateInvite: async function (token, updates) {
         try {
-            const response = await fetch('/api/invites/update', {
+            const response = await fetch('api/invites/update', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ token, updates })
@@ -111,7 +112,7 @@ const DatabaseService = {
 
         // 2. Check Server
         try {
-            const response = await fetch('/api/invites/validate', {
+            const response = await fetch('api/invites/validate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ token, password })
