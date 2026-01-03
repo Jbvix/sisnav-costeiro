@@ -1,0 +1,14 @@
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
+PassengerAppRoot "/home/sisnav/public_html" 
+PassengerBaseURI "/"
+PassengerPython "/home/sisnav/virtualenv/public_html/3.9/bin/python"
+# DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
+
+# Redirect API calls to Python
+RewriteEngine On
+RewriteCond %{REQUEST_URI} ^/api/ [NC]
+RewriteRule ^ http://127.0.0.1:5000%{REQUEST_URI} [P,L]
+
+# Optional: Force HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
