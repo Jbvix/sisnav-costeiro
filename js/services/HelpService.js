@@ -7,44 +7,57 @@ import AuthService from './AuthService.js';
 const HelpService = {
 
     // Configuração dos Passos do Tour (Por Perfil)
+    // Configuração dos Passos do Tour (Por View ID)
     tourSteps: {
-        planning: [
+        'view-appraisal': [
             {
-                element: '#tab-btn-appraisal',
-                title: 'Planejamento de Viagem',
-                text: 'Aqui você cria suas rotas, define waypoints e consulta marés.'
+                element: '#card-appraisal',
+                title: 'Fase 1: Appraisal (Avaliação)',
+                text: 'Aqui começa o planejamento. Preencha os dados da embarcação, portos e verifique os checklists iniciais.'
             },
             {
-                element: '#map-container',
-                title: 'Mapa Náutico',
-                text: 'Interaja com o mapa: clique para criar pontos, arraste para navegar.'
+                element: '#btn-tab-planning',
+                title: 'Próxima Fase',
+                text: 'Após concluir a avaliação, avance para a aba PLAN para traçar a rota.'
+            }
+        ],
+        'view-planning': [
+            {
+                element: '#btn-manual-plan',
+                title: 'Fase 2: Planning (Planejamento)',
+                text: 'Crie sua rota inserindo waypoints manualmente ou importando um arquivo GPX.'
+            },
+            {
+                element: '#input-gpx', // Pointer to the box
+                title: 'Importar Rota',
+                text: 'Arraste seu arquivo GPX aqui para carregar uma rota automaticamente.'
+            },
+            {
+                element: '#planning-dashboard',
+                title: 'Dashboard da Viagem',
+                text: 'Revise distâncias, tempos e consumo estimado antes de salvar.'
             },
             {
                 element: '#btn-save-plan',
-                title: 'Salvar Plano',
-                text: 'Não perca seu trabalho! Venha aqui para salvar seu progresso.'
-            },
-            {
-                element: '#help-btn-float',
-                title: 'Ajuda',
-                text: 'Dúvidas? Clique aqui a qualquer momento para rever este guia ou abrir o manual.'
+                title: 'Salvar Viagem',
+                text: 'Ao finalizar, salve o plano para disponibilizá-lo para a frota.'
             }
         ],
-        monitor: [
+        'view-monitoring': [
             {
                 element: '#view-monitoring',
-                title: 'Modo Monitoramento',
-                text: 'Esta é a visão da ponte. Acompanhe a posição e telemetria em tempo real.'
-            },
-            {
-                element: '#live-badge',
-                title: 'Status Ao Vivo',
-                text: 'Indica qual embarcação está sendo rastreada no momento.'
+                title: 'Fase 3: Monitoring (Monitoramento)',
+                text: 'Visão da Ponte de Comando. Acompanhe a execução da viagem em tempo real.'
             },
             {
                 element: '#map-container',
-                title: 'Moving Map',
-                text: 'O mapa seguirá a embarcação automaticamente.'
+                title: 'Carta Digital',
+                text: 'O mapa exibe a posição real, tráfego AIS e alertas de proximidade.'
+            },
+            {
+                element: '#stat-live-sog',
+                title: 'Telemetria',
+                text: 'Dados de velocidade (SOG) e curso (COG) atualizados ao vivo.'
             }
         ]
     },
@@ -52,12 +65,24 @@ const HelpService = {
     init: function () {
         this.injectStyles();
         this.createHelpButton();
+        console.log("HelpService: Inicializado.");
+    },
 
-        // Auto-start tour if first time
+    /**
+     * Verifica e inicia o tour para uma View específica se for a primeira vez
+     * @param {string} viewId - ID da aba (ex: 'view-appraisal')
+     */
+    checkAndStartTour: function (viewId) {
         const session = AuthService.getSession();
-        if (session && !localStorage.getItem('sisnav_tour_seen_' + session.type)) {
-            this.startTour();
-            localStorage.setItem('sisnav_tour_seen_' + session.type, 'true');
+        // Storage key unique per view + user type
+        const key = `sisnav_tour_${viewId}_${session ? session.type : 'guest'}`;
+
+        if (!localStorage.getItem(key)) {
+            // Delay slightly to allow UI transition
+            setTimeout(() => {
+                this.startTour(viewId);
+                localStorage.setItem(key, 'true');
+            }, 800);
         }
     },
 
@@ -141,10 +166,15 @@ const HelpService = {
         document.body.appendChild(btn);
     },
 
-    startTour: function () {
-        const session = AuthService.getSession();
-        const type = session ? session.type : 'planning';
-        const steps = this.tourSteps[type] || this.tourSteps['planning'];
+    startTour: function (viewId) {
+        const steps = this.tourSteps[viewId];
+
+        if (!steps || steps.length === 0) {
+            console.log(`HelpService: Nenhum tour configurado para ${viewId}`);
+            return;
+        }
+
+        console.log(`HelpService: Iniciando tour para ${viewId}`);
 
         let currentStep = 0;
 

@@ -11,6 +11,7 @@
  */
 
 import NavMath from '../core/NavMath.js';
+import HelpService from '../services/HelpService.js';
 
 const UIManager = {
 
@@ -60,6 +61,9 @@ const UIManager = {
             this.elements.coverScreen.classList.add('transition', 'duration-500', 'opacity-0', 'pointer-events-none');
             setTimeout(() => {
                 this.elements.coverScreen.style.display = 'none';
+
+                // Trigger initial Tab (Appraisal) to start the first tour
+                this.switchTab('view-appraisal');
             }, 500);
         }
     },
@@ -93,6 +97,11 @@ const UIManager = {
         if (activeBtn) {
             activeBtn.classList.remove('text-slate-300');
             activeBtn.classList.add('bg-slate-700', 'text-blue-300');
+        }
+
+        // Trigger Tour Context Check
+        if (HelpService && typeof HelpService.checkAndStartTour === 'function') {
+            HelpService.checkAndStartTour(targetViewId);
         }
     },
 
