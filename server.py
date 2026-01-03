@@ -1,5 +1,9 @@
 from flask import Flask, send_from_directory, jsonify, Response, request
-from flask_cors import CORS
+try:
+    from flask_cors import CORS
+except ImportError:
+    CORS = None
+
 import os
 import sys
 import logging
@@ -15,8 +19,12 @@ except ImportError as e:
     print(f"Warning: Update scripts not found: {e}")
 
 app = Flask(__name__)
-# Enable CORS for all domains (Production/Development)
-CORS(app)
+
+# Enable CORS safely
+if CORS:
+    CORS(app)
+else:
+    print("Warning: Flask-CORS not found. CORS is disabled.")
 
 # Base Directory for absolute paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
