@@ -89,6 +89,8 @@
                     Módulo de Planejamento</a></li>
             <li><a href="#cap4" class="hover:text-cyan-600 block"><span class="font-bold text-slate-400 mr-2">04</span>
                     Módulo de Monitoramento</a></li>
+            <li><a href="#cap5" class="hover:text-cyan-600 block"><span class="font-bold text-slate-400 mr-2">05</span>
+                    Painel Administrativo</a></li>
             <li><a href="#anexo" class="hover:text-cyan-600 block"><span
                         class="font-bold text-slate-400 mr-2">ANEXO</span> Glossário de Ícones</a></li>
         </ul>
@@ -144,6 +146,44 @@
         <p>Destinado a Armadores, CCO e displays repetidores na ponte.</p>
         <p>Neste modo, o mapa ocupa 100% da tela ("Moving Map"). A embarcação selecionada permanece centralizada, e os
             dados de telemetria (SOG, COG, Heading) são exibidos em destaque no topo da tela.</p>
+    </section>
+
+    <section id="cap5" class="chapter">
+        <h2 class="text-3xl mb-6 flex items-center gap-3"><span class="text-cyan-500 text-4xl">05</span> Painel
+            Administrativo</h2>
+        <p>Destinado aos Gestores do Sistema (SysAdmin/Armador).</p>
+
+        <h3 class="text-xl mt-6 mb-3">5.1 Acesso ao Painel</h3>
+        <p>O painel de controle fica em uma URL segura separada: <code>/admin.html</code>. É necessário autenticação de
+            nível "Admin".</p>
+
+        <h3 class="text-xl mt-6 mb-3">5.2 Gerenciando Convites</h3>
+        <p>O SISNAV não possui cadastro aberto. O Admin deve criar convites para cada comandante ou navio.</p>
+        <ul class="list-disc pl-6 mb-4 space-y-2">
+            <li><strong>Criar Convite:</strong> Clique em "Novo Convite", defina um nome (ex: "Cmte. Silva") e o nível
+                de acesso (Admin, Planning, Monitor).</li>
+            <li><strong>Copiar Link:</strong> O sistema gera um link único. Envie este link para o usuário via WhatsApp
+                ou E-mail.</li>
+            <li><strong>Revogar:</strong> Clique no ícone de lixeira para invalidar um link imediatamente caso haja
+                troca de tripulação.</li>
+        </ul>
+
+        <h3 class="text-xl mt-6 mb-3">5.3 Níveis de Acesso</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+            <div class="p-4 border border-slate-200 rounded bg-slate-50">
+                <strong class="text-cyan-700">Planning</strong>
+                <p class="text-sm mt-2">Acesso completo para criar, editar e salvar rotas de viagem.</p>
+            </div>
+            <div class="p-4 border border-slate-200 rounded bg-slate-50">
+                <strong class="text-green-700">Monitor</strong>
+                <p class="text-sm mt-2">Acesso apenas de leitura ("View-Only") para telas repetidoras na ponte ou
+                    escritório.</p>
+            </div>
+            <div class="p-4 border border-slate-200 rounded bg-slate-50">
+                <strong class="text-purple-700">Admin</strong>
+                <p class="text-sm mt-2">Acesso total ao sistema e ao painel de gestão de usuários.</p>
+            </div>
+        </div>
     </section>
 
     <section id="anexo"
