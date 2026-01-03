@@ -14,6 +14,17 @@ const DatabaseService = {
         SETTINGS: 'sisnav_settings_v1'
     },
 
+    // SPRINT (HOTFIX): Convites Hardcoded para funcionar em qualquer PC sem Backend
+    STATIC_INVITES: [
+        {
+            token: 'tmtk5s1hwm6vtv2iw3', // Token de Produção
+            password: '2WR-N3U',
+            type: 'planning', // Ou 'monitor', dependendo do uso desejado (User disse link de planejamento no exemplo)
+            status: 'active',
+            email: 'usuario.producao@sisnav.com'
+        }
+    ],
+
     /**
      * Inicializa o banco de dados com valores padrão se vazio.
      */
@@ -33,11 +44,15 @@ const DatabaseService = {
     },
 
     /**
-     * Retorna a lista de convites.
+     * Retorna a lista de convites (Local + Estáticos).
      */
     getInvites: function () {
-        const data = localStorage.getItem(this.KEYS.INVITES);
-        return data ? JSON.parse(data) : [];
+        const localData = localStorage.getItem(this.KEYS.INVITES);
+        const localList = localData ? JSON.parse(localData) : [];
+
+        // Merge evitando duplicatas (prioriza local se houver conflito, mas aqui são disjuntos por prefixo)
+        // Apenas para visualização no Admin, mostramos todos
+        return [...this.STATIC_INVITES, ...localList];
     },
 
     /**
