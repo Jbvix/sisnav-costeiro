@@ -21,6 +21,7 @@ import ReportService from './services/ReportService.js?v=7';
 import TideLocator from './services/TideLocator.js';
 import AuthService from './services/AuthService.js'; // SPRINT 4
 import HelpService from './services/HelpService.js'; // SPRINT 6
+import AutomatedPlanningService from './services/AutomatedPlanningService.js'; // AUTOMATION
 
 const App = {
     init: function () {
@@ -468,6 +469,17 @@ const App = {
         if (selArr) selArr.addEventListener('change', () => this.handlePortSelection());
 
         if (selArr) selArr.addEventListener('change', () => this.handlePortSelection());
+
+        // Automation Trigger on Port Change (if route exists)
+        [selDep, selArr].forEach(sel => {
+            if (sel) {
+                sel.addEventListener('change', () => {
+                    if (State.routePoints && State.routePoints.length > 0) {
+                        this.runAutomatedPlanning(State.routePoints);
+                    }
+                });
+            }
+        });
 
         // PERSISTENCE (SALVAR/CARREGAR)
         const btnSavePlan = document.getElementById('btn-save-plan');
@@ -1570,6 +1582,9 @@ const App = {
                 // Tenta auto-selecionar portos baseados na rota GPX
                 this.autoSelectPortsFromGPX(points);
 
+                // AUTOMATION: Run Charts & Lights Planner
+                this.runAutomatedPlanning(points);
+
                 this.recalculateVoyage();
 
                 MapService.plotRoute(points);
@@ -1985,6 +2000,77 @@ const App = {
                 }
             })
             .catch(e => console.error("App: Erro no auto-route", e));
+    },
+
+    /**
+     * Centraliza a chamada ao AutomatedPlanningService.
+     * Mescla as sugestões com o Estado Atual (sem deletar o que o usuário já escolheu manualmente).
+     */
+    runAutomatedPlanning: function (routePoints) {
+        if (!AutomatedPlanningService || !routePoints) return;
+
+        console.log("App: Running Automated Planning...");
+
+        // Ensure lists exist
+        if (!State.appraisal.lighthouses) State.appraisal.lighthouses = [];
+        if (!State.appraisal.selectedCharts) State.appraisal.selectedCharts = [];
+
+        // Get Port IDs from DOM directly (Source of Truth)
+        const depId = document.getElementById('select-dep')?.value;
+        const arrId = document.getElementById('select-arr')?.value;
+
+        // Run Analysis
+        const suggestions = AutomatedPlanningService.analyzeRoute(routePoints, this.availableLighthouses || [], depId, arrId);
+
+        // MERGE CHARTS
+        let newChartsCount = 0;
+        suggestions.charts.forEach(id => {
+            // Check if already present (Partial match logic because selectedCharts stores "ID - Title")
+            // Actually, populateChartsDropdown stores "ID - Title".
+            // We need to match ID.
+
+            const alreadySelected = State.appraisal.selectedCharts.some(sel => sel.startsWith(id + ' -'));
+
+            if (!alreadySelected) {
+                // Find full option value from cache if possible
+                if (this.availableCharts) {
+                    const foundObj = this.availableCharts.find(c => c.id === id);
+                    if (foundObj) {
+                        const fullValue = `${foundObj.id} - ${foundObj.title}`;
+                        State.appraisal.selectedCharts.push(fullValue);
+                        newChartsCount++;
+                    }
+                }
+            }
+        });
+
+        // MERGE LIGHTHOUSES
+        let newLightsCount = 0;
+        suggestions.lighthouses.forEach(suggLh => {
+            const alreadySelected = State.appraisal.lighthouses.some(l => l.name === suggLh.name);
+            if (!alreadySelected) {
+                State.appraisal.lighthouses.push(suggLh);
+                newLightsCount++;
+            }
+        });
+
+        // RE-RENDER
+        if (newChartsCount > 0) this.renderSelectedCharts();
+        if (newLightsCount > 0) {
+            this.renderLighthousesTable();
+            // Optional: Map Update?
+            // MapService.renderLighthouses(State.appraisal.lighthouses); // Only if we want to show selected ones differently
+        }
+
+        if (newChartsCount > 0 || newLightsCount > 0) {
+            // Notify User (Non-intrusive)
+            console.log(`App: Auto-added ${newChartsCount} charts and ${newLightsCount} lights.`);
+            // alert(`Planejamento Automático:\n+ ${newChartsCount} Cartas Náuticas\n+ ${newLightsCount} Faróis/Auxílios identificados na rota.`);
+            // Using a snackbar or toast would be better, but console is fine for now.
+
+            // Force validation update
+            this.validateAppraisalLogic();
+        }
     },
 
     autoSelectPortsFromGPX: function (points) {
