@@ -474,9 +474,8 @@ const App = {
         [selDep, selArr].forEach(sel => {
             if (sel) {
                 sel.addEventListener('change', () => {
-                    if (State.routePoints && State.routePoints.length > 0) {
-                        this.runAutomatedPlanning(State.routePoints);
-                    }
+                    // Force automation even without route points (Port-only check)
+                    this.runAutomatedPlanning(State.routePoints);
                 });
             }
         });
@@ -2009,7 +2008,10 @@ const App = {
      * Mescla as sugestões com o Estado Atual (sem deletar o que o usuário já escolheu manualmente).
      */
     runAutomatedPlanning: function (routePoints) {
-        if (!AutomatedPlanningService || !routePoints) return;
+        if (!AutomatedPlanningService) return;
+
+        // If no route provided, use empty array to allow Port-based checks to run
+        const points = routePoints || [];
 
         console.log("App: Running Automated Planning...");
 
@@ -2022,7 +2024,7 @@ const App = {
         const arrId = document.getElementById('select-arr')?.value;
 
         // Run Analysis
-        const suggestions = AutomatedPlanningService.analyzeRoute(routePoints, this.availableLighthouses || [], depId, arrId);
+        const suggestions = AutomatedPlanningService.analyzeRoute(points, this.availableLighthouses || [], depId, arrId);
 
         // MERGE CHARTS
         let newChartsCount = 0;
