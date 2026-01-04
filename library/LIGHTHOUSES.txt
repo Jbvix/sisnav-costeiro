@@ -125,10 +125,10 @@ Farol de Sarita	32°37.81' S	52°25.76' W	Lp (3) B. 15s 18M	Torre quadrangular d
 Farol de Albardão	33°12.15' S	52°42.31' W	Lp (4) B. 25s 42M	Torre cilíndrica de concreto armado,
 Farol de Chuí	33°44.57' S	53°22.48' W	Lp (2) B. 35s 46M	Torre troncônica de Radiofarol concreto armado, com Racon O (– – –)
 Farol de Atalaia	32°07.11' S	52°04.64' W	N/D 30M	Torre troncônica me- Racon K (– . – ) tálica, com faixas Bandas S e X CANAL DE ACESSO AOS TERMINAIS
-Farol de Bojuru	31°29.16' S	51°25.23' W	N/D 6M	Armação metálica sobre estacas, en-
+
 Farol de Capao da Canoa	29°44.70' S	50°00.28' W	Lp (2) B. 15M	Torre quadrangular de concreto armado,
 Farol de Itapuã	30°23.11' S	51°03.57' W	Lp B. 12M	Torre octogonal de alvenaria cercada de
-Farol de Cristóvão Pereira	31°03.81' S	51°09.91' W	Lp B. 13M	Torre quadrangular de alvenaria, branca
+
 Farol de Tramandaí	30°00.51' S	50°08.15' W	LpL B. 23M	Torre troncônica Racon Z (– – . .) de alvenaria, com Bandas S e X
 Farol de Albardao	33°12.15' S	52°42.36' W	Lp (4) B. 42M	Torre cilíndrica de concreto armado,
 Farol de Alcantara	02°24.60' S	44°25.06' W	Q (2) B. 10M	Tubo metálico, bran co
@@ -136,7 +136,7 @@ Farol de Amapa	02°04.60' N	50°51.60' W	Al.Fl.	Farol white;green, Altura 30m
 Farol de Andreza	02°45.80' S	42°15.70' W	Lp E. 6M	Tubos metálicos dis pos tos em forma pi
 Farol de Antigo Farol de Capão da Canoa	29°45.74' S	50°00.93' W	N/D 15M	Torre quadrangular de concreto armado,
 Farol de Aquipelago de Alcatrazes	24°05.70' S	45°42.20' W	N/D 15M	Torre tronco pira- Setor de visibi- midal quadrangular lidade
-Farol de Arambare	30°56.14' S	51°27.59' W	Lp V. 5M	Armação metálica, verde
+
 Farol de Araquari	26°27.14' S	48°35.66' W	F A. 8M	Torre cilíndrica de alvenaria, branca
 
 Farol de Arpoador	02°43.59' S	42°22.42' W	Lp B. 12M	Armação tronco pi rami dal quadrangu
@@ -164,25 +164,25 @@ Farol de Calombo	23°01.65' S	44°18.78' W	Lp. E. 3s 5M	Poste quadrangular de co
 Farol de Camamu	13°53.48' S	38°59.94' W	N/D	Farol
 Farol de Camapijo	01°21.81' S	48°38.82' W	Lp (2) B. 8M	Tubo metálico sobre base de concreto ar
 Farol de Camaçari	12°44.53' S	38°08.95' W	Lp B. 16M	Torre cilíndrica de Na extremidade con creto armado, de um píer
-Farol de Canal da Feitoria No 5	31°43.45' S	52°00.22' W	Lp E. 7M	Armação metálica sobre estacas, en-
-Farol de Canal da Setia No 4	31°53.12' S	52°09.07' W	Lp V. 9M	Armação metálica sobre estacas, verde
+
+
 Farol de Cascalheira	00°01.35' S	51°03.72' W	Lp (2) B.	Farol branco, Altura 13m
 Farol de Colares	00°55.08' S	48°17.53' W	Lp (2) B. 10M	Tubo metálico bran co, sobre base de
 Farol de Coroa Vermelha	17°58.04' S	39°12.48' W	Lp (3) B. 13M	Torre octogonal de alvenaria, encarnada
-Farol de Coroa do Meio No 12	31°44.35' S	52°09.30' W	Lp V. 9M	Armação metálica sobre estacas, verde
-Farol de Coroa dos Patos No 4	31°43.00' S	52°04.33' W	Lp V. 9M	Armação metálica sobre estacas, verde
 
-Farol de Desertas	30°33.00' S	50°50.23' W	Lp V. 9M	Armação metálica, verde
-Farol de Desertores	30°57.83' S	51°14.84' W	Lp V. 9M	Armação metálica sobre estacas, verde
-Farol de Diamante No 6	31°57.28' S	52°04.76' W	Lp V. 9M	Armação metálica sobre estacas, verde
+
+
+
+
+
 Farol de Enseada dos Portugueses	20°30.49' S	29°18.92' W	Q E. 4M	Armação em treliça Funcionamento quadrangular me- ocasional
-Farol de Farolete Baleias No 7	31°55.09' S	52°07.13' W	Lp E. 7M	Armação metálica sobre estacas, en- CANAL DA SETIA
-Farol de Farolete Barba Negra	30°32.02' S	51°08.48' W	Lp V. 9M	Armação metálica, verde
+
+
 Farol de Farolete Calhau de São Pedro	27°15.07' S	48°25.33' W	Lp B. 8M	Torre tronco pira- midal quadrangular
 Farol de Farolete Propriá	10°56.80' S	37°01.86' W	N/D	Farol
 Farol de Fortaleza de Santa Cruz	22°56.28' S	43°08.06' W	Iso E. 14M	Torre hexagonal envi draçada, sobre
 Farol de Fugitivo	00°10.21' N	50°55.11' W	Lp (2) B.	Farol branco, Altura 13m
-Farol de Gambeta No 9	31°43.92' S	52°08.14' W	Lp E. 7M	Armação metálica sobre estacas, en- CANAL DO NASCIMENTO
+
 Farol de Gameleira	05°13.20' S	35°25.36' W	N/D	Farol
 Farol de Garcia d'Avila	12°34.65' S	38°00.10' W	Lp (2) B. 21M	Torre cilíndrica de al venaria, branca
 Farol de Guarau	24°22.90' S	46°59.20' W	N/D	Farol
@@ -242,21 +242,21 @@ Farol de Morro dos Conventos	28°56.08' S	49°21.76' W	Lp (3) B. 25M	Torre tronc
 Farol de Mucuri	18°03.61' S	39°32.06' W	Lp. B. 6s 16M	Torre cilíndrica de concreto armado,
 Farol de Mundau	03°10.59' S	39°21.72' W	Lp B. 14M	Torre quadrangular de concreto armado,
 Farol de Mãe Luiza	05°47.71' S	35°11.12' W	N/D 39M	Torre troncônica de Setor de visibi- alvenaria, branca lidade
-Farol de No 102	30°20.69' S	51°03.90' W	Lp V. 7M	Armação metálica sobre estacas, encar-
-Farol de No 106	30°19.92' S	51°05.52' W	Lp V. 9M	Armação metálica, verde
-Farol de No 11	31°42.60' S	51°58.11' W	Lp E. 7M	Armação metálica sobre estacas, encar-
 
-Farol de No 17	31°41.95' S	51°56.50' W	Lp E. 7M	Armação metálica sobre estacas, en-
-Farol de No 3	31°47.83' S	52°11.59' W	Lp E. 7M	Armação metálica
-Farol de No 32	31°52.13' S	52°09.61' W	Lp V. 7M	Armação metálica sobre estacas, encar-
 
-Farol de No 50	31°46.39' S	52°10.72' W	Lp V. 9M	Armação metálica sobre estacas, verde
-Farol de No 6	31°43.31' S	52°00.10' W	Lp V. 9M	Armação metálica sobre estacas, verde
+
+
+
+
+
+
+
+
 Farol de No 7	26°54.73' S	48°38.27' W	Lp (3) E. 10M	Torre cilíndrica de fibra de vidro, sobre
-Farol de No 8	31°42.98' S	51°59.27' W	Lp V. 7M	Armação metálica sobre estacas, encar-
-Farol de No 9	31°43.05' S	51°59.24' W	Lp E. 7M	Armação metálica sobre estacas, encar-
-Farol de No 97	30°20.81' S	51°03.58' W	Lp E. 7M	Armação metálica sobre estacas, encar-
-Farol de No 99	30°20.62' S	51°03.85' W	Lp E. 7M	Armação metálica sobre estacas, encar-
+
+
+
+
 Farol de Norte	08°02.67' S	34°51.02' W	Lp V. 11M	Torre quadrangular de concreto armado,
 Farol de Novo Farol do Cabeço do São Francisco	10°29.41' S	36°23.19' W	Lp B.	Farol branco, Altura 43m
 Farol de Número 10	26°54.86' S	48°38.48' W	Q (2) V. 5M	Torre cilíndrica de fibra de vidro, sobre
@@ -307,7 +307,7 @@ Farol de Porto Seguro	16°26.17' S	39°03.84' W	N/D 8M	Poste cilíndrico em conc
 Farol de Porto de Suape	08°23.55' S	34°56.83' W	Iso V. 8M	Poste quadrangular de concreto armado,
 Farol de Potengi	05°46.94' S	35°12.59' W	Lp. V. 3s 5M	Torre quadrangular de alvenaria, ver-
 Farol de Quatipuru	00°42.70' S	46°57.60' W	Lp (3) B.	Farol branco, Altura 27m
-Farol de Quilombo	31°26.56' S	51°46.59' W	Lp V. 7M	Armação metálica sobre estacas, verde
+
 Farol de Quissama	22°09.70' S	41°17.84' W	LpL B. 17M	Torre ciíndrica de concreto armado,
 Farol de Recife	08°03.27' S	34°51.92' W	Al.Fl. 11M	Torre quadrangular de concreto armado,
 Farol de Recife de Natal	05°45.08' S	35°11.68' W	Lp V. 17M	Torre quadrangular de alvenaria, verde
@@ -318,7 +318,7 @@ Farol de Rio de São Miguel	09°52.01' S	35°54.37' W	Lp B. 13M	Torre tronco pir
 Farol de Rotativo	22°59.23' S	43°22.10' W	N/D	Farol, Altura 20m
 
 Farol de Santa Marta	28°36.25' S	48°48.84' W	N/D	Farol, Altura 29m
-Farol de Sao Lourenço (Curva)	31°22.70' S	51°57.95' W	Lp E. 7M	Armação metálica sobre estacas, en-
+
 Farol de Sao Mateus	18°36.96' S	39°44.01' W	Lp (2) B. 15M	Torre cilíndrica de fibra de vidro, bran-
 Farol de Sapata	03°52.49' S	32°27.69' W	Al.Fl.	Farol white;red, Altura 203m
 
