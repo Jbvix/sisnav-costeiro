@@ -178,11 +178,22 @@ const App = {
     handleRouteEdit: function (action, idx, lat, lon) {
         if (!State.routePoints) State.routePoints = [];
 
+        // Safety Check for Index Actions
+        if ((action === 'move' || action === 'delete' || action === 'insert') &&
+            (idx === undefined || idx === null || idx < 0 || idx >= State.routePoints.length)) {
+            console.warn(`App: handleRouteEdit Invalid Index ${idx} for action ${action}. Total points: ${State.routePoints.length}`);
+            return;
+        }
+
         if (action === 'move') {
-            State.routePoints[idx].lat = lat;
-            State.routePoints[idx].lon = lon;
+            if (State.routePoints[idx]) {
+                State.routePoints[idx].lat = lat;
+                State.routePoints[idx].lon = lon;
+            }
         } else if (action === 'delete') {
-            State.routePoints.splice(idx, 1);
+            if (State.routePoints[idx]) {
+                State.routePoints.splice(idx, 1);
+            }
         } else if (action === 'add') {
             // Append to end
             State.routePoints.push({

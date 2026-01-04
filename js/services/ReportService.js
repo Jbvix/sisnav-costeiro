@@ -448,9 +448,48 @@ const renderRouteAndDistances = (doc, y, state) => {
             }
             // Chart
             let chartId = "-";
-            if (p2.chart) chartId = p2.chart;
-            else {
-                try { if (ChartService) { chartId = ChartService.getChartForPosition(p2.lat, p2.lon); } } catch (e) { }
+            // Chart Logic (Mirror UIManager)
+
+            // LOGIC: First and Last WP must show Approximation Chart of Port
+            const isFirst = (i === 0);
+            const isLast = (i === safePoints.length - 1);
+
+            if (isFirst || isLast) {
+                const getApproxChart = (portName) => {
+                    if (!portName) return null;
+                    const n = portName.toUpperCase();
+                    if (n.includes("VITORIA") || n.includes("VITÓRIA") || n.includes("TUBARÃO")) return "1410";
+                    if (n.includes("RIO") && n.includes("JANEIRO")) return "1506";
+                    if (n.includes("GUANABARA")) return "1506";
+                    if (n.includes("SANTOS")) return "1711";
+                    if (n.includes("RECIFE")) return "930";
+                    if (n.includes("SUAPE")) return "930";
+                    if (n.includes("MUCURIPE") || n.includes("FORTALEZA")) return "710";
+                    if (n.includes("SALVADOR")) return "1101";
+                    if (n.includes("ITAQUI") || n.includes("SAO LUIS")) return "411";
+                    if (n.includes("PARANAGUA")) return "1820";
+                    if (n.includes("ITATIAIA") || n.includes("ITAJAÍ")) return "1805";
+                    if (n.includes("IMBITUBA")) return "1904";
+                    if (n.includes("RIO GRANDE")) return "21080";
+                    return null;
+                };
+                const targetPort = isFirst ? state.voyage.depPort : state.voyage.arrPort;
+                const approx = getApproxChart(targetPort);
+                if (approx) chartId = approx;
+                else {
+                    // Fallback
+                    if (p2.chart) chartId = p2.chart;
+                    else if (window.ChartService) {
+                        const c = window.ChartService.getChartForPosition(p2.lat, p2.lon);
+                        if (c) chartId = c.id;
+                    }
+                }
+            } else {
+                if (p2.chart) chartId = p2.chart;
+                else if (window.ChartService) {
+                    const c = window.ChartService.getChartForPosition(p2.lat, p2.lon);
+                    if (c) chartId = c.id;
+                }
             }
 
             const pos2 = (Calc && typeof Calc.formatPos === 'function')

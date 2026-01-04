@@ -212,17 +212,66 @@ const UIManager = {
             const etaStr = etaDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) + ' ' +
                 etaDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
-            // CHART LOOKUP
-            let chartId = "-";
-            if (pCurrent.chart) {
-                chartId = pCurrent.chart;
-            } else if (window.AutomatedPlanningService && window.AutomatedPlanningService.chartGeoDB) {
-                const db = window.AutomatedPlanningService.chartGeoDB;
-                for (const [id, bbox] of Object.entries(db)) {
-                    if (pCurrent.lat <= bbox.n && pCurrent.lat >= bbox.s &&
-                        pCurrent.lon >= bbox.w && pCurrent.lon <= bbox.e) {
-                        chartId = id;
-                        break;
+            // Determine Chart
+            let chartId = '-';
+
+            // LOGIC: First and Last WP must show Approximation Chart of Port
+            const isFirst = (i === 0);
+            const isLast = (i === routePoints.length - 1);
+
+            if (isFirst || isLast) {
+                // Helper to find approximation chart
+                const getApproxChart = (portName) => {
+                    if (!portName) return null;
+                    const n = portName.toUpperCase();
+                    if (n.includes("VITORIA") || n.includes("VITÓRIA") || n.includes("TUBARÃO")) return "1410";
+                    if (n.includes("RIO") && n.includes("JANEIRO")) return "1506";
+                    if (n.includes("GUANABARA")) return "1506";
+                    if (n.includes("SANTOS")) return "1711";
+                    if (n.includes("RECIFE")) return "930";
+                    if (n.includes("SUAPE")) return "930"; // Close enough or specific? 21030 is coastal.
+                    if (n.includes("MUCURIPE") || n.includes("FORTALEZA")) return "710";
+                    if (n.includes("SALVADOR")) return "1101";
+                    if (n.includes("ITAQUI") || n.includes("SAO LUIS")) return "411";
+                    if (n.includes("PARANAGUA")) return "1820";
+                    if (n.includes("ITATIAIA") || n.includes("ITAJAÍ")) return "1805";
+                    if (n.includes("IMBITUBA")) return "1904";
+                    if (n.includes("RIO GRANDE")) return "21080"; // Fallback or specific?
+                    return null;
+                };
+
+                const targetPort = isFirst ? State.voyage.depPort : State.voyage.arrPort;
+                const approx = getApproxChart(targetPort);
+                if (approx) {
+                    chartId = approx;
+                } else {
+                    // Fallback normal logic if unknown port
+                    chartId = pCurrent.chart || (window.AutomatedPlanningService && window.AutomatedPlanningService.chartGeoDB && Object.entries(window.AutomatedPlanningService.chartGeoDB).find(([id, bbox]) => {
+                        // Simple bbox check would be better, but for now fallback to known logic or existing
+                        return pCurrent.lat <= bbox.n && pCurrent.lat >= bbox.s && pCurrent.lon >= bbox.w && pCurrent.lon <= bbox.e;
+                    })?.[0]) || '-';
+
+                    // Try to get from ChartService if available
+                    if (chartId === '-' && window.ChartService) {
+                        const c = window.ChartService.getChartForPosition(pCurrent.lat, pCurrent.lon);
+                        if (c) chartId = c.id;
+                    }
+                }
+            } else {
+                // Intermediate Waypoints: Use assigned chart or lookup Coastal
+                if (pCurrent.chart) {
+                    chartId = pCurrent.chart;
+                } else if (window.ChartService) {
+                    const c = window.ChartService.getChartForPosition(pCurrent.lat, pCurrent.lon);
+                    if (c) chartId = c.id;
+                } else if (window.AutomatedPlanningService && window.AutomatedPlanningService.chartGeoDB) {
+                    const db = window.AutomatedPlanningService.chartGeoDB;
+                    for (const [id, bbox] of Object.entries(db)) {
+                        if (pCurrent.lat <= bbox.n && pCurrent.lat >= bbox.s &&
+                            pCurrent.lon >= bbox.w && pCurrent.lon <= bbox.e) {
+                            chartId = id;
+                            break;
+                        }
                     }
                 }
             }
