@@ -53,6 +53,7 @@ const App = {
         if (MapService) {
             MapService.init('map-container');
             MapService.renderPorts(PortDatabase); // Renderiza âncoras na inicialização
+            this.injectMapControls(); // Injeta botão de Edição
         }
 
         this.populatePortDropdowns();
@@ -111,17 +112,84 @@ const App = {
             // Show Fleet List
             this.showFleetDashboard();
         }
+        // Show Fleet List
+        this.showFleetDashboard();
+    }
+},
+
+    /**
+     * Injeta controles flutuantes no Mapa (Lock/Unlock)
+     */
+    injectMapControls: function () {
+        const container = document.getElementById('map-container');
+if (!container) return;
+
+// Prevent Duplicate
+if (document.getElementById('map-edit-controls')) return;
+
+const controls = document.createElement('div');
+controls.id = 'map-edit-controls';
+controls.className = "absolute top-4 right-4 z-[400] flex flex-col gap-2";
+controls.innerHTML = `
+            <button id="btn-lock-route" class="w-10 h-10 bg-white rounded shadow-lg text-slate-700 hover:text-blue-600 hover:bg-gray-50 flex items-center justify-center transition" title="Editar Rota">
+                <i class="fas fa-lock"></i>
+            </button>
+            <button id="btn-clear-route" class="hidden w-10 h-10 bg-white rounded shadow-lg text-red-500 hover:text-red-700 hover:bg-red-50 flex items-center justify-center transition" title="Limpar Rota Completa">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        `;
+
+// Leaflet controls container usually handles propagation, but since we append manually:
+L.DomEvent.disableClickPropagation(controls);
+container.appendChild(controls);
+
+// Bind Events
+document.getElementById('btn-lock-route').addEventListener('click', () => this.toggleEditMode());
+document.getElementById('btn-clear-route').addEventListener('click', () => this.clearRoute());
     },
 
-    addLiveBadge: function (label) {
-        const mapContainer = document.getElementById('map-container');
-        // Remove existing
-        const old = document.getElementById('live-badge');
-        if (old) old.remove();
+toggleEditMode: function () {
+    const btn = document.getElementById('btn-lock-route');
+    const btnClear = document.getElementById('btn-clear-route');
+    const isLocked = btn.innerHTML.includes('fa-lock');
 
-        const badge = document.createElement('div');
-        badge.id = 'live-badge';
-        badge.className = "absolute top-2 left-2 z-[400] bg-red-600 text-white px-3 py-1 rounded text-xs font-bold animate-pulse shadow-lg flex items-center gap-2";
+    if (isLocked) {
+        // UNLOCK (Enable Edit)
+        btn.innerHTML = '<i class="fas fa-lock-open text-orange-500"></i>';
+        btn.classList.add('border-2', 'border-orange-400');
+        if (btnClear) btnClear.classList.remove('hidden');
+
+        MapService.setEditingMode(true, (action, idx, lat, lon) => this.handleRouteEdit(action, idx, lat, lon));
+        console.log("App: Modo Edição ATIVADO");
+    } else {
+        // LOCK (Disable Edit)
+        btn.innerHTML = '<i class="fas fa-lock"></i>';
+        btn.classList.remove('border-2', 'border-orange-400');
+        if (btnClear) btnClear.classList.add('hidden');
+
+        MapService.setEditingMode(false);
+        console.log("App: Modo Edição DESATIVADO");
+    }
+},
+
+handleRouteEdit: function (action, idx, lat, lon) {
+    if (!State.routePoints) return;
+
+    if (action === 'move') {
+        State.routePoints[idx].lat = lat;
+        State.routePoints[idx].lon = lon;
+        // Update Table & Calcs immediately? Or Debounce?
+        // Immediate is fine for small routes.
+        this.recalculateVoyage();
+        // Note: recalculateVoyage re-plots route. 
+        // Re-plotting resets markers, killing the drag.
+        // BAD UX for continuous drag.
+        // FIX: Only update data here. Re-plot on DragEnd is handled by MapService?
+        // MapService 'dragend' calls this once.
+        // So re-plotting is fine, it will just snap the marker to the new position.
+    } else if (action === 'delete') {
+        State.routePoints.splice(idx, 1);
+        // Re-index sequences handled by render? Or need to re-assign seq?
         badge.innerHTML = `<i class="fas fa-satellite-dish"></i> AO VIVO: ${label}`;
         mapContainer.parentNode.insertBefore(badge, mapContainer.nextSibling);
     },

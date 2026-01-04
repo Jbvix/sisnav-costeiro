@@ -145,7 +145,10 @@ const MapService = {
                 iconAnchor: [12, 12]
             });
 
-            L.marker([p.lat, p.lon], { icon: wpIcon })
+            L.marker([p.lat, p.lon], {
+                icon: wpIcon,
+                routeIndex: index // Metadata for Editing
+            })
                 .bindPopup(`
                     <div class="text-xs text-center">
                         <strong class="text-blue-800 text-sm">${index + 1}. ${p.name}</strong><br>
@@ -181,9 +184,73 @@ const MapService = {
             }
         });
 
-        // Ajusta o zoom para caber toda a rota na tela (Fit Bounds)
-        const polyline = L.polyline(latlngs); // Objeto temporário apenas para geometria
-        State.mapInstance.fitBounds(polyline.getBounds(), { padding: [50, 50] });
+        // Ajusta o zoom para caber toda a rota na tela (Fit Bounds) se não estiver editando
+        if (!State.isEditingRoute) {
+            const polyline = L.polyline(latlngs);
+            State.mapInstance.fitBounds(polyline.getBounds(), { padding: [50, 50] });
+        }
+    },
+
+    /**
+     * Alterna o modo de edição da rota.
+     * @param {boolean} enabled - True para ativar, False para travar.
+     * @param {Function} onUpdate - Callback (index, newLat, newLon) ou (action, index) quando houver mudança.
+     */
+    setEditingMode: function (enabled, onUpdate) {
+        if (!State.mapInstance || !State.layers.waypoints) return;
+
+        State.isEditingRoute = enabled;
+
+        // Itera sobre os marcadores existentes
+        State.layers.waypoints.eachLayer(layer => {
+            if (layer instanceof L.Marker) {
+                // Habilita/Desabilita arraste
+                if (layer.dragging) {
+                    enabled ? layer.dragging.enable() : layer.dragging.disable();
+                }
+
+                // Remove listeners antigos para evitar duplicação em toggles repetidos
+                layer.off('dragend');
+                layer.off('contextmenu');
+                layer.off('click'); // Optional: Click to delete? Too dangerous. Right click is better.
+
+                if (enabled) {
+                    // Visual Cue: Cursor
+                    // L.DomUtil.addClass(layer.getElement(), 'cursor-move'); // Leaflet does this auto
+
+                    // DRAG END: Update position
+                    layer.on('dragend', (e) => {
+                        const newLL = e.target.getLatLng();
+                        // O index está no título ou popup? 
+                        // Precisamos guardar o index no objeto layer ao criar.
+                        // Vamos assumir que a ordem na layerGroup é instável, então precisamos de metadata.
+                        // Mas plotRoute recria tudo.
+                        // Vamos reinjetar metadata no plotRoute.
+                        // FAILSAFE: Recriar plotRoute com metadata se necessário.
+                        // Como plotRoute é chamado frequentemente, vamos garantir que ele attach index.
+                        // See modification in plotRoute below.
+                        const idx = layer.options.routeIndex;
+                        if (idx !== undefined && onUpdate) {
+                            onUpdate('move', idx, newLL.lat, newLL.lng);
+                        }
+                    });
+
+                    // RIGHT CLICK: Delete
+                    layer.on('contextmenu', (e) => {
+                        const idx = layer.options.routeIndex;
+                        if (idx !== undefined && onUpdate) {
+                            if (confirm('Excluir este Waypoint?')) {
+                                onUpdate('delete', idx);
+                            }
+                        }
+                    });
+                }
+            }
+        });
+
+        // Update Cursor
+        const mapContainer = State.mapInstance.getContainer();
+        mapContainer.style.cursor = enabled ? 'crosshair' : '';
     },
 
     /**
