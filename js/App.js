@@ -1890,7 +1890,10 @@ const App = {
             .then(routes => {
                 // 1. Construir o Grafo (Melhorado: Detecta portos INTERMEDIÁRIOS)
                 const graph = {};
-                const THRESHOLD_NM = 30; // Tolerância para considerar que a rota passa no porto
+                // INCREASED THRESHOLD to 50NM to handle wide approach points
+                const THRESHOLD_NM = 50;
+
+                console.log("App: AutoRoute Logic v2.1 (Sub-segment + 50NM)");
 
                 // Helper para achar Portos ao longo da rota
                 const findPortsOnRoute = (points) => {
@@ -1924,6 +1927,7 @@ const App = {
 
                 routes.forEach(r => {
                     const portsOnRoute = findPortsOnRoute(r.points);
+                    console.log(`Debug: Route '${r.id}' detected ports:`, portsOnRoute.map(p => `${p.id}(${Math.round(p.dist)}NM)`).join(', '));
 
                     // Se encontrou pelo menos 2 portos, cria segmentos entre eles
                     // Ex: Vix -> Salvador -> Recife. Cria Vix-Sal e Sal-Rec.
@@ -1954,6 +1958,11 @@ const App = {
                             });
                         }
                     }
+                });
+
+                // Debug Graph Connections
+                Object.keys(graph).forEach(k => {
+                    console.log(`Debug: Node ${k} connects to: ${graph[k].map(e => e.target).join(', ')}`);
                 });
 
                 // 2. Busca em Largura (BFS)
