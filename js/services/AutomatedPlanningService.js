@@ -30,34 +30,52 @@ const AutomatedPlanningService = {
         '21080': { title: 'Do Cabo de Santa Marta ao Arroio Chuí', n: -28.0, s: -35.0, w: -54.0, e: -48.0 },
 
         // Aproximação / Portos (Áreas pequenas)
+        '301': { title: 'Do Rio Pará ao Porto de Belém', n: -0.5, s: -2.0, w: -48.8, e: -48.0 },
         '410': { title: 'Prox. Baía de São Marcos (Itaqui)', n: -2.0, s: -3.0, w: -44.8, e: -43.8 },
+        '411': { title: 'Porto do Itaqui', n: -2.5, s: -2.65, w: -44.45, e: -44.30 },
         '710': { title: 'Prox. Porto de Mucuripe (Fortaleza)', n: -3.6, s: -3.8, w: -38.65, e: -38.35 },
         '810': { title: 'Prox. Porto de Natal', n: -5.7, s: -5.9, w: -35.3, e: -35.1 },
-        '930': { title: 'Prox. Porto do Recife / Suape', n: -7.9, s: -8.5, w: -35.0, e: -34.75 }, // Cobre Suape tb? Chart 930 é Recife. Suape é prox.
+        '830': { title: 'Porto de Cabedelo', n: -6.9, s: -7.1, w: -34.9, e: -34.75 },
+        '930': { title: 'Prox. Porto do Recife / Suape', n: -7.9, s: -8.5, w: -35.0, e: -34.75 },
+        '1000': { title: 'Porto de Maceió', n: -9.6, s: -9.75, w: -35.8, e: -35.6 },
         '1101': { title: 'Prox. Porto de Salvador', n: -12.8, s: -13.2, w: -38.7, e: -38.3 },
+        '1110': { title: 'Baía de Todos os Santos', n: -12.6, s: -13.1, w: -38.8, e: -38.4 },
+        '1201': { title: 'Porto de Ilhéus', n: -14.7, s: -14.9, w: -39.1, e: -38.9 },
         '1410': { title: 'Prox. Portos de Vitória e Tubarão', n: -20.2, s: -20.4, w: -40.4, e: -40.1 },
         '1506': { title: 'Prox. Baía de Guanabara (Rio)', n: -22.7, s: -23.1, w: -43.3, e: -42.9 },
+        '1600': { title: 'Da Ilha Grande à Sepetiba', n: -22.9, s: -23.2, w: -44.1, e: -43.6 },
+        '1644': { title: 'Canal de São Sebastião', n: -23.7, s: -23.9, w: -45.5, e: -45.3 },
         '1711': { title: 'Prox. Porto de Santos', n: -23.9, s: -24.1, w: -46.5, e: -46.2 },
+        '1805': { title: 'Porto de Itajaí', n: -26.8, s: -27.0, w: -48.7, e: -48.55 },
         '1820': { title: 'Prox. Barra de Paranaguá', n: -25.4, s: -25.7, w: -48.6, e: -48.2 },
         '1902': { title: 'Prox. Ilha de Santa Catarina', n: -27.2, s: -27.9, w: -48.7, e: -48.3 },
+        '1904': { title: 'Porto de Imbituba', n: -28.2, s: -28.3, w: -48.7, e: -48.6 },
         '2110': { title: 'Prox. Porto do Rio Grande', n: -31.9, s: -32.3, w: -52.2, e: -51.9 }
     },
 
     // Mapeamento Porto -> Carta de Aproximação Recomendada (Override Manual)
     portToChart: {
+        'BR_VDC': ['301'],      // Vila do Conde
+        'BR_BEL': ['301'],      // Belém
+        'BR_ITA': ['410', '411'], // Itaqui
         'BR_FOR': ['710'],      // Mucuripe
-        'BR_PEC': ['710'],      // Pecém (Prox)
+        'BR_PEC': ['710'],      // Pecém
         'BR_NAT': ['810'],      // Natal
-        'BR_CAB': ['21040'],    // Cabedelo (Genérica pois não temos especifica no TXT?)
+        'BR_CAB': ['830'],      // Cabedelo
         'BR_REC': ['930'],      // Recife
-        'BR_SUA': ['930'],      // Suape (Prox Recife)
-        'BR_SSA': ['1101'],     // Salvador
+        'BR_SUA': ['930'],      // Suape
+        'BR_MAC': ['1000'],     // Maceió
+        'BR_SAL': ['1101', '1110'], // Salvador
+        'BR_ILH': ['1201'],     // Ilhéus
         'BR_VIT': ['1410'],     // Vitória
         'BR_RIO': ['1506'],     // Rio
-        'BR_SSZ': ['1711'],     // Santos
+        'BR_ITG': ['1600'],     // Sepetiba
+        'BR_ANG': ['1600'],     // Angra (Prox)
+        'BR_SSB': ['1644'],     // São Sebastião
+        'BR_STS': ['1711'],     // Santos
         'BR_PNG': ['1820'],     // Paranaguá
+        'BR_ITJ': ['1805', '1902'], // Itajaí / SC
         'BR_RIG': ['2110'],     // Rio Grande
-        'BR_ITA': ['410'],      // Itaqui
     },
 
     /**
