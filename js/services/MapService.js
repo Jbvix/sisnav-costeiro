@@ -133,6 +133,24 @@ const MapService = {
             opacity: 0.15
         }).addTo(State.layers.track);
 
+        // helper to attach listeners
+        const attachEditListeners = (marker, index) => {
+            marker.on('dragend', (e) => {
+                const newLL = e.target.getLatLng();
+                const cb = State.editingCallback;
+                if (cb) cb('move', index, newLL.lat, newLL.lng);
+            });
+
+            marker.on('contextmenu', (e) => {
+                const cb = State.editingCallback;
+                if (cb) {
+                    if (confirm('Excluir este Waypoint?')) {
+                        cb('delete', index);
+                    }
+                }
+            });
+        };
+
         // 2. Loop principal: Waypoints e Segmentos
         routePoints.forEach((p, index) => {
             // A. Marcador Numerado
@@ -145,17 +163,25 @@ const MapService = {
                 iconAnchor: [12, 12]
             });
 
-            L.marker([p.lat, p.lon], {
+            const markerOptions = {
                 icon: wpIcon,
-                routeIndex: index // Metadata for Editing
-            })
-                .bindPopup(`
-                    <div class="text-xs text-center">
-                        <strong class="text-blue-800 text-sm">${index + 1}. ${p.name}</strong><br>
-                        ${p.lat.toFixed(4)}, ${p.lon.toFixed(4)}
-                    </div>
-                `)
-                .addTo(State.layers.waypoints);
+                routeIndex: index,
+                draggable: State.isEditingRoute || false // Apply draggable if in edit mode
+            };
+
+            const marker = L.marker([p.lat, p.lon], markerOptions).addTo(State.layers.waypoints);
+
+            marker.bindPopup(`
+                <div class="text-xs text-center">
+                    <strong class="text-blue-800 text-sm">${index + 1}. ${p.name}</strong><br>
+                    ${p.lat.toFixed(4)}, ${p.lon.toFixed(4)}
+                </div>
+            `);
+
+            // If editing, attach listeners immediately
+            if (State.isEditingRoute) {
+                attachEditListeners(marker, index);
+            }
 
             // B. Segmento de Linha (Perna)
             if (index < routePoints.length - 1) {
@@ -169,17 +195,32 @@ const MapService = {
                 // Cálculo de Rumo e Distância do Segmento
                 if (NavMath && typeof NavMath.calcLeg === 'function') {
                     const leg = NavMath.calcLeg(p.lat, p.lon, pNext.lat, pNext.lon);
-                    segmentLine.bindPopup(`
+                    const popupContent = `
                         <div class="text-center text-sm">
                             <strong class="text-blue-700">Perna ${index + 1}</strong><br>
                             Rumo: <strong>${leg.crs.toFixed(1)}°</strong><br>
                             Dist: <strong>${leg.dist.toFixed(1)} NM</strong>
                         </div>
-                    `);
+                    `;
+                    segmentLine.bindPopup(popupContent);
 
                     // Mouseover visual effect
                     segmentLine.on('mouseover', function () { this.setStyle({ weight: 5, color: '#2563eb' }); });
                     segmentLine.on('mouseout', function () { this.setStyle({ weight: 3, color: 'blue' }); });
+
+                    // IF EDITING: Click to Insert Waypoint
+                    if (State.isEditingRoute) {
+                        segmentLine.on('click', (e) => {
+                            L.DomEvent.stopPropagation(e); // Prevent map click
+                            const cb = State.editingCallback;
+                            if (cb) {
+                                // Insert AT click position
+                                cb('insert', index, e.latlng.lat, e.latlng.lng);
+                            }
+                        });
+                        // Change cursor
+                        segmentLine.getElement().style.cursor = 'copy'; // "Plus" cursor
+                    }
                 }
             }
         });
@@ -200,8 +241,26 @@ const MapService = {
         if (!State.mapInstance || !State.layers.waypoints) return;
 
         State.isEditingRoute = enabled;
+        if (enabled && onUpdate) {
+            State.editingCallback = onUpdate; // Store callback for future replots
+        }
 
-        // Itera sobre os marcadores existentes
+        const map = State.mapInstance;
+
+        // Clean up Map Click listener
+        map.off('click');
+
+        if (enabled) {
+            // MAP CLICK: Append Waypoint
+            map.on('click', (e) => {
+                const cb = State.editingCallback;
+                if (cb) {
+                    cb('add', null, e.latlng.lat, e.latlng.lng);
+                }
+            });
+        }
+
+        // Itera sobre os marcadores existentes (para o toggle inicial)
         State.layers.waypoints.eachLayer(layer => {
             if (layer instanceof L.Marker) {
                 // Habilita/Desabilita arraste
@@ -212,35 +271,22 @@ const MapService = {
                 // Remove listeners antigos para evitar duplicação em toggles repetidos
                 layer.off('dragend');
                 layer.off('contextmenu');
-                layer.off('click'); // Optional: Click to delete? Too dangerous. Right click is better.
 
                 if (enabled) {
-                    // Visual Cue: Cursor
-                    // L.DomUtil.addClass(layer.getElement(), 'cursor-move'); // Leaflet does this auto
-
-                    // DRAG END: Update position
                     layer.on('dragend', (e) => {
                         const newLL = e.target.getLatLng();
-                        // O index está no título ou popup? 
-                        // Precisamos guardar o index no objeto layer ao criar.
-                        // Vamos assumir que a ordem na layerGroup é instável, então precisamos de metadata.
-                        // Mas plotRoute recria tudo.
-                        // Vamos reinjetar metadata no plotRoute.
-                        // FAILSAFE: Recriar plotRoute com metadata se necessário.
-                        // Como plotRoute é chamado frequentemente, vamos garantir que ele attach index.
-                        // See modification in plotRoute below.
-                        const idx = layer.options.routeIndex;
-                        if (idx !== undefined && onUpdate) {
-                            onUpdate('move', idx, newLL.lat, newLL.lng);
+                        const idx = layer.options.routeIndex; // Relies on index being correct from plotRoute
+                        if (idx !== undefined && State.editingCallback) {
+                            State.editingCallback('move', idx, newLL.lat, newLL.lng);
                         }
                     });
 
-                    // RIGHT CLICK: Delete
                     layer.on('contextmenu', (e) => {
+                        L.DomEvent.stopPropagation(e);
                         const idx = layer.options.routeIndex;
-                        if (idx !== undefined && onUpdate) {
+                        if (idx !== undefined && State.editingCallback) {
                             if (confirm('Excluir este Waypoint?')) {
-                                onUpdate('delete', idx);
+                                State.editingCallback('delete', idx);
                             }
                         }
                     });

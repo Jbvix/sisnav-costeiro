@@ -176,16 +176,38 @@ const App = {
     },
 
     handleRouteEdit: function (action, idx, lat, lon) {
-        if (!State.routePoints) return;
+        if (!State.routePoints) State.routePoints = [];
 
         if (action === 'move') {
             State.routePoints[idx].lat = lat;
             State.routePoints[idx].lon = lon;
         } else if (action === 'delete') {
             State.routePoints.splice(idx, 1);
-            // Re-normalize sequences
-            State.routePoints.forEach((p, i) => p.sequence = i + 1);
+        } else if (action === 'add') {
+            // Append to end
+            State.routePoints.push({
+                lat: lat,
+                lon: lon,
+                name: `WPT ${State.routePoints.length + 1}`
+            });
+        } else if (action === 'insert') {
+            // Insert AFTER the index (splitting the leg)
+            // or BEFORE? Usually clicking a segment leg i means inserting between i and i+1.
+            // So we insert at i+1.
+            State.routePoints.splice(idx + 1, 0, {
+                lat: lat,
+                lon: lon,
+                name: `WPT ${State.routePoints.length + 2}` // Temp name
+            });
         }
+
+        // Re-index names to be clean? Or let user rename?
+        // Let's re-sequence them to standard WPT X format for consistency if generic names are used.
+        State.routePoints.forEach((p, i) => {
+            if (!p.name || p.name.startsWith('WPT')) {
+                p.name = `WPT ${i + 1}`;
+            }
+        });
 
         // UPDATE VISUALS & DATA
         this.recalculateVoyage();
