@@ -165,8 +165,8 @@ const AutomatedPlanningService = {
 
         // Exact Check
         return routePoints.some(p => {
-            const dist = NavMath.calcDist(lat, lon, p.lat, p.lon);
-            return dist <= bufferNM;
+            const leg = NavMath.calcLeg(lat, lon, p.lat, p.lon);
+            return leg.dist <= bufferNM;
         });
     }
 };
