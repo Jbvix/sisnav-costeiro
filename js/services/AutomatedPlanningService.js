@@ -26,7 +26,7 @@ const AutomatedPlanningService = {
         '21040': { title: 'De Natal ao Rio Itariri', n: -4.0, s: -13.0, w: -39.0, e: -34.0 }, // Cobre Recife/Salvador norte
         '21050': { title: 'Do Rio Itariri ao Arq. Abrolhos', n: -11.0, s: -19.0, w: -41.0, e: -36.0 },
         '21060': { title: 'Do Arq. Abrolhos ao Cabo Frio', n: -17.0, s: -24.0, w: -43.0, e: -39.0 },
-        '21070': { title: 'Do Cabo Frio ao Cabo de Santa Marta', n: -22.0, s: -29.0, w: -49.0, e: -41.0 },
+        '21070': { title: 'Do Cabo Frio ao Cabo de Santa Marta', n: -23.0, s: -29.0, w: -49.0, e: -41.0 }, // Fix: Start at Cabo Frio (-23)
         '21080': { title: 'Do Cabo de Santa Marta ao Arroio Chuí', n: -28.0, s: -35.0, w: -54.0, e: -48.0 },
 
         // Aproximação / Portos (Áreas pequenas)
@@ -43,7 +43,7 @@ const AutomatedPlanningService = {
         '1201': { title: 'Porto de Ilhéus', n: -14.7, s: -14.9, w: -39.1, e: -38.9 },
         '1410': { title: 'Prox. Portos de Vitória e Tubarão', n: -20.2, s: -20.4, w: -40.4, e: -40.1 },
         '1506': { title: 'Prox. Baía de Guanabara (Rio)', n: -22.7, s: -23.1, w: -43.3, e: -42.9 },
-        '1600': { title: 'Da Ilha Grande à Sepetiba', n: -22.9, s: -23.2, w: -44.1, e: -43.6 },
+        '1600': { title: 'Da Ilha Grande à Sepetiba', n: -23.05, s: -23.2, w: -44.1, e: -43.6 }, // Fix: Exclude Rio
         '1644': { title: 'Canal de São Sebastião', n: -23.7, s: -23.9, w: -45.5, e: -45.3 },
         '1711': { title: 'Prox. Porto de Santos', n: -23.9, s: -24.1, w: -46.5, e: -46.2 },
         '1805': { title: 'Porto de Itajaí', n: -26.8, s: -27.0, w: -48.7, e: -48.55 },

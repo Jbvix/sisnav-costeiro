@@ -2051,6 +2051,10 @@ const App = {
                         State.routePoints = finalPoints;
                         this.recalculateVoyage();
                         MapService.plotRoute(finalPoints);
+
+                        // TRIGGER AUTOMATION
+                        this.runAutomatedPlanning(finalPoints);
+
                         UIManager.renderRouteTable(finalPoints);
                         UIManager.unlockPlanningDashboard();
                         console.log(`App: Rota carregada: ${finalPoints.length} WPs via ${segments.length} segmento(s).`);
