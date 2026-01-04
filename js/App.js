@@ -1888,36 +1888,71 @@ const App = {
         fetch(`js/data/known_routes.json?v=${new Date().getTime()}`)
             .then(r => r.json())
             .then(routes => {
-                // 1. Construir o Grafo
+                // 1. Construir o Grafo (Melhorado: Detecta portos INTERMEDIÁRIOS)
                 const graph = {};
-                const THRESHOLD_NM = 30; // Tolerância Geo-Spatial
+                const THRESHOLD_NM = 30; // Tolerância para considerar que a rota passa no porto
 
-                // Helper para achar qual porto está perto de uma coordenada
-                const findClosestPortId = (lat, lon) => {
-                    let closestId = null;
-                    let minD = 9999;
+                // Helper para achar Portos ao longo da rota
+                const findPortsOnRoute = (points) => {
+                    const foundPorts = [];
+                    // Otimização: para cada porto, checar se ele está perto de ALGUM ponto da rota.
+                    // Para evitar n^2 pesado, podemos iterar a rota e checar portos próximos?
+                    // Como temos poucos portos (20-30), iterar portos e achar o ponto mais próximo na rota é viável.
+
                     PortDatabase.forEach(p => {
-                        const d = NavMath.calcLeg(lat, lon, p.lat, p.lon).dist;
-                        if (d < minD) { minD = d; closestId = p.id; }
+                        let minD = 9999;
+                        let bestIdx = -1;
+
+                        // Amostragem ou loop total? Loop total para precisão (rotas tem ~500-1000 pts, ok para JS)
+                        // Para performance extrema, usar amostragem, mas 30NM é grande.
+                        points.forEach((pt, idx) => {
+                            const d = NavMath.calcLeg(p.lat, p.lon, pt.lat, pt.lon).dist;
+                            if (d < minD) {
+                                minD = d;
+                                bestIdx = idx;
+                            }
+                        });
+
+                        if (minD <= THRESHOLD_NM) {
+                            foundPorts.push({ id: p.id, index: bestIdx, dist: minD });
+                        }
                     });
-                    return minD < THRESHOLD_NM ? closestId : null;
+
+                    // Ordenar por índice na rota (sequência)
+                    return foundPorts.sort((a, b) => a.index - b.index);
                 };
 
                 routes.forEach(r => {
-                    const startP = r.points[0];
-                    const endP = r.points[r.points.length - 1];
+                    const portsOnRoute = findPortsOnRoute(r.points);
 
-                    const startNode = findClosestPortId(startP.lat, startP.lon);
-                    const endNode = findClosestPortId(endP.lat, endP.lon);
+                    // Se encontrou pelo menos 2 portos, cria segmentos entre eles
+                    // Ex: Vix -> Salvador -> Recife. Cria Vix-Sal e Sal-Rec.
+                    if (portsOnRoute.length >= 2) {
+                        for (let i = 0; i < portsOnRoute.length - 1; i++) {
+                            const p1 = portsOnRoute[i];
+                            const p2 = portsOnRoute[i + 1];
 
-                    if (startNode && endNode && startNode !== endNode) {
-                        if (!graph[startNode]) graph[startNode] = [];
-                        if (!graph[endNode]) graph[endNode] = [];
+                            if (!graph[p1.id]) graph[p1.id] = [];
+                            if (!graph[p2.id]) graph[p2.id] = [];
 
-                        // Adiciona aresta direta
-                        graph[startNode].push({ target: endNode, route: r, reverse: false, id: r.id });
-                        // Adiciona aresta reversa
-                        graph[endNode].push({ target: startNode, route: r, reverse: true, id: r.id });
+                            // Segmento P1 -> P2
+                            graph[p1.id].push({
+                                target: p2.id,
+                                route: r,
+                                reverse: false,
+                                id: r.id,
+                                slice: [p1.index, p2.index] // Guardar índices para recorte
+                            });
+
+                            // Segmento P2 -> P1 (Reverso)
+                            graph[p2.id].push({
+                                target: p1.id,
+                                route: r,
+                                reverse: true,
+                                id: r.id,
+                                slice: [p1.index, p2.index] // Índices originais (tratar no slice)
+                            });
+                        }
                     }
                 });
 
@@ -1962,21 +1997,36 @@ const App = {
                             const info = pathMap[curr];
                             if (!info) throw new Error(`PathMap broken for ${curr}`);
                             segments.unshift(info.edge);
-                            routeNames.unshift(info.edge.id);
+                            routeNames.unshift(`${info.edge.id}[${info.edge.slice[0]}-${info.edge.slice[1]}]`);
                             curr = info.parent;
                         }
 
                         console.log("App: Caminho reconstruído:", routeNames.join(' -> '));
 
-                        // AUTO-ACCEPT (Confirm removido)
+                        // AUTO-ACCEPT
                         console.log("App: Costurando rotas (AUTO)...");
 
                         let finalPoints = [];
                         let seq = 1;
 
                         segments.forEach((seg) => {
-                            let pts = JSON.parse(JSON.stringify(seg.route.points));
-                            if (seg.reverse) pts.reverse();
+                            // Recortar a rota original usando o slice
+                            let pStart = seg.slice[0];
+                            let pEnd = seg.slice[1];
+
+                            // Slice: extrair sub-array. slice(start, end+1)
+                            // Se seg.reverse é true, o segmento lógico é P2->P1.
+                            // Mas na rota original os dados estão P1...P2.
+                            // Então cortamos P1...P2 e invertemos se necessário.
+
+                            let pts = seg.route.points.slice(Math.min(pStart, pEnd), Math.max(pStart, pEnd) + 1);
+
+                            // Copiar para evitar mutação
+                            pts = JSON.parse(JSON.stringify(pts));
+
+                            if (seg.reverse) {
+                                pts.reverse();
+                            }
 
                             pts.forEach(p => {
                                 finalPoints.push({
@@ -1994,7 +2044,7 @@ const App = {
                         MapService.plotRoute(finalPoints);
                         UIManager.renderRouteTable(finalPoints);
                         UIManager.unlockPlanningDashboard();
-                        console.log(`App: Rota carregada: ${finalPoints.length} WPs via ${segments.length} arquivo(s).`);
+                        console.log(`App: Rota carregada: ${finalPoints.length} WPs via ${segments.length} segmento(s).`);
 
                     } catch (err) {
                         console.error("App: Erro CRÍTICO na reconstrução da rota:", err);
@@ -2003,8 +2053,7 @@ const App = {
 
                 } else {
                     console.log("App: Nenhuma conexão encontrada no Grafo.");
-                    // Feedback visual solicitado pelo usuário
-                    alert(`Não foi possível calcular uma rota automática entre ${pDep.name} e ${pArr.name}.\n\nPossíveis causas:\n1. Não há arquivos GPX cobrindo este trecho.\n2. Os arquivos existentes não conectam os portos (distância > 30NM).`);
+                    alert(`Não foi possível calcular uma rota automática entre ${pDep.name} e ${pArr.name}.\n\nO sistema tentou conectar trechos de arquivos conhecidos, mas não encontrou continuidade.\n\nPor favor, envie o arquivo GPX manualmente.`);
                 }
             })
             .catch(e => console.error("App: Erro no auto-route", e));
