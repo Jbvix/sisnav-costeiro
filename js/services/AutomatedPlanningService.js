@@ -194,12 +194,28 @@ const AutomatedPlanningService = {
             if (arrPort) interestPoints.push({ lat: arrPort.lat, lon: arrPort.lon });
         }
 
-        if (availableLighthouses && availableLighthouses.length > 0 && interestPoints.length > 0) {
+        if (availableLighthouses && availableLighthouses.length > 0) {
             availableLighthouses.forEach(lh => {
                 // Pular se não tem coords
                 if (!lh.latDec) return;
 
-                const isRelevant = this.isLocationNearRoute(lh.latDec, lh.lonDec, interestPoints, LIGHTHOUSE_BUFFER);
+                let isRelevant = false;
+
+                // 1. Proximity Check (Route + Dep/Arr Ports)
+                if (interestPoints.length > 0) {
+                    isRelevant = this.isLocationNearRoute(lh.latDec, lh.lonDec, interestPoints, LIGHTHOUSE_BUFFER);
+                }
+
+                // 2. Latitude Range Check (Voyage Coverage)
+                // If minLat/maxLat are valid (Dep/Arr selected), include all lights in range
+                if (!isRelevant && minLat !== 90 && maxLat !== -90) {
+                    const margin = 0.5; // Margin to include lights slightly outside direct path
+                    if (lh.latDec >= (minLat - margin) && lh.latDec <= (maxLat + margin)) {
+                        isRelevant = true;
+                        // console.log(`AutoPlan: Farol (Lat-Range) detectado: ${lh.name}`);
+                    }
+                }
+
                 if (isRelevant) {
                     suggestions.lighthouses.push(lh);
                 }
