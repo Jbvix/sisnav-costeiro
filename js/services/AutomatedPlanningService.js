@@ -101,6 +101,16 @@ const AutomatedPlanningService = {
         const sampleRate = Math.max(1, Math.floor(routePoints.length / 50));
         const samplePoints = routePoints.filter((_, i) => i % sampleRate === 0);
 
+        // Pre-fetch Port Objects and Calculate Voyage Range
+        const depPort = PortDatabase.find(p => p.id === depPortId);
+        const arrPort = PortDatabase.find(p => p.id === arrPortId);
+        let minLat = 90, maxLat = -90;
+
+        if (depPort && arrPort) {
+            minLat = Math.min(depPort.lat, arrPort.lat);
+            maxLat = Math.max(depPort.lat, arrPort.lat);
+        }
+
         Object.entries(this.chartGeoDB).forEach(([chartId, bbox]) => {
             // 1. Check Intersection with Route Points (if available)
             let match = false;
@@ -150,12 +160,8 @@ const AutomatedPlanningService = {
         // Regra: Listar TODOS os portos entre a Lat de Partida e Lat de Chegada
         // (Ignorando se a rota passa perto ou longe, garantindo cobertura total de abrigos possíveis)
 
-        const depPort = PortDatabase.find(p => p.id === depPortId);
-        const arrPort = PortDatabase.find(p => p.id === arrPortId);
-
         if (depPort && arrPort) {
-            const minLat = Math.min(depPort.lat, arrPort.lat);
-            const maxLat = Math.max(depPort.lat, arrPort.lat);
+            // Already calculated minLat/maxLat at top scope
 
             PortDatabase.forEach(port => {
                 // Se já não é dep/arr
