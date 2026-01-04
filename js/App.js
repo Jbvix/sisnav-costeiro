@@ -213,6 +213,11 @@ const App = {
         this.recalculateVoyage();
         MapService.plotRoute(State.routePoints);
         UIManager.renderRouteTable(State.routePoints);
+
+        // AUTO-LOCK after Add/Insert to prevent accidental clicks
+        if (action === 'add' || action === 'insert') {
+            this.toggleEditMode();
+        }
     },
 
     clearRoute: function () {
