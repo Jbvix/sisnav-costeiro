@@ -169,9 +169,18 @@ const AutomatedPlanningService = {
                     // Checar se latitude está dentro do range (com margem de segurança de 0.05 grau)
                     // buffer de margem para incluir portos "quase" no caminho
                     const margin = 0.05;
+                    // Fix Itaqui: Itaqui (-2.5) should be in Vila do Conde (-1.5) to Mucuripe (-3.7)
                     if (port.lat >= (minLat - margin) && port.lat <= (maxLat + margin)) {
-                        this.portToChart[port.id].forEach(c => suggestions.charts.add(c));
-                        console.log(`AutoPlan: Porto Intermediário (Lat-Range) detectado: ${port.name} -> Add Chart`);
+
+                        // EXTRA CHECK: Longitude (Evitar Arquipélagos Distantes)
+                        const minLon = Math.min(depPort.lon, arrPort.lon);
+                        const maxLon = Math.max(depPort.lon, arrPort.lon);
+                        const lonMargin = 2.0;
+
+                        if (port.lon >= (minLon - lonMargin) && port.lon <= (maxLon + lonMargin)) {
+                            this.portToChart[port.id].forEach(c => suggestions.charts.add(c));
+                            console.log(`AutoPlan: Porto Intermediário (Lat-Range) detectado: ${port.name} -> Add Chart`);
+                        }
                     }
                 }
             });
@@ -259,11 +268,36 @@ const AutomatedPlanningService = {
             });
         }
 
+        // 3. Ordenação das Cartas (Também da Origem para o Destino)
+        let sortedCharts = Array.from(suggestions.charts);
+        if (depPort) {
+            sortedCharts.sort((aId, bId) => {
+                // Get Charts Info
+                const chartA = this.chartGeoDB[aId];
+                const chartB = this.chartGeoDB[bId];
+
+                // Se não achar (port maps talvez usem IDs não no DB? Não, todos devem estar), fallback
+                if (!chartA || !chartB) return 0;
+
+                // Calculate Center Point of Chart
+                const latA = (chartA.n + chartA.s) / 2;
+                const lonA = (chartA.w + chartA.e) / 2;
+
+                const latB = (chartB.n + chartB.s) / 2;
+                const lonB = (chartB.w + chartB.e) / 2;
+
+                const distA = NavMath.calcLeg(depPort.lat, depPort.lon, latA, lonA).dist;
+                const distB = NavMath.calcLeg(depPort.lat, depPort.lon, latB, lonB).dist;
+
+                return distA - distB;
+            });
+        }
+
         console.timeEnd("AutomatedPlanning");
-        console.log(`AutoPlan: ${suggestions.charts.size} Cartas, ${uniqueLighthouses.length} Faróis sugeridos.`);
+        console.log(`AutoPlan: ${sortedCharts.length} Cartas, ${uniqueLighthouses.length} Faróis sugeridos.`);
 
         return {
-            charts: Array.from(suggestions.charts),
+            charts: sortedCharts,
             lighthouses: uniqueLighthouses
         };
     },
