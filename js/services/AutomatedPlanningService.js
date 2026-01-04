@@ -209,12 +209,25 @@ const AutomatedPlanningService = {
                 // 2. Latitude Range Check (Voyage Coverage)
                 // If minLat/maxLat are valid (Dep/Arr selected), include all lights in range
                 if (!isRelevant && minLat !== 90 && maxLat !== -90) {
-                    // Margin reduzido para 0.05 (aprox 3 milhas) para evitar pegar faróis "atrás" da partida/chegada
-                    // Ex: Evitar pegar Pecém/Paracuru (Lat -3.4/3.5) numa viagem Mucuripe (-3.7) -> Suape (-8.0)
+                    // Margin reduzido para 0.05
                     const margin = 0.05;
+                    // Check Latitude Range
                     if (lh.latDec >= (minLat - margin) && lh.latDec <= (maxLat + margin)) {
-                        isRelevant = true;
-                        // console.log(`AutoPlan: Farol (Lat-Range) detectado: ${lh.name}`);
+
+                        // EXTRA CHECK: Longitude (Evitar Ilhas Oceânicas como Fernando de Noronha -32W)
+                        // Se a viagem é Costeira (ex: Longitude ~ -34 a -50), ignorar coisas multo a Leste (tipo > -33)
+                        // A Costa do NE é aprox -34.8. Noronha é -32.4 (Mais a leste/maior valor)
+                        // Regra simples: Se todos os portos são "Mainland" (Oeste de -34.5), filtrar lon > -33.5
+                        // Ou simplesmente checar se a Longitude também está "perto" do range de longitude da viagem.
+
+                        const minLon = Math.min(depPort.lon, arrPort.lon);
+                        const maxLon = Math.max(depPort.lon, arrPort.lon);
+                        const lonMargin = 2.0; // Margem maior em Longitude (2 graus ~ 120 milhas variacao da costa)
+
+                        if (lh.lonDec >= (minLon - lonMargin) && lh.lonDec <= (maxLon + lonMargin)) {
+                            isRelevant = true;
+                            // console.log(`AutoPlan: Farol (Lat-Range) detectado: ${lh.name}`);
+                        }
                     }
                 }
 
