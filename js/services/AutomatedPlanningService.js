@@ -102,13 +102,37 @@ const AutomatedPlanningService = {
         const samplePoints = routePoints.filter((_, i) => i % sampleRate === 0);
 
         Object.entries(this.chartGeoDB).forEach(([chartId, bbox]) => {
-            // Se algum ponto da rota está dentro do BBox da carta
-            const intersects = samplePoints.some(p =>
-                p.lat <= bbox.n && p.lat >= bbox.s &&
-                p.lon >= bbox.w && p.lon <= bbox.e
-            );
+            // 1. Check Intersection with Route Points (if available)
+            let match = false;
 
-            if (intersects) {
+            if (samplePoints.length > 0) {
+                match = samplePoints.some(p =>
+                    p.lat <= bbox.n && p.lat >= bbox.s &&
+                    p.lon >= bbox.w && p.lon <= bbox.e
+                );
+            }
+
+            // 2. Latitude Overlap Check (For Coastal Charts & General Coverage)
+            // If we have Dep/Arr ports, we check if the chart's Latitude Range overlaps with the Voyage Latitude Range
+            // This ensures coastal charts are added even without GPX.
+            if (!match && depPort && arrPort) {
+                // Logic: range overlap
+                // Chart Range: [bbox.s, bbox.n]
+                // Voyage Range: [minLat, maxLat]
+                // Overlap if: (Chart.S <= Voyage.Max) AND (Chart.N >= Voyage.Min)
+
+                if (bbox.s <= maxLat && bbox.n >= minLat) {
+                    // Filter only "Costeira" charts (ID stars with '2') explicitly to avoid adding disjoint approach charts?
+                    // Usually approach charts are small, so they might not pass this check easily unless they really are in the range.
+                    // But strictly speaking, chart 210xxx are coastal.
+                    if (chartId.startsWith('2') && chartId.length === 5) {
+                        match = true;
+                        console.log(`AutoPlan: Carta Costeira (Lat-Overlap) detectada: ${chartId}`);
+                    }
+                }
+            }
+
+            if (match) {
                 suggestions.charts.add(chartId);
             }
         });
