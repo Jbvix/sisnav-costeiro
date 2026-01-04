@@ -442,33 +442,22 @@
                             <div class="bg-gray-50 p-3 rounded border border-gray-200">
                                 <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Lista de Faróis
                                     (Rota)</label>
-                                <div class="flex gap-2 mb-2">
+
+                                <!-- LISTA PRINCIPAL -->
+                                <div id="list-selected-lighthouses"
+                                    class="flex flex-col gap-1 mb-2 min-h-[40px] max-h-[150px] overflow-y-auto border border-gray-100 bg-white rounded p-1">
+                                    <span class="text-[10px] text-gray-400 italic p-1">Nenhum farol selecionado.</span>
+                                </div>
+
+                                <!-- MANUAL ADD (Compacto) -->
+                                <div class="flex gap-2">
                                     <select id="select-lighthouse-add"
-                                        class="flex-1 min-w-0 p-1.5 border rounded text-xs bg-white text-gray-700">
-                                        <option value="">Carregando Faróis...</option>
+                                        class="flex-1 min-w-0 p-1 border rounded text-[10px] bg-white text-gray-600 h-6">
+                                        <option value="">+ Adicionar Manualmente...</option>
                                     </select>
                                     <button id="btn-add-lighthouse"
-                                        class="shrink-0 px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded hover:bg-blue-700 w-8 h-8 flex items-center justify-center"><i
-                                            class="fas fa-lightbulb"></i></button>
-                                </div>
-                                <div class="overflow-x-auto max-h-48 overflow-y-auto">
-                                    <table class="w-full text-[10px] text-left">
-                                        <thead class="bg-gray-200 text-gray-600 uppercase sticky top-0">
-                                            <tr>
-                                                <th class="p-1">Nome</th>
-                                                <th class="p-1">Coord</th>
-                                                <th class="p-1">Carac.</th>
-                                                <th class="p-1">Desc.</th>
-                                                <th class="p-1"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody id="tbody-lighthouses" class="bg-white divide-y divide-gray-100">
-                                            <tr>
-                                                <td colspan="4" class="p-2 text-center text-gray-400 italic">Nenhum
-                                                    farol selecionado.</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                        class="shrink-0 px-2 bg-slate-200 text-slate-600 text-[10px] font-bold rounded hover:bg-slate-300 h-6 w-6 flex items-center justify-center border border-slate-300"><i
+                                            class="fas fa-plus"></i></button>
                                 </div>
                             </div>
                         </div>

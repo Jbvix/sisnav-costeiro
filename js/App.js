@@ -989,30 +989,37 @@ const App = {
     },
 
     renderLighthousesTable: function () {
-        const tbody = document.getElementById('tbody-lighthouses');
-        if (!tbody) return;
-        tbody.innerHTML = '';
+        const container = document.getElementById('list-selected-lighthouses');
+        if (!container) return;
+        container.innerHTML = '';
 
         if (!State.appraisal.lighthouses || State.appraisal.lighthouses.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" class="p-2 text-center text-gray-400 italic">Nenhum farol selecionado.</td></tr>';
+            container.innerHTML = '<span class="text-[10px] text-gray-400 italic p-1">Nenhum farol selecionado.</span>';
             return;
         }
 
         State.appraisal.lighthouses.forEach((lh, index) => {
-            const tr = document.createElement('tr');
-            tr.className = "border-b hover:bg-gray-50";
-            tr.innerHTML = `
-                <td class="p-1 font-bold text-gray-700 text-[10px]">${lh.name}</td>
-                <td class="p-1 text-gray-600 text-[9px]">${lh.lat}<br>${lh.lon}</td>
-                <td class="p-1 text-gray-600 text-[9px]">${lh.char}</td>
-                <td class="p-1 text-gray-600 text-[9px] italic leading-tight">${lh.desc || '-'}</td>
-                <td class="p-1 text-center">
-                    <button class="text-red-400 hover:text-red-600" onclick="window.App.removeLighthouse(${index})">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
+            const div = document.createElement('div');
+            // Style matching Charts List Item
+            div.className = "w-full bg-yellow-50 border border-yellow-200 text-[10px] p-2 rounded flex items-center justify-between shadow-sm";
+
+            div.innerHTML = `
+                <div class="flex items-center gap-2 overflow-hidden">
+                    <div class="flex flex-col items-center justify-center min-w-[35px] border-r border-yellow-300 pr-2 mr-1">
+                        <i class="fas fa-lightbulb text-yellow-500 text-lg"></i>
+                    </div>
+                    <div class="flex flex-col leading-tight min-w-0">
+                        <span class="font-bold truncate text-ellipsis text-slate-800 uppercase">${lh.name}</span>
+                        <div class="flex gap-2 text-[9px] text-gray-500 font-mono">
+                           <span>${lh.lat} / ${lh.lon}</span>
+                           <span class="font-bold text-yellow-700">${lh.char}</span>
+                        </div>
+                    </div>
+                </div>
+                <i class="fas fa-trash-alt cursor-pointer text-red-300 hover:text-red-500 p-1 transition-colors ml-2" 
+                   onclick="window.App.removeLighthouse(${index})" title="Remover"></i>
             `;
-            tbody.appendChild(tr);
+            container.appendChild(div);
         });
     },
 
