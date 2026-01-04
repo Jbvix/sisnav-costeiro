@@ -107,8 +107,36 @@ const AutomatedPlanningService = {
         const samplePoints = routePoints.filter((_, i) => i % sampleRate === 0);
 
         // Pre-fetch Port Objects and Calculate Voyage Range
-        const depPort = PortDatabase.find(p => p.id === depPortId);
-        const arrPort = PortDatabase.find(p => p.id === arrPortId);
+        // Pre-fetch Port Objects and Calculate Voyage Range
+        let depPort = PortDatabase.find(p => p.id === depPortId);
+        let arrPort = PortDatabase.find(p => p.id === arrPortId);
+
+        // FALLBACK: Infer keys from GPX if not provided (Resilience)
+        if ((!depPort || !arrPort) && routePoints.length > 0) {
+            const startPt = routePoints[0];
+            const endPt = routePoints[routePoints.length - 1];
+
+            if (!depPort) {
+                // Find closest port to start
+                let minD = 9999;
+                PortDatabase.forEach(p => {
+                    const d = NavMath.calcLeg(p.lat, p.lon, startPt.lat, startPt.lon).dist;
+                    if (d < minD) { minD = d; depPort = p; }
+                });
+                if (depPort) console.log(`AutoPlan: Inferred DepPort from GPX: ${depPort.name}`);
+            }
+
+            if (!arrPort) {
+                // Find closest port to end
+                let minD = 9999;
+                PortDatabase.forEach(p => {
+                    const d = NavMath.calcLeg(p.lat, p.lon, endPt.lat, endPt.lon).dist;
+                    if (d < minD) { minD = d; arrPort = p; }
+                });
+                if (arrPort) console.log(`AutoPlan: Inferred ArrPort from GPX: ${arrPort.name}`);
+            }
+        }
+
         let minLat = 90, maxLat = -90;
 
         if (depPort && arrPort) {
