@@ -119,7 +119,8 @@ const App = {
      * Injeta controles flutuantes no Mapa (Lock/Unlock)
      */
     injectMapControls: function () {
-        const container = document.getElementById('map-container');
+        // Change: Append to the parent View instead of map-container to avoid Leaflet conflicts
+        const container = document.getElementById('view-monitoring');
         if (!container) return;
 
         // Prevent Duplicate
@@ -127,8 +128,8 @@ const App = {
 
         const controls = document.createElement('div');
         controls.id = 'map-edit-controls';
-        // Changed position to Top-Left (below zoom) to avoid overlapping "Tempo Real" at Top-Right
-        controls.className = "absolute top-24 left-3 z-[400] flex flex-col gap-2";
+        // Position: Top-Left (below zoom), Z-Index super high
+        controls.className = "absolute top-24 left-4 z-[5000] flex flex-col gap-2";
         controls.innerHTML = `
             <button id="btn-lock-route" class="w-10 h-10 bg-white rounded shadow-lg text-slate-700 hover:text-blue-600 hover:bg-gray-50 flex items-center justify-center transition" title="Editar Rota">
                 <i class="fas fa-lock"></i>
