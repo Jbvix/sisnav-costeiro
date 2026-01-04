@@ -122,16 +122,25 @@ const AutomatedPlanningService = {
         // Filtra faróis num raio de X milhas da rota
         const LIGHTHOUSE_BUFFER = 15; // NM
 
-        if (availableLighthouses && availableLighthouses.length > 0) {
+        // Definir pontos de interesse (Rota + Portos)
+        const interestPoints = [...samplePoints];
+
+        // Se tivermos IDs de portos, buscar coordenadas e adicionar aos pontos de interesse
+        if (depPortId) {
+            const depPort = PortDatabase.find(p => p.id === depPortId);
+            if (depPort) interestPoints.push({ lat: depPort.lat, lon: depPort.lon });
+        }
+        if (arrPortId) {
+            const arrPort = PortDatabase.find(p => p.id === arrPortId);
+            if (arrPort) interestPoints.push({ lat: arrPort.lat, lon: arrPort.lon });
+        }
+
+        if (availableLighthouses && availableLighthouses.length > 0 && interestPoints.length > 0) {
             availableLighthouses.forEach(lh => {
                 // Pular se não tem coords
                 if (!lh.latDec) return;
 
-                // Check distance to ANY point in sample
-                // Otimização: Check BBox da rota primeiro? Sim, idealmente.
-                // Mas Haversine Simples resolve pra < 500 faróis e 50 pontos.
-
-                const isRelevant = this.isLocationNearRoute(lh.latDec, lh.lonDec, samplePoints, LIGHTHOUSE_BUFFER);
+                const isRelevant = this.isLocationNearRoute(lh.latDec, lh.lonDec, interestPoints, LIGHTHOUSE_BUFFER);
                 if (isRelevant) {
                     suggestions.lighthouses.push(lh);
                 }
