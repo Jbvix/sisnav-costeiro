@@ -222,12 +222,34 @@ const AutomatedPlanningService = {
             });
         }
 
+        // --- PÓS-PROCESSAMENTO: DEDUPLICAÇÃO E ORDENAÇÃO ---
+
+        // 1. Deduplicação (por Nome)
+        const uniqueLighthouses = [];
+        const seenNames = new Set();
+        suggestions.lighthouses.forEach(lh => {
+            if (!seenNames.has(lh.name)) {
+                uniqueLighthouses.push(lh);
+                seenNames.add(lh.name);
+            }
+        });
+
+        // 2. Ordenação (Da Origem para o Destino)
+        // Se houver porto de partida, ordena pela distância até ele
+        if (depPort) {
+            uniqueLighthouses.sort((a, b) => {
+                const distA = NavMath.calcLeg(depPort.lat, depPort.lon, a.latDec, a.lonDec).dist;
+                const distB = NavMath.calcLeg(depPort.lat, depPort.lon, b.latDec, b.lonDec).dist;
+                return distA - distB;
+            });
+        }
+
         console.timeEnd("AutomatedPlanning");
-        console.log(`AutoPlan: ${suggestions.charts.size} Cartas, ${suggestions.lighthouses.length} Faróis sugeridos.`);
+        console.log(`AutoPlan: ${suggestions.charts.size} Cartas, ${uniqueLighthouses.length} Faróis sugeridos.`);
 
         return {
             charts: Array.from(suggestions.charts),
-            lighthouses: suggestions.lighthouses
+            lighthouses: uniqueLighthouses
         };
     },
 
