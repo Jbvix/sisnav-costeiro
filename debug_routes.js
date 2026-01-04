@@ -53,9 +53,8 @@ const NavMath = {
 const routesPath = path.join(__dirname, 'js/data/known_routes.json');
 const routes = JSON.parse(fs.readFileSync(routesPath, 'utf8'));
 
-// 1. Construir o Grafo
-const graph = {};
-const THRESHOLD_NM = 30;
+const graph = {}; // Restore graph declaration
+const THRESHOLD_NM = 90; // Increased to 90NM for offshore routes
 
 const findPortsOnRoute = (points) => {
     const foundPorts = [];
@@ -84,9 +83,23 @@ routes.forEach(r => {
     const portsOnRoute = findPortsOnRoute(r.points);
 
     // Filter debug for specific routes
-    if (r.id.includes('santos') || r.id.includes('rio grande')) {
+    // Log ALL routes to see where RIO is detected
+    if (true) {
         console.log(`Route: ${r.id}`);
-        portsOnRoute.forEach(p => console.log(`  - Found ${p.name} (${p.id}) at dist ${p.dist.toFixed(1)} NM`));
+        // Compact log
+        console.log(`  Ports: ${portsOnRoute.map(p => p.id).join(' -> ')}`);
+
+        // DEBUG: Find closest distance to RIO explicitly
+        const rio = PortDatabase.find(p => p.id === 'BR_RIO');
+        let minRioD = 9999;
+        r.points.forEach(pt => {
+            const d = NavMath.calcLeg(rio.lat, rio.lon, pt.lat, pt.lon).dist;
+            if (d < minRioD) minRioD = d;
+        });
+        console.log(`  [DEBUG] Closest approach to BR_RIO: ${minRioD.toFixed(1)} NM`);
+
+        const rioDetected = portsOnRoute.find(p => p.id === 'BR_RIO');
+        if (!rioDetected) console.log("  [WARN] BR_RIO NOT DETECTED on this route!");
     }
 
     if (portsOnRoute.length >= 2) {
@@ -105,8 +118,8 @@ routes.forEach(r => {
 
 console.log("---------------------------------------------------");
 console.log("Graph Connectivity Check:");
-const start = 'BR_SAL'; // Salvador
-const end = 'BR_PNG'; // Paranaguá
+const start = 'BR_ITQ'; // Itaqui
+const end = 'BR_RIO'; // Rio de Janeiro
 
 console.log(`Looking for path ${start} -> ${end}`);
 

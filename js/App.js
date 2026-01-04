@@ -1890,8 +1890,8 @@ const App = {
             .then(routes => {
                 // 1. Construir o Grafo (Melhorado: Detecta portos INTERMEDIÁRIOS)
                 const graph = {};
-                // INCREASED THRESHOLD to 50NM to handle wide approach points
-                const THRESHOLD_NM = 50;
+                // INCREASED THRESHOLD to 90NM to handle wide approach points (e.g. Rio de Janeiro on offshore routes)
+                const THRESHOLD_NM = 90;
 
                 console.log("App: AutoRoute Logic v2.1 (Sub-segment + 50NM)");
 
