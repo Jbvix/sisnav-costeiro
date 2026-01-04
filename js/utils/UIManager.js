@@ -137,23 +137,21 @@ const UIManager = {
     renderRouteTable: function (routePoints) {
         const tbody = this.elements.tableBody;
 
-        // UPDATE HEADER if not matching (Ideally this should be static HTML, but we check/inject if needed)
-        // For now, assuming user accepts standard styling. We just update the ROWS.
-        // Wait, if the header is static in HTML, I can't change columns without changing HTML too.
-        // I should probably inject the Header too or assume the user updated HTML?
-        // Let's Inject Header dynamically to be safe.
+        // Ensure header matches via JS as fallback (or if user didnt update HTML yet)
         const thead = document.getElementById('table-route-head');
         if (thead) {
             thead.innerHTML = `
                 <tr>
-                    <th class="p-2 text-left">WP</th>
-                    <th class="p-2 text-left">CARTA</th>
-                    <th class="p-2 text-left">REF. FAROL</th>
-                    <th class="p-2 text-center">POSIÇÃO</th>
-                    <th class="p-2 text-center">RUMO</th>
-                    <th class="p-2 text-center">DIST</th>
+                    <th class="p-2 text-center w-8">WP</th>
+                    <th class="p-2 text-center">Carta</th>
+                    <th class="p-2 text-left">Ref. Farol</th>
+                    <th class="p-2 text-center">Posição (DDM)</th>
+                    <th class="p-2 text-center">Rumo</th>
+                    <th class="p-2 text-center">Dist.</th>
+                    <th class="p-2 text-center">Tempo</th>
                     <th class="p-2 text-center">ETA</th>
-                    <th class="p-2 text-center">HORAS</th>
+                    <th class="p-2 text-center">Total</th>
+                    <th class="p-2 text-center">Horas</th>
                 </tr>
             `;
         }
@@ -161,7 +159,7 @@ const UIManager = {
         tbody.innerHTML = ""; // Limpa tabela anterior
 
         if (!routePoints || routePoints.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="8" class="p-8 text-center text-gray-400 italic">Nenhuma rota carregada.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-gray-400 italic">Nenhuma rota carregada.</td></tr>`;
             return;
         }
 
@@ -175,56 +173,56 @@ const UIManager = {
             startDate = new Date(window.State.voyage.depTime);
         }
 
+        // Helper for HH:MM format
+        const fmtHours = (h) => {
+            if (isNaN(h)) return "00:00";
+            const hh = Math.floor(h);
+            const mm = Math.round((h % 1) * 60);
+            return `${hh.toString().padStart(2, '0')}:${mm.toString().padStart(2, '0')}`;
+        };
+
         // Loop para criar as linhas
         for (let i = 0; i < routePoints.length; i++) {
             const pCurrent = routePoints[i];
             const pNext = routePoints[i + 1]; // Can be undefined for last point
 
-            // CALC LEG DATA (If not last point)
+            // CALC LEG DATA (Using this point to next point)
             let crs = 0;
-            let dist = 0;
+            let legDist = 0;
             let legTime = 0;
 
             if (pNext) {
                 const leg = NavMath.calcLeg(pCurrent.lat, pCurrent.lon, pNext.lat, pNext.lon);
                 crs = leg.crs;
-                dist = leg.dist;
-                legTime = (dist / speed); // Hours
+                legDist = leg.dist;
+                legTime = (legDist / speed); // Hours
             }
 
-            // ACCUMULATED DATA (For ETA/Hours)
-            // ETA is for reaching THIS point.
-            // First point (i=0): ETA = Start Time. Hours = 0.
+            // ACCUMULATED DATA (At this point)
+            // For the first point, total dist is 0, total time is 0.
             if (i > 0) {
-                // Add Previous Leg to Cumulative
                 const pPrev = routePoints[i - 1];
                 const legPrev = NavMath.calcLeg(pPrev.lat, pPrev.lon, pCurrent.lat, pCurrent.lon);
                 cumDist += legPrev.dist;
                 cumTimeHours += (legPrev.dist / speed);
             }
 
-            // ETA Calc
+            // ETA Calculation
             const etaDate = new Date(startDate.getTime() + (cumTimeHours * 3600 * 1000));
             const etaStr = etaDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) + ' ' +
                 etaDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
-            // Hours (Elapsed)
-            const hoursStr = Math.floor(cumTimeHours).toString().padStart(2, '0') + ':' +
-                Math.round((cumTimeHours % 1) * 60).toString().padStart(2, '0');
-
-
             // CHART LOOKUP
-            // Need AutomatedPlanningService or similar. Assuming global or fallback.
             let chartId = "-";
-            if (window.AutomatedPlanningService && window.AutomatedPlanningService.chartGeoDB) {
+            if (pCurrent.chart) {
+                chartId = pCurrent.chart;
+            } else if (window.AutomatedPlanningService && window.AutomatedPlanningService.chartGeoDB) {
                 const db = window.AutomatedPlanningService.chartGeoDB;
-                // Find first matching chart
                 for (const [id, bbox] of Object.entries(db)) {
-                    // Check inclusion
                     if (pCurrent.lat <= bbox.n && pCurrent.lat >= bbox.s &&
                         pCurrent.lon >= bbox.w && pCurrent.lon <= bbox.e) {
                         chartId = id;
-                        break; // Pick first one
+                        break;
                     }
                 }
             }
@@ -232,7 +230,7 @@ const UIManager = {
             // LIGHTHOUSE INFO
             const lhHtml = this.renderLighthouseInfo(pCurrent.lat, pCurrent.lon);
 
-
+            // RENDER ROW
             const row = document.createElement('tr');
             row.className = "hover:bg-blue-50 border-b border-gray-100 transition duration-150 text-[11px]";
 
@@ -257,15 +255,23 @@ const UIManager = {
                 </td>
 
                 <td class="p-2 text-center font-mono text-slate-600">
-                    ${pNext ? dist.toFixed(1) : '-'}
+                    ${pNext ? legDist.toFixed(1) : '-'}
                 </td>
                 
-                <td class="p-2 text-center font-mono text-slate-700 bg-gray-50">
+                <td class="p-2 text-center font-mono text-slate-700">
+                    ${pNext ? fmtHours(legTime) : '-'}
+                </td>
+
+                <td class="p-2 text-center font-mono text-slate-500 bg-gray-50">
                     ${etaStr}
                 </td>
 
-                <td class="p-2 text-center font-mono text-slate-500">
-                    ${hoursStr}
+                <td class="p-2 text-center font-mono text-slate-600">
+                    ${cumDist.toFixed(1)}
+                </td>
+
+                <td class="p-2 text-center font-mono text-slate-600">
+                    ${fmtHours(cumTimeHours)}
                 </td>
             `;
             tbody.appendChild(row);

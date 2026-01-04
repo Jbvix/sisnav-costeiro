@@ -709,14 +709,19 @@
                 <div class="bg-white rounded shadow overflow-hidden border border-gray-200">
                     <div class="overflow-x-auto max-h-[400px]">
                         <table class="w-full text-sm text-left">
-                            <thead class="bg-gray-100 text-xs uppercase text-gray-600 sticky top-0 shadow-sm z-10">
+                            <thead id="table-route-head"
+                                class="bg-gray-100 text-xs uppercase text-gray-600 sticky top-0 shadow-sm z-10">
                                 <tr>
-                                    <th class="p-3 w-10 text-center">#</th>
-                                    <th class="p-3">Waypoint</th>
-                                    <th class="p-3 text-center">Lat / Long</th>
-                                    <th class="p-3 text-center">Rumo</th>
-                                    <th class="p-3 text-center">Dist</th>
-                                    <th class="p-4">FAROL</th>
+                                    <th class="p-2 text-center w-8">WP</th>
+                                    <th class="p-2 text-center">Carta</th>
+                                    <th class="p-2 text-left">Ref. Farol</th>
+                                    <th class="p-2 text-center">Posição (DDM)</th>
+                                    <th class="p-2 text-center">Rumo</th>
+                                    <th class="p-2 text-center">Dist.</th>
+                                    <th class="p-2 text-center">Tempo</th>
+                                    <th class="p-2 text-center">ETA</th>
+                                    <th class="p-2 text-center">Total</th>
+                                    <th class="p-2 text-center">Horas</th>
                                 </tr>
                             </thead>
                             <tbody id="table-route-body" class="divide-y divide-gray-100">

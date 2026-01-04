@@ -181,20 +181,27 @@ const App = {
         if (action === 'move') {
             State.routePoints[idx].lat = lat;
             State.routePoints[idx].lon = lon;
-            // Update Table & Calcs immediately
-            this.recalculateVoyage();
         } else if (action === 'delete') {
             State.routePoints.splice(idx, 1);
             // Re-normalize sequences
             State.routePoints.forEach((p, i) => p.sequence = i + 1);
-            this.recalculateVoyage();
         }
+
+        // UPDATE VISUALS & DATA
+        this.recalculateVoyage();
+        MapService.plotRoute(State.routePoints);
+        UIManager.renderRouteTable(State.routePoints);
     },
 
     clearRoute: function () {
         if (confirm("Tem certeza que deseja apagar TODA a derrota?")) {
             State.routePoints = [];
+
+            // UPDATE VISUALS & DATA
             this.recalculateVoyage();
+            MapService.plotRoute(State.routePoints); // Clears map
+            UIManager.renderRouteTable(State.routePoints); // Clears table
+
             this.toggleEditMode(); // relock
         }
     },

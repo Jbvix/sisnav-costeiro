@@ -406,7 +406,11 @@ const renderRouteAndDistances = (doc, y, state) => {
     if (safePoints.length > 0) {
         // Start
         const p0 = safePoints[0];
-        routeData.push(["1", "-", "-", `${p0.lat.toFixed(4)}\n${p0.lon.toFixed(4)}`, "-", "-", "-", currentEta.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }), "0.0", "0.0"]);
+        const pos0 = (Calc && typeof Calc.formatPos === 'function')
+            ? `${Calc.formatPos(p0.lat, 'lat')}\n${Calc.formatPos(p0.lon || p0.lng, 'lon')}`
+            : `${p0.lat.toFixed(4)}\n${(p0.lon || p0.lng).toFixed(4)}`;
+
+        routeData.push(["1", "-", "-", pos0, "-", "-", "-", currentEta.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }), "0.0", "00:00"]);
 
         for (let i = 0; i < safePoints.length - 1; i++) {
             const p1 = safePoints[i];
@@ -436,17 +440,35 @@ const renderRouteAndDistances = (doc, y, state) => {
             if (window.App && typeof window.App.getNearestLighthouse === 'function') {
                 try {
                     const lh = window.App.getNearestLighthouse(p2.lat, p2.lon);
-                    if (lh && lh.dist < 50) refTxt = `${lh.name}\n(${lh.dist.toFixed(1)}mn)`;
+                    // Use range from object or default 10
+                    const range = lh.range || 10;
+                    if (lh && lh.dist <= range) refTxt = `${lh.name}\n(${lh.dist.toFixed(1)}mn)`;
+                    else refTxt = "-";
                 } catch (e) { }
             }
             // Chart
             let chartId = "-";
-            try { if (ChartService) { chartId = ChartService.getChartForPosition(p2.lat, p2.lon); } } catch (e) { }
+            if (p2.chart) chartId = p2.chart;
+            else {
+                try { if (ChartService) { chartId = ChartService.getChartForPosition(p2.lat, p2.lon); } } catch (e) { }
+            }
 
-            routeData.push([(i + 2).toString(), chartId, refTxt, `${p2.lat.toFixed(4)}\n${p2.lon.toFixed(4)}`,
-            `${crs.toFixed(1)}°`, legDist.toFixed(1), formatDuration(legHours),
-            currentEta.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }),
-            cumulativeDist.toFixed(1), formatDuration(cumulativeHours)]);
+            const pos2 = (Calc && typeof Calc.formatPos === 'function')
+                ? `${Calc.formatPos(p2.lat, 'lat')}\n${Calc.formatPos(p2.lon, 'lon')}`
+                : `${p2.lat.toFixed(4)}\n${p2.lon.toFixed(4)}`;
+
+            routeData.push([
+                p2.name || (i + 2).toString(),
+                chartId,
+                refTxt,
+                pos2,
+                `${crs.toFixed(1)}°`,
+                legDist.toFixed(1),
+                formatDuration(legHours),
+                currentEta.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }),
+                cumulativeDist.toFixed(1),
+                formatDuration(cumulativeHours)
+            ]);
         }
     }
 
