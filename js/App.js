@@ -2048,12 +2048,25 @@ const App = {
                             });
                         });
 
+                        // Build list of visited ports for Chart suggestions
+                        const visitedPortIds = [depId];
+                        // Traverse pathMap to get intermediate nodes
+                        let traceNode = arrId;
+                        const intermediates = [];
+                        while (traceNode !== depId) {
+                            intermediates.unshift(traceNode);
+                            const info = pathMap[traceNode];
+                            if (!info) break;
+                            traceNode = info.parent;
+                        }
+                        visitedPortIds.push(...intermediates);
+
                         State.routePoints = finalPoints;
                         this.recalculateVoyage();
                         MapService.plotRoute(finalPoints);
 
-                        // TRIGGER AUTOMATION
-                        this.runAutomatedPlanning(finalPoints);
+                        // TRIGGER AUTOMATION with visited ports
+                        this.runAutomatedPlanning(finalPoints, visitedPortIds);
 
                         UIManager.renderRouteTable(finalPoints);
                         UIManager.unlockPlanningDashboard();
@@ -2076,13 +2089,16 @@ const App = {
      * Centraliza a chamada ao AutomatedPlanningService.
      * Mescla as sugestões com o Estado Atual (sem deletar o que o usuário já escolheu manualmente).
      */
-    runAutomatedPlanning: function (routePoints) {
+    runAutomatedPlanning: function (routePoints, visitedPortIds = []) {
         if (!AutomatedPlanningService) return;
 
         // If no route provided, use empty array to allow Port-based checks to run
         const points = routePoints || [];
 
         console.log("App: Running Automated Planning...");
+        if (visitedPortIds.length > 0) {
+            console.log("App: Visited Ports detected:", visitedPortIds.join(', '));
+        }
 
         // Ensure lists exist
         if (!State.appraisal.lighthouses) State.appraisal.lighthouses = [];
@@ -2093,7 +2109,7 @@ const App = {
         const arrId = document.getElementById('select-arr')?.value;
 
         // Run Analysis
-        const suggestions = AutomatedPlanningService.analyzeRoute(points, this.availableLighthouses || [], depId, arrId);
+        const suggestions = AutomatedPlanningService.analyzeRoute(points, this.availableLighthouses || [], depId, arrId, visitedPortIds);
 
         // MERGE CHARTS
         let newChartsCount = 0;

@@ -85,7 +85,15 @@ const AutomatedPlanningService = {
      * @param {String} depPortId - ID do Porto de Partida (ex: 'BR_FOR')
      * @param {String} arrPortId - ID do Porto de Chegada
      */
-    analyzeRoute: function (routePoints, availableLighthouses, depPortId, arrPortId) {
+    /**
+     * Executa a análise completa
+     * @param {Array} routePoints - Array de {lat, lon}
+     * @param {Array} availableLighthouses - Lista completa de faróis carregados
+     * @param {String} depPortId - ID do Porto de Partida (ex: 'BR_FOR')
+     * @param {String} arrPortId - ID do Porto de Chegada
+     * @param {Array} visitedPortIds - Lista de IDs de portos visitados pela rota (Opcional)
+     */
+    analyzeRoute: function (routePoints, availableLighthouses, depPortId, arrPortId, visitedPortIds = []) {
         console.time("AutomatedPlanning");
 
         const suggestions = {
@@ -94,9 +102,6 @@ const AutomatedPlanningService = {
         };
 
         // 1. ANÁLISE DE CARTAS (Bounding Box Intersection)
-        // Otimização: Verificar BBox da rota inteira primeiro? 
-        // Para MVP, checamos cada carta contra a rota (sampling)
-
         // Amostragem da rota para performance (a cada 10 pontos ou 20 milhas)
         const sampleRate = Math.max(1, Math.floor(routePoints.length / 50));
         const samplePoints = routePoints.filter((_, i) => i % sampleRate === 0);
@@ -122,22 +127,12 @@ const AutomatedPlanningService = {
                 );
             }
 
-            // 2. Latitude Overlap Check (For Coastal Charts & General Coverage)
-            // If we have Dep/Arr ports, we check if the chart's Latitude Range overlaps with the Voyage Latitude Range
+            // 2. Latitude Overlap Check (For Coastal Charts 21xxx)
             // This ensures coastal charts are added even without GPX.
             if (!match && depPort && arrPort) {
-                // Logic: range overlap
-                // Chart Range: [bbox.s, bbox.n]
-                // Voyage Range: [minLat, maxLat]
-                // Overlap if: (Chart.S <= Voyage.Max) AND (Chart.N >= Voyage.Min)
-
                 if (bbox.s <= maxLat && bbox.n >= minLat) {
-                    // Filter only "Costeira" charts (ID stars with '2') explicitly to avoid adding disjoint approach charts?
-                    // Usually approach charts are small, so they might not pass this check easily unless they really are in the range.
-                    // But strictly speaking, chart 210xxx are coastal.
                     if (chartId.startsWith('2') && chartId.length === 5) {
                         match = true;
-                        console.log(`AutoPlan: Carta Costeira (Lat-Overlap) detectada: ${chartId}`);
                     }
                 }
             }
@@ -147,95 +142,70 @@ const AutomatedPlanningService = {
             }
         });
 
-        // 2. FORÇAR PORTOS (Partida/Chegada/Intermediários)
-        // Adiciona cartas dos portos extremos
-        if (depPortId && this.portToChart[depPortId]) {
-            this.portToChart[depPortId].forEach(c => suggestions.charts.add(c));
-        }
-        if (arrPortId && this.portToChart[arrPortId]) {
-            this.portToChart[arrPortId].forEach(c => suggestions.charts.add(c));
-        }
+        // 2. FORÇAR PORTOS (Partida/Chegada/Intermediários/Visitados)
+        const portsToForce = new Set([depPortId, arrPortId, ...visitedPortIds]);
 
-        // Sugerir cartas de portos INTERMEDIÁRIOS dentro da Latitudes da Viagem
-        // Regra: Listar TODOS os portos entre a Lat de Partida e Lat de Chegada
-        // (Ignorando se a rota passa perto ou longe, garantindo cobertura total de abrigos possíveis)
+        portsToForce.forEach(pId => {
+            if (pId && this.portToChart[pId]) {
+                this.portToChart[pId].forEach(c => suggestions.charts.add(c));
+                console.log(`AutoPlan: Porto (Visitado) detectado: ${pId} -> Add Chart`);
+            }
+        });
 
+        // Sugerir cartas de portos INTERMEDIÁRIOS dentro da Latitudes da Viagem (Fallback)
         if (depPort && arrPort) {
-            // Already calculated minLat/maxLat at top scope
-
             PortDatabase.forEach(port => {
-                // Se já não é dep/arr
-                if (port.id !== depPortId && port.id !== arrPortId && this.portToChart[port.id]) {
-                    // Checar se latitude está dentro do range (com margem de segurança de 0.05 grau)
-                    // buffer de margem para incluir portos "quase" no caminho
+                // Se já não foi forçado acima
+                if (!portsToForce.has(port.id) && this.portToChart[port.id]) {
+                    // Checar se latitude está dentro do range (com margem de segurança)
                     const margin = 0.05;
-                    // Fix Itaqui: Itaqui (-2.5) should be in Vila do Conde (-1.5) to Mucuripe (-3.7)
                     if (port.lat >= (minLat - margin) && port.lat <= (maxLat + margin)) {
+                        // EXTRA CHECK: Longitude removida para evitar problemas em rotas L-shape
+                        // Apenas aceitamos se a latitude bater.
+                        // Mas para evitar ports no outro lado do mundo (teórico), usar margem larga de Lon?
+                        // Brasil é aprox W 034 a W 054. Safe range.
 
-                        // EXTRA CHECK: Longitude (Evitar Arquipélagos Distantes)
-                        const minLon = Math.min(depPort.lon, arrPort.lon);
-                        const maxLon = Math.max(depPort.lon, arrPort.lon);
-                        const lonMargin = 2.0;
-
-                        if (port.lon >= (minLon - lonMargin) && port.lon <= (maxLon + lonMargin)) {
-                            this.portToChart[port.id].forEach(c => suggestions.charts.add(c));
-                            console.log(`AutoPlan: Porto Intermediário (Lat-Range) detectado: ${port.name} -> Add Chart`);
-                        }
+                        this.portToChart[port.id].forEach(c => suggestions.charts.add(c));
+                        console.log(`AutoPlan: Porto Intermediário (Lat-Range) detectado: ${port.name} -> Add Chart`);
                     }
                 }
             });
         }
 
         // 3. ANÁLISE DE FARÓIS (Proximidade)
-        // Filtra faróis num raio de X milhas da rota
         const LIGHTHOUSE_BUFFER = 15; // NM
 
         // Definir pontos de interesse (Rota + Portos)
         const interestPoints = [...samplePoints];
 
-        // Se tivermos IDs de portos, buscar coordenadas e adicionar aos pontos de interesse
-        if (depPortId) {
-            const depPort = PortDatabase.find(p => p.id === depPortId);
-            if (depPort) interestPoints.push({ lat: depPort.lat, lon: depPort.lon });
-        }
-        if (arrPortId) {
-            const arrPort = PortDatabase.find(p => p.id === arrPortId);
-            if (arrPort) interestPoints.push({ lat: arrPort.lat, lon: arrPort.lon });
-        }
+        // Se tivermos IDs de portos, buscar coordenadas
+        if (depPort) interestPoints.push({ lat: depPort.lat, lon: depPort.lon });
+        if (arrPort) interestPoints.push({ lat: arrPort.lat, lon: arrPort.lon });
 
         if (availableLighthouses && availableLighthouses.length > 0) {
             availableLighthouses.forEach(lh => {
-                // Pular se não tem coords
                 if (!lh.latDec) return;
 
                 let isRelevant = false;
 
-                // 1. Proximity Check (Route + Dep/Arr Ports)
+                // 1. Proximity Check
                 if (interestPoints.length > 0) {
+                    // Reuse functionality for route proximity
                     isRelevant = this.isLocationNearRoute(lh.latDec, lh.lonDec, interestPoints, LIGHTHOUSE_BUFFER);
                 }
 
-                // 2. Latitude Range Check (Voyage Coverage)
-                // If minLat/maxLat are valid (Dep/Arr selected), include all lights in range
+                // 2. Latitude Range Check (Fallback)
                 if (!isRelevant && minLat !== 90 && maxLat !== -90) {
-                    // Margin reduzido para 0.05
                     const margin = 0.05;
-                    // Check Latitude Range
                     if (lh.latDec >= (minLat - margin) && lh.latDec <= (maxLat + margin)) {
-
-                        // EXTRA CHECK: Longitude (Evitar Ilhas Oceânicas como Fernando de Noronha -32W)
-                        // Se a viagem é Costeira (ex: Longitude ~ -34 a -50), ignorar coisas multo a Leste (tipo > -33)
-                        // A Costa do NE é aprox -34.8. Noronha é -32.4 (Mais a leste/maior valor)
-                        // Regra simples: Se todos os portos são "Mainland" (Oeste de -34.5), filtrar lon > -33.5
-                        // Ou simplesmente checar se a Longitude também está "perto" do range de longitude da viagem.
-
                         const minLon = Math.min(depPort.lon, arrPort.lon);
                         const maxLon = Math.max(depPort.lon, arrPort.lon);
-                        const lonMargin = 2.0; // Margem maior em Longitude (2 graus ~ 120 milhas variacao da costa)
+                        const lonMargin = 2.0;
 
+                        // Check Lon Range (important for offshore islands vs coast)
+                        // If Route is Itaqui->Rio, range covers Northeast.
                         if (lh.lonDec >= (minLon - lonMargin) && lh.lonDec <= (maxLon + lonMargin)) {
-                            isRelevant = true;
-                            // console.log(`AutoPlan: Farol (Lat-Range) detectado: ${lh.name}`);
+                            // isRelevant = true; // Disabled pure box check to prefer route proximity now that route is better
                         }
                     }
                 }
@@ -258,9 +228,28 @@ const AutomatedPlanningService = {
             }
         });
 
-        // 2. Ordenação (Da Origem para o Destino)
-        // Se houver porto de partida, ordena pela distância até ele
-        if (depPort) {
+        // 2. Ordenação (Along-Track Distance)
+        if (routePoints && routePoints.length > 0) {
+            // Assign a "Route Index" to each lighthouse (closest point index)
+            uniqueLighthouses.forEach(lh => {
+                let minDist = 9999;
+                let bestIdx = 0;
+                // Sampling is enough for sorting order
+                for (let i = 0; i < routePoints.length; i += 10) {
+                    const p = routePoints[i];
+                    const d = NavMath.calcLeg(p.lat, p.lon, lh.latDec, lh.lonDec).dist;
+                    if (d < minDist) {
+                        minDist = d;
+                        bestIdx = i;
+                    }
+                }
+                lh._sortIdx = bestIdx;
+            });
+
+            uniqueLighthouses.sort((a, b) => a._sortIdx - b._sortIdx);
+
+        } else if (depPort) {
+            // Fallback: Distance from DepPort
             uniqueLighthouses.sort((a, b) => {
                 const distA = NavMath.calcLeg(depPort.lat, depPort.lon, a.latDec, a.lonDec).dist;
                 const distB = NavMath.calcLeg(depPort.lat, depPort.lon, b.latDec, b.lonDec).dist;
