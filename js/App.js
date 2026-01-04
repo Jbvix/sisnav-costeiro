@@ -1965,33 +1965,57 @@ const App = {
                     console.log(`Debug: Node ${k} connects to: ${graph[k].map(e => e.target).join(', ')}`);
                 });
 
-                // 2. Busca em Largura (BFS)
-                const queue = [[depId]];
-                const visited = new Set();
-                const pathMap = {}; // { Node: { parent, edge } }
+                // 2. Pathfinding: Weighted Dijkstra (Inertia Optimized)
+                // Usamos Dijkstra em vez de BFS para penalizar trocas desnecessárias de arquivo de rota (zigue-zagues).
+                // Custo = 1 por segmento + 5 se trocar de RouteID.
 
+                const pq = [{ id: depId, cost: 0, routeId: null, parent: null, edge: null }];
+                const minCosts = {}; // Key: node_routeId
+
+                let finalState = null;
                 let found = false;
 
-                while (queue.length > 0) {
-                    const path = queue.shift();
-                    const node = path[path.length - 1];
+                // Maps for reconstruction compatibility
+                const pathMap = {};
 
-                    if (node === arrId) {
+                while (pq.length > 0) {
+                    // Sort (Min-Heap simulado)
+                    pq.sort((a, b) => a.cost - b.cost);
+                    const curr = pq.shift();
+
+                    if (curr.id === arrId) {
                         found = true;
+                        finalState = curr;
                         break;
                     }
 
-                    if (visited.has(node)) continue;
-                    visited.add(node);
+                    const stateKey = `${curr.id}_${curr.routeId || 'start'}`;
+                    if (minCosts[stateKey] !== undefined && minCosts[stateKey] <= curr.cost) continue;
+                    minCosts[stateKey] = curr.cost;
 
-                    const neighbors = graph[node] || [];
+                    const neighbors = graph[curr.id] || [];
                     for (const edge of neighbors) {
-                        if (!visited.has(edge.target)) {
-                            if (!pathMap[edge.target]) {
-                                pathMap[edge.target] = { parent: node, edge: edge };
-                                queue.push([...path, edge.target]);
-                            }
-                        }
+                        // PENALTY: Se já estamos numa rota e trocamos, adiciona custo.
+                        // Evita sair de uma rota costeira para entrar em porto e sair de novo.
+                        const penalty = (curr.routeId !== null && edge.id !== curr.routeId) ? 5 : 0;
+                        const newCost = curr.cost + 1 + penalty;
+
+                        pq.push({
+                            id: edge.target,
+                            cost: newCost,
+                            routeId: edge.id, // edge.id holds the route file ID
+                            parent: curr,
+                            edge: edge
+                        });
+                    }
+                }
+
+                // Populate pathMap from best path for compatibility with reconstruction code
+                if (found && finalState) {
+                    let trace = finalState;
+                    while (trace.parent) {
+                        pathMap[trace.id] = { parent: trace.parent.id, edge: trace.edge };
+                        trace = trace.parent;
                     }
                 }
 

@@ -117,44 +117,105 @@ routes.forEach(r => {
 });
 
 console.log("---------------------------------------------------");
+console.log("---------------------------------------------------");
 console.log("Graph Connectivity Check:");
 const start = 'BR_ITQ'; // Itaqui
-const end = 'BR_RIO'; // Rio de Janeiro
+const end = 'BR_RIG'; // Rio Grande
 
 console.log(`Looking for path ${start} -> ${end}`);
 
 // BFS
-const queue = [[start]];
-const visited = new Set();
+// DIJKSTRA instead of BFS to penalize route switching
+const PriorityQueue = [];
+// State: { id, cost, path, routeId, edges }
+const startNode = { id: start, cost: 0, path: [start], routeId: null, edges: [] };
+PriorityQueue.push(startNode);
+
+// minCosts tracks minimal cost to reach a (Node, RouteID) tuple
+// This is critical because arriving at B via Route 1 (cost 10) might be better than via Route 2 (cost 9)
+// if the next hop is Route 1 (cost 10+1 = 11 vs 9+1+5 = 15).
+const minCosts = {}; // Key: `${nodeId}_${routeId}`
+
 let found = false;
-let pathFound = [];
+let finalNode = null;
 
-while (queue.length > 0) {
-    const path = queue.shift();
-    const node = path[path.length - 1];
+while (PriorityQueue.length > 0) {
+    // Sort logic (Simple Min-Heap simulation)
+    PriorityQueue.sort((a, b) => a.cost - b.cost);
+    const curr = PriorityQueue.shift();
 
-    if (node === end) {
+    if (curr.id === end) {
         found = true;
-        pathFound = path;
+        finalNode = curr;
         break;
     }
 
-    if (visited.has(node)) continue;
-    visited.add(node);
+    // State Check
+    // If routeId is null (start), use 'null'
+    const rId = curr.routeId || 'null';
+    const stateKey = `${curr.id}_${rId}`;
 
-    const neighbors = graph[node] || [];
+    if (minCosts[stateKey] !== undefined && minCosts[stateKey] <= curr.cost) {
+        continue;
+    }
+    minCosts[stateKey] = curr.cost;
+
+    const neighbors = graph[curr.id] || [];
     for (const edge of neighbors) {
-        if (!visited.has(edge.target)) {
-            queue.push([...path, edge.target]);
-        }
+        // Calculate penalty
+        // Penalty if we are already on a route (curr.routeId != null) AND we switch.
+        // If curr.routeId is null (start), no penalty.
+        const penalty = (curr.routeId !== null && edge.route !== curr.routeId) ? 5 : 0;
+        const newCost = curr.cost + 1 + penalty;
+
+        PriorityQueue.push({
+            id: edge.target,
+            cost: newCost,
+            path: [...curr.path, edge.target],
+            routeId: edge.route,
+            edges: [...curr.edges, edge]
+        });
     }
 }
 
 if (found) {
+    pathFound = finalNode.path;
+    // Populate parentMap for display logic below (mocking the structure expected)
+    // Actually, we can just print directly from edges
+    console.log(`SUCCESS! Path found with Cost ${finalNode.cost}:`, pathFound.join(' -> '));
+    console.log("Detailed Segments (Inertia Optimized):");
+    finalNode.edges.forEach(e => {
+        console.log(` -> ${e.target} [via ${e.route}]`);
+    });
+
+    // Skip the old loop printing
+    found = false; // Disable old block
+} else {
+    // Fallback to old block if not found (found is already false)
+}
+
+if (found) {
     console.log("SUCCESS! Path found:", pathFound.join(' -> '));
+    // Print Route IDs for each leg to debug "which file is doing this?"
+    for (let i = 0; i < pathFound.length - 1; i++) {
+        const from = pathFound[i];
+        const to = pathFound[i + 1];
+        const info = parentMap[to]; // Valid because BFS tree property
+        // Note: parentMap[to] might not be from 'from' in general graph, but in BFS tree construction logic above it should be roughly right 
+        // strictly we should reconstruct from end to start using parent pointers.
+    }
+
+    // Better reconstruction
+    let curr = end;
+    const legs = [];
+    while (curr !== start) {
+        const info = parentMap[curr];
+        legs.unshift(`${info.p} -> ${curr} [via ${info.routeId}]`);
+        curr = info.p;
+    }
+    console.log("Detailed Segments:");
+    legs.forEach(l => console.log(l));
+
 } else {
     console.log("FAILED. No path found.");
-    // print neighbors of start
-    console.log(`Neighbors of ${start}:`, graph[start] ? graph[start].map(e => e.target) : 'None');
-    console.log(`Neighbors of ${end}:`, graph[end] ? graph[end].map(e => e.target) : 'None');
 }
