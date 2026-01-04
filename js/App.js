@@ -1450,17 +1450,19 @@ const App = {
 
             const badgeLabel = isApproach ? "APR" : "COST";
 
-            tag.className = `${badgeClass} border text-[10px] px-2 py-1 rounded flex items-center gap-2 shadow-sm`;
-
-            // Display: [TYPE] ID - Title (Scale)
-            // chartStr already has "ID - Title"
-            // We append scale
+            tag.className = `w-full ${badgeClass} border text-[10px] p-2 rounded flex items-center justify-between shadow-sm`;
 
             tag.innerHTML = `
-                <span class="font-bold text-[9px] opacity-70 border-r border-gray-300 pr-1 mr-1">${badgeLabel}</span>
-                <span class="truncate max-w-[200px]">${chartStr}</span>
-                <span class="font-mono text-[9px] text-gray-500 bg-white/50 px-1 rounded hidden md:inline-block">${meta.scale || '?'}</span>
-                <i class="fas fa-times cursor-pointer hover:text-red-500 ml-1"></i>`;
+                <div class="flex items-center gap-2 overflow-hidden">
+                    <div class="flex flex-col items-center justify-center min-w-[35px] border-r border-gray-300 pr-2 mr-1">
+                        <span class="font-bold text-[9px]">${badgeLabel}</span>
+                    </div>
+                    <div class="flex flex-col leading-tight min-w-0">
+                        <span class="font-bold truncate text-ellipsis text-slate-700">${chartStr}</span>
+                        <span class="text-[9px] text-gray-500 font-mono">Escala: ${meta.scale || 'N/A'}</span>
+                    </div>
+                </div>
+                <i class="fas fa-trash-alt cursor-pointer text-red-300 hover:text-red-500 p-1 transition-colors ml-2" title="Remover"></i>`;
 
             tag.querySelector('i').addEventListener('click', () => {
                 State.appraisal.selectedCharts.splice(idx, 1);
