@@ -122,19 +122,30 @@ const AutomatedPlanningService = {
             this.portToChart[arrPortId].forEach(c => suggestions.charts.add(c));
         }
 
-        // Sugerir cartas de portos INTERMEDIÁRIOS próximos da rota
-        // Iterar sobre todos os portos conhecidos
-        PortDatabase.forEach(port => {
-            // Se já não é dep/arr
-            if (port.id !== depPortId && port.id !== arrPortId && this.portToChart[port.id]) {
-                // Checar distancia da rota
-                const isNear = this.isLocationNearRoute(port.lat, port.lon, samplePoints, 20); // 20 NM buffer
-                if (isNear) {
-                    this.portToChart[port.id].forEach(c => suggestions.charts.add(c));
-                    console.log(`AutoPlan: Porto Intermediário detectado: ${port.name} -> Add Chart`);
+        // Sugerir cartas de portos INTERMEDIÁRIOS dentro da Latitudes da Viagem
+        // Regra: Listar TODOS os portos entre a Lat de Partida e Lat de Chegada
+        // (Ignorando se a rota passa perto ou longe, garantindo cobertura total de abrigos possíveis)
+
+        const depPort = PortDatabase.find(p => p.id === depPortId);
+        const arrPort = PortDatabase.find(p => p.id === arrPortId);
+
+        if (depPort && arrPort) {
+            const minLat = Math.min(depPort.lat, arrPort.lat);
+            const maxLat = Math.max(depPort.lat, arrPort.lat);
+
+            PortDatabase.forEach(port => {
+                // Se já não é dep/arr
+                if (port.id !== depPortId && port.id !== arrPortId && this.portToChart[port.id]) {
+                    // Checar se latitude está dentro do range (com margem de segurança de 0.5 grau)
+                    // buffer de margem para incluir portos "quase" no caminho
+                    const margin = 0.5;
+                    if (port.lat >= (minLat - margin) && port.lat <= (maxLat + margin)) {
+                        this.portToChart[port.id].forEach(c => suggestions.charts.add(c));
+                        console.log(`AutoPlan: Porto Intermediário (Lat-Range) detectado: ${port.name} -> Add Chart`);
+                    }
                 }
-            }
-        });
+            });
+        }
 
         // 3. ANÁLISE DE FARÓIS (Proximidade)
         // Filtra faróis num raio de X milhas da rota
