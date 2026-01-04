@@ -166,9 +166,9 @@ const AutomatedPlanningService = {
             PortDatabase.forEach(port => {
                 // Se já não é dep/arr
                 if (port.id !== depPortId && port.id !== arrPortId && this.portToChart[port.id]) {
-                    // Checar se latitude está dentro do range (com margem de segurança de 0.5 grau)
+                    // Checar se latitude está dentro do range (com margem de segurança de 0.05 grau)
                     // buffer de margem para incluir portos "quase" no caminho
-                    const margin = 0.5;
+                    const margin = 0.05;
                     if (port.lat >= (minLat - margin) && port.lat <= (maxLat + margin)) {
                         this.portToChart[port.id].forEach(c => suggestions.charts.add(c));
                         console.log(`AutoPlan: Porto Intermediário (Lat-Range) detectado: ${port.name} -> Add Chart`);
@@ -209,7 +209,9 @@ const AutomatedPlanningService = {
                 // 2. Latitude Range Check (Voyage Coverage)
                 // If minLat/maxLat are valid (Dep/Arr selected), include all lights in range
                 if (!isRelevant && minLat !== 90 && maxLat !== -90) {
-                    const margin = 0.5; // Margin to include lights slightly outside direct path
+                    // Margin reduzido para 0.05 (aprox 3 milhas) para evitar pegar faróis "atrás" da partida/chegada
+                    // Ex: Evitar pegar Pecém/Paracuru (Lat -3.4/3.5) numa viagem Mucuripe (-3.7) -> Suape (-8.0)
+                    const margin = 0.05;
                     if (lh.latDec >= (minLat - margin) && lh.latDec <= (maxLat + margin)) {
                         isRelevant = true;
                         // console.log(`AutoPlan: Farol (Lat-Range) detectado: ${lh.name}`);
