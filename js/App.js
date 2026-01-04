@@ -948,7 +948,8 @@ const App = {
                             desc: parts[4] ? parts[4].trim() : '',
                             // Pre-parse for distance calc
                             latDec: NavMath.parseDMS(parts[1].trim()),
-                            lonDec: NavMath.parseDMS(parts[2].trim())
+                            lonDec: NavMath.parseDMS(parts[2].trim()),
+                            range: (parts[3] && parts[3].match(/(\d+)M/)) ? parseInt(parts[3].match(/(\d+)M/)[1]) : 10 // Default 10NM if not found
                         };
                         this.availableLighthouses.push(lh);
                         const opt = document.createElement('option');

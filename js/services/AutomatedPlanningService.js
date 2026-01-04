@@ -201,7 +201,7 @@ const AutomatedPlanningService = {
         }
 
         // 3. ANÁLISE DE FARÓIS (Proximidade)
-        const LIGHTHOUSE_BUFFER = 15; // NM
+        const LIGHTHOUSE_BUFFER = 25; // NM (Increased to 25 to catch all coastal lights per user request)
 
         // Definir pontos de interesse (Rota + Portos)
         const interestPoints = [...samplePoints];
