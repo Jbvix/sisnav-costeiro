@@ -154,10 +154,11 @@ const App = {
     toggleEditMode: function () {
         const btn = document.getElementById('btn-lock-route');
         const btnClear = document.getElementById('btn-clear-route');
-        const isLocked = btn.innerHTML.includes('fa-lock');
+        // FIX: Check specifically for OPEN lock to see if we are currently unlocked
+        const isUnlocked = btn.innerHTML.includes('fa-lock-open');
 
-        if (isLocked) {
-            // UNLOCK (Enable Edit)
+        if (!isUnlocked) {
+            // CURRENTLY LOCKED -> UNLOCK (Enable Edit)
             btn.innerHTML = '<i class="fas fa-lock-open text-orange-500"></i>';
             btn.classList.add('border-2', 'border-orange-400');
             if (btnClear) btnClear.classList.remove('hidden');
@@ -165,7 +166,7 @@ const App = {
             MapService.setEditingMode(true, (action, idx, lat, lon) => this.handleRouteEdit(action, idx, lat, lon));
             console.log("App: Modo Edição ATIVADO");
         } else {
-            // LOCK (Disable Edit)
+            // CURRENTLY UNLOCKED -> LOCK (Disable Edit)
             btn.innerHTML = '<i class="fas fa-lock"></i>';
             btn.classList.remove('border-2', 'border-orange-400');
             if (btnClear) btnClear.classList.add('hidden');
