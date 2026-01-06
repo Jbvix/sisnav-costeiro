@@ -87,21 +87,40 @@ const App = {
 
     initViewerMode: function () {
         console.log("App: Iniciando modo VISUALIZADOR (Remoto)");
-        // 1. Hide Controls
+
+        // 1. Force Hide All Views except Monitoring
+        const views = ['view-cover', 'view-appraisal', 'view-planning', 'view-reports'];
+        views.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.add('hidden');
+                el.style.display = 'none'; // Force inline style to override any CSS
+            }
+        });
+
+        // 2. Show Monitoring View
+        const viewMon = document.getElementById('view-monitoring');
+        if (viewMon) {
+            viewMon.classList.remove('hidden');
+            viewMon.style.display = 'block';
+        }
+
+        // 3. Hide Controls & Navbar
         const controls = document.querySelector('#view-monitoring .mt-4');
         if (controls) controls.classList.add('hidden');
 
-        // 2. Hide Navbar
-        UIManager.switchTab('view-monitoring');
         const nav = document.querySelector('nav');
         if (nav) nav.style.display = 'none';
+
+        // 4. Update UIManager State (if applicable, though we forced DOM above)
+        // UIManager.switchTab('view-monitoring'); // Optional if manual force works better
 
         // FIX: Ensure map has size after tab switch
         setTimeout(() => {
             if (MapService) MapService.invalidateSize();
         }, 500);
 
-        // 3. Determine Target
+        // 5. Determine Target
         const urlParams = new URLSearchParams(window.location.search);
         const targetID = urlParams.get('id');
 
