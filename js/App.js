@@ -349,7 +349,7 @@ const App = {
                         if (MapService) {
                             MapService.updateShipPosition(data.lat, data.lon, data.cog);
                             if (!this.hasFixedMap) {
-                                MapService.map.setView([data.lat, data.lon], 12);
+                                MapService.setView(data.lat, data.lon, 12);
                                 this.hasFixedMap = true;
                             }
                         }

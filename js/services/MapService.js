@@ -443,6 +443,11 @@ const MapService = {
                 onSnapClick({ lat: ll.lat, lon: ll.lng });
             }
         });
+    },
+    setView: function (lat, lon, zoom) {
+        if (State.mapInstance) {
+            State.mapInstance.setView([lat, lon], zoom);
+        }
     }
 };
 
