@@ -112,7 +112,11 @@ const App = {
         const nav = document.querySelector('nav');
         if (nav) nav.style.display = 'none';
 
-        // 4. Update UIManager State (if applicable, though we forced DOM above)
+        // 4. Hide Map Edit Controls (Sprint Fix)
+        const editControls = document.getElementById('map-edit-controls');
+        if (editControls) editControls.style.display = 'none';
+
+        // 5. Update UIManager State (if applicable, though we forced DOM above)
         // UIManager.switchTab('view-monitoring'); // Optional if manual force works better
 
         // FIX: Ensure map has size after tab switch
