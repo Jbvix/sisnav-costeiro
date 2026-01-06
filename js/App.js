@@ -274,7 +274,7 @@ const App = {
 
         const badge = document.createElement('div');
         badge.id = 'live-badge';
-        badge.className = "absolute top-2 left-2 z-[400] bg-red-600 text-white px-3 py-1 rounded text-xs font-bold animate-pulse shadow-lg flex items-center gap-2";
+        badge.className = "absolute top-20 left-2 z-[400] bg-red-600 text-white px-3 py-1 rounded text-xs font-bold animate-pulse shadow-lg flex items-center gap-2";
         badge.innerHTML = `<i class="fas fa-satellite-dish"></i> AO VIVO: ${label}`;
         mapContainer.parentNode.insertBefore(badge, mapContainer.nextSibling);
     },
