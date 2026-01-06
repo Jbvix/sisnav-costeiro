@@ -357,84 +357,10 @@ const App = {
         };
     },
 
-    loadAutoRoute: function () {
-        // If route already loaded, skip
-        if (State.routePoints && State.routePoints.length > 0) {
-            console.log("App: Rota já existente. Pulando auto-load.");
-            MapService.plotRoute(State.routePoints);
-            return;
-        }
 
-        console.log("App: Auto-Loading Route based on Appraisal...");
-
-        // 1. Get Origin / Dest
-        // Try DOM first (if User just filled it), then State (if persisted)
-        const elDep = document.getElementById('select-dep');
-        const elArr = document.getElementById('select-arr');
-
-        // Fallback Defaults (Rio Grande -> Rio de Janeiro) for DEMO
-        let dep = (elDep && elDep.options[elDep.selectedIndex]) ? elDep.options[elDep.selectedIndex].text : "RIO GRANDE";
-        let arr = (elArr && elArr.options[elArr.selectedIndex]) ? elArr.options[elArr.selectedIndex].text : "RIO DE JANEIRO";
-
-        // Clean Names (Remove formatting like "BR RIG - ")
-        const clean = (s) => s.replace(/^[A-Z]{2}\s[A-Z]{3}\s-\s/, '').trim().toLowerCase();
-
-        let depName = clean(dep);
-        let arrName = clean(arr);
-
-        // If selection is empty ("Selecione..."), force demo defaults
-        if (depName.includes("selecio") || arrName.includes("selecio")) {
-            console.log("App: Portos não selecionados. Usando Demo: Rio Grande -> Rio");
-            depName = "rio grande"; // Matches filename part
-            arrName = "rio de janeiro";
-        }
-
-        console.log(`App: Buscando rota: ${depName} -> ${arrName}`);
-
-        // 2. Fetch Index
-        fetch('js/data/known_routes.json')
-            .then(res => res.json())
-            .then(routes => {
-                // 3. Find Match
-                // Logic: Check if route.origin contains depName AND route.destination contains arrName
-                const match = routes.find(r => {
-                    const o = r.origin.toLowerCase();
-                    const d = r.destination.toLowerCase();
-                    return o.includes(depName) && d.includes(arrName);
-                });
-
-                if (match) {
-                    console.log(`App: Rota encontrada: ${match.id}`);
-
-                    // 4. Load Points
-                    State.routePoints = match.points.map((p, i) => ({
-                        lat: p.lat,
-                        lon: p.lon,
-                        name: `WPT ${i + 1}`
-                    }));
-
-                    // 5. Plot
-                    if (MapService) {
-                        MapService.plotRoute(State.routePoints);
-
-                        // Fit Bounds?
-                        // MapService.plotRoute already fits bounds if not editing.
-                        // But startRemoteMonitoring might override view to ship.
-                        // Let's let the ship poll center the view on the vessel, 
-                        // but initial view will show route.
-                    }
-                } else {
-                    console.warn("App: Nenhuma rota compatível encontrada no índice.");
-                }
-            })
-            .catch(err => console.error("App: Erro ao carregar rotas auto:", err));
-    },
 
     startRemoteMonitoring: function (targetID) {
         if (this.monitorTimer) clearInterval(this.monitorTimer);
-
-        // Auto-Load Route (Sprint Request)
-        this.loadAutoRoute();
 
         const poll = () => {
             fetch(`api/position?id=${targetID}`)
