@@ -333,23 +333,26 @@ const UIManager = {
     renderLighthouseInfo: function (lat, lon) {
         if (window.App && typeof window.App.getNearestLighthouse === 'function') {
             const lh = window.App.getNearestLighthouse(lat, lon);
+            const range = lh ? (lh.range || 10) : 10;
+            const MAX_REF_RADIUS = 50.0; // Show as reference if within this radius
 
-            // USER REQUEST: Only show if visible (Dist <= Range)
-            // lh.range was added to App.js parser. Default 10 if missing.
-            const range = lh.range || 10;
+            if (lh && lh.dist <= MAX_REF_RADIUS) {
+                const isVisible = lh.dist <= range;
 
-            if (lh && lh.dist <= range) {
-                // Visible Icon
-                const icon = '<i class="fas fa-lightbulb text-yellow-500 animate-pulse"></i>';
+                // Style based on visibility
+                let iconClass = isVisible ? "text-yellow-500 animate-pulse" : "text-gray-300";
+                let textClass = isVisible ? "text-slate-700" : "text-gray-400";
+                let distClass = isVisible ? "text-gray-500" : "text-gray-300";
+
+                const icon = `<i class="fas fa-lightbulb ${iconClass}"></i>`;
 
                 return `
                     <div class="flex flex-col items-center leading-tight">
-                        <span class="font-bold text-slate-700 text-[10px]">${lh.name}</span>
-                        <span class="text-[9px] text-gray-500 font-mono">${icon} ${lh.dist.toFixed(1)} NM (Alc: ${range}M)</span>
+                        <span class="font-bold ${textClass} text-[10px]">${lh.name}</span>
+                        <span class="text-[9px] ${distClass} font-mono">${icon} ${lh.dist.toFixed(1)} NM (Alc: ${range}M)</span>
                     </div>
                 `;
             } else {
-                // Not Visible - Show nothing or dash as per request "apenas se for visível"
                 return '<span class="text-gray-200 text-[9px]">-</span>';
             }
         }
