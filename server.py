@@ -96,6 +96,25 @@ def upload_gpx():
         except Exception as e:
             return jsonify({'error': str(e)}), 500
             
+            return jsonify({'status': 'OK', 'message': f'Rota {file.filename} adicionada e índice atualizado!'})
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+
+@app.route('/api/tide-files', methods=['GET'])
+def list_tide_files():
+    try:
+        tide_dir = os.path.join(BASE_DIR, 'library', 'tabua mares 2026')
+        if not os.path.exists(tide_dir):
+             return jsonify([])
+        
+        files = [f for f in os.listdir(tide_dir) if f.lower().endswith('.pdf') or f.lower().endswith('.docx')]
+        # Sort for better UX (numeric sort if possible, but alpha is fine)
+        files.sort()
+        return jsonify(files)
+    except Exception as e:
+        logger.error(f"Error listing tide files: {e}")
+        return jsonify({'error': str(e)}), 500
+
 # File-Based Persistence
 # Using /tmp ensures write permissions on Linux/cPanel environments
 import tempfile

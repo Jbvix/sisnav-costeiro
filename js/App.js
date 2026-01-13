@@ -65,6 +65,7 @@ const App = {
         this.populateSheltersDropdown();
         this.populateSheltersDropdown();
         this.populateTidePorts(); // New
+        this.populateTideTables(); // New (Dropdowns)
 
         // CHECK MODE: MONITOR (Web/Repeater)
         // SPRINT 4: Check Session Role OR URL Param
@@ -814,6 +815,55 @@ const App = {
                 console.error("Erro ao carregar malha:", err);
                 alert("Erro ao carregar índice de rotas. Rode 'python build_route_index.py' primeiro.");
             });
+    },
+
+    populateTideTables: function () {
+        const selDep = document.getElementById('select-tide-dep');
+        const selArr = document.getElementById('select-tide-arr');
+
+        if (!selDep || !selArr) return;
+
+        console.log("App: Buscando Tábuas de Marés...");
+        fetch('api/tide-files')
+            .then(res => res.json())
+            .then(files => {
+                if (files.error) {
+                    console.error("Tide Files Error:", files.error);
+                    return;
+                }
+
+                // Populate
+                const options = `<option value="">-- Selecione da Biblioteca --</option>` +
+                    files.map(f => `<option value="${f}">${f}</option>`).join('');
+
+                selDep.innerHTML = options;
+                selArr.innerHTML = options;
+
+                console.log(`App: ${files.length} tábuas de maré carregadas.`);
+            })
+            .catch(err => console.error("Tide Files Fetch Error:", err));
+
+        // Bind Events
+        const handleSelection = (selId, type) => {
+            const sel = document.getElementById(selId);
+            sel.addEventListener('change', (e) => {
+                const filename = e.target.value;
+                if (!filename) return;
+
+                // We store the path relative to library
+                // But ReportService needs to know if it's a file object (upload) or a path (library)
+                // For now, let's store it in a new property or override 'files' if compatible.
+                // Simplified: Store in State.appraisal.tideLibraryPaths = { dep: '...', arr: '...' }
+
+                if (!State.appraisal.tideLibraryPaths) State.appraisal.tideLibraryPaths = {};
+
+                State.appraisal.tideLibraryPaths[type] = filename ? `library/tabua mares 2026/${filename}` : null;
+                console.log(`App: Tábua (${type}) selecionada da biblioteca: ${filename}`);
+            });
+        };
+
+        handleSelection('select-tide-dep', 'dep');
+        handleSelection('select-tide-arr', 'arr');
     },
 
     populatePortDropdowns: function () {
