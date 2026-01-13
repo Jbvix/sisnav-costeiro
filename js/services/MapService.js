@@ -117,11 +117,13 @@ const MapService = {
      * @param {Array<object>} routePoints - Array de objetos {lat, lon, name}.
      */
     plotRoute: function (routePoints) {
-        if (!State.mapInstance || !routePoints || routePoints.length === 0) return;
+        if (!State.mapInstance || !routePoints) return;
 
         // Limpa rota anterior usando as referências guardadas no State
         if (State.layers.track) State.layers.track.clearLayers();
         if (State.layers.waypoints) State.layers.waypoints.clearLayers();
+
+        if (routePoints.length === 0) return;
 
         // Extrai apenas as coordenadas [lat, lon] para a polilinha do Leaflet
         const latlngs = routePoints.map(p => [p.lat, p.lon]);
