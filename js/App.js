@@ -1314,7 +1314,8 @@ const App = {
                         dist: leg.dist,
                         desc: lh.desc,
                         lat: lh.lat,
-                        lon: lh.lon
+                        lon: lh.lon,
+                        range: lh.range // Pass parsed range
                     };
                 }
             }
