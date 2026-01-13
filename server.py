@@ -327,6 +327,29 @@ def update_invite():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/invites/delete', methods=['POST'])
+def delete_invite():
+    try:
+        data = request.json
+        token = data.get('token')
+        
+        if not token:
+            return jsonify({'error': 'Missing token'}), 400
+            
+        invites = load_invites()
+        
+        # Filter out the invite with the matching token
+        new_invites = [i for i in invites if i['token'] != token]
+        
+        if len(new_invites) < len(invites):
+            save_invites(new_invites)
+            return jsonify({'status': 'success'})
+        else:
+            return jsonify({'error': 'Token not found'}), 404
+            
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 @app.route('/api/invites/validate', methods=['POST'])
 def validate_invite():
     try:

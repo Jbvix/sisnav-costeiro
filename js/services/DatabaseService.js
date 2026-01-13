@@ -99,6 +99,23 @@ const DatabaseService = {
     },
 
     /**
+     * [ASYNC] Deleta um convite permanentemente do SERVIDOR.
+     */
+    deleteInvite: async function (token) {
+        try {
+            const response = await fetch('api/invites/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ token })
+            });
+            return response.ok;
+        } catch (e) {
+            console.error("Erro ao deletar convite:", e);
+            return false;
+        }
+    },
+
+    /**
      * [ASYNC] Valida token diretamente no servidor.
      */
     validateInvite: async function (token, password) {
