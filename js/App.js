@@ -484,15 +484,9 @@ const App = {
         const btnUpdateMetoc = document.getElementById('btn-update-metoc');
         if (btnUpdateMetoc) {
             btnUpdateMetoc.addEventListener('click', () => {
-                const icon = btnUpdateMetoc.querySelector('i');
-                if (icon) icon.classList.add('fa-spin');
-
-                console.log("App: Atualizando dados ambientais manualmente...");
-                this.recalculateVoyage();
-
-                setTimeout(() => {
-                    if (icon) icon.classList.remove('fa-spin');
-                }, 800);
+                if (confirm("Deseja baixar dados atualizados da Marinha e CPTEC? Isso pode levar alguns segundos.")) {
+                    this.triggerRemoteUpdate(btnUpdateMetoc);
+                }
             });
         }
 
@@ -2011,6 +2005,80 @@ const App = {
 
             // Atualiza dados ambientais
             this.updateEnviroData(etdDate, etaDate);
+        }
+    },
+
+    /**
+     * Aciona a atualização remota de dados (Scraping) via Backend
+     */
+    triggerRemoteUpdate: async function (btnElement) {
+        const icon = btnElement ? btnElement.querySelector('i') : null;
+        const spanStatus = document.getElementById('weather-status-display');
+
+        if (icon) icon.classList.add('fa-spin');
+        if (spanStatus) {
+            spanStatus.innerText = "Iniciando...";
+            spanStatus.className = "text-[10px] font-mono text-blue-600 bg-blue-50 px-2 py-1 rounded border animate-pulse";
+        }
+
+        try {
+            console.log("App: Solicitando atualização ao servidor...");
+            const response = await fetch('/api/update-data', { method: 'POST' });
+
+            if (!response.body) throw new Error("ReadableStream não suportado.");
+
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder("utf-8");
+
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+
+                const chunk = decoder.decode(value, { stream: true });
+                const lines = chunk.split('\n\n');
+
+                lines.forEach(line => {
+                    if (line.startsWith('data: ')) {
+                        try {
+                            const jsonStr = line.replace('data: ', '').trim();
+                            if (!jsonStr) return;
+                            const data = JSON.parse(jsonStr);
+
+                            if (spanStatus) {
+                                spanStatus.innerText = "Atualizando: " + (data.progress || 0) + "%";
+                            }
+                            console.log(`Update Progress: ${data.progress}% - ${data.status}`);
+
+                            if (data.error) {
+                                throw new Error(data.status);
+                            }
+                        } catch (e) {
+                            // console.warn("Stream Parse debug", e);
+                        }
+                    }
+                });
+            }
+
+            // Finished stream
+            console.log("App: Atualização remota concluída. Recarregando caches...");
+            if (window.TideCSVService) {
+                await window.TideCSVService.reload();
+            }
+            this.recalculateVoyage();
+
+            // Restore Status UI
+            this.updateWeatherStatusUI();
+            alert("Base de dados meteorológica atualizada com sucesso!");
+
+        } catch (error) {
+            console.error(error);
+            alert("Erro ao atualizar dados: " + error.message);
+            if (spanStatus) {
+                spanStatus.innerText = "Falha!";
+                spanStatus.className = "text-[10px] font-mono text-red-600 bg-red-50 px-2 py-1 rounded border";
+            }
+        } finally {
+            if (icon) icon.classList.remove('fa-spin');
         }
     },
 
