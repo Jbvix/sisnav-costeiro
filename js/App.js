@@ -831,7 +831,18 @@ const App = {
     },
 
     startVisualPlanningMode: function () {
-        alert("Modo Visual Ativado! Carregando rotas...");
+        // alert("Modo Visual Ativado! Carregando rotas..."); // Removed alert for smoother UX
+
+        // 1. Switch to Map View
+        if (UIManager && typeof UIManager.switchTab === 'function') {
+            UIManager.switchTab('view-monitoring');
+        }
+
+        // 2. Ensure Edit Controls are Visible (Fix for Mobile/Monitor Mode conflict)
+        const editControls = document.getElementById('map-edit-controls');
+        if (editControls) {
+            editControls.style.display = 'flex'; // Restore visibility
+        }
 
         // Carrega dados REAIS do backend (gerado pelo build_route_index.py)
         fetch('js/data/known_routes.json')
