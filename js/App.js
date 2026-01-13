@@ -40,6 +40,15 @@ const App = {
             if (ok) console.log("App: Marés JSON carregadas.");
         });
 
+        // Load Known Routes (For Monitoring)
+        fetch('js/data/known_routes.json')
+            .then(res => res.json())
+            .then(routes => {
+                State.knownRoutes = routes;
+                console.log(`App: ${routes.length} rotas conhecidas carregadas.`);
+            })
+            .catch(e => console.warn("App: Falha ao carregar rotas conhecidas.", e));
+
 
         if (NavMath && typeof NavMath.calcLeg === 'function') {
             console.log("App: Módulo NavMath OK.");
@@ -385,6 +394,31 @@ const App = {
 
                         const cogEl = document.getElementById('stat-live-cog');
                         if (cogEl) cogEl.innerText = `${Math.round(data.cog || 0)}°`;
+
+                        // Plot Route if available
+                        if (data.routeId && MapService && State.knownRoutes) {
+                            // Avoid re-plotting same route constantly
+                            if (this._lastPlottedRouteId !== data.routeId) {
+                                // Try to find by ID first (exact match)
+                                let route = State.knownRoutes.find(r => r.id === data.routeId);
+
+                                // Fallback: Try by filename (ends with) if ID is full path
+                                if (!route) {
+                                    route = State.knownRoutes.find(r => data.routeId.endsWith(r.id) || r.id.endsWith(data.routeId));
+                                }
+
+                                if (route) {
+                                    console.log(`App: Plotando rota remota '${route.id}'...`);
+                                    MapService.plotRoute(route.points);
+                                    this._lastPlottedRouteId = data.routeId;
+                                } else {
+                                    // Maybe it's a raw filename not in known_routes? (Custom GPX)
+                                    // We can't plot raw gpx unless server sends points. 
+                                    // For now, only known routes are supported.
+                                    console.log(`App: Rota remota '${data.routeId}' não encontrada localmente.`);
+                                }
+                            }
+                        }
                     }
                 })
                 .catch(err => console.warn("Monitor Poll Error (Offline?):", err));
@@ -1849,6 +1883,7 @@ const App = {
                 }
 
                 State.routePoints = points;
+                State.currentRouteId = file.name; // Store ID for sharing
 
                 // Tenta auto-selecionar portos baseados na rota GPX
                 this.autoSelectPortsFromGPX(points);
@@ -2713,7 +2748,8 @@ const App = {
                         lat: lat,
                         lon: lon,
                         sog: speed,
-                        cog: heading
+                        cog: heading,
+                        routeId: State.currentRouteId || null // Share Active Route ID
                     })
                 }).then(res => {
                     if (!res.ok) {

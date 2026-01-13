@@ -220,6 +220,8 @@ def handle_position():
                 "lon": data.get('lon'),
                 "sog": data.get('sog'),
                 "cog": data.get('cog'),
+                "routeId": data.get('routeId'),
+                "destination": data.get('destination'),
                 "timestamp": time.time()
             }
             
