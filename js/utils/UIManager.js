@@ -325,6 +325,16 @@ const UIManager = {
             `;
             tbody.appendChild(row);
         }
+
+        // ADD TOTALS ROW (SPRINT 5)
+        const totalRow = document.createElement('tr');
+        totalRow.className = "bg-slate-200 font-bold text-xs border-t-2 border-slate-300";
+        totalRow.innerHTML = `
+            <td colspan="8" class="p-2 text-right uppercase text-slate-600">Totais da Viagem:</td>
+            <td class="p-2 text-center text-slate-800">${cumDist.toFixed(1)}</td>
+            <td class="p-2 text-center text-slate-800">${fmtHours(cumTimeHours)}</td>
+        `;
+        tbody.appendChild(totalRow);
     },
 
     /**

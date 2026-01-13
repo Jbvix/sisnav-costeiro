@@ -812,10 +812,15 @@ const ReportService = {
             const days = Math.floor(totalHours / 24); const remHrs = Math.floor(totalHours % 24);
             const durationStr = `${Math.floor(totalHours)}h (${days}d ${remHrs}h)`;
 
+            const depDate = voyage.depTime ? new Date(voyage.depTime) : new Date();
+            const arrDate = new Date(depDate.getTime() + (totalHours * 3600 * 1000));
+
             const summaryData = [
                 ["REBOCADOR:", (state.shipProfile.name || "SAAM CHILE").toUpperCase()],
                 ["DE:", (voyage.depPort || "MUCURIPE").toUpperCase()],
                 ["PARA:", (voyage.arrPort || "SUAPE").toUpperCase()],
+                ["SAÍDA:", depDate.toLocaleString('pt-BR')],
+                ["CHEGADA:", arrDate.toLocaleString('pt-BR')],
                 ["DISTÂNCIA (MN):", totalDist.toFixed(1)],
                 ["TEMPO ESTIMADO:", durationStr]
             ];
@@ -860,8 +865,8 @@ const ReportService = {
             // 7. DADOS DE MÁQUINAS
             currentY = renderMachineInfo(doc, currentY, state);
 
-            // 7.1 CHECKLIST
-            currentY = renderMachineryChecklist(doc, currentY, state);
+            // 7.1 CHECKLIST (REMOVED AS PER USER REQUEST)
+            // currentY = renderMachineryChecklist(doc, currentY, state);
 
             // 8. ANEXOS (Meteo e Navarea)
             if (state.appraisal.meteoText) {
