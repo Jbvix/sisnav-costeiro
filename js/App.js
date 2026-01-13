@@ -2005,6 +2005,11 @@ const App = {
 
             // Atualiza dados ambientais
             this.updateEnviroData(etdDate, etaDate);
+
+            // SYNC TABLE (Ensure Plan Table matches new ETA/Speed/Coords)
+            if (UIManager && typeof UIManager.renderRouteTable === 'function') {
+                UIManager.renderRouteTable(State.routePoints);
+            }
         }
     },
 
