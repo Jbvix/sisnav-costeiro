@@ -480,6 +480,22 @@ const App = {
             btnAddPrint.addEventListener('click', () => this.handleAddPrint());
         }
 
+        // LISTENER DO BOTÃO DE ATUALIZAÇÃO METEOROLÓGICA (PLAN SCREEN)
+        const btnUpdateMetoc = document.getElementById('btn-update-metoc');
+        if (btnUpdateMetoc) {
+            btnUpdateMetoc.addEventListener('click', () => {
+                const icon = btnUpdateMetoc.querySelector('i');
+                if (icon) icon.classList.add('fa-spin');
+
+                console.log("App: Atualizando dados ambientais manualmente...");
+                this.recalculateVoyage();
+
+                setTimeout(() => {
+                    if (icon) icon.classList.remove('fa-spin');
+                }, 800);
+            });
+        }
+
         const btnSimulate = document.getElementById('btn-simulate');
         if (btnSimulate) btnSimulate.addEventListener('click', () => this.startSimulation());
 
