@@ -282,10 +282,26 @@
             }
         };
 
+        // Network Logic
+        let serverBaseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/')); // Default fallback
+
+        async function detectServerUrl() {
+            try {
+                const res = await fetch('/api/system-info');
+                if (res.ok) {
+                    const data = await res.json();
+                    // Construct URL using detected IP
+                    serverBaseUrl = `http://${data.ip}:${data.port}`;
+                    console.log("Admin: Detectada URL de Rede:", serverBaseUrl);
+                }
+            } catch (e) {
+                console.warn("Admin: Falha ao detectar IP de rede, usando Localhost.", e);
+            }
+        }
+        detectServerUrl();
+
         function formatMessage(token, pass, type) {
-            // Fix: Use current location path to resolve subdirectories
-            const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
-            const link = `${baseUrl}/login.html?token=${token}`;
+            const link = `${serverBaseUrl}/login.html?token=${token}`;
             const roleName = type === 'planning' ? 'PLANEJAMENTO 🗺️' : 'MONITORAMENTO 📡';
 
             return `⚓ *SISNAV Costeiro* - Convite de Acesso\n\n` +
@@ -298,9 +314,8 @@
         // Modal Logic
         function openShareModal(token, pass, type) {
             const msg = formatMessage(token, pass, type);
-            const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
-
-            document.getElementById('share-link-box').innerText = `${baseUrl}/login.html?token=${token}`;
+            // Update display with serverBaseUrl
+            document.getElementById('share-link-box').innerText = `${serverBaseUrl}/login.html?token=${token}`;
             document.getElementById('share-pass-box').innerText = pass;
             document.getElementById('modal-share').classList.remove('hidden');
 

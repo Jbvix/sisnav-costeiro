@@ -367,6 +367,33 @@ def validate_invite():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+import socket
+
+def get_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        # doesn't even have to be reachable
+        s.connect(('10.255.255.255', 1))
+        IP = s.getsockname()[0]
+    except Exception:
+        IP = '127.0.0.1'
+    finally:
+        s.close()
+    return IP
+
+@app.route('/api/system-info', methods=['GET'])
+def get_system_info():
+    """Returns the server network info for client-side link generation."""
+    return jsonify({
+        'ip': get_ip(),
+        'port': 5000,
+        'hostname': socket.gethostname() 
+    })
+
 if __name__ == '__main__':
-    print("Iniciando SISNAV Costeiro em http://localhost:5000")
-    app.run(debug=True, port=5000)
+    local_ip = get_ip()
+    print(f" SISNAV COSTEIRO | Servidor Orientado a Rede")
+    print(f" > Local:   http://localhost:5000")
+    print(f" > Rede:    http://{local_ip}:5000 (Acesse por este IP)")
+    print(f"---------------------------------------------------")
+    app.run(debug=True, host='0.0.0.0', port=5000)
