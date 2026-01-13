@@ -129,6 +129,7 @@ const HelpService = {
                 position: absolute;
                 background: white;
                 width: 300px;
+                max-width: 90vw;
                 padding: 20px;
                 border-radius: 8px;
                 box-shadow: 0 10px 25px rgba(0,0,0,0.5);
@@ -211,19 +212,7 @@ const HelpService = {
             target.classList.add('tour-highlight');
             target.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-            // Position Popover (Naive Bottom-Right)
-            const rect = target.getBoundingClientRect();
-            // Default: Below
-            let top = rect.bottom + 15;
-            let left = rect.left;
-
-            // Boundary checks (Simple)
-            if (top + 200 > window.innerHeight) top = rect.top - 200; // Flip UP
-            if (left + 300 > window.innerWidth) left = window.innerWidth - 320; // Flip LEFT
-
-            popover.style.top = top + window.scrollY + 'px';
-            popover.style.left = left + window.scrollX + 'px';
-
+            // 1. Set Content (Required for sizing)
             popover.innerHTML = `
                 <h3>${step.title}</h3>
                 <p>${step.text}</p>
@@ -232,6 +221,41 @@ const HelpService = {
                     <button class="tour-btn tour-btn-next">${index === steps.length - 1 ? 'Concluir' : 'Próximo'}</button>
                 </div>
             `;
+
+            // 2. Measure Dimensions
+            const rect = target.getBoundingClientRect();
+            const popRect = popover.getBoundingClientRect();
+            const popWidth = popRect.width;
+            const popHeight = popRect.height;
+            const portW = window.innerWidth;
+            const portH = window.innerHeight;
+
+            // 3. Smart Positioning
+            let top, left;
+
+            // Mobile (< 768px): Force Centered for best experience
+            if (portW < 768) {
+                top = (portH / 2) - (popHeight / 2);
+                left = (portW / 2) - (popWidth / 2);
+            } else {
+                // Desktop Logic
+                // Vertical: Prefer Bottom, Flip if needed
+                top = rect.bottom + 15;
+                if (top + popHeight > portH - 10) {
+                    top = rect.top - popHeight - 15; // Flip Up
+                }
+                // Fallback to center if still bad
+                if (top < 10) top = (portH / 2) - (popHeight / 2);
+
+                // Horizontal: Center on target, Clamp to Viewport
+                left = rect.left + (rect.width / 2) - (popWidth / 2);
+                if (left < 10) left = 10;
+                if (left + popWidth > portW - 10) left = portW - popWidth - 10;
+            }
+
+            // 4. Apply Coordinates
+            popover.style.top = (top + window.scrollY) + 'px';
+            popover.style.left = (left + window.scrollX) + 'px';
 
             // Bind Events
             popover.querySelector('.tour-btn-next').onclick = (e) => { e.stopPropagation(); showStep(index + 1); };
