@@ -329,23 +329,52 @@
 
                             <!-- 2. METEO -->
                             <div class="bg-gray-50 p-3 rounded border border-gray-200">
-                                <label
-                                    class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Meteomarinha</label>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label
+                                        class="block text-[10px] font-bold text-gray-400 uppercase">Meteomarinha</label>
+                                    <div class="flex gap-1">
+                                        <a href="https://www.marinha.mil.br/chm/dados-do-smm-avisos-de-mau-tempo/avisos-de-mau-tempo"
+                                            target="_blank"
+                                            class="px-2 py-0.5 bg-blue-100 text-blue-600 text-[9px] font-bold rounded hover:bg-blue-200 transition-colors flex items-center gap-1">
+                                            <i class="fas fa-external-link-alt"></i> Fonte Oficial
+                                        </a>
+                                        <button
+                                            onclick="navigator.clipboard.readText().then(text => document.getElementById('txt-meteo-content').value = text).catch(err => alert('Permissão de colar negada ou não suportada.'))"
+                                            class="px-2 py-0.5 bg-gray-200 text-gray-600 text-[9px] font-bold rounded hover:bg-gray-300 transition-colors flex items-center gap-1"
+                                            title="Colar da Área de Transferência">
+                                            <i class="fas fa-paste"></i> Colar
+                                        </button>
+                                    </div>
+                                </div>
                                 <div class="space-y-2">
                                     <textarea id="txt-meteo-content" rows="6"
                                         class="w-full p-2 border rounded text-[10px] focus:border-blue-500 font-mono bg-white shadow-inner"
-                                        placeholder=" COLE AQUI O TEXTO DO BOLETIM METEOMARINHA..."></textarea>
+                                        placeholder="COLE AQUI O TEXTO DO BOLETIM METEOMARINHA..."></textarea>
                                 </div>
                             </div>
 
                             <!-- 3. NAVAREA V -->
                             <div class="bg-gray-50 p-3 rounded border border-gray-200">
-                                <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Navarea
-                                    V</label>
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase">Navarea V</label>
+                                    <div class="flex gap-1">
+                                        <a href="https://www.marinha.mil.br/chm/dados-do-smm-avisos-radio-nauticos/avisos-radio-nauticos"
+                                            target="_blank"
+                                            class="px-2 py-0.5 bg-blue-100 text-blue-600 text-[9px] font-bold rounded hover:bg-blue-200 transition-colors flex items-center gap-1">
+                                            <i class="fas fa-external-link-alt"></i> Fonte Oficial
+                                        </a>
+                                        <button
+                                            onclick="navigator.clipboard.readText().then(text => document.getElementById('txt-navarea-content').value = text).catch(err => alert('Permissão de colar negada ou não suportada.'))"
+                                            class="px-2 py-0.5 bg-gray-200 text-gray-600 text-[9px] font-bold rounded hover:bg-gray-300 transition-colors flex items-center gap-1"
+                                            title="Colar da Área de Transferência">
+                                            <i class="fas fa-paste"></i> Colar
+                                        </button>
+                                    </div>
+                                </div>
                                 <div class="space-y-2">
                                     <textarea id="txt-navarea-content" rows="6"
                                         class="w-full p-2 border rounded text-[10px] focus:border-blue-500 font-mono bg-white shadow-inner"
-                                        placeholder=" COLE AQUI O TEXTO DOS AVISOS NAVAREA..."></textarea>
+                                        placeholder="COLE AQUI O TEXTO DOS AVISOS NAVAREA..."></textarea>
                                 </div>
                             </div>
 
