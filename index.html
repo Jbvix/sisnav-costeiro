@@ -267,6 +267,68 @@
                                 placeholder="N/A" step="0.01">
                         </div>
                     </div>
+
+                    <!-- NOVO: Configuração do Reboque -->
+                    <div class="mt-4 grid grid-cols-2 gap-4 bg-orange-50 p-3 rounded border border-orange-100">
+                        <div>
+                            <label class="block text-[10px] font-bold text-orange-800 mb-1">Configuração de
+                                Reboque</label>
+                            <select id="select-tow-config"
+                                class="w-full p-1 border rounded text-xs mb-1 font-bold text-gray-700">
+                                <option value="">Selecione...</option>
+                                <option value="LONG_TOW">Reboque Longo</option>
+                                <option value="NO_TOW">Sem Reboque</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] font-bold text-orange-800 mb-1">Comprimento do Cabo
+                                (m)</label>
+                            <input type="number" id="inp-tow-length"
+                                class="w-full p-1 border rounded text-sm text-center font-bold text-gray-800"
+                                placeholder="0">
+                        </div>
+                    </div>
+
+                    <!-- NOVO: Comunicações -->
+                    <div class="mt-4 bg-green-50 p-3 rounded border border-green-100">
+                        <label
+                            class="block text-[10px] font-bold text-green-800 mb-2 uppercase border-b border-green-200 pb-1">Comunicações</label>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-[9px] text-green-700 mb-1">Estação Costeira</label>
+                                <select id="select-comm-station"
+                                    class="w-full p-1 border rounded text-xs bg-white text-gray-700">
+                                    <option value="">Selecione...</option>
+                                    <option value="Rio Rádio (PPR)">Rio Rádio (PPR)</option>
+                                    <option value="Santos Rádio (PPS)">Santos Rádio (PPS)</option>
+                                    <option value="Vitória Rádio (PPV)">Vitória Rádio (PPV)</option>
+                                    <option value="Salvador Rádio (PPA)">Salvador Rádio (PPA)</option>
+                                    <option value="Recife Rádio (PPO)">Recife Rádio (PPO)</option>
+                                    <option value="Belém Rádio (PPL)">Belém Rádio (PPL)</option>
+                                    <option value="Rio Grande Rádio (PPQ)">Rio Grande Rádio (PPQ)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[9px] text-green-700 mb-1">Canal de Trabalho</label>
+                                <select id="select-comm-channel"
+                                    class="w-full p-1 border rounded text-xs bg-white text-gray-700">
+                                    <option value="">Selecione...</option>
+                                    <option value="16">16 (Emergência/Chamada)</option>
+                                    <option value="11">11 (VTS)</option>
+                                    <option value="12">12 (Porto)</option>
+                                    <option value="14">14 (Operações)</option>
+                                    <option value="68">68 (Manobra)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[9px] text-green-700 mb-1">Contatos da Empresa</label>
+                                <select id="select-company-contacts"
+                                    class="w-full p-1 border rounded text-xs bg-white text-gray-700">
+                                    <option value="">Carregando...</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -401,6 +463,34 @@
                                         <input type="file" id="inp-file-tide-arr" accept="image/*,application/pdf"
                                             class="w-full text-[10px] text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                                     </div>
+                                </div>
+                            </div>
+
+                            <!-- 6. RISCOS (NOVO) -->
+                            <div class="bg-red-50 p-3 rounded border border-red-100 mt-2">
+                                <label class="block text-[10px] font-bold text-red-400 mb-2 uppercase">Gestão de
+                                    Riscos</label>
+                                <div class="grid grid-cols-2 gap-2 text-[10px] text-gray-600">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="checkbox" id="chk-risk-fishing"
+                                            class="rounded text-red-500 focus:ring-red-500">
+                                        <span>Tráfego Pesca</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="checkbox" id="chk-risk-military"
+                                            class="rounded text-red-500 focus:ring-red-500">
+                                        <span>Área Militar</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="checkbox" id="chk-risk-visibility"
+                                            class="rounded text-red-500 focus:ring-red-500">
+                                        <span>Visibilidade Restrita</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="checkbox" id="chk-risk-traffic"
+                                            class="rounded text-red-500 focus:ring-red-500">
+                                        <span>Tráfego Entrada/Saída</span>
+                                    </label>
                                 </div>
                             </div>
 

@@ -66,6 +66,8 @@ const App = {
         this.populateSheltersDropdown();
         this.populateTidePorts(); // New
         this.populateTideTables(); // New (Dropdowns)
+        this.populateCompanyContacts(); // New (API)
+        this.bindVoyagePlanInputs(); // New (Bindings)
 
         // CHECK MODE: MONITOR (Web/Repeater)
         // SPRINT 4: Check Session Role OR URL Param
@@ -864,6 +866,70 @@ const App = {
 
         handleSelection('select-tide-dep', 'dep');
         handleSelection('select-tide-arr', 'arr');
+    },
+
+    populateCompanyContacts: function () {
+        const select = document.getElementById('select-company-contacts');
+        if (!select) return;
+
+        fetch('api/contacts')
+            .then(r => r.json())
+            .then(contacts => {
+                if (contacts.error) {
+                    console.error("App: Error fetching contacts", contacts.error);
+                    return;
+                }
+                const options = `<option value="">Selecione...</option>` +
+                    contacts.map(c => `<option value="${c.name} - ${c.phone}">${c.name} (${c.role})</option>`).join('');
+                select.innerHTML = options;
+            })
+            .catch(e => console.error("App: API Contacts Error", e));
+
+        // Bind selection
+        select.addEventListener('change', (e) => {
+            if (!State.appraisal.communications) State.appraisal.communications = {};
+            State.appraisal.communications.companyContact = e.target.value;
+        });
+    },
+
+    bindVoyagePlanInputs: function () {
+        // Init State structures if missing
+        if (!State.appraisal.towing) State.appraisal.towing = {};
+        if (!State.appraisal.communications) State.appraisal.communications = {};
+        if (!State.appraisal.risks) State.appraisal.risks = {};
+
+        // Helper to bind input to state path
+        const bind = (id, pathObj, key, isCheckbox = false) => {
+            const el = document.getElementById(id);
+            if (!el) return;
+
+            // Restore value from State
+            if (pathObj[key] !== undefined) {
+                if (isCheckbox) el.checked = pathObj[key];
+                else el.value = pathObj[key];
+            }
+
+            // Listen for changes
+            el.addEventListener('change', (e) => {
+                pathObj[key] = isCheckbox ? e.target.checked : e.target.value;
+                console.log(`App: Updated ${key} ->`, pathObj[key]);
+            });
+        };
+
+        // Towing
+        bind('select-tow-config', State.appraisal.towing, 'config');
+        bind('inp-tow-length', State.appraisal.towing, 'length');
+
+        // Communications
+        bind('select-comm-station', State.appraisal.communications, 'station');
+        bind('select-comm-channel', State.appraisal.communications, 'channel');
+        bind('select-company-contacts', State.appraisal.communications, 'companyContact');
+
+        // Risks
+        bind('chk-risk-fishing', State.appraisal.risks, 'fishing', true);
+        bind('chk-risk-military', State.appraisal.risks, 'military', true);
+        bind('chk-risk-visibility', State.appraisal.risks, 'visibility', true);
+        bind('chk-risk-traffic', State.appraisal.risks, 'traffic', true);
     },
 
     populatePortDropdowns: function () {

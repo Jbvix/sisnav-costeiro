@@ -115,6 +115,33 @@ def list_tide_files():
         logger.error(f"Error listing tide files: {e}")
         return jsonify({'error': str(e)}), 500
 
+@app.route('/api/contacts', methods=['GET'])
+def get_contacts():
+    try:
+        contacts_path = os.path.join(BASE_DIR, 'library', 'CONTACTS.txt')
+        if not os.path.exists(contacts_path):
+             return jsonify([])
+        
+        contacts = []
+        with open(contacts_path, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+            # Skip header if present (assuming first line is header if it starts with 'NAME')
+            start_idx = 1 if lines and 'NAME' in lines[0].upper() else 0
+            
+            for line in lines[start_idx:]:
+                parts = line.strip().split('\t')
+                if len(parts) >= 2: # At least Name and Phone
+                    contacts.append({
+                        'name': parts[0].strip(),
+                        'phone': parts[1].strip(),
+                        'email': parts[2].strip() if len(parts) > 2 else '',
+                        'role': parts[3].strip() if len(parts) > 3 else ''
+                    })
+        return jsonify(contacts)
+    except Exception as e:
+        logger.error(f"Error reading contacts: {e}")
+        return jsonify({'error': str(e)}), 500
+
 # File-Based Persistence
 # Using /tmp ensures write permissions on Linux/cPanel environments
 import tempfile
