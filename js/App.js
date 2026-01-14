@@ -22,7 +22,6 @@ import TideLocator from './services/TideLocator.js';
 import AuthService from './services/AuthService.js'; // SPRINT 4
 import HelpService from './services/HelpService.js'; // SPRINT 6
 import AutomatedPlanningService from './services/AutomatedPlanningService.js'; // AUTOMATION
-import CHMService from './services/CHMService.js'; // NOVO
 
 const App = {
     init: function () {
@@ -30,7 +29,6 @@ const App = {
 
         // Init Help (Sprint 6)
         HelpService.init();
-        CHMService.init(); // NOVO: Listeners for CHM Button
 
         window.TideCSVService = TideCSVService;
         window.TideJSONService = tideJSONService; // Expose new service

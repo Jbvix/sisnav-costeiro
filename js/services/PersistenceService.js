@@ -194,9 +194,8 @@ const PersistenceService = {
         }
 
         // Appraisal Text fields
-        this.bindInputToState('txt-meteo-content', 'appraisal.meteoText');
-        this.bindInputToState('txt-mau-tempo-content', 'appraisal.mauTempoText'); // NOVO
-        this.bindInputToState('txt-navarea-content', 'appraisal.navareaText');
+        setVal('txt-meteo-content', State.appraisal.meteoText);
+        setVal('txt-navarea-content', State.appraisal.navareaText);
 
 
         // Branch

@@ -868,7 +868,7 @@ const ReportService = {
             // 7.1 CHECKLIST (REMOVED AS PER USER REQUEST)
             // currentY = renderMachineryChecklist(doc, currentY, state);
 
-            // 8. ANEXOS (Meteo e Navarea e Mau Tempo)
+            // 8. ANEXOS (Meteo e Navarea)
             if (state.appraisal.meteoText) {
                 doc.addPage();
                 addSectionTitle(doc, "ANEXO I - METEOMARINHA", 20);
@@ -879,24 +879,9 @@ const ReportService = {
                 doc.text(splitText, 15, 30);
             }
 
-            if (state.appraisal.mauTempoText) { // NOVO
-                doc.addPage();
-                addSectionTitle(doc, "ANEXO II - AVISOS DE MAU TEMPO", 20);
-                doc.setFontSize(8);
-                doc.setFont("courier", "bold");
-                doc.setTextColor(200, 0, 0); // Red for emphasis
-
-                const splitText = doc.splitTextToSize(state.appraisal.mauTempoText, 180);
-                doc.text(splitText, 15, 30);
-
-                doc.setTextColor(0); // Reset
-                doc.setFont("courier", "normal");
-            }
-
             if (state.appraisal.navareaText) {
-                const title = state.appraisal.mauTempoText ? "ANEXO III - NAVAREA V (AVISOS RÁDIO)" : "ANEXO II - NAVAREA V";
                 doc.addPage();
-                addSectionTitle(doc, title, 20);
+                addSectionTitle(doc, "ANEXO II - NAVAREA V", 20);
                 doc.setFontSize(8);
                 doc.setFont("courier", "normal");
 
