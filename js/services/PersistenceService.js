@@ -193,6 +193,12 @@ const PersistenceService = {
             setVal('inp-draft-tow-fwd', prof.draft.towFwd);
         }
 
+        // Appraisal Text fields
+        this.bindInputToState('txt-meteo-content', 'appraisal.meteoText');
+        this.bindInputToState('txt-mau-tempo-content', 'appraisal.mauTempoText'); // NOVO
+        this.bindInputToState('txt-navarea-content', 'appraisal.navareaText');
+
+
         // Branch
         setVal('inp-ship-branch', prof.branch);
 

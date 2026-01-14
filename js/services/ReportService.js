@@ -868,27 +868,40 @@ const ReportService = {
             // 7.1 CHECKLIST (REMOVED AS PER USER REQUEST)
             // currentY = renderMachineryChecklist(doc, currentY, state);
 
-            // 8. ANEXOS (Meteo e Navarea)
+            // 8. ANEXOS (Meteo e Navarea e Mau Tempo)
             if (state.appraisal.meteoText) {
-                doc.addPage('a4', 'l');
-                currentY = addSectionTitle(doc, "ANEXO: PREVISÃO METEOMARINHA", 20);
-                const meteoRows = parseMeteoText(state.appraisal.meteoText);
-                if (meteoRows.length > 0) {
-                    const tableBody = meteoRows.map(row => [row.group, `${row.zone_id}\n${row.zone_name}`, row.wx_short, row.wind_short, row.sea_short, row.vis_short]);
-                    doc.autoTable({ startY: currentY, head: [['Grupo', 'Área', 'Tempo (Wx)', 'Vento (Bft)', 'Ondas (m)', 'Visib.']], body: tableBody, theme: 'grid', styles: { fontSize: 8 }, headStyles: { fillColor: [11, 61, 145] } });
-                } else {
-                    doc.autoTable({ startY: currentY, body: [[state.appraisal.meteoText]], theme: 'plain', styles: { font: 'courier', fontSize: 8 } });
-                }
+                doc.addPage();
+                addSectionTitle(doc, "ANEXO I - METEOMARINHA", 20);
+                doc.setFontSize(8);
+                doc.setFont("courier", "normal"); // Monospaced for preserved formatting
+
+                const splitText = doc.splitTextToSize(state.appraisal.meteoText, 180);
+                doc.text(splitText, 15, 30);
             }
+
+            if (state.appraisal.mauTempoText) { // NOVO
+                doc.addPage();
+                addSectionTitle(doc, "ANEXO II - AVISOS DE MAU TEMPO", 20);
+                doc.setFontSize(8);
+                doc.setFont("courier", "bold");
+                doc.setTextColor(200, 0, 0); // Red for emphasis
+
+                const splitText = doc.splitTextToSize(state.appraisal.mauTempoText, 180);
+                doc.text(splitText, 15, 30);
+
+                doc.setTextColor(0); // Reset
+                doc.setFont("courier", "normal");
+            }
+
             if (state.appraisal.navareaText) {
-                doc.addPage('a4', 'l');
-                currentY = addSectionTitle(doc, "ANEXO: AVISOS NAVAREA V", 20);
-                const navRows = parseNavareaText(state.appraisal.navareaText);
-                if (navRows.length > 0) {
-                    doc.autoTable({ startY: currentY, head: [['Aviso', 'Região', 'Categoria', 'Tipo', 'Meios/Alvos', 'Período', 'Coord']], body: navRows, theme: 'grid', styles: { fontSize: 6 }, headStyles: { fillColor: [192, 57, 43] }, columnStyles: { 4: { cellWidth: 80 } } });
-                } else {
-                    doc.autoTable({ startY: currentY, body: [[state.appraisal.navareaText]], theme: 'plain', styles: { font: 'courier', fontSize: 8 } });
-                }
+                const title = state.appraisal.mauTempoText ? "ANEXO III - NAVAREA V (AVISOS RÁDIO)" : "ANEXO II - NAVAREA V";
+                doc.addPage();
+                addSectionTitle(doc, title, 20);
+                doc.setFontSize(8);
+                doc.setFont("courier", "normal");
+
+                const splitText = doc.splitTextToSize(state.appraisal.navareaText, 180);
+                doc.text(splitText, 15, 30);
             }
 
             // ASSINATURAS FINAL

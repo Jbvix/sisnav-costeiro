@@ -14,7 +14,8 @@ import time
 try:
     import rebuild_csv
     import update_weather_batch
-    import build_route_index # New
+    import build_route_index
+    import chm_manager # New Scraper Module
 except ImportError as e:
     print(f"Warning: Update scripts not found: {e}")
 
@@ -66,6 +67,16 @@ def update_data():
             yield f"data: {json.dumps({'status': f'Erro: {str(e)}', 'progress': 0, 'error': True})}\n\n"
 
     return Response(generate(), mimetype='text/event-stream')
+
+@app.route('/api/chm/fetch', methods=['POST'])
+def fetch_chm_data():
+    try:
+        # Check if requested to use chm_manager
+        result = chm_manager.run_scrape()
+        return jsonify(result)
+    except Exception as e:
+        logger.error(f"CHM Scrape Error: {e}")
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 @app.route('/api/upload-gpx', methods=['POST'])
 def upload_gpx():
