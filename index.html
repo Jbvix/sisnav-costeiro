@@ -409,6 +409,32 @@
                                 </div>
                             </div>
 
+                            <!-- 2.1 AVISOS DE MAU TEMPO (NOVO) -->
+                            <div class="bg-gray-50 p-3 rounded border border-gray-200 mt-2">
+                                <div class="flex justify-between items-center mb-1">
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase">Avisos de Mau
+                                        Tempo</label>
+                                    <div class="flex gap-1">
+                                        <a href="https://www.marinha.mil.br/chm/dados-do-smm-avisos-de-mau-tempo/avisos-de-mau-tempo"
+                                            target="_blank"
+                                            class="px-2 py-0.5 bg-blue-100 text-blue-600 text-[9px] font-bold rounded hover:bg-blue-200 transition-colors flex items-center gap-1">
+                                            <i class="fas fa-external-link-alt"></i> Fonte Oficial
+                                        </a>
+                                        <button
+                                            onclick="navigator.clipboard.readText().then(text => document.getElementById('txt-bad-weather-content').value = text).catch(err => alert('Permissão de colar negada ou não suportada.'))"
+                                            class="px-2 py-0.5 bg-gray-200 text-gray-600 text-[9px] font-bold rounded hover:bg-gray-300 transition-colors flex items-center gap-1"
+                                            title="Colar da Área de Transferência">
+                                            <i class="fas fa-paste"></i> Colar
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="space-y-2">
+                                    <textarea id="txt-bad-weather-content" rows="6"
+                                        class="w-full p-2 border rounded text-[10px] focus:border-blue-500 font-mono bg-white shadow-inner"
+                                        placeholder="COLE AQUI O TEXTO DOS AVISOS DE MAU TEMPO..."></textarea>
+                                </div>
+                            </div>
+
                             <!-- 3. NAVAREA V -->
                             <div class="bg-gray-50 p-3 rounded border border-gray-200">
                                 <div class="flex justify-between items-center mb-1">
@@ -1043,7 +1069,7 @@
     </div>
 
     <!-- SCRIPT PRINCIPAL (MÓDULO) - Carregado após as dependências -->
-    <script type="module" src="js/App.js?v=25"></script>
+    <script type="module" src="js/App.js?v=26"></script>
 </body>
 
 </html>

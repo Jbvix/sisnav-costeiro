@@ -47,6 +47,7 @@ const State = {
         selectedCharts: [], // Array de strings (ex: "23100 - BAÍA DE SEPETIBA")
         meteoLink: "",
         navareaLink: "",
+        badWeatherText: "", // New Text Field
         files: {
             meteo: null,    // Nome do arquivo
             navarea: null,

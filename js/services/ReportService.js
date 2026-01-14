@@ -879,6 +879,16 @@ const ReportService = {
                 doc.text(splitText, 15, 30);
             }
 
+            if (state.appraisal.badWeatherText) {
+                doc.addPage();
+                addSectionTitle(doc, "ANEXO 1A - AVISOS DE MAU TEMPO", 20);
+                doc.setFontSize(8);
+                doc.setFont("courier", "normal");
+
+                const splitText = doc.splitTextToSize(state.appraisal.badWeatherText, 180);
+                doc.text(splitText, 15, 30);
+            }
+
             if (state.appraisal.navareaText) {
                 doc.addPage();
                 addSectionTitle(doc, "ANEXO II - NAVAREA V", 20);

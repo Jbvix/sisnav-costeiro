@@ -1573,6 +1573,7 @@ const App = {
             }
         }
         bindLink('txt-meteo-content', 'meteoText');
+        bindLink('txt-bad-weather-content', 'badWeatherText'); // NEW
         bindLink('txt-navarea-content', 'navareaText');
 
         // Listeners Praça de Máquinas (Engine)

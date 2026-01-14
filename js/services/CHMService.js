@@ -54,14 +54,14 @@ const CHMService = {
         if (txtMeteo && data.meteo) {
             txtMeteo.value = data.meteo;
             // Trigger change event if needed for state binding
-            txtMeteo.dispatchEvent(new Event('change'));
+            txtMeteo.dispatchEvent(new Event('input'));
         }
 
         // 2. Mau Tempo (Direct Fill)
-        const txtMauTempo = document.getElementById('txt-mau-tempo-content');
+        const txtMauTempo = document.getElementById('txt-bad-weather-content');
         if (txtMauTempo && data.mau_tempo) {
             txtMauTempo.value = data.mau_tempo;
-            txtMauTempo.dispatchEvent(new Event('change'));
+            txtMauTempo.dispatchEvent(new Event('input')); // Changed to 'input' to trigger bindLink
         }
 
         // 3. Navarea (Smart Combination)
@@ -69,7 +69,7 @@ const CHMService = {
         if (txtNavarea && data.navarea) {
             const combinedText = this.combineNavareaText(data.navarea);
             txtNavarea.value = combinedText;
-            txtNavarea.dispatchEvent(new Event('change'));
+            txtNavarea.dispatchEvent(new Event('input'));
         }
     },
 
