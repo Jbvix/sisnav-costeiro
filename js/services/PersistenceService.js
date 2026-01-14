@@ -193,9 +193,9 @@ const PersistenceService = {
             setVal('inp-draft-tow-fwd', prof.draft.towFwd);
         }
 
-        // Appraisal Text fields
-        setVal('txt-meteo-content', State.appraisal.meteoText);
-        setVal('txt-navarea-content', State.appraisal.navareaText);
+        // Appraisal Text fields (REMOVIDOS DA UI)
+        // setVal('txt-meteo-content', State.appraisal.meteoText);
+        // setVal('txt-navarea-content', State.appraisal.navareaText);
 
 
         // Branch
