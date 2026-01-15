@@ -19,6 +19,9 @@ except Exception as e:
     print(f"Warning: Update scripts not found or failed to load: {e}")
 
 app = Flask(__name__)
+# FORÇAR DEBUG EM PRODUÇÃO (TEMPORÁRIO PARA DIAGNÓSTICO)
+app.config['DEBUG'] = True
+app.config['PROPAGATE_EXCEPTIONS'] = True
 
 # Enable CORS safely
 if CORS:
@@ -28,6 +31,10 @@ else:
 
 # Base Directory for absolute paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(BASE_DIR, 'data')
+if not os.path.exists(DATA_DIR):
+    os.makedirs(DATA_DIR) # Ensure data dir exists (requires 755 permission on parent)
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -44,26 +51,32 @@ def serve_static(path):
 @app.route('/api/update-data', methods=['POST'])
 def update_data():
     def generate():
-        yield f"data: {json.dumps({'status': 'Iniciando atualização...', 'progress': 5})}\n\n"
+        yield f"data: {json.dumps({'status': 'Iniciando atualização...', 'progress': 5})}\\n\\n"
         
         try:
             # 1. Tides
-            yield f"data: {json.dumps({'status': 'Baixando Marés (Base Nacional)...', 'progress': 20})}\n\n"
+            yield f"data: {json.dumps({'status': 'Baixando Marés (Base Nacional)...', 'progress': 20})}\\n\\n"
             # Redirect stdout to capture logs? Or just run blind?
             # ideally modify rebuild_csv to yield progress, but for now blocking call
-            rebuild_csv.run() 
-            yield f"data: {json.dumps({'status': 'Marés Atualizadas!', 'progress': 50})}\n\n"
+            if rebuild_csv and rebuild_csv.TideDataCollector:
+                rebuild_csv.run() 
+                yield f"data: {json.dumps({'status': 'Marés Atualizadas!', 'progress': 50})}\\n\\n"
+            else:
+                 yield f"data: {json.dumps({'status': 'Ignorando Marés (Módulo ausente)', 'progress': 50})}\\n\\n"
 
             # 2. Weather
-            yield f"data: {json.dumps({'status': 'Baixando Meteorologia (18 Portos)...', 'progress': 60})}\n\n"
-            update_weather_batch.run()
-            yield f"data: {json.dumps({'status': 'Meteorologia Atualizada!', 'progress': 90})}\n\n"
+            yield f"data: {json.dumps({'status': 'Baixando Meteorologia (18 Portos)...', 'progress': 60})}\\n\\n"
+            if update_weather_batch and update_weather_batch.WeatherCollector:
+                update_weather_batch.run()
+                yield f"data: {json.dumps({'status': 'Meteorologia Atualizada!', 'progress': 90})}\\n\\n"
+            else:
+                 yield f"data: {json.dumps({'status': 'Ignorando Clima (Módulo ausente)', 'progress': 90})}\\n\\n"
 
-            yield f"data: {json.dumps({'status': 'Conuído!', 'progress': 100})}\n\n"
+            yield f"data: {json.dumps({'status': 'Concluído!', 'progress': 100})}\\n\\n"
             
         except Exception as e:
             logger.error(f"Update Error: {e}")
-            yield f"data: {json.dumps({'status': f'Erro: {str(e)}', 'progress': 0, 'error': True})}\n\n"
+            yield f"data: {json.dumps({'status': f'Erro: {str(e)}', 'progress': 0, 'error': True})}\\n\\n"
 
     return Response(generate(), mimetype='text/event-stream')
 
@@ -90,7 +103,8 @@ def upload_gpx():
             
             # Capture output or just run?
             # We can mock the print or just trust it.
-            build_route_index.build_index(gpx_dir, output_file)
+            if build_route_index:
+                build_route_index.build_index(gpx_dir, output_file)
             
             return jsonify({'status': 'OK', 'message': f'Rota {file.filename} adicionada e índice atualizado!'})
         except Exception as e:
@@ -125,7 +139,7 @@ def get_contacts():
             start_idx = 1 if lines and 'NAME' in lines[0].upper() else 0
             
             for line in lines[start_idx:]:
-                parts = line.strip().split('\t')
+                parts = line.strip().split('\\t')
                 if len(parts) >= 2: # At least Name and Phone
                     contacts.append({
                         'name': parts[0].strip(),
@@ -139,9 +153,8 @@ def get_contacts():
         return jsonify({'error': str(e)}), 500
 
 # File-Based Persistence
-# Using /tmp ensures write permissions on Linux/cPanel environments
-import tempfile
-FLEET_FILE = os.path.join(tempfile.gettempdir(), 'sisnav_fleet_data.json')
+# CHANGE: Use local 'data' folder instead of tempfile to avoid permission issues
+FLEET_FILE = os.path.join(DATA_DIR, 'sisnav_fleet_data.json')
 
 def load_fleet_data():
     try:
@@ -149,7 +162,7 @@ def load_fleet_data():
             with open(FLEET_FILE, 'r') as f:
                 return json.load(f)
     except Exception as e:
-        sys.stderr.write(f"Error loading: {e}\n")
+        sys.stderr.write(f"Error loading: {e}\\n")
     return {}
 
 def save_fleet_data(data):
@@ -159,7 +172,7 @@ def save_fleet_data(data):
         return True, None
     except Exception as e:
         err_msg = f"Save Error: {str(e)}"
-        sys.stderr.write(err_msg + "\n")
+        sys.stderr.write(err_msg + "\\n")
         return False, err_msg
 
 @app.route('/api/fleet', methods=['GET'])
@@ -249,7 +262,8 @@ def handle_position():
 # INVITES SYSTEM (Backend Persistence)
 # -------------------------------------------------------------------
 
-INVITES_FILE = os.path.join(tempfile.gettempdir(), 'sisnav_invites_db.json')
+# CHANGE: Use local 'data' folder
+INVITES_FILE = os.path.join(DATA_DIR, 'sisnav_invites_db.json')
 
 def load_invites():
     try:
