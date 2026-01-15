@@ -8,8 +8,9 @@ import os
 try:
     from scraping_tide import TideDataCollector
 except ImportError:
-    print("ERRO: O arquivo scraping_tide.py não foi encontrado no diretório atual.")
-    sys.exit(1)
+    print("ERRO: O arquivo scraping_tide.py não foi encontrado no diretório atual. O script rebuild_csv falhará ao rodar, mas o servidor permanecerá online.")
+    # sys.exit(1) REMOVED to avoid crashing the server on import
+    TideDataCollector = None
 
 # Configurar Logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
