@@ -15,8 +15,8 @@ try:
     import rebuild_csv
     import update_weather_batch
     import build_route_index
-except ImportError as e:
-    print(f"Warning: Update scripts not found: {e}")
+except Exception as e:
+    print(f"Warning: Update scripts not found or failed to load: {e}")
 
 app = Flask(__name__)
 
