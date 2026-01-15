@@ -2,7 +2,7 @@
  * Middleware de Proteção de Rota
  * Injetado no <head> de index.html
  */
-import AuthService from './services/AuthService.js?v=Sprint1';
+import AuthService from './services/AuthService.js?v=Hotfix4';
 
 // Init DB/Auth
 AuthService.init();

@@ -19,7 +19,7 @@ import { tideJSONService } from './services/TideJSONService.js'; // NEW
 import TideCSVService from './services/TideCSVService.js?v=7';
 import ReportService from './services/ReportService.js?v=7';
 import TideLocator from './services/TideLocator.js';
-import AuthService from './services/AuthService.js'; // SPRINT 4
+import AuthService from './services/AuthService.js?v=Hotfix4'; // SPRINT 4
 import HelpService from './services/HelpService.js'; // SPRINT 6
 import AutomatedPlanningService from './services/AutomatedPlanningService.js'; // AUTOMATION
 
