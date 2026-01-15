@@ -95,10 +95,6 @@ def upload_gpx():
             return jsonify({'status': 'OK', 'message': f'Rota {file.filename} adicionada e índice atualizado!'})
         except Exception as e:
             return jsonify({'error': str(e)}), 500
-            
-            return jsonify({'status': 'OK', 'message': f'Rota {file.filename} adicionada e índice atualizado!'})
-        except Exception as e:
-            return jsonify({'error': str(e)}), 500
 
 @app.route('/api/tide-files', methods=['GET'])
 def list_tide_files():
