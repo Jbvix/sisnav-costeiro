@@ -4,6 +4,9 @@ PassengerBaseURI "/"
 PassengerPython "/home/c62gtwye66po/virtualenv/sisnav_app/3.9/bin/python"
 # DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
 
+# FIX CRITICAL: Define HOME variable to prevent virtualenv crash
+SetEnv HOME /home/c62gtwye66po
+
 # Configuração para garantir que o Python assuma tudo
 Options +ExecCGI
 AddHandler cgi-script .py
