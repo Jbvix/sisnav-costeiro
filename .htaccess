@@ -1,7 +1,7 @@
 # DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION BEGIN
-PassengerAppRoot "/home/c62gtwye66po/public_html"
+PassengerAppRoot "/home/c62gtwye66po/sisnav_app"
 PassengerBaseURI "/"
-PassengerPython "/home/c62gtwye66po/virtualenv/public_html/3.9/bin/python"
+PassengerPython "/home/c62gtwye66po/virtualenv/sisnav_app/3.9/bin/python"
 # DO NOT REMOVE. CLOUDLINUX PASSENGER CONFIGURATION END
 
 # Configuração para garantir que o Python assuma tudo
