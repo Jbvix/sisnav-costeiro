@@ -11,15 +11,30 @@ if project_home not in sys.path:
 # Importa a aplicação Flask do arquivo server.py
 try:
     from server import app as application
-except Exception as e:
+except Exception:
     import traceback
     error_msg = traceback.format_exc()
     
-    # Emergency App to show error
-    from flask import Flask
-    application = Flask(__name__)
-    
-    @application.route('/')
-    @application.route('/<path:path>')
-    def error_handler(path=None):
-        return f"<h1>CRITICAL STARTUP ERROR</h1><pre>{error_msg}</pre>", 500
+    def application(environ, start_response):
+        status = '500 Internal Server Error'
+        output = f"""
+        <html>
+        <head><title>Startup Error</title></head>
+        <body>
+            <h1>CRITICAL STARTUP ERROR</h1>
+            <h3>The Python application failed to load.</h3>
+            <pre>{error_msg}</pre>
+            <hr>
+            <p><strong>Debug Info:</strong></p>
+            <ul>
+                <li>CWD: {os.getcwd()}</li>
+                <li>Python Version: {sys.version}</li>
+            </ul>
+        </body>
+        </html>
+        """.encode('utf-8')
+        
+        response_headers = [('Content-type', 'text/html'),
+                            ('Content-Length', str(len(output)))]
+        start_response(status, response_headers)
+        return [output]
