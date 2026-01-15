@@ -19,9 +19,10 @@ except Exception as e:
     print(f"Warning: Update scripts not found or failed to load: {e}")
 
 app = Flask(__name__)
-# FORÇAR DEBUG EM PRODUÇÃO (TEMPORÁRIO PARA DIAGNÓSTICO)
-app.config['DEBUG'] = True
-app.config['PROPAGATE_EXCEPTIONS'] = True
+app = Flask(__name__)
+# PRODUÇÃO: Debug desligado para segurança
+app.config['DEBUG'] = False
+app.config['PROPAGATE_EXCEPTIONS'] = False
 
 # Enable CORS safely
 if CORS:
