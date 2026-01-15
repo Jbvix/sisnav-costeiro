@@ -8,11 +8,4 @@ PassengerPython "/home/c62gtwye66po/virtualenv/public_html/3.9/bin/python"
 Options +ExecCGI
 AddHandler cgi-script .py
 
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    
-    # Se NÃO for arquivo real (imagem, css, js), manda pro Python
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteRule ^(.*)$ http://127.0.0.1:5000/$1 [P,L]
-</IfModule>
+
