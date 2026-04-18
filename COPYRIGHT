@@ -1,0 +1,34 @@
+SISNAV Costeiro — Declaração de Copyright e Autoria
+=====================================================
+
+Copyright (c) 2025 Jossian Brito
+Todos os direitos reservados. All rights reserved.
+
+Obra: SISNAV Costeiro — Sistema de Auxílio à Navegação
+Tipo: Software (Programa de Computador / Obra Literária)
+Versão inicial de publicação: Dezembro de 2025
+Versão atual: 3.1.0 (Janeiro de 2026)
+
+Descrição:
+  Sistema de planejamento de viagem para navegação costeira,
+  compatível com IMO A.893(21). Inclui módulos de appraisal,
+  planejamento de rota, monitoramento com GPS, coleta de dados
+  ambientais (marés e meteorologia) e exportação de documentação
+  em conformidade com requisitos de segurança marítima.
+
+Tecnologias originais:
+  - Algoritmo de "Tide Snapping" com threshold geoespacial de 30 NM
+  - Interpolação cosseno de alturas de maré entre eventos discretos
+  - Pipeline de coleta e processamento de dados de marés brasileiras
+  - Sistema de planejamento visual com snapping em cartografia náutica
+  - Arquitetura Single Page Application para uso offline embarcado
+
+Proteção legal:
+  Lei nº 9.610/98 (Brasil) — Direitos Autorais
+  Convenção de Berna — Artigo 2 (Proteção Automática)
+  Acordo TRIPS — Artigo 10 (Programas de Computador)
+
+Contato do autor para licenciamento:
+  Consulte o arquivo MANUAL_DO_USUARIO.md ou README.md
+
+Data desta declaração: Janeiro de 2026
