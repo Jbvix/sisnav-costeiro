@@ -1,0 +1,79 @@
+SISNAV COSTEIRO — LICENÇA DE SOFTWARE PROPRIETÁRIO
+Copyright (c) 2025 Jossian Brito. Todos os direitos reservados.
+
+═══════════════════════════════════════════════════════════════════════════════
+
+1. PROPRIEDADE INTELECTUAL
+
+   Este software, incluindo todo o seu código-fonte, documentação, algoritmos,
+   dados, arquivos de configuração e demais artefatos contidos neste repositório
+   ("Software"), é obra original de Jossian Brito ("Autor") e encontra-se
+   protegido pelas seguintes legislações e tratados:
+
+   - Lei nº 9.610/98 — Lei de Direitos Autorais do Brasil
+   - Lei nº 9.279/96 — Lei de Propriedade Industrial do Brasil
+   - Convenção de Berna para a Proteção de Obras Literárias e Artísticas
+   - Acordo sobre Aspectos dos Direitos de Propriedade Intelectual (TRIPS)
+   - Legislação aplicável de cada país signatário dos tratados acima
+
+2. RESTRIÇÕES DE USO
+
+   É EXPRESSAMENTE PROIBIDO, sem autorização prévia e por escrito do Autor:
+
+   a) Copiar, reproduzir, distribuir ou publicar o Software, no todo ou em parte;
+   b) Modificar, adaptar, traduzir ou criar obras derivadas do Software;
+   c) Incorporar o Software ou qualquer parte dele em outros produtos ou serviços;
+   d) Usar o Software para fins comerciais, incluindo prestação de serviços a
+      terceiros ou integração em produtos comercializados;
+   e) Descompilar, realizar engenharia reversa ou tentativa de extração do
+      código-fonte de qualquer componente compilado;
+   f) Sublicenciar, vender, alugar, emprestar ou transferir o Software ou
+      quaisquer direitos sobre ele a terceiros;
+   g) Remover, ocultar ou alterar avisos de copyright, marcas ou outras
+      identificações proprietárias presentes no Software.
+
+3. ACESSO RESTRITO
+
+   Este repositório é PRIVADO. O acesso ao código-fonte é concedido
+   exclusivamente a colaboradores autorizados pelo Autor, para fins de
+   desenvolvimento interno. O acesso não confere ao colaborador nenhum
+   direito de propriedade, licença ou cessão sobre o Software.
+
+4. USO OPERACIONAL INTERNO
+
+   O Software destina-se exclusivamente ao uso operacional interno da
+   organização autorizada pelo Autor. Qualquer uso fora deste escopo
+   requer licença específica por escrito.
+
+5. AUSÊNCIA DE GARANTIAS
+
+   O SOFTWARE É FORNECIDO "NO ESTADO EM QUE SE ENCONTRA" ("AS IS"),
+   SEM GARANTIAS DE QUALQUER NATUREZA, EXPRESSAS OU IMPLÍCITAS.
+   O AUTOR NÃO SE RESPONSABILIZA POR DANOS DIRETOS, INDIRETOS,
+   INCIDENTAIS OU CONSEQUENCIAIS DECORRENTES DO USO DO SOFTWARE.
+
+6. APLICAÇÃO E VIOLAÇÕES
+
+   Qualquer violação dos termos desta licença:
+
+   a) Acarretará rescisão imediata e automática de qualquer direito de
+      acesso concedido;
+   b) Sujeitará o infrator às penalidades cíveis e criminais previstas
+      na Lei nº 9.610/98, incluindo indenização por danos materiais e morais,
+      apreensão de exemplares ilícitos e cessação da atividade infrativa;
+   c) Poderá resultar em medidas liminares, sem necessidade de notificação
+      prévia, para cessar uso não autorizado.
+
+7. CONTATO E LICENCIAMENTO
+
+   Para solicitação de licença comercial, parceria ou uso autorizado:
+
+   Autor:    Jossian Brito
+   Projeto:  SISNAV Costeiro — Sistema de Auxílio à Navegação
+   Versão:   3.0.0 Modular
+   Criado:   Dezembro de 2025
+
+   Consulte o arquivo MANUAL_DO_USUARIO.md para informações de contato.
+
+═══════════════════════════════════════════════════════════════════════════════
+© 2025 Jossian Brito. Todos os direitos reservados.
