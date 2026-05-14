@@ -1267,6 +1267,11 @@ const App = {
 
         if (!depId || !arrId) {
             clearTimeout(this._chmFillTimer);
+            const infoClear = document.getElementById('comm-route-stations-info');
+            if (infoClear) {
+                infoClear.classList.add('hidden');
+                infoClear.innerHTML = '';
+            }
             fillOptions(STATION_ORDER_NORTH_SOUTH);
             if (prev && [...selComm.options].some((o) => o.value === prev)) {
                 selComm.value = prev;
@@ -1277,6 +1282,24 @@ const App = {
         const along = getStationsAlongRoute(depId, arrId, PortDatabase);
         const list = along && along.length ? along : STATION_ORDER_NORTH_SOUTH;
         fillOptions(list);
+
+        const infoEl = document.getElementById('comm-route-stations-info');
+        if (infoEl) {
+            const esc = (s) => String(s)
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/</g, '&lt;');
+            const chips = list.map((v) => {
+                const m = String(v).match(/\(([^)]+)\)/);
+                const code = m ? m[1] : v;
+                return '<span class="inline-block mr-1 mb-1 px-1.5 py-0.5 bg-white border border-green-400 rounded font-mono text-[9px] font-bold" title="' + esc(v) + '">' + esc(code) + '</span>';
+            }).join('');
+            infoEl.classList.remove('hidden');
+            infoEl.innerHTML =
+                '<span class="block font-bold text-green-800 mb-1">Estações no trecho (N → S) — ' + list.length + '</span>' +
+                '<span class="flex flex-wrap items-center gap-0.5">' + chips + '</span>' +
+                '<span class="block mt-1 text-[8px] text-green-700">Menu acima: estação principal no relatório. Use as etiquetas para todas as áreas da derrota.</span>';
+        }
 
         if (!State.appraisal.communications) State.appraisal.communications = {};
 
