@@ -1,4 +1,4 @@
-import NavMath from '../core/NavMath.js?v=8';
+import NavMath from '../core/NavMath.js?v=9';
 import TideCSVService from './TideCSVService.js';
 import ChartService from './ChartService.js';
 
@@ -811,7 +811,7 @@ const ReportService = {
 
         let NavMath = window.NavMath;
         if (!NavMath) {
-            try { const module = await import('../core/NavMath.js'); NavMath = module.default; }
+            try { const module = await import('../core/NavMath.js?v=9'); NavMath = module.default; }
             catch (e) { console.error("ReportService: Failed to load NavMath", e); }
         }
 

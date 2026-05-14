@@ -97,4 +97,11 @@ const NavMath = {
     }
 };
 
+/** Uma única instância global evita módulos duplicados em cache (v com vs sem query). */
+try {
+    if (typeof globalThis !== 'undefined') {
+        globalThis.NavMath = NavMath;
+    }
+} catch (e) { /* ignore */ }
+
 export default NavMath;

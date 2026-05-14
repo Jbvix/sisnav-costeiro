@@ -7,7 +7,7 @@
  */
 
 import State from './core/State.js?v=7';
-import NavMath from './core/NavMath.js?v=8';
+import NavMath from './core/NavMath.js?v=9';
 import MapService from './services/MapService.js?v=7';
 import WeatherAPI from './services/WeatherAPI.js?v=7';
 import GPXParser from './utils/GPXParser.js?v=7';
@@ -17,11 +17,11 @@ import PersistenceService from './services/PersistenceService.js?v=1';
 import UpdateService from './services/UpdateService.js?v=1';
 import { tideJSONService } from './services/TideJSONService.js'; // NEW
 import TideCSVService from './services/TideCSVService.js?v=7';
-import ReportService from './services/ReportService.js?v=8';
+import ReportService from './services/ReportService.js?v=9';
 import TideLocator from './services/TideLocator.js';
 import AuthService from './services/AuthService.js?v=Hotfix4'; // SPRINT 4
 import HelpService from './services/HelpService.js'; // SPRINT 6
-import AutomatedPlanningService from './services/AutomatedPlanningService.js'; // AUTOMATION
+import AutomatedPlanningService from './services/AutomatedPlanningService.js?v=2'; // AUTOMATION
 import {
     getStationsAlongRoute,
     STATION_ORDER_NORTH_SOUTH,
@@ -59,6 +59,7 @@ const App = {
 
         if (NavMath && typeof NavMath.calcLeg === 'function') {
             console.log("App: Módulo NavMath OK.");
+            window.NavMath = NavMath;
         } else {
             console.error("App: ERRO CRÍTICO - NavMath falhou.", NavMath);
         }

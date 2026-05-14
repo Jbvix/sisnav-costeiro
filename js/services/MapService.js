@@ -12,7 +12,7 @@
  */
 
 import State from '../core/State.js';
-import NavMath from '../core/NavMath.js?v=8';
+import NavMath from '../core/NavMath.js?v=9';
 
 const MapService = {
 

@@ -10,7 +10,7 @@
  * Isola a lógica de apresentação da lógica de negócios.
  */
 
-import NavMath from '../core/NavMath.js?v=8';
+import NavMath from '../core/NavMath.js?v=9';
 import HelpService from '../services/HelpService.js';
 
 const UIManager = {
