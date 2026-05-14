@@ -27,6 +27,7 @@ import {
     STATION_ORDER_NORTH_SOUTH,
     stationForDepartureLat
 } from './services/CoastalRadioStations.js?v=1';
+import CHMService from './services/CHMService.js?v=1';
 
 const App = {
     init: function () {
@@ -34,6 +35,7 @@ const App = {
 
         // Init Help (Sprint 6)
         HelpService.init();
+        CHMService.init();
 
         window.TideCSVService = TideCSVService;
         window.TideJSONService = tideJSONService; // Expose new service
@@ -1264,6 +1266,7 @@ const App = {
         };
 
         if (!depId || !arrId) {
+            clearTimeout(this._chmFillTimer);
             fillOptions(STATION_ORDER_NORTH_SOUTH);
             if (prev && [...selComm.options].some((o) => o.value === prev)) {
                 selComm.value = prev;
@@ -1284,6 +1287,17 @@ const App = {
         selComm.value = pick;
         State.appraisal.communications.station = pick;
         selComm.dispatchEvent(new Event('change', { bubbles: true }));
+
+        this.scheduleChmFill();
+    },
+
+    /** Após origem+destino, busca CHM/Sealagom sem alerta (debounce). */
+    scheduleChmFill: function () {
+        clearTimeout(this._chmFillTimer);
+        if (!State.voyage || !State.voyage.depPort || !State.voyage.arrPort) return;
+        this._chmFillTimer = setTimeout(() => {
+            CHMService.fetchAndPopulate({ silent: true });
+        }, 1600);
     },
 
     // --- FARÓIS ---

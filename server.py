@@ -402,6 +402,37 @@ def validate_invite():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+
+# --- CHM / Sealagom (Meteo, Mau tempo, NAVAREA) ---
+try:
+    import sealagom_chm
+except ImportError:
+    sealagom_chm = None
+
+
+@app.route('/api/chm/fetch', methods=['POST'])
+def chm_fetch():
+    """
+    Corpo JSON opcional: { "depPort": "BR_SAL", "arrPort": "BR_RIG" }
+    Requer SEALAGOM_API_TOKEN no ambiente (cPanel → variáveis ou passenger_wsgi).
+    """
+    if not sealagom_chm:
+        return jsonify({'status': 'error', 'message': 'Módulo sealagom_chm não disponível.'}), 500
+
+    token = os.environ.get('SEALAGOM_API_TOKEN', '').strip()
+    body = request.get_json(silent=True) or {}
+    dep = body.get('depPort') or body.get('dep')
+    arr = body.get('arrPort') or body.get('arr')
+
+    try:
+        result = sealagom_chm.fetch_all(dep, arr, token)
+        code = 200 if result.get('status') == 'success' else 503
+        return jsonify(result), code
+    except Exception as e:
+        logger.exception("chm_fetch")
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+
 import socket
 
 def get_ip():
