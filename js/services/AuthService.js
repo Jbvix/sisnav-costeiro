@@ -6,7 +6,7 @@
  * Abstrai a lógica de verificação de tokens e senhas.
  */
 
-import DatabaseService from './DatabaseService.js?v=Hotfix3';
+import DatabaseService from './DatabaseService.js?v=Hotfix4';
 
 const AuthService = {
 

@@ -1,412 +1,488 @@
 station_id,station_name,date,time,height,type
-BR_RIG,Rio Grande,27/12/2025,2:51,0.1,baixa-mar
-BR_RIG,Rio Grande,27/12/2025,7:49,0.3,baixa-mar
-BR_RIG,Rio Grande,27/12/2025,15:40,0.2,baixa-mar
-BR_RIG,Rio Grande,27/12/2025,19:48,0.3,baixa-mar
-BR_RIG,Rio Grande,28/12/2025,4:41,0.1,baixa-mar
-BR_RIG,Rio Grande,28/12/2025,8:40,0.3,baixa-mar
-BR_RIG,Rio Grande,28/12/2025,17:24,0.2,baixa-mar
-BR_RIG,Rio Grande,28/12/2025,20:58,0.3,baixa-mar
-BR_RIG,Rio Grande,29/12/2025,5:55,0.1,baixa-mar
-BR_RIG,Rio Grande,29/12/2025,10:11,0.3,baixa-mar
-BR_RIG,Rio Grande,29/12/2025,18:11,0.1,baixa-mar
-BR_RIG,Rio Grande,29/12/2025,22:51,0.3,baixa-mar
-BR_RIG,Rio Grande,30/12/2025,16:30,0.2,baixa-mar
-BR_RIG,Rio Grande,30/12/2025,19:49,0.3,baixa-mar
-BR_RIG,Rio Grande,31/12/2025,7:44,0.1,baixa-mar
-BR_RIG,Rio Grande,31/12/2025,11:48,0.3,baixa-mar
-BR_RIG,Rio Grande,31/12/2025,19:42,0.1,baixa-mar
-BR_RIG,Rio Grande,03/01/2026,0:47,0.3,baixa-mar
-BR_RIG,Rio Grande,03/01/2026,8:47,0.1,baixa-mar
-BR_RIG,Rio Grande,03/01/2026,12:52,0.3,baixa-mar
-BR_RIG,Rio Grande,03/01/2026,20:48,0.1,baixa-mar
-BR_RIG,Rio Grande,04/01/2026,1:53,0.3,baixa-mar
-BR_RIG,Rio Grande,04/01/2026,9:36,0.1,baixa-mar
-BR_RIG,Rio Grande,04/01/2026,13:38,0.3,baixa-mar
-BR_RIG,Rio Grande,04/01/2026,21:31,0.1,baixa-mar
-BR_PNG,Paranaguá,27/12/2025,2:34,0.4,baixa-mar
-BR_PNG,Paranaguá,27/12/2025,9:30,1.4,baixa-mar
-BR_PNG,Paranaguá,27/12/2025,15:23,0.6,baixa-mar
-BR_PNG,Paranaguá,27/12/2025,21:29,1.4,baixa-mar
-BR_PNG,Paranaguá,28/12/2025,4:24,0.4,baixa-mar
-BR_PNG,Paranaguá,28/12/2025,10:21,1.3,baixa-mar
-BR_PNG,Paranaguá,28/12/2025,17:07,0.5,baixa-mar
-BR_PNG,Paranaguá,28/12/2025,22:39,1.3,baixa-mar
-BR_PNG,Paranaguá,29/12/2025,5:38,0.4,baixa-mar
-BR_PNG,Paranaguá,29/12/2025,11:52,1.2,baixa-mar
-BR_PNG,Paranaguá,29/12/2025,17:54,0.4,baixa-mar
-BR_PNG,Paranaguá,30/12/2025,0:32,1.3,baixa-mar
-BR_PNG,Paranaguá,30/12/2025,6:29,0.3,baixa-mar
-BR_PNG,Paranaguá,30/12/2025,12:49,1.2,baixa-mar
-BR_PNG,Paranaguá,30/12/2025,18:36,0.3,baixa-mar
-BR_PNG,Paranaguá,31/12/2025,1:33,1.4,baixa-mar
-BR_PNG,Paranaguá,31/12/2025,7:27,0.3,baixa-mar
-BR_PNG,Paranaguá,31/12/2025,13:29,1.2,baixa-mar
-BR_PNG,Paranaguá,31/12/2025,19:25,0.1,baixa-mar
-BR_PNG,Paranaguá,03/01/2026,2:28,1.5,baixa-mar
-BR_PNG,Paranaguá,03/01/2026,8:30,0.2,baixa-mar
-BR_PNG,Paranaguá,03/01/2026,14:33,1.3,baixa-mar
-BR_PNG,Paranaguá,03/01/2026,20:31,0.1,baixa-mar
-BR_PNG,Paranaguá,04/01/2026,3:34,1.5,baixa-mar
-BR_PNG,Paranaguá,04/01/2026,9:19,0.3,baixa-mar
-BR_PNG,Paranaguá,04/01/2026,15:19,1.3,baixa-mar
-BR_PNG,Paranaguá,04/01/2026,21:14,0.0,baixa-mar
-BR_SFS,São Francisco do Sul,27/12/2025,3:46,0.4,baixa-mar
-BR_SFS,São Francisco do Sul,27/12/2025,9:25,1.1,baixa-mar
-BR_SFS,São Francisco do Sul,27/12/2025,16:35,0.6,baixa-mar
-BR_SFS,São Francisco do Sul,27/12/2025,21:24,1.1,baixa-mar
-BR_SFS,São Francisco do Sul,28/12/2025,5:36,0.4,baixa-mar
-BR_SFS,São Francisco do Sul,28/12/2025,10:16,1.0,baixa-mar
-BR_SFS,São Francisco do Sul,28/12/2025,18:19,0.5,baixa-mar
-BR_SFS,São Francisco do Sul,28/12/2025,22:34,1.0,baixa-mar
-BR_SFS,São Francisco do Sul,29/12/2025,6:50,0.4,baixa-mar
-BR_SFS,São Francisco do Sul,29/12/2025,11:47,0.9,baixa-mar
-BR_SFS,São Francisco do Sul,29/12/2025,19:06,0.4,baixa-mar
-BR_SFS,São Francisco do Sul,30/12/2025,0:27,1.0,baixa-mar
-BR_SFS,São Francisco do Sul,30/12/2025,7:41,0.3,baixa-mar
-BR_SFS,São Francisco do Sul,30/12/2025,12:44,0.9,baixa-mar
-BR_SFS,São Francisco do Sul,30/12/2025,19:48,0.3,baixa-mar
-BR_SFS,São Francisco do Sul,31/12/2025,1:28,1.1,baixa-mar
-BR_SFS,São Francisco do Sul,31/12/2025,8:39,0.3,baixa-mar
-BR_SFS,São Francisco do Sul,31/12/2025,13:24,0.9,baixa-mar
-BR_SFS,São Francisco do Sul,31/12/2025,20:37,0.1,baixa-mar
-BR_SFS,São Francisco do Sul,03/01/2026,2:23,1.2,baixa-mar
-BR_SFS,São Francisco do Sul,03/01/2026,9:42,0.2,baixa-mar
-BR_SFS,São Francisco do Sul,03/01/2026,14:28,1.0,baixa-mar
-BR_SFS,São Francisco do Sul,03/01/2026,21:43,0.1,baixa-mar
-BR_SFS,São Francisco do Sul,04/01/2026,3:29,1.2,baixa-mar
-BR_SFS,São Francisco do Sul,04/01/2026,10:31,0.3,baixa-mar
-BR_SFS,São Francisco do Sul,04/01/2026,15:14,1.0,baixa-mar
-BR_SFS,São Francisco do Sul,04/01/2026,22:26,0.0,baixa-mar
-BR_ITJ,Itajaí,27/12/2025,4:02,0.3,baixa-mar
-BR_ITJ,Itajaí,27/12/2025,8:18,0.8,baixa-mar
-BR_ITJ,Itajaí,27/12/2025,16:51,0.5,baixa-mar
-BR_ITJ,Itajaí,27/12/2025,20:17,0.8,baixa-mar
-BR_ITJ,Itajaí,28/12/2025,5:52,0.3,baixa-mar
-BR_ITJ,Itajaí,28/12/2025,9:09,0.8,baixa-mar
-BR_ITJ,Itajaí,28/12/2025,18:35,0.4,baixa-mar
-BR_ITJ,Itajaí,28/12/2025,21:27,0.8,baixa-mar
-BR_ITJ,Itajaí,29/12/2025,7:06,0.3,baixa-mar
-BR_ITJ,Itajaí,29/12/2025,10:40,0.7,baixa-mar
-BR_ITJ,Itajaí,29/12/2025,19:22,0.3,baixa-mar
-BR_ITJ,Itajaí,29/12/2025,23:20,0.8,baixa-mar
-BR_ITJ,Itajaí,30/12/2025,7:57,0.2,baixa-mar
-BR_ITJ,Itajaí,30/12/2025,11:37,0.7,baixa-mar
-BR_ITJ,Itajaí,30/12/2025,20:04,0.2,baixa-mar
-BR_ITJ,Itajaí,31/12/2025,0:21,0.8,baixa-mar
-BR_ITJ,Itajaí,31/12/2025,8:55,0.2,baixa-mar
-BR_ITJ,Itajaí,31/12/2025,12:17,0.7,baixa-mar
-BR_ITJ,Itajaí,31/12/2025,20:53,0.1,baixa-mar
-BR_ITJ,Itajaí,03/01/2026,1:16,0.9,baixa-mar
-BR_ITJ,Itajaí,03/01/2026,9:58,0.2,baixa-mar
-BR_ITJ,Itajaí,03/01/2026,13:21,0.8,baixa-mar
-BR_ITJ,Itajaí,03/01/2026,21:59,0.1,baixa-mar
-BR_ITJ,Itajaí,04/01/2026,2:22,0.9,baixa-mar
-BR_ITJ,Itajaí,04/01/2026,10:47,0.2,baixa-mar
-BR_ITJ,Itajaí,04/01/2026,14:07,0.8,baixa-mar
-BR_ITJ,Itajaí,04/01/2026,22:42,0.0,baixa-mar
-BR_IMB,Imbituba,27/12/2025,2:13,0.2,baixa-mar
-BR_IMB,Imbituba,27/12/2025,6:43,0.6,baixa-mar
-BR_IMB,Imbituba,27/12/2025,15:02,0.3,baixa-mar
-BR_IMB,Imbituba,27/12/2025,18:42,0.6,baixa-mar
-BR_IMB,Imbituba,28/12/2025,4:03,0.2,baixa-mar
-BR_IMB,Imbituba,28/12/2025,7:34,0.5,baixa-mar
-BR_IMB,Imbituba,28/12/2025,16:46,0.3,baixa-mar
-BR_IMB,Imbituba,28/12/2025,19:52,0.5,baixa-mar
-BR_IMB,Imbituba,29/12/2025,5:17,0.2,baixa-mar
-BR_IMB,Imbituba,29/12/2025,9:05,0.5,baixa-mar
-BR_IMB,Imbituba,29/12/2025,17:33,0.2,baixa-mar
-BR_IMB,Imbituba,29/12/2025,21:45,0.5,baixa-mar
-BR_IMB,Imbituba,30/12/2025,6:08,0.2,baixa-mar
-BR_IMB,Imbituba,30/12/2025,10:02,0.5,baixa-mar
-BR_IMB,Imbituba,30/12/2025,18:15,0.2,baixa-mar
-BR_IMB,Imbituba,30/12/2025,22:46,0.6,baixa-mar
-BR_IMB,Imbituba,31/12/2025,7:06,0.2,baixa-mar
-BR_IMB,Imbituba,31/12/2025,10:42,0.5,baixa-mar
-BR_IMB,Imbituba,31/12/2025,19:04,0.1,baixa-mar
-BR_IMB,Imbituba,31/12/2025,23:55,0.6,baixa-mar
-BR_IMB,Imbituba,03/01/2026,8:09,0.1,baixa-mar
-BR_IMB,Imbituba,03/01/2026,11:46,0.5,baixa-mar
-BR_IMB,Imbituba,03/01/2026,20:10,0.1,baixa-mar
-BR_IMB,Imbituba,04/01/2026,0:47,0.6,baixa-mar
-BR_IMB,Imbituba,04/01/2026,8:58,0.2,baixa-mar
-BR_IMB,Imbituba,04/01/2026,12:32,0.5,baixa-mar
-BR_IMB,Imbituba,04/01/2026,20:53,0.0,baixa-mar
-BR_RIO,Rio de Janeiro,27/12/2025,2:54,0.4,baixa-mar
-BR_RIO,Rio de Janeiro,27/12/2025,8:00,1.1,baixa-mar
-BR_RIO,Rio de Janeiro,27/12/2025,15:43,0.6,baixa-mar
-BR_RIO,Rio de Janeiro,27/12/2025,19:59,1.1,baixa-mar
-BR_RIO,Rio de Janeiro,28/12/2025,4:44,0.4,baixa-mar
-BR_RIO,Rio de Janeiro,28/12/2025,8:51,1.0,baixa-mar
-BR_RIO,Rio de Janeiro,28/12/2025,17:27,0.5,baixa-mar
-BR_RIO,Rio de Janeiro,28/12/2025,21:09,1.0,baixa-mar
-BR_RIO,Rio de Janeiro,29/12/2025,5:58,0.4,baixa-mar
-BR_RIO,Rio de Janeiro,29/12/2025,10:22,0.9,baixa-mar
-BR_RIO,Rio de Janeiro,29/12/2025,18:14,0.4,baixa-mar
-BR_RIO,Rio de Janeiro,29/12/2025,23:02,1.0,baixa-mar
-BR_RIO,Rio de Janeiro,30/12/2025,6:49,0.3,baixa-mar
-BR_RIO,Rio de Janeiro,30/12/2025,11:19,0.9,baixa-mar
-BR_RIO,Rio de Janeiro,30/12/2025,18:56,0.3,baixa-mar
-BR_RIO,Rio de Janeiro,31/12/2025,0:03,1.1,baixa-mar
-BR_RIO,Rio de Janeiro,31/12/2025,7:47,0.3,baixa-mar
-BR_RIO,Rio de Janeiro,31/12/2025,11:59,0.9,baixa-mar
-BR_RIO,Rio de Janeiro,31/12/2025,19:45,0.1,baixa-mar
-BR_RIO,Rio de Janeiro,03/01/2026,0:58,1.2,baixa-mar
-BR_RIO,Rio de Janeiro,03/01/2026,8:50,0.2,baixa-mar
-BR_RIO,Rio de Janeiro,03/01/2026,13:03,1.0,baixa-mar
-BR_RIO,Rio de Janeiro,03/01/2026,20:51,0.1,baixa-mar
-BR_RIO,Rio de Janeiro,04/01/2026,2:04,1.2,baixa-mar
-BR_RIO,Rio de Janeiro,04/01/2026,9:39,0.3,baixa-mar
-BR_RIO,Rio de Janeiro,04/01/2026,13:49,1.0,baixa-mar
-BR_RIO,Rio de Janeiro,04/01/2026,21:34,0.0,baixa-mar
-BR_SEP,Sepetiba,27/12/2025,1:29,0.5,baixa-mar
-BR_SEP,Sepetiba,27/12/2025,8:45,1.5,baixa-mar
-BR_SEP,Sepetiba,27/12/2025,14:18,0.7,baixa-mar
-BR_SEP,Sepetiba,27/12/2025,20:44,1.5,baixa-mar
-BR_SEP,Sepetiba,28/12/2025,3:19,0.5,baixa-mar
-BR_SEP,Sepetiba,28/12/2025,9:36,1.4,baixa-mar
-BR_SEP,Sepetiba,28/12/2025,16:02,0.6,baixa-mar
-BR_SEP,Sepetiba,28/12/2025,21:54,1.4,baixa-mar
-BR_SEP,Sepetiba,29/12/2025,4:33,0.5,baixa-mar
-BR_SEP,Sepetiba,29/12/2025,11:07,1.3,baixa-mar
-BR_SEP,Sepetiba,29/12/2025,16:49,0.5,baixa-mar
-BR_SEP,Sepetiba,29/12/2025,23:47,1.4,baixa-mar
-BR_SEP,Sepetiba,30/12/2025,5:24,0.4,baixa-mar
-BR_SEP,Sepetiba,30/12/2025,12:04,1.3,baixa-mar
-BR_SEP,Sepetiba,30/12/2025,17:31,0.4,baixa-mar
-BR_SEP,Sepetiba,31/12/2025,0:48,1.5,baixa-mar
-BR_SEP,Sepetiba,31/12/2025,6:22,0.4,baixa-mar
-BR_SEP,Sepetiba,31/12/2025,12:44,1.3,baixa-mar
-BR_SEP,Sepetiba,31/12/2025,18:20,0.2,baixa-mar
-BR_SEP,Sepetiba,03/01/2026,1:43,1.6,baixa-mar
-BR_SEP,Sepetiba,03/01/2026,7:25,0.3,baixa-mar
-BR_SEP,Sepetiba,03/01/2026,13:48,1.4,baixa-mar
-BR_SEP,Sepetiba,03/01/2026,19:26,0.2,baixa-mar
-BR_SEP,Sepetiba,04/01/2026,2:49,1.6,baixa-mar
-BR_SEP,Sepetiba,04/01/2026,8:14,0.4,baixa-mar
-BR_SEP,Sepetiba,04/01/2026,14:34,1.4,baixa-mar
-BR_SEP,Sepetiba,04/01/2026,20:09,0.1,baixa-mar
-BR_VIT,Vitória,27/12/2025,2:33,0.5,baixa-mar
-BR_VIT,Vitória,27/12/2025,8:42,1.2,baixa-mar
-BR_VIT,Vitória,27/12/2025,14:54,0.5,baixa-mar
-BR_VIT,Vitória,27/12/2025,21:25,1.2,baixa-mar
-BR_VIT,Vitória,28/12/2025,3:42,0.6,baixa-mar
-BR_VIT,Vitória,28/12/2025,9:50,1.1,baixa-mar
-BR_VIT,Vitória,28/12/2025,16:04,0.5,baixa-mar
-BR_VIT,Vitória,28/12/2025,22:40,1.2,baixa-mar
-BR_VIT,Vitória,29/12/2025,4:59,0.6,baixa-mar
-BR_VIT,Vitória,29/12/2025,11:06,1.2,baixa-mar
-BR_VIT,Vitória,29/12/2025,17:20,0.4,baixa-mar
-BR_VIT,Vitória,29/12/2025,23:54,1.3,baixa-mar
-BR_VIT,Vitória,30/12/2025,6:11,0.5,baixa-mar
-BR_VIT,Vitória,30/12/2025,12:17,1.2,baixa-mar
-BR_VIT,Vitória,30/12/2025,18:28,0.3,baixa-mar
-BR_VIT,Vitória,31/12/2025,0:59,1.3,baixa-mar
-BR_VIT,Vitória,31/12/2025,7:12,0.4,baixa-mar
-BR_VIT,Vitória,31/12/2025,13:18,1.3,baixa-mar
-BR_VIT,Vitória,31/12/2025,19:28,0.2,baixa-mar
-BR_VIT,Vitória,03/01/2026,2:07,1.5,baixa-mar
-BR_VIT,Vitória,03/01/2026,8:18,0.1,baixa-mar
-BR_VIT,Vitória,03/01/2026,14:23,1.4,baixa-mar
-BR_VIT,Vitória,03/01/2026,20:31,0.0,baixa-mar
-BR_VIT,Vitória,04/01/2026,2:54,1.5,baixa-mar
-BR_VIT,Vitória,04/01/2026,9:04,0.1,baixa-mar
-BR_VIT,Vitória,04/01/2026,15:10,1.5,baixa-mar
-BR_VIT,Vitória,04/01/2026,21:19,0.1,baixa-mar
-BR_SAL,Salvador,27/12/2025,3:14,0.7,baixa-mar
-BR_SAL,Salvador,27/12/2025,9:26,1.9,baixa-mar
-BR_SAL,Salvador,27/12/2025,15:35,0.7,baixa-mar
-BR_SAL,Salvador,27/12/2025,22:09,2.0,baixa-mar
-BR_SAL,Salvador,28/12/2025,4:23,0.7,baixa-mar
-BR_SAL,Salvador,28/12/2025,10:34,1.8,baixa-mar
-BR_SAL,Salvador,28/12/2025,16:45,0.7,baixa-mar
-BR_SAL,Salvador,28/12/2025,23:24,2.0,baixa-mar
-BR_SAL,Salvador,29/12/2025,5:40,0.7,baixa-mar
-BR_SAL,Salvador,29/12/2025,11:50,1.9,baixa-mar
-BR_SAL,Salvador,29/12/2025,18:01,0.6,baixa-mar
-BR_SAL,Salvador,30/12/2025,0:38,2.1,baixa-mar
-BR_SAL,Salvador,30/12/2025,6:52,0.7,baixa-mar
-BR_SAL,Salvador,30/12/2025,13:01,1.9,baixa-mar
-BR_SAL,Salvador,30/12/2025,19:09,0.5,baixa-mar
-BR_SAL,Salvador,31/12/2025,1:43,2.2,baixa-mar
-BR_SAL,Salvador,31/12/2025,7:53,0.6,baixa-mar
-BR_SAL,Salvador,31/12/2025,14:02,2.1,baixa-mar
-BR_SAL,Salvador,31/12/2025,20:09,0.4,baixa-mar
-BR_SAL,Salvador,03/01/2026,2:51,2.5,baixa-mar
-BR_SAL,Salvador,03/01/2026,8:59,0.3,baixa-mar
-BR_SAL,Salvador,03/01/2026,15:07,2.3,baixa-mar
-BR_SAL,Salvador,03/01/2026,21:12,0.2,baixa-mar
-BR_SAL,Salvador,04/01/2026,3:38,2.5,baixa-mar
-BR_SAL,Salvador,04/01/2026,9:45,0.3,baixa-mar
-BR_SAL,Salvador,04/01/2026,15:54,2.4,baixa-mar
-BR_SAL,Salvador,04/01/2026,22:00,0.1,baixa-mar
-BR_REC,Recife,27/12/2025,3:21,0.6,baixa-mar
-BR_REC,Recife,27/12/2025,9:24,1.9,baixa-mar
-BR_REC,Recife,27/12/2025,15:42,0.6,baixa-mar
-BR_REC,Recife,27/12/2025,22:07,2.0,baixa-mar
-BR_REC,Recife,28/12/2025,4:30,0.7,baixa-mar
-BR_REC,Recife,28/12/2025,10:32,1.8,baixa-mar
-BR_REC,Recife,28/12/2025,16:52,0.6,baixa-mar
-BR_REC,Recife,28/12/2025,23:22,2.0,baixa-mar
-BR_REC,Recife,29/12/2025,5:47,0.7,baixa-mar
-BR_REC,Recife,29/12/2025,11:48,1.9,baixa-mar
-BR_REC,Recife,29/12/2025,18:08,0.6,baixa-mar
-BR_REC,Recife,30/12/2025,0:36,2.1,baixa-mar
-BR_REC,Recife,30/12/2025,6:59,0.6,baixa-mar
-BR_REC,Recife,30/12/2025,12:59,1.9,baixa-mar
-BR_REC,Recife,30/12/2025,19:16,0.5,baixa-mar
-BR_REC,Recife,31/12/2025,1:41,2.2,baixa-mar
-BR_REC,Recife,31/12/2025,8:00,0.6,baixa-mar
-BR_REC,Recife,31/12/2025,14:00,2.1,baixa-mar
-BR_REC,Recife,31/12/2025,20:16,0.4,baixa-mar
-BR_REC,Recife,03/01/2026,2:49,2.5,baixa-mar
-BR_REC,Recife,03/01/2026,9:06,0.3,baixa-mar
-BR_REC,Recife,03/01/2026,15:05,2.3,baixa-mar
-BR_REC,Recife,03/01/2026,21:19,0.2,baixa-mar
-BR_REC,Recife,04/01/2026,3:36,2.5,baixa-mar
-BR_REC,Recife,04/01/2026,9:52,0.3,baixa-mar
-BR_REC,Recife,04/01/2026,15:52,2.4,baixa-mar
-BR_REC,Recife,04/01/2026,22:07,0.1,baixa-mar
-BR_SUA,Suape,27/12/2025,3:19,0.6,baixa-mar
-BR_SUA,Suape,27/12/2025,9:22,1.8,baixa-mar
-BR_SUA,Suape,27/12/2025,15:40,0.6,baixa-mar
-BR_SUA,Suape,27/12/2025,22:05,1.9,baixa-mar
-BR_SUA,Suape,28/12/2025,4:28,0.7,baixa-mar
-BR_SUA,Suape,28/12/2025,10:30,1.7,baixa-mar
-BR_SUA,Suape,28/12/2025,16:50,0.6,baixa-mar
-BR_SUA,Suape,28/12/2025,23:20,1.9,baixa-mar
-BR_SUA,Suape,29/12/2025,5:45,0.7,baixa-mar
-BR_SUA,Suape,29/12/2025,11:46,1.8,baixa-mar
-BR_SUA,Suape,29/12/2025,18:06,0.5,baixa-mar
-BR_SUA,Suape,30/12/2025,0:34,2.0,baixa-mar
-BR_SUA,Suape,30/12/2025,6:57,0.6,baixa-mar
-BR_SUA,Suape,30/12/2025,12:57,1.8,baixa-mar
-BR_SUA,Suape,30/12/2025,19:14,0.4,baixa-mar
-BR_SUA,Suape,31/12/2025,1:39,2.1,baixa-mar
-BR_SUA,Suape,31/12/2025,7:58,0.5,baixa-mar
-BR_SUA,Suape,31/12/2025,13:58,2.0,baixa-mar
-BR_SUA,Suape,31/12/2025,20:14,0.4,baixa-mar
-BR_SUA,Suape,03/01/2026,2:47,2.4,baixa-mar
-BR_SUA,Suape,03/01/2026,9:04,0.3,baixa-mar
-BR_SUA,Suape,03/01/2026,15:03,2.2,baixa-mar
-BR_SUA,Suape,03/01/2026,21:17,0.2,baixa-mar
-BR_SUA,Suape,04/01/2026,3:34,2.4,baixa-mar
-BR_SUA,Suape,04/01/2026,9:50,0.3,baixa-mar
-BR_SUA,Suape,04/01/2026,15:50,2.3,baixa-mar
-BR_SUA,Suape,04/01/2026,22:05,0.1,baixa-mar
-BR_FOR,Fortaleza,27/12/2025,4:11,0.7,baixa-mar
-BR_FOR,Fortaleza,27/12/2025,10:32,2.5,baixa-mar
-BR_FOR,Fortaleza,27/12/2025,16:42,0.7,baixa-mar
-BR_FOR,Fortaleza,27/12/2025,23:01,2.5,baixa-mar
-BR_FOR,Fortaleza,28/12/2025,5:11,0.7,baixa-mar
-BR_FOR,Fortaleza,28/12/2025,11:33,2.5,baixa-mar
-BR_FOR,Fortaleza,28/12/2025,17:47,0.7,baixa-mar
-BR_FOR,Fortaleza,29/12/2025,0:08,2.5,baixa-mar
-BR_FOR,Fortaleza,29/12/2025,6:15,0.7,baixa-mar
-BR_FOR,Fortaleza,29/12/2025,12:36,2.5,baixa-mar
-BR_FOR,Fortaleza,29/12/2025,18:55,0.7,baixa-mar
-BR_FOR,Fortaleza,30/12/2025,1:16,2.5,baixa-mar
-BR_FOR,Fortaleza,30/12/2025,7:19,0.7,baixa-mar
-BR_FOR,Fortaleza,30/12/2025,13:39,2.6,baixa-mar
-BR_FOR,Fortaleza,30/12/2025,19:59,0.6,baixa-mar
-BR_FOR,Fortaleza,31/12/2025,2:20,2.5,baixa-mar
-BR_FOR,Fortaleza,31/12/2025,8:20,0.7,baixa-mar
-BR_FOR,Fortaleza,31/12/2025,14:39,2.6,baixa-mar
-BR_FOR,Fortaleza,31/12/2025,20:57,0.6,baixa-mar
-BR_FOR,Fortaleza,03/01/2026,3:39,2.6,baixa-mar
-BR_FOR,Fortaleza,03/01/2026,9:38,0.6,baixa-mar
-BR_FOR,Fortaleza,03/01/2026,15:54,2.7,baixa-mar
-BR_FOR,Fortaleza,03/01/2026,22:09,0.5,baixa-mar
-BR_FOR,Fortaleza,04/01/2026,4:27,2.7,baixa-mar
-BR_FOR,Fortaleza,04/01/2026,10:24,0.5,baixa-mar
-BR_FOR,Fortaleza,04/01/2026,16:39,2.7,baixa-mar
-BR_FOR,Fortaleza,04/01/2026,22:56,0.5,baixa-mar
-BR_BEL,Belém,27/12/2025,4:42,3.0,baixa-mar
-BR_BEL,Belém,27/12/2025,11:56,0.7,baixa-mar
-BR_BEL,Belém,27/12/2025,17:15,3.0,baixa-mar
-BR_BEL,Belém,28/12/2025,0:27,0.7,baixa-mar
-BR_BEL,Belém,28/12/2025,5:44,3.0,baixa-mar
-BR_BEL,Belém,28/12/2025,12:56,0.7,baixa-mar
-BR_BEL,Belém,28/12/2025,18:16,3.0,baixa-mar
-BR_BEL,Belém,29/12/2025,1:32,0.7,baixa-mar
-BR_BEL,Belém,29/12/2025,6:51,3.0,baixa-mar
-BR_BEL,Belém,29/12/2025,14:00,0.7,baixa-mar
-BR_BEL,Belém,29/12/2025,19:19,3.0,baixa-mar
-BR_BEL,Belém,30/12/2025,2:40,0.7,baixa-mar
-BR_BEL,Belém,30/12/2025,7:59,3.0,baixa-mar
-BR_BEL,Belém,30/12/2025,15:04,0.7,baixa-mar
-BR_BEL,Belém,30/12/2025,20:22,3.1,baixa-mar
-BR_BEL,Belém,31/12/2025,3:44,0.6,baixa-mar
-BR_BEL,Belém,31/12/2025,9:03,3.0,baixa-mar
-BR_BEL,Belém,31/12/2025,16:05,0.7,baixa-mar
-BR_BEL,Belém,31/12/2025,21:22,3.2,baixa-mar
-BR_BEL,Belém,03/01/2026,5:06,0.4,baixa-mar
-BR_BEL,Belém,03/01/2026,10:22,3.2,baixa-mar
-BR_BEL,Belém,03/01/2026,17:23,0.6,baixa-mar
-BR_BEL,Belém,03/01/2026,22:37,3.4,baixa-mar
-BR_BEL,Belém,04/01/2026,5:54,0.4,baixa-mar
-BR_BEL,Belém,04/01/2026,11:10,3.3,baixa-mar
-BR_BEL,Belém,04/01/2026,18:09,0.5,baixa-mar
-BR_BEL,Belém,04/01/2026,23:22,3.5,baixa-mar
-BR_ITQ,Itaqui,27/12/2025,0:35,5.6,baixa-mar
-BR_ITQ,Itaqui,27/12/2025,6:49,1.1,baixa-mar
-BR_ITQ,Itaqui,27/12/2025,13:08,5.6,baixa-mar
-BR_ITQ,Itaqui,27/12/2025,19:20,1.1,baixa-mar
-BR_ITQ,Itaqui,28/12/2025,1:37,5.6,baixa-mar
-BR_ITQ,Itaqui,28/12/2025,7:49,1.1,baixa-mar
-BR_ITQ,Itaqui,28/12/2025,14:09,5.6,baixa-mar
-BR_ITQ,Itaqui,28/12/2025,20:25,1.1,baixa-mar
-BR_ITQ,Itaqui,29/12/2025,2:44,5.6,baixa-mar
-BR_ITQ,Itaqui,29/12/2025,8:53,1.1,baixa-mar
-BR_ITQ,Itaqui,29/12/2025,15:12,5.6,baixa-mar
-BR_ITQ,Itaqui,29/12/2025,21:33,1.1,baixa-mar
-BR_ITQ,Itaqui,30/12/2025,3:52,5.6,baixa-mar
-BR_ITQ,Itaqui,30/12/2025,9:57,1.1,baixa-mar
-BR_ITQ,Itaqui,30/12/2025,16:15,5.7,baixa-mar
-BR_ITQ,Itaqui,30/12/2025,22:37,1.0,baixa-mar
-BR_ITQ,Itaqui,31/12/2025,4:56,5.6,baixa-mar
-BR_ITQ,Itaqui,31/12/2025,10:58,1.1,baixa-mar
-BR_ITQ,Itaqui,31/12/2025,17:15,5.8,baixa-mar
-BR_ITQ,Itaqui,31/12/2025,23:35,0.9,baixa-mar
-BR_ITQ,Itaqui,03/01/2026,6:15,5.8,baixa-mar
-BR_ITQ,Itaqui,03/01/2026,12:16,0.9,baixa-mar
-BR_ITQ,Itaqui,03/01/2026,18:30,6.1,baixa-mar
-BR_ITQ,Itaqui,04/01/2026,0:47,0.8,baixa-mar
-BR_ITQ,Itaqui,04/01/2026,7:03,5.9,baixa-mar
-BR_ITQ,Itaqui,04/01/2026,13:02,0.8,baixa-mar
-BR_ITQ,Itaqui,04/01/2026,19:15,6.2,baixa-mar
-BR_SUA,Suape,27/12/2025,3:19,0.6,baixa-mar
-BR_SUA,Suape,27/12/2025,9:22,1.8,baixa-mar
-BR_SUA,Suape,27/12/2025,15:40,0.6,baixa-mar
-BR_SUA,Suape,27/12/2025,22:05,1.9,baixa-mar
-BR_SUA,Suape,28/12/2025,4:28,0.7,baixa-mar
-BR_SUA,Suape,28/12/2025,10:30,1.7,baixa-mar
-BR_SUA,Suape,28/12/2025,16:50,0.6,baixa-mar
-BR_SUA,Suape,28/12/2025,23:20,1.9,baixa-mar
-BR_SUA,Suape,29/12/2025,5:45,0.7,baixa-mar
-BR_SUA,Suape,29/12/2025,11:46,1.8,baixa-mar
-BR_SUA,Suape,29/12/2025,18:06,0.5,baixa-mar
-BR_SUA,Suape,30/12/2025,0:34,2.0,baixa-mar
-BR_SUA,Suape,30/12/2025,6:57,0.6,baixa-mar
-BR_SUA,Suape,30/12/2025,12:57,1.8,baixa-mar
-BR_SUA,Suape,30/12/2025,19:14,0.4,baixa-mar
-BR_SUA,Suape,31/12/2025,1:39,2.1,baixa-mar
-BR_SUA,Suape,31/12/2025,7:58,0.5,baixa-mar
-BR_SUA,Suape,31/12/2025,13:58,2.0,baixa-mar
-BR_SUA,Suape,31/12/2025,20:14,0.4,baixa-mar
-BR_SUA,Suape,03/01/2026,2:47,2.4,baixa-mar
-BR_SUA,Suape,03/01/2026,9:04,0.3,baixa-mar
-BR_SUA,Suape,03/01/2026,15:03,2.2,baixa-mar
-BR_SUA,Suape,03/01/2026,21:17,0.2,baixa-mar
-BR_SUA,Suape,04/01/2026,3:34,2.4,baixa-mar
-BR_SUA,Suape,04/01/2026,9:50,0.3,baixa-mar
-BR_SUA,Suape,04/01/2026,15:50,2.3,baixa-mar
-BR_SUA,Suape,04/01/2026,22:05,0.1,baixa-mar
-BR_SUA,Suape,01/01/2026,02:01,2.09,preamar
-BR_SUA,Suape,01/01/2026,08:14,0.38,baixa-mar
-BR_SUA,Suape,01/01/2026,14:21,2.17,preamar
-BR_SUA,Suape,01/01/2026,20:44,0.18,baixa-mar
-BR_FOR,Mucuripe,01/01/2026,02:38,2.50,preamar
-BR_FOR,Mucuripe,01/01/2026,08:40,0.51,baixa-mar
-BR_FOR,Mucuripe,01/01/2026,14:59,2.78,preamar
-BR_FOR,Mucuripe,01/01/2026,21:19,0.19,baixa-mar
+BR_RIG,Rio Grande,13/01/2026,6:20,0.2,baixa-mar
+BR_RIG,Rio Grande,13/01/2026,9:47,0.3,baixa-mar
+BR_RIG,Rio Grande,13/01/2026,18:26,0.1,baixa-mar
+BR_RIG,Rio Grande,13/01/2026,23:19,0.3,baixa-mar
+BR_RIG,Rio Grande,14/01/2026,7:03,0.1,baixa-mar
+BR_RIG,Rio Grande,14/01/2026,11:07,0.3,baixa-mar
+BR_RIG,Rio Grande,14/01/2026,19:09,0.1,baixa-mar
+BR_RIG,Rio Grande,15/01/2026,0:04,0.3,baixa-mar
+BR_RIG,Rio Grande,15/01/2026,7:54,0.1,baixa-mar
+BR_RIG,Rio Grande,15/01/2026,11:52,0.3,baixa-mar
+BR_RIG,Rio Grande,15/01/2026,20:00,0.1,baixa-mar
+BR_RIG,Rio Grande,16/01/2026,0:54,0.3,baixa-mar
+BR_RIG,Rio Grande,16/01/2026,8:45,0.1,baixa-mar
+BR_RIG,Rio Grande,16/01/2026,12:39,0.3,baixa-mar
+BR_RIG,Rio Grande,16/01/2026,20:51,0.1,baixa-mar
+BR_RIG,Rio Grande,17/01/2026,1:54,0.3,baixa-mar
+BR_RIG,Rio Grande,17/01/2026,9:24,0.1,baixa-mar
+BR_RIG,Rio Grande,17/01/2026,13:34,0.3,baixa-mar
+BR_RIG,Rio Grande,17/01/2026,21:30,0.1,baixa-mar
+BR_RIG,Rio Grande,18/01/2026,2:35,0.3,baixa-mar
+BR_RIG,Rio Grande,18/01/2026,9:55,0.1,baixa-mar
+BR_RIG,Rio Grande,18/01/2026,14:21,0.3,baixa-mar
+BR_RIG,Rio Grande,18/01/2026,22:02,0.1,baixa-mar
+BR_RIG,Rio Grande,19/01/2026,3:07,0.3,baixa-mar
+BR_RIG,Rio Grande,19/01/2026,10:22,0.1,baixa-mar
+BR_RIG,Rio Grande,19/01/2026,14:56,0.3,baixa-mar
+BR_RIG,Rio Grande,19/01/2026,22:30,0.1,baixa-mar
+BR_RIG,Rio Grande,21/01/2026,4:08,0.3,baixa-mar
+BR_RIG,Rio Grande,21/01/2026,11:11,0.1,baixa-mar
+BR_RIG,Rio Grande,21/01/2026,15:59,0.3,baixa-mar
+BR_RIG,Rio Grande,21/01/2026,23:31,0.1,baixa-mar
+BR_RIG,Rio Grande,22/01/2026,4:43,0.3,baixa-mar
+BR_RIG,Rio Grande,22/01/2026,11:33,0.2,baixa-mar
+BR_RIG,Rio Grande,22/01/2026,16:34,0.3,baixa-mar
+BR_PNG,Paranaguá,13/01/2026,6:03,0.5,baixa-mar
+BR_PNG,Paranaguá,13/01/2026,11:28,1.0,baixa-mar
+BR_PNG,Paranaguá,13/01/2026,18:09,0.3,baixa-mar
+BR_PNG,Paranaguá,14/01/2026,1:00,1.2,baixa-mar
+BR_PNG,Paranaguá,14/01/2026,6:46,0.4,baixa-mar
+BR_PNG,Paranaguá,14/01/2026,12:48,1.2,baixa-mar
+BR_PNG,Paranaguá,14/01/2026,18:52,0.2,baixa-mar
+BR_PNG,Paranaguá,15/01/2026,1:45,1.3,baixa-mar
+BR_PNG,Paranaguá,15/01/2026,7:37,0.4,baixa-mar
+BR_PNG,Paranaguá,15/01/2026,13:33,1.2,baixa-mar
+BR_PNG,Paranaguá,15/01/2026,19:43,0.2,baixa-mar
+BR_PNG,Paranaguá,16/01/2026,2:35,1.3,baixa-mar
+BR_PNG,Paranaguá,16/01/2026,8:28,0.3,baixa-mar
+BR_PNG,Paranaguá,16/01/2026,14:20,1.3,baixa-mar
+BR_PNG,Paranaguá,16/01/2026,20:34,0.1,baixa-mar
+BR_PNG,Paranaguá,17/01/2026,3:35,1.4,baixa-mar
+BR_PNG,Paranaguá,17/01/2026,9:07,0.3,baixa-mar
+BR_PNG,Paranaguá,17/01/2026,15:15,1.4,baixa-mar
+BR_PNG,Paranaguá,17/01/2026,21:13,0.0,baixa-mar
+BR_PNG,Paranaguá,18/01/2026,4:16,1.5,baixa-mar
+BR_PNG,Paranaguá,18/01/2026,9:38,0.3,baixa-mar
+BR_PNG,Paranaguá,18/01/2026,16:02,1.5,baixa-mar
+BR_PNG,Paranaguá,18/01/2026,21:45,0.0,baixa-mar
+BR_PNG,Paranaguá,19/01/2026,4:48,1.7,baixa-mar
+BR_PNG,Paranaguá,19/01/2026,10:05,0.3,baixa-mar
+BR_PNG,Paranaguá,19/01/2026,16:37,1.7,baixa-mar
+BR_PNG,Paranaguá,19/01/2026,22:13,0.0,baixa-mar
+BR_PNG,Paranaguá,21/01/2026,5:49,1.7,baixa-mar
+BR_PNG,Paranaguá,21/01/2026,10:54,0.4,baixa-mar
+BR_PNG,Paranaguá,21/01/2026,17:40,1.8,baixa-mar
+BR_PNG,Paranaguá,21/01/2026,23:14,0.1,baixa-mar
+BR_PNG,Paranaguá,22/01/2026,6:24,1.7,baixa-mar
+BR_PNG,Paranaguá,22/01/2026,11:16,0.5,baixa-mar
+BR_PNG,Paranaguá,22/01/2026,18:15,1.7,baixa-mar
+BR_SFS,São Francisco do Sul,13/01/2026,7:15,0.5,baixa-mar
+BR_SFS,São Francisco do Sul,13/01/2026,11:23,0.8,baixa-mar
+BR_SFS,São Francisco do Sul,13/01/2026,19:21,0.3,baixa-mar
+BR_SFS,São Francisco do Sul,14/01/2026,0:55,0.9,baixa-mar
+BR_SFS,São Francisco do Sul,14/01/2026,7:58,0.4,baixa-mar
+BR_SFS,São Francisco do Sul,14/01/2026,12:43,0.9,baixa-mar
+BR_SFS,São Francisco do Sul,14/01/2026,20:04,0.2,baixa-mar
+BR_SFS,São Francisco do Sul,15/01/2026,1:40,1.0,baixa-mar
+BR_SFS,São Francisco do Sul,15/01/2026,8:49,0.4,baixa-mar
+BR_SFS,São Francisco do Sul,15/01/2026,13:28,0.9,baixa-mar
+BR_SFS,São Francisco do Sul,15/01/2026,20:55,0.2,baixa-mar
+BR_SFS,São Francisco do Sul,16/01/2026,2:30,1.0,baixa-mar
+BR_SFS,São Francisco do Sul,16/01/2026,9:40,0.3,baixa-mar
+BR_SFS,São Francisco do Sul,16/01/2026,14:15,1.0,baixa-mar
+BR_SFS,São Francisco do Sul,16/01/2026,21:46,0.1,baixa-mar
+BR_SFS,São Francisco do Sul,17/01/2026,3:30,1.1,baixa-mar
+BR_SFS,São Francisco do Sul,17/01/2026,10:19,0.3,baixa-mar
+BR_SFS,São Francisco do Sul,17/01/2026,15:10,1.1,baixa-mar
+BR_SFS,São Francisco do Sul,17/01/2026,22:25,0.0,baixa-mar
+BR_SFS,São Francisco do Sul,18/01/2026,4:11,1.2,baixa-mar
+BR_SFS,São Francisco do Sul,18/01/2026,10:50,0.3,baixa-mar
+BR_SFS,São Francisco do Sul,18/01/2026,15:57,1.2,baixa-mar
+BR_SFS,São Francisco do Sul,18/01/2026,22:57,0.0,baixa-mar
+BR_SFS,São Francisco do Sul,19/01/2026,4:43,1.3,baixa-mar
+BR_SFS,São Francisco do Sul,19/01/2026,11:17,0.3,baixa-mar
+BR_SFS,São Francisco do Sul,19/01/2026,16:32,1.3,baixa-mar
+BR_SFS,São Francisco do Sul,19/01/2026,23:25,0.0,baixa-mar
+BR_SFS,São Francisco do Sul,21/01/2026,5:44,1.3,baixa-mar
+BR_SFS,São Francisco do Sul,21/01/2026,12:06,0.4,baixa-mar
+BR_SFS,São Francisco do Sul,21/01/2026,17:35,1.4,baixa-mar
+BR_SFS,São Francisco do Sul,22/01/2026,0:26,0.1,baixa-mar
+BR_SFS,São Francisco do Sul,22/01/2026,6:19,1.3,baixa-mar
+BR_SFS,São Francisco do Sul,22/01/2026,12:28,0.5,baixa-mar
+BR_SFS,São Francisco do Sul,22/01/2026,18:10,1.3,baixa-mar
+BR_ITJ,Itajaí,13/01/2026,7:31,0.4,baixa-mar
+BR_ITJ,Itajaí,13/01/2026,10:16,0.6,baixa-mar
+BR_ITJ,Itajaí,13/01/2026,19:37,0.2,baixa-mar
+BR_ITJ,Itajaí,13/01/2026,23:48,0.7,baixa-mar
+BR_ITJ,Itajaí,14/01/2026,8:14,0.3,baixa-mar
+BR_ITJ,Itajaí,14/01/2026,11:36,0.7,baixa-mar
+BR_ITJ,Itajaí,14/01/2026,20:20,0.2,baixa-mar
+BR_ITJ,Itajaí,15/01/2026,0:33,0.8,baixa-mar
+BR_ITJ,Itajaí,15/01/2026,9:05,0.3,baixa-mar
+BR_ITJ,Itajaí,15/01/2026,12:21,0.7,baixa-mar
+BR_ITJ,Itajaí,15/01/2026,21:11,0.2,baixa-mar
+BR_ITJ,Itajaí,16/01/2026,1:23,0.8,baixa-mar
+BR_ITJ,Itajaí,16/01/2026,9:56,0.2,baixa-mar
+BR_ITJ,Itajaí,16/01/2026,13:08,0.8,baixa-mar
+BR_ITJ,Itajaí,16/01/2026,22:02,0.1,baixa-mar
+BR_ITJ,Itajaí,17/01/2026,2:23,0.8,baixa-mar
+BR_ITJ,Itajaí,17/01/2026,10:35,0.2,baixa-mar
+BR_ITJ,Itajaí,17/01/2026,14:03,0.8,baixa-mar
+BR_ITJ,Itajaí,17/01/2026,22:41,0.0,baixa-mar
+BR_ITJ,Itajaí,18/01/2026,3:04,0.9,baixa-mar
+BR_ITJ,Itajaí,18/01/2026,11:06,0.2,baixa-mar
+BR_ITJ,Itajaí,18/01/2026,14:50,0.9,baixa-mar
+BR_ITJ,Itajaí,18/01/2026,23:13,0.0,baixa-mar
+BR_ITJ,Itajaí,19/01/2026,3:36,1.0,baixa-mar
+BR_ITJ,Itajaí,19/01/2026,11:33,0.2,baixa-mar
+BR_ITJ,Itajaí,19/01/2026,15:25,1.0,baixa-mar
+BR_ITJ,Itajaí,19/01/2026,23:41,0.0,baixa-mar
+BR_ITJ,Itajaí,21/01/2026,0:10,0.1,baixa-mar
+BR_ITJ,Itajaí,21/01/2026,4:37,1.0,baixa-mar
+BR_ITJ,Itajaí,21/01/2026,12:22,0.3,baixa-mar
+BR_ITJ,Itajaí,21/01/2026,16:28,1.1,baixa-mar
+BR_ITJ,Itajaí,22/01/2026,0:42,0.1,baixa-mar
+BR_ITJ,Itajaí,22/01/2026,5:12,1.0,baixa-mar
+BR_ITJ,Itajaí,22/01/2026,12:44,0.4,baixa-mar
+BR_ITJ,Itajaí,22/01/2026,17:03,1.0,baixa-mar
+BR_IMB,Imbituba,13/01/2026,5:42,0.3,baixa-mar
+BR_IMB,Imbituba,13/01/2026,8:41,0.4,baixa-mar
+BR_IMB,Imbituba,13/01/2026,17:48,0.2,baixa-mar
+BR_IMB,Imbituba,13/01/2026,22:13,0.5,baixa-mar
+BR_IMB,Imbituba,14/01/2026,6:25,0.2,baixa-mar
+BR_IMB,Imbituba,14/01/2026,10:01,0.5,baixa-mar
+BR_IMB,Imbituba,14/01/2026,18:31,0.1,baixa-mar
+BR_IMB,Imbituba,14/01/2026,22:58,0.5,baixa-mar
+BR_IMB,Imbituba,15/01/2026,7:16,0.2,baixa-mar
+BR_IMB,Imbituba,15/01/2026,10:46,0.5,baixa-mar
+BR_IMB,Imbituba,15/01/2026,19:22,0.1,baixa-mar
+BR_IMB,Imbituba,15/01/2026,23:48,0.5,baixa-mar
+BR_IMB,Imbituba,16/01/2026,8:07,0.2,baixa-mar
+BR_IMB,Imbituba,16/01/2026,11:33,0.5,baixa-mar
+BR_IMB,Imbituba,16/01/2026,20:13,0.1,baixa-mar
+BR_IMB,Imbituba,17/01/2026,0:48,0.6,baixa-mar
+BR_IMB,Imbituba,17/01/2026,8:46,0.2,baixa-mar
+BR_IMB,Imbituba,17/01/2026,12:28,0.6,baixa-mar
+BR_IMB,Imbituba,17/01/2026,20:52,0.0,baixa-mar
+BR_IMB,Imbituba,18/01/2026,1:29,0.6,baixa-mar
+BR_IMB,Imbituba,18/01/2026,9:17,0.2,baixa-mar
+BR_IMB,Imbituba,18/01/2026,13:15,0.6,baixa-mar
+BR_IMB,Imbituba,18/01/2026,21:24,0.0,baixa-mar
+BR_IMB,Imbituba,19/01/2026,2:01,0.7,baixa-mar
+BR_IMB,Imbituba,19/01/2026,9:44,0.2,baixa-mar
+BR_IMB,Imbituba,19/01/2026,13:50,0.7,baixa-mar
+BR_IMB,Imbituba,19/01/2026,21:52,0.0,baixa-mar
+BR_IMB,Imbituba,21/01/2026,3:02,0.7,baixa-mar
+BR_IMB,Imbituba,21/01/2026,10:33,0.2,baixa-mar
+BR_IMB,Imbituba,21/01/2026,14:53,0.8,baixa-mar
+BR_IMB,Imbituba,21/01/2026,22:53,0.1,baixa-mar
+BR_IMB,Imbituba,22/01/2026,3:37,0.7,baixa-mar
+BR_IMB,Imbituba,22/01/2026,10:55,0.3,baixa-mar
+BR_IMB,Imbituba,22/01/2026,15:28,0.7,baixa-mar
+BR_IMB,Imbituba,22/01/2026,23:39,0.1,baixa-mar
+BR_RIO,Rio de Janeiro,13/01/2026,6:23,0.5,baixa-mar
+BR_RIO,Rio de Janeiro,13/01/2026,9:58,0.8,baixa-mar
+BR_RIO,Rio de Janeiro,13/01/2026,18:29,0.3,baixa-mar
+BR_RIO,Rio de Janeiro,13/01/2026,23:30,0.9,baixa-mar
+BR_RIO,Rio de Janeiro,14/01/2026,7:06,0.4,baixa-mar
+BR_RIO,Rio de Janeiro,14/01/2026,11:18,0.9,baixa-mar
+BR_RIO,Rio de Janeiro,14/01/2026,19:12,0.2,baixa-mar
+BR_RIO,Rio de Janeiro,15/01/2026,0:15,1.0,baixa-mar
+BR_RIO,Rio de Janeiro,15/01/2026,7:57,0.4,baixa-mar
+BR_RIO,Rio de Janeiro,15/01/2026,12:03,0.9,baixa-mar
+BR_RIO,Rio de Janeiro,15/01/2026,20:03,0.2,baixa-mar
+BR_RIO,Rio de Janeiro,16/01/2026,1:05,1.0,baixa-mar
+BR_RIO,Rio de Janeiro,16/01/2026,8:48,0.3,baixa-mar
+BR_RIO,Rio de Janeiro,16/01/2026,12:50,1.0,baixa-mar
+BR_RIO,Rio de Janeiro,16/01/2026,20:54,0.1,baixa-mar
+BR_RIO,Rio de Janeiro,17/01/2026,2:05,1.1,baixa-mar
+BR_RIO,Rio de Janeiro,17/01/2026,9:27,0.3,baixa-mar
+BR_RIO,Rio de Janeiro,17/01/2026,13:45,1.1,baixa-mar
+BR_RIO,Rio de Janeiro,17/01/2026,21:33,0.0,baixa-mar
+BR_RIO,Rio de Janeiro,18/01/2026,2:46,1.2,baixa-mar
+BR_RIO,Rio de Janeiro,18/01/2026,9:58,0.3,baixa-mar
+BR_RIO,Rio de Janeiro,18/01/2026,14:32,1.2,baixa-mar
+BR_RIO,Rio de Janeiro,18/01/2026,22:05,0.0,baixa-mar
+BR_RIO,Rio de Janeiro,19/01/2026,3:18,1.3,baixa-mar
+BR_RIO,Rio de Janeiro,19/01/2026,10:25,0.3,baixa-mar
+BR_RIO,Rio de Janeiro,19/01/2026,15:07,1.3,baixa-mar
+BR_RIO,Rio de Janeiro,19/01/2026,22:33,0.0,baixa-mar
+BR_RIO,Rio de Janeiro,21/01/2026,4:19,1.3,baixa-mar
+BR_RIO,Rio de Janeiro,21/01/2026,11:14,0.4,baixa-mar
+BR_RIO,Rio de Janeiro,21/01/2026,16:10,1.4,baixa-mar
+BR_RIO,Rio de Janeiro,21/01/2026,23:34,0.1,baixa-mar
+BR_RIO,Rio de Janeiro,22/01/2026,4:54,1.3,baixa-mar
+BR_RIO,Rio de Janeiro,22/01/2026,11:36,0.5,baixa-mar
+BR_RIO,Rio de Janeiro,22/01/2026,16:45,1.3,baixa-mar
+BR_SEP,Sepetiba,13/01/2026,4:58,0.6,baixa-mar
+BR_SEP,Sepetiba,13/01/2026,10:43,1.2,baixa-mar
+BR_SEP,Sepetiba,13/01/2026,17:04,0.4,baixa-mar
+BR_SEP,Sepetiba,14/01/2026,0:15,1.3,baixa-mar
+BR_SEP,Sepetiba,14/01/2026,5:41,0.5,baixa-mar
+BR_SEP,Sepetiba,14/01/2026,12:03,1.3,baixa-mar
+BR_SEP,Sepetiba,14/01/2026,17:47,0.3,baixa-mar
+BR_SEP,Sepetiba,15/01/2026,1:00,1.4,baixa-mar
+BR_SEP,Sepetiba,15/01/2026,6:32,0.5,baixa-mar
+BR_SEP,Sepetiba,15/01/2026,12:48,1.3,baixa-mar
+BR_SEP,Sepetiba,15/01/2026,18:38,0.3,baixa-mar
+BR_SEP,Sepetiba,16/01/2026,1:50,1.4,baixa-mar
+BR_SEP,Sepetiba,16/01/2026,7:23,0.4,baixa-mar
+BR_SEP,Sepetiba,16/01/2026,13:35,1.4,baixa-mar
+BR_SEP,Sepetiba,16/01/2026,19:29,0.2,baixa-mar
+BR_SEP,Sepetiba,17/01/2026,2:50,1.5,baixa-mar
+BR_SEP,Sepetiba,17/01/2026,8:02,0.4,baixa-mar
+BR_SEP,Sepetiba,17/01/2026,14:30,1.5,baixa-mar
+BR_SEP,Sepetiba,17/01/2026,20:08,0.1,baixa-mar
+BR_SEP,Sepetiba,18/01/2026,3:31,1.6,baixa-mar
+BR_SEP,Sepetiba,18/01/2026,8:33,0.4,baixa-mar
+BR_SEP,Sepetiba,18/01/2026,15:17,1.6,baixa-mar
+BR_SEP,Sepetiba,18/01/2026,20:40,0.1,baixa-mar
+BR_SEP,Sepetiba,19/01/2026,4:03,1.7,baixa-mar
+BR_SEP,Sepetiba,19/01/2026,9:00,0.4,baixa-mar
+BR_SEP,Sepetiba,19/01/2026,15:52,1.7,baixa-mar
+BR_SEP,Sepetiba,19/01/2026,21:08,0.1,baixa-mar
+BR_SEP,Sepetiba,21/01/2026,5:04,1.7,baixa-mar
+BR_SEP,Sepetiba,21/01/2026,9:49,0.5,baixa-mar
+BR_SEP,Sepetiba,21/01/2026,16:55,1.8,baixa-mar
+BR_SEP,Sepetiba,21/01/2026,22:09,0.2,baixa-mar
+BR_SEP,Sepetiba,22/01/2026,5:39,1.7,baixa-mar
+BR_SEP,Sepetiba,22/01/2026,10:11,0.6,baixa-mar
+BR_SEP,Sepetiba,22/01/2026,17:30,1.7,baixa-mar
+BR_SEP,Sepetiba,22/01/2026,22:55,0.3,baixa-mar
+BR_VIT,Vitória,13/01/2026,6:06,0.8,baixa-mar
+BR_VIT,Vitória,13/01/2026,12:12,1.0,baixa-mar
+BR_VIT,Vitória,13/01/2026,18:26,0.6,baixa-mar
+BR_VIT,Vitória,14/01/2026,0:56,1.1,baixa-mar
+BR_VIT,Vitória,14/01/2026,7:08,0.7,baixa-mar
+BR_VIT,Vitória,14/01/2026,13:13,1.1,baixa-mar
+BR_VIT,Vitória,14/01/2026,19:22,0.5,baixa-mar
+BR_VIT,Vitória,15/01/2026,1:46,1.2,baixa-mar
+BR_VIT,Vitória,15/01/2026,7:54,0.6,baixa-mar
+BR_VIT,Vitória,15/01/2026,13:59,1.2,baixa-mar
+BR_VIT,Vitória,15/01/2026,20:07,0.4,baixa-mar
+BR_VIT,Vitória,16/01/2026,2:27,1.2,baixa-mar
+BR_VIT,Vitória,16/01/2026,8:33,0.5,baixa-mar
+BR_VIT,Vitória,16/01/2026,14:40,1.2,baixa-mar
+BR_VIT,Vitória,16/01/2026,20:47,0.3,baixa-mar
+BR_VIT,Vitória,17/01/2026,3:04,1.3,baixa-mar
+BR_VIT,Vitória,17/01/2026,9:10,0.4,baixa-mar
+BR_VIT,Vitória,17/01/2026,15:18,1.3,baixa-mar
+BR_VIT,Vitória,17/01/2026,21:25,0.3,baixa-mar
+BR_VIT,Vitória,18/01/2026,3:40,1.3,baixa-mar
+BR_VIT,Vitória,18/01/2026,9:45,0.3,baixa-mar
+BR_VIT,Vitória,18/01/2026,15:54,1.3,baixa-mar
+BR_VIT,Vitória,18/01/2026,22:02,0.2,baixa-mar
+BR_VIT,Vitória,19/01/2026,4:16,1.3,baixa-mar
+BR_VIT,Vitória,19/01/2026,10:20,0.2,baixa-mar
+BR_VIT,Vitória,19/01/2026,16:31,1.3,baixa-mar
+BR_VIT,Vitória,19/01/2026,22:38,0.2,baixa-mar
+BR_VIT,Vitória,21/01/2026,5:25,1.4,baixa-mar
+BR_VIT,Vitória,21/01/2026,11:29,0.2,baixa-mar
+BR_VIT,Vitória,21/01/2026,17:43,1.4,baixa-mar
+BR_VIT,Vitória,21/01/2026,23:51,0.2,baixa-mar
+BR_VIT,Vitória,22/01/2026,6:00,1.3,baixa-mar
+BR_VIT,Vitória,22/01/2026,12:04,0.2,baixa-mar
+BR_VIT,Vitória,22/01/2026,18:20,1.4,baixa-mar
+BR_SAL,Salvador,13/01/2026,0:34,1.8,baixa-mar
+BR_SAL,Salvador,13/01/2026,6:47,0.9,baixa-mar
+BR_SAL,Salvador,13/01/2026,12:56,1.7,baixa-mar
+BR_SAL,Salvador,13/01/2026,19:07,0.7,baixa-mar
+BR_SAL,Salvador,14/01/2026,1:40,1.8,baixa-mar
+BR_SAL,Salvador,14/01/2026,7:49,0.8,baixa-mar
+BR_SAL,Salvador,14/01/2026,13:57,1.8,baixa-mar
+BR_SAL,Salvador,14/01/2026,20:03,0.7,baixa-mar
+BR_SAL,Salvador,15/01/2026,2:30,1.9,baixa-mar
+BR_SAL,Salvador,15/01/2026,8:35,0.7,baixa-mar
+BR_SAL,Salvador,15/01/2026,14:43,1.9,baixa-mar
+BR_SAL,Salvador,15/01/2026,20:48,0.6,baixa-mar
+BR_SAL,Salvador,16/01/2026,3:11,2.0,baixa-mar
+BR_SAL,Salvador,16/01/2026,9:14,0.7,baixa-mar
+BR_SAL,Salvador,16/01/2026,15:24,2.0,baixa-mar
+BR_SAL,Salvador,16/01/2026,21:28,0.5,baixa-mar
+BR_SAL,Salvador,17/01/2026,3:48,2.1,baixa-mar
+BR_SAL,Salvador,17/01/2026,9:51,0.6,baixa-mar
+BR_SAL,Salvador,17/01/2026,16:02,2.1,baixa-mar
+BR_SAL,Salvador,17/01/2026,22:06,0.5,baixa-mar
+BR_SAL,Salvador,18/01/2026,4:24,2.2,baixa-mar
+BR_SAL,Salvador,18/01/2026,10:26,0.5,baixa-mar
+BR_SAL,Salvador,18/01/2026,16:38,2.2,baixa-mar
+BR_SAL,Salvador,18/01/2026,22:43,0.4,baixa-mar
+BR_SAL,Salvador,19/01/2026,5:00,2.2,baixa-mar
+BR_SAL,Salvador,19/01/2026,11:01,0.4,baixa-mar
+BR_SAL,Salvador,19/01/2026,17:15,2.2,baixa-mar
+BR_SAL,Salvador,19/01/2026,23:19,0.4,baixa-mar
+BR_SAL,Salvador,21/01/2026,6:09,2.3,baixa-mar
+BR_SAL,Salvador,21/01/2026,12:10,0.4,baixa-mar
+BR_SAL,Salvador,21/01/2026,18:27,2.3,baixa-mar
+BR_SAL,Salvador,22/01/2026,0:32,0.4,baixa-mar
+BR_SAL,Salvador,22/01/2026,6:44,2.2,baixa-mar
+BR_SAL,Salvador,22/01/2026,12:45,0.4,baixa-mar
+BR_SAL,Salvador,22/01/2026,19:04,2.3,baixa-mar
+BR_REC,Recife,13/01/2026,0:32,1.8,baixa-mar
+BR_REC,Recife,13/01/2026,6:54,0.9,baixa-mar
+BR_REC,Recife,13/01/2026,12:54,1.7,baixa-mar
+BR_REC,Recife,13/01/2026,19:14,0.7,baixa-mar
+BR_REC,Recife,14/01/2026,1:38,1.8,baixa-mar
+BR_REC,Recife,14/01/2026,7:56,0.8,baixa-mar
+BR_REC,Recife,14/01/2026,13:55,1.8,baixa-mar
+BR_REC,Recife,14/01/2026,20:10,0.6,baixa-mar
+BR_REC,Recife,15/01/2026,2:28,1.9,baixa-mar
+BR_REC,Recife,15/01/2026,8:42,0.7,baixa-mar
+BR_REC,Recife,15/01/2026,14:41,1.9,baixa-mar
+BR_REC,Recife,15/01/2026,20:55,0.6,baixa-mar
+BR_REC,Recife,16/01/2026,3:09,2.0,baixa-mar
+BR_REC,Recife,16/01/2026,9:21,0.6,baixa-mar
+BR_REC,Recife,16/01/2026,15:22,2.0,baixa-mar
+BR_REC,Recife,16/01/2026,21:35,0.5,baixa-mar
+BR_REC,Recife,17/01/2026,3:46,2.1,baixa-mar
+BR_REC,Recife,17/01/2026,9:58,0.6,baixa-mar
+BR_REC,Recife,17/01/2026,16:00,2.1,baixa-mar
+BR_REC,Recife,17/01/2026,22:13,0.5,baixa-mar
+BR_REC,Recife,18/01/2026,4:22,2.2,baixa-mar
+BR_REC,Recife,18/01/2026,10:33,0.5,baixa-mar
+BR_REC,Recife,18/01/2026,16:36,2.2,baixa-mar
+BR_REC,Recife,18/01/2026,22:50,0.4,baixa-mar
+BR_REC,Recife,19/01/2026,4:58,2.2,baixa-mar
+BR_REC,Recife,19/01/2026,11:08,0.4,baixa-mar
+BR_REC,Recife,19/01/2026,17:13,2.2,baixa-mar
+BR_REC,Recife,19/01/2026,23:26,0.4,baixa-mar
+BR_REC,Recife,21/01/2026,0:03,0.4,baixa-mar
+BR_REC,Recife,21/01/2026,6:07,2.3,baixa-mar
+BR_REC,Recife,21/01/2026,12:17,0.4,baixa-mar
+BR_REC,Recife,21/01/2026,18:25,2.3,baixa-mar
+BR_REC,Recife,22/01/2026,0:39,0.4,baixa-mar
+BR_REC,Recife,22/01/2026,6:42,2.2,baixa-mar
+BR_REC,Recife,22/01/2026,12:52,0.4,baixa-mar
+BR_REC,Recife,22/01/2026,19:02,2.3,baixa-mar
+BR_SUA,Suape,13/01/2026,0:30,1.7,baixa-mar
+BR_SUA,Suape,13/01/2026,6:52,0.9,baixa-mar
+BR_SUA,Suape,13/01/2026,12:52,1.6,baixa-mar
+BR_SUA,Suape,13/01/2026,19:12,0.7,baixa-mar
+BR_SUA,Suape,14/01/2026,1:36,1.7,baixa-mar
+BR_SUA,Suape,14/01/2026,7:54,0.8,baixa-mar
+BR_SUA,Suape,14/01/2026,13:53,1.7,baixa-mar
+BR_SUA,Suape,14/01/2026,20:08,0.6,baixa-mar
+BR_SUA,Suape,15/01/2026,2:26,1.8,baixa-mar
+BR_SUA,Suape,15/01/2026,8:40,0.7,baixa-mar
+BR_SUA,Suape,15/01/2026,14:39,1.8,baixa-mar
+BR_SUA,Suape,15/01/2026,20:53,0.5,baixa-mar
+BR_SUA,Suape,16/01/2026,3:07,1.9,baixa-mar
+BR_SUA,Suape,16/01/2026,9:19,0.6,baixa-mar
+BR_SUA,Suape,16/01/2026,15:20,1.9,baixa-mar
+BR_SUA,Suape,16/01/2026,21:33,0.4,baixa-mar
+BR_SUA,Suape,17/01/2026,3:44,2.0,baixa-mar
+BR_SUA,Suape,17/01/2026,9:56,0.5,baixa-mar
+BR_SUA,Suape,17/01/2026,15:58,2.0,baixa-mar
+BR_SUA,Suape,17/01/2026,22:11,0.4,baixa-mar
+BR_SUA,Suape,18/01/2026,4:20,2.1,baixa-mar
+BR_SUA,Suape,18/01/2026,10:31,0.4,baixa-mar
+BR_SUA,Suape,18/01/2026,16:34,2.1,baixa-mar
+BR_SUA,Suape,18/01/2026,22:48,0.4,baixa-mar
+BR_SUA,Suape,19/01/2026,4:56,2.1,baixa-mar
+BR_SUA,Suape,19/01/2026,11:06,0.4,baixa-mar
+BR_SUA,Suape,19/01/2026,17:11,2.1,baixa-mar
+BR_SUA,Suape,19/01/2026,23:24,0.4,baixa-mar
+BR_SUA,Suape,21/01/2026,0:01,0.4,baixa-mar
+BR_SUA,Suape,21/01/2026,6:05,2.2,baixa-mar
+BR_SUA,Suape,21/01/2026,12:15,0.4,baixa-mar
+BR_SUA,Suape,21/01/2026,18:23,2.2,baixa-mar
+BR_SUA,Suape,22/01/2026,0:37,0.4,baixa-mar
+BR_SUA,Suape,22/01/2026,6:40,2.1,baixa-mar
+BR_SUA,Suape,22/01/2026,12:50,0.4,baixa-mar
+BR_SUA,Suape,22/01/2026,19:00,2.2,baixa-mar
+BR_FOR,Fortaleza,13/01/2026,0:40,2.4,baixa-mar
+BR_FOR,Fortaleza,13/01/2026,6:42,0.8,baixa-mar
+BR_FOR,Fortaleza,13/01/2026,13:04,2.4,baixa-mar
+BR_FOR,Fortaleza,13/01/2026,19:25,0.7,baixa-mar
+BR_FOR,Fortaleza,14/01/2026,1:46,2.4,baixa-mar
+BR_FOR,Fortaleza,14/01/2026,7:45,0.8,baixa-mar
+BR_FOR,Fortaleza,14/01/2026,14:06,2.4,baixa-mar
+BR_FOR,Fortaleza,14/01/2026,20:26,0.7,baixa-mar
+BR_FOR,Fortaleza,15/01/2026,2:47,2.4,baixa-mar
+BR_FOR,Fortaleza,15/01/2026,8:44,0.7,baixa-mar
+BR_FOR,Fortaleza,15/01/2026,15:02,2.5,baixa-mar
+BR_FOR,Fortaleza,15/01/2026,21:21,0.7,baixa-mar
+BR_FOR,Fortaleza,16/01/2026,3:40,2.4,baixa-mar
+BR_FOR,Fortaleza,16/01/2026,9:36,0.7,baixa-mar
+BR_FOR,Fortaleza,16/01/2026,15:52,2.5,baixa-mar
+BR_FOR,Fortaleza,16/01/2026,22:09,0.7,baixa-mar
+BR_FOR,Fortaleza,17/01/2026,4:26,2.5,baixa-mar
+BR_FOR,Fortaleza,17/01/2026,10:21,0.7,baixa-mar
+BR_FOR,Fortaleza,17/01/2026,16:36,2.6,baixa-mar
+BR_FOR,Fortaleza,17/01/2026,22:51,0.6,baixa-mar
+BR_FOR,Fortaleza,18/01/2026,5:07,2.5,baixa-mar
+BR_FOR,Fortaleza,18/01/2026,11:02,0.7,baixa-mar
+BR_FOR,Fortaleza,18/01/2026,17:17,2.6,baixa-mar
+BR_FOR,Fortaleza,18/01/2026,23:30,0.6,baixa-mar
+BR_FOR,Fortaleza,19/01/2026,5:45,2.6,baixa-mar
+BR_FOR,Fortaleza,19/01/2026,11:41,0.6,baixa-mar
+BR_FOR,Fortaleza,19/01/2026,17:56,2.6,baixa-mar
+BR_FOR,Fortaleza,21/01/2026,0:45,0.5,baixa-mar
+BR_FOR,Fortaleza,21/01/2026,6:58,2.6,baixa-mar
+BR_FOR,Fortaleza,21/01/2026,12:58,0.6,baixa-mar
+BR_FOR,Fortaleza,21/01/2026,19:13,2.7,baixa-mar
+BR_FOR,Fortaleza,22/01/2026,1:22,0.5,baixa-mar
+BR_FOR,Fortaleza,22/01/2026,7:36,2.6,baixa-mar
+BR_FOR,Fortaleza,22/01/2026,13:38,0.6,baixa-mar
+BR_FOR,Fortaleza,22/01/2026,19:54,2.7,baixa-mar
+BR_BEL,Belém,13/01/2026,2:05,0.9,baixa-mar
+BR_BEL,Belém,13/01/2026,7:23,2.7,baixa-mar
+BR_BEL,Belém,13/01/2026,14:27,0.9,baixa-mar
+BR_BEL,Belém,13/01/2026,19:47,2.8,baixa-mar
+BR_BEL,Belém,14/01/2026,3:10,0.9,baixa-mar
+BR_BEL,Belém,14/01/2026,8:29,2.7,baixa-mar
+BR_BEL,Belém,14/01/2026,15:30,0.9,baixa-mar
+BR_BEL,Belém,14/01/2026,20:49,2.8,baixa-mar
+BR_BEL,Belém,15/01/2026,4:11,0.9,baixa-mar
+BR_BEL,Belém,15/01/2026,9:30,2.8,baixa-mar
+BR_BEL,Belém,15/01/2026,16:29,0.9,baixa-mar
+BR_BEL,Belém,15/01/2026,21:45,2.9,baixa-mar
+BR_BEL,Belém,16/01/2026,5:06,0.8,baixa-mar
+BR_BEL,Belém,16/01/2026,10:23,2.8,baixa-mar
+BR_BEL,Belém,16/01/2026,17:21,0.9,baixa-mar
+BR_BEL,Belém,16/01/2026,22:35,3.0,baixa-mar
+BR_BEL,Belém,17/01/2026,5:54,0.7,baixa-mar
+BR_BEL,Belém,17/01/2026,11:09,2.9,baixa-mar
+BR_BEL,Belém,17/01/2026,18:06,0.8,baixa-mar
+BR_BEL,Belém,17/01/2026,23:19,3.1,baixa-mar
+BR_BEL,Belém,18/01/2026,6:36,0.6,baixa-mar
+BR_BEL,Belém,18/01/2026,11:50,3.0,baixa-mar
+BR_BEL,Belém,18/01/2026,18:47,0.7,baixa-mar
+BR_BEL,Belém,19/01/2026,0:00,3.2,baixa-mar
+BR_BEL,Belém,19/01/2026,7:15,0.6,baixa-mar
+BR_BEL,Belém,19/01/2026,12:28,3.1,baixa-mar
+BR_BEL,Belém,19/01/2026,19:26,0.6,baixa-mar
+BR_BEL,Belém,21/01/2026,1:17,3.3,baixa-mar
+BR_BEL,Belém,21/01/2026,8:30,0.5,baixa-mar
+BR_BEL,Belém,21/01/2026,13:41,3.2,baixa-mar
+BR_BEL,Belém,21/01/2026,20:43,0.6,baixa-mar
+BR_BEL,Belém,22/01/2026,1:56,3.3,baixa-mar
+BR_BEL,Belém,22/01/2026,9:07,0.5,baixa-mar
+BR_BEL,Belém,22/01/2026,14:19,3.2,baixa-mar
+BR_BEL,Belém,22/01/2026,21:23,0.6,baixa-mar
+BR_ITQ,Itaqui,13/01/2026,3:16,5.3,baixa-mar
+BR_ITQ,Itaqui,13/01/2026,9:20,1.4,baixa-mar
+BR_ITQ,Itaqui,13/01/2026,15:40,5.4,baixa-mar
+BR_ITQ,Itaqui,13/01/2026,22:03,1.3,baixa-mar
+BR_ITQ,Itaqui,14/01/2026,4:22,5.3,baixa-mar
+BR_ITQ,Itaqui,14/01/2026,10:23,1.4,baixa-mar
+BR_ITQ,Itaqui,14/01/2026,16:42,5.4,baixa-mar
+BR_ITQ,Itaqui,14/01/2026,23:04,1.3,baixa-mar
+BR_ITQ,Itaqui,15/01/2026,5:23,5.4,baixa-mar
+BR_ITQ,Itaqui,15/01/2026,11:22,1.3,baixa-mar
+BR_ITQ,Itaqui,15/01/2026,17:38,5.5,baixa-mar
+BR_ITQ,Itaqui,15/01/2026,23:59,1.2,baixa-mar
+BR_ITQ,Itaqui,16/01/2026,6:16,5.4,baixa-mar
+BR_ITQ,Itaqui,16/01/2026,12:14,1.3,baixa-mar
+BR_ITQ,Itaqui,16/01/2026,18:28,5.6,baixa-mar
+BR_ITQ,Itaqui,17/01/2026,0:47,1.1,baixa-mar
+BR_ITQ,Itaqui,17/01/2026,7:02,5.5,baixa-mar
+BR_ITQ,Itaqui,17/01/2026,12:59,1.2,baixa-mar
+BR_ITQ,Itaqui,17/01/2026,19:12,5.7,baixa-mar
+BR_ITQ,Itaqui,18/01/2026,1:29,1.0,baixa-mar
+BR_ITQ,Itaqui,18/01/2026,7:43,5.6,baixa-mar
+BR_ITQ,Itaqui,18/01/2026,13:40,1.1,baixa-mar
+BR_ITQ,Itaqui,18/01/2026,19:53,5.8,baixa-mar
+BR_ITQ,Itaqui,19/01/2026,2:08,0.9,baixa-mar
+BR_ITQ,Itaqui,19/01/2026,8:21,5.7,baixa-mar
+BR_ITQ,Itaqui,19/01/2026,14:19,1.0,baixa-mar
+BR_ITQ,Itaqui,19/01/2026,20:32,5.8,baixa-mar
+BR_ITQ,Itaqui,21/01/2026,3:23,0.8,baixa-mar
+BR_ITQ,Itaqui,21/01/2026,9:34,5.8,baixa-mar
+BR_ITQ,Itaqui,21/01/2026,15:36,0.9,baixa-mar
+BR_ITQ,Itaqui,21/01/2026,21:49,5.9,baixa-mar
+BR_ITQ,Itaqui,22/01/2026,4:00,0.8,baixa-mar
+BR_ITQ,Itaqui,22/01/2026,10:12,5.8,baixa-mar
+BR_ITQ,Itaqui,22/01/2026,16:16,0.9,baixa-mar
+BR_ITQ,Itaqui,22/01/2026,22:30,5.9,baixa-mar

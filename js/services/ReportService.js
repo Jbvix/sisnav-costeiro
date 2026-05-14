@@ -406,7 +406,11 @@ const renderRouteAndDistances = (doc, y, state) => {
     if (safePoints.length > 0) {
         // Start
         const p0 = safePoints[0];
-        routeData.push(["1", "-", "-", `${p0.lat.toFixed(4)}\n${p0.lon.toFixed(4)}`, "-", "-", "-", currentEta.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }), "0.0", "0.0"]);
+        const pos0 = (Calc && typeof Calc.formatPos === 'function')
+            ? `${Calc.formatPos(p0.lat, 'lat')}\n${Calc.formatPos(p0.lon || p0.lng, 'lon')}`
+            : `${p0.lat.toFixed(4)}\n${(p0.lon || p0.lng).toFixed(4)}`;
+
+        routeData.push(["1", "-", "-", pos0, "-", "-", "-", currentEta.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }), "0.0", "00:00"]);
 
         for (let i = 0; i < safePoints.length - 1; i++) {
             const p1 = safePoints[i];
@@ -436,17 +440,74 @@ const renderRouteAndDistances = (doc, y, state) => {
             if (window.App && typeof window.App.getNearestLighthouse === 'function') {
                 try {
                     const lh = window.App.getNearestLighthouse(p2.lat, p2.lon);
-                    if (lh && lh.dist < 50) refTxt = `${lh.name}\n(${lh.dist.toFixed(1)}mn)`;
+                    // Use range from object or default 10
+                    const range = lh.range || 10;
+                    if (lh && lh.dist <= range) refTxt = `${lh.name}\n(${lh.dist.toFixed(1)}mn)`;
+                    else refTxt = "-";
                 } catch (e) { }
             }
             // Chart
             let chartId = "-";
-            try { if (ChartService) { chartId = ChartService.getChartForPosition(p2.lat, p2.lon); } } catch (e) { }
+            // Chart Logic (Mirror UIManager)
 
-            routeData.push([(i + 2).toString(), chartId, refTxt, `${p2.lat.toFixed(4)}\n${p2.lon.toFixed(4)}`,
-            `${crs.toFixed(1)}°`, legDist.toFixed(1), formatDuration(legHours),
-            currentEta.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }),
-            cumulativeDist.toFixed(1), formatDuration(cumulativeHours)]);
+            // LOGIC: First and Last WP must show Approximation Chart of Port
+            const isFirst = (i === 0);
+            const isLast = (i === safePoints.length - 1);
+
+            if (isFirst || isLast) {
+                const getApproxChart = (portName) => {
+                    if (!portName) return null;
+                    const n = portName.toUpperCase();
+                    if (n.includes("VITORIA") || n.includes("VITÓRIA") || n.includes("TUBARÃO")) return "1410";
+                    if (n.includes("RIO") && n.includes("JANEIRO")) return "1506";
+                    if (n.includes("GUANABARA")) return "1506";
+                    if (n.includes("SANTOS")) return "1711";
+                    if (n.includes("RECIFE")) return "930";
+                    if (n.includes("SUAPE")) return "930";
+                    if (n.includes("MUCURIPE") || n.includes("FORTALEZA")) return "710";
+                    if (n.includes("SALVADOR")) return "1101";
+                    if (n.includes("ITAQUI") || n.includes("SAO LUIS")) return "411";
+                    if (n.includes("PARANAGUA")) return "1820";
+                    if (n.includes("ITATIAIA") || n.includes("ITAJAÍ")) return "1805";
+                    if (n.includes("IMBITUBA")) return "1904";
+                    if (n.includes("RIO GRANDE")) return "21080";
+                    return null;
+                };
+                const targetPort = isFirst ? state.voyage.depPort : state.voyage.arrPort;
+                const approx = getApproxChart(targetPort);
+                if (approx) chartId = approx;
+                else {
+                    // Fallback
+                    if (p2.chart) chartId = p2.chart;
+                    else if (window.ChartService) {
+                        const c = window.ChartService.getChartForPosition(p2.lat, p2.lon);
+                        if (c) chartId = c.id;
+                    }
+                }
+            } else {
+                if (p2.chart) chartId = p2.chart;
+                else if (window.ChartService) {
+                    const c = window.ChartService.getChartForPosition(p2.lat, p2.lon);
+                    if (c) chartId = c.id;
+                }
+            }
+
+            const pos2 = (Calc && typeof Calc.formatPos === 'function')
+                ? `${Calc.formatPos(p2.lat, 'lat')}\n${Calc.formatPos(p2.lon, 'lon')}`
+                : `${p2.lat.toFixed(4)}\n${p2.lon.toFixed(4)}`;
+
+            routeData.push([
+                p2.name || (i + 2).toString(),
+                chartId,
+                refTxt,
+                pos2,
+                `${crs.toFixed(1)}°`,
+                legDist.toFixed(1),
+                formatDuration(legHours),
+                currentEta.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }),
+                cumulativeDist.toFixed(1),
+                formatDuration(cumulativeHours)
+            ]);
         }
     }
 
@@ -751,10 +812,15 @@ const ReportService = {
             const days = Math.floor(totalHours / 24); const remHrs = Math.floor(totalHours % 24);
             const durationStr = `${Math.floor(totalHours)}h (${days}d ${remHrs}h)`;
 
+            const depDate = voyage.depTime ? new Date(voyage.depTime) : new Date();
+            const arrDate = new Date(depDate.getTime() + (totalHours * 3600 * 1000));
+
             const summaryData = [
                 ["REBOCADOR:", (state.shipProfile.name || "SAAM CHILE").toUpperCase()],
                 ["DE:", (voyage.depPort || "MUCURIPE").toUpperCase()],
                 ["PARA:", (voyage.arrPort || "SUAPE").toUpperCase()],
+                ["SAÍDA:", depDate.toLocaleString('pt-BR')],
+                ["CHEGADA:", arrDate.toLocaleString('pt-BR')],
                 ["DISTÂNCIA (MN):", totalDist.toFixed(1)],
                 ["TEMPO ESTIMADO:", durationStr]
             ];
@@ -799,30 +865,38 @@ const ReportService = {
             // 7. DADOS DE MÁQUINAS
             currentY = renderMachineInfo(doc, currentY, state);
 
-            // 7.1 CHECKLIST
-            currentY = renderMachineryChecklist(doc, currentY, state);
+            // 7.1 CHECKLIST (REMOVED AS PER USER REQUEST)
+            // currentY = renderMachineryChecklist(doc, currentY, state);
 
             // 8. ANEXOS (Meteo e Navarea)
             if (state.appraisal.meteoText) {
-                doc.addPage('a4', 'l');
-                currentY = addSectionTitle(doc, "ANEXO: PREVISÃO METEOMARINHA", 20);
-                const meteoRows = parseMeteoText(state.appraisal.meteoText);
-                if (meteoRows.length > 0) {
-                    const tableBody = meteoRows.map(row => [row.group, `${row.zone_id}\n${row.zone_name}`, row.wx_short, row.wind_short, row.sea_short, row.vis_short]);
-                    doc.autoTable({ startY: currentY, head: [['Grupo', 'Área', 'Tempo (Wx)', 'Vento (Bft)', 'Ondas (m)', 'Visib.']], body: tableBody, theme: 'grid', styles: { fontSize: 8 }, headStyles: { fillColor: [11, 61, 145] } });
-                } else {
-                    doc.autoTable({ startY: currentY, body: [[state.appraisal.meteoText]], theme: 'plain', styles: { font: 'courier', fontSize: 8 } });
-                }
+                doc.addPage();
+                addSectionTitle(doc, "ANEXO I - METEOMARINHA", 20);
+                doc.setFontSize(8);
+                doc.setFont("courier", "normal"); // Monospaced for preserved formatting
+
+                const splitText = doc.splitTextToSize(state.appraisal.meteoText, 180);
+                doc.text(splitText, 15, 30);
             }
+
+            if (state.appraisal.badWeatherText) {
+                doc.addPage();
+                addSectionTitle(doc, "ANEXO 1A - AVISOS DE MAU TEMPO", 20);
+                doc.setFontSize(8);
+                doc.setFont("courier", "normal");
+
+                const splitText = doc.splitTextToSize(state.appraisal.badWeatherText, 180);
+                doc.text(splitText, 15, 30);
+            }
+
             if (state.appraisal.navareaText) {
-                doc.addPage('a4', 'l');
-                currentY = addSectionTitle(doc, "ANEXO: AVISOS NAVAREA V", 20);
-                const navRows = parseNavareaText(state.appraisal.navareaText);
-                if (navRows.length > 0) {
-                    doc.autoTable({ startY: currentY, head: [['Aviso', 'Região', 'Categoria', 'Tipo', 'Meios/Alvos', 'Período', 'Coord']], body: navRows, theme: 'grid', styles: { fontSize: 6 }, headStyles: { fillColor: [192, 57, 43] }, columnStyles: { 4: { cellWidth: 80 } } });
-                } else {
-                    doc.autoTable({ startY: currentY, body: [[state.appraisal.navareaText]], theme: 'plain', styles: { font: 'courier', fontSize: 8 } });
-                }
+                doc.addPage();
+                addSectionTitle(doc, "ANEXO II - NAVAREA V", 20);
+                doc.setFontSize(8);
+                doc.setFont("courier", "normal");
+
+                const splitText = doc.splitTextToSize(state.appraisal.navareaText, 180);
+                doc.text(splitText, 15, 30);
             }
 
             // ASSINATURAS FINAL

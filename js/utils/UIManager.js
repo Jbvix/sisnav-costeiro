@@ -136,48 +136,205 @@ const UIManager = {
      */
     renderRouteTable: function (routePoints) {
         const tbody = this.elements.tableBody;
+
+        // Ensure header matches via JS as fallback (or if user didnt update HTML yet)
+        const thead = document.getElementById('table-route-head');
+        if (thead) {
+            thead.innerHTML = `
+                <tr>
+                    <th class="p-2 text-center w-8">WP</th>
+                    <th class="p-2 text-center">Carta</th>
+                    <th class="p-2 text-left">Ref. Farol</th>
+                    <th class="p-2 text-center">Posição (DDM)</th>
+                    <th class="p-2 text-center">Rumo</th>
+                    <th class="p-2 text-center">Dist.</th>
+                    <th class="p-2 text-center">Tempo</th>
+                    <th class="p-2 text-center">ETA</th>
+                    <th class="p-2 text-center">Total</th>
+                    <th class="p-2 text-center">Horas</th>
+                </tr>
+            `;
+        }
+
         tbody.innerHTML = ""; // Limpa tabela anterior
 
         if (!routePoints || routePoints.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-gray-400 italic">Nenhuma rota carregada.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="10" class="p-8 text-center text-gray-400 italic">Nenhuma rota carregada.</td></tr>`;
             return;
         }
 
+        // INIT VARIABLES FOR CALCULATIONS
+        let cumDist = 0;
+        let cumTimeHours = 0;
+        const speed = (window.State && window.State.shipProfile && window.State.shipProfile.speed) ? parseFloat(window.State.shipProfile.speed) : 10;
+
+        let startDate = new Date();
+        if (window.State && window.State.voyage && window.State.voyage.depTime) {
+            startDate = new Date(window.State.voyage.depTime);
+        }
+
+        // Helper for HH:MM format
+        const fmtHours = (h) => {
+            if (isNaN(h)) return "00:00";
+            const hh = Math.floor(h);
+            const mm = Math.round((h % 1) * 60);
+            return `${hh.toString().padStart(2, '0')}:${mm.toString().padStart(2, '0')}`;
+        };
+
         // Loop para criar as linhas
-        for (let i = 0; i < routePoints.length - 1; i++) {
-            const p1 = routePoints[i];
-            const p2 = routePoints[i + 1];
+        for (let i = 0; i < routePoints.length; i++) {
+            const pCurrent = routePoints[i];
+            const pNext = routePoints[i + 1]; // Can be undefined for last point
 
-            // Calcula perna individual
-            const leg = NavMath.calcLeg(p1.lat, p1.lon, p2.lat, p2.lon);
+            // CALC LEG DATA (Using this point to next point)
+            let crs = 0;
+            let legDist = 0;
+            let legTime = 0;
 
+            if (pNext) {
+                const leg = NavMath.calcLeg(pCurrent.lat, pCurrent.lon, pNext.lat, pNext.lon);
+                crs = leg.crs;
+                legDist = leg.dist;
+                legTime = (legDist / speed); // Hours
+            }
+
+            // ACCUMULATED DATA (At this point)
+            // For the first point, total dist is 0, total time is 0.
+            if (i > 0) {
+                const pPrev = routePoints[i - 1];
+                const legPrev = NavMath.calcLeg(pPrev.lat, pPrev.lon, pCurrent.lat, pCurrent.lon);
+                cumDist += legPrev.dist;
+                cumTimeHours += (legPrev.dist / speed);
+            }
+
+            // ETA Calculation
+            const etaDate = new Date(startDate.getTime() + (cumTimeHours * 3600 * 1000));
+            const etaStr = etaDate.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' }) + ' ' +
+                etaDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+            // Determine Chart
+            let chartId = '-';
+
+            // LOGIC: First and Last WP must show Approximation Chart of Port
+            const isFirst = (i === 0);
+            const isLast = (i === routePoints.length - 1);
+
+            if (isFirst || isLast) {
+                // Helper to find approximation chart
+                const getApproxChart = (portName) => {
+                    if (!portName) return null;
+                    const n = portName.toUpperCase();
+                    if (n.includes("VITORIA") || n.includes("VITÓRIA") || n.includes("TUBARÃO")) return "1410";
+                    if (n.includes("RIO") && n.includes("JANEIRO")) return "1506";
+                    if (n.includes("GUANABARA")) return "1506";
+                    if (n.includes("SANTOS")) return "1711";
+                    if (n.includes("RECIFE")) return "930";
+                    if (n.includes("SUAPE")) return "930"; // Close enough or specific? 21030 is coastal.
+                    if (n.includes("MUCURIPE") || n.includes("FORTALEZA")) return "710";
+                    if (n.includes("SALVADOR")) return "1101";
+                    if (n.includes("ITAQUI") || n.includes("SAO LUIS")) return "411";
+                    if (n.includes("PARANAGUA")) return "1820";
+                    if (n.includes("ITATIAIA") || n.includes("ITAJAÍ")) return "1805";
+                    if (n.includes("IMBITUBA")) return "1904";
+                    if (n.includes("RIO GRANDE")) return "21080"; // Fallback or specific?
+                    return null;
+                };
+
+                const targetPort = isFirst ? State.voyage.depPort : State.voyage.arrPort;
+                const approx = getApproxChart(targetPort);
+                if (approx) {
+                    chartId = approx;
+                } else {
+                    // Fallback normal logic if unknown port
+                    chartId = pCurrent.chart || (window.AutomatedPlanningService && window.AutomatedPlanningService.chartGeoDB && Object.entries(window.AutomatedPlanningService.chartGeoDB).find(([id, bbox]) => {
+                        // Simple bbox check would be better, but for now fallback to known logic or existing
+                        return pCurrent.lat <= bbox.n && pCurrent.lat >= bbox.s && pCurrent.lon >= bbox.w && pCurrent.lon <= bbox.e;
+                    })?.[0]) || '-';
+
+                    // Try to get from ChartService if available
+                    if (chartId === '-' && window.ChartService) {
+                        const c = window.ChartService.getChartForPosition(pCurrent.lat, pCurrent.lon);
+                        if (c) chartId = c.id;
+                    }
+                }
+            } else {
+                // Intermediate Waypoints: Use assigned chart or lookup Coastal
+                if (pCurrent.chart) {
+                    chartId = pCurrent.chart;
+                } else if (window.ChartService) {
+                    const c = window.ChartService.getChartForPosition(pCurrent.lat, pCurrent.lon);
+                    if (c) chartId = c.id;
+                } else if (window.AutomatedPlanningService && window.AutomatedPlanningService.chartGeoDB) {
+                    const db = window.AutomatedPlanningService.chartGeoDB;
+                    for (const [id, bbox] of Object.entries(db)) {
+                        if (pCurrent.lat <= bbox.n && pCurrent.lat >= bbox.s &&
+                            pCurrent.lon >= bbox.w && pCurrent.lon <= bbox.e) {
+                            chartId = id;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // LIGHTHOUSE INFO
+            const lhHtml = this.renderLighthouseInfo(pCurrent.lat, pCurrent.lon);
+
+            // RENDER ROW
             const row = document.createElement('tr');
-            row.className = "hover:bg-blue-50 border-b border-gray-100 transition duration-150";
+            row.className = "hover:bg-blue-50 border-b border-gray-100 transition duration-150 text-[11px]";
 
             row.innerHTML = `
-                <td class="p-3 font-bold text-gray-400 text-center">${i + 1}</td>
-                <td class="p-3">
-                    <div class="font-bold text-slate-700 text-sm">${p1.name}</div>
-                    <div class="text-[10px] text-gray-400 uppercase tracking-wide">to ${p2.name}</div>
+                <td class="p-2 font-bold text-gray-400 text-center">${i + 1}</td>
+                
+                <td class="p-2 text-center font-bold text-blue-800">${chartId}</td>
+                
+                <td class="p-2 text-left border-l border-gray-50 max-w-[150px] overflow-hidden">
+                   ${lhHtml}
                 </td>
-                <td class="p-3 text-center text-[10px] font-mono text-gray-500">
-                    ${NavMath.formatPos(p1.lat, 'lat')}<br>
-                    ${NavMath.formatPos(p1.lon, 'lon')}
+
+                <td class="p-2 text-center font-mono text-gray-500 leading-tight">
+                    ${NavMath.formatPos(pCurrent.lat, 'lat')}<br>
+                    ${NavMath.formatPos(pCurrent.lon, 'lon')}
                 </td>
-                <td class="p-3 text-center">
-                    <span class="font-mono font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded text-xs">
-                        ${leg.crs.toFixed(1)}°
+
+                <td class="p-2 text-center">
+                    <span class="font-mono font-bold text-blue-700 bg-blue-50 px-1 rounded text-[10px]">
+                        ${pNext ? crs.toFixed(1) + '°' : '-'}
                     </span>
                 </td>
-                <td class="p-3 text-center font-mono text-sm text-slate-600">
-                    ${leg.dist.toFixed(1)}
+
+                <td class="p-2 text-center font-mono text-slate-600">
+                    ${pNext ? legDist.toFixed(1) : '-'}
                 </td>
-                <td class="p-3 text-center text-[10px] text-gray-600 border-l border-gray-50">
-                    ${this.renderLighthouseInfo(p2.lat, p2.lon)}
+                
+                <td class="p-2 text-center font-mono text-slate-700">
+                    ${pNext ? fmtHours(legTime) : '-'}
+                </td>
+
+                <td class="p-2 text-center font-mono text-slate-500 bg-gray-50">
+                    ${etaStr}
+                </td>
+
+                <td class="p-2 text-center font-mono text-slate-600">
+                    ${cumDist.toFixed(1)}
+                </td>
+
+                <td class="p-2 text-center font-mono text-slate-600">
+                    ${fmtHours(cumTimeHours)}
                 </td>
             `;
             tbody.appendChild(row);
         }
+
+        // ADD TOTALS ROW (SPRINT 5)
+        const totalRow = document.createElement('tr');
+        totalRow.className = "bg-slate-200 font-bold text-xs border-t-2 border-slate-300";
+        totalRow.innerHTML = `
+            <td colspan="8" class="p-2 text-right uppercase text-slate-600">Totais da Viagem:</td>
+            <td class="p-2 text-center text-slate-800">${cumDist.toFixed(1)}</td>
+            <td class="p-2 text-center text-slate-800">${fmtHours(cumTimeHours)}</td>
+        `;
+        tbody.appendChild(totalRow);
     },
 
     /**
@@ -186,23 +343,30 @@ const UIManager = {
     renderLighthouseInfo: function (lat, lon) {
         if (window.App && typeof window.App.getNearestLighthouse === 'function') {
             const lh = window.App.getNearestLighthouse(lat, lon);
-            if (lh && lh.dist < 50) { // Só mostra se < 50 NM para não poluir ?
-                // Ícone baseado na distância
-                let icon = '<i class="far fa-lightbulb text-gray-300"></i>';
-                if (lh.dist < 10) icon = '<i class="fas fa-lightbulb text-yellow-500"></i>';
-                else if (lh.dist < 20) icon = '<i class="fas fa-lightbulb text-yellow-300"></i>';
+            const range = lh ? (lh.range || 10) : 10;
+            const MAX_REF_RADIUS = 50.0; // Show as reference if within this radius
+
+            if (lh && lh.dist <= MAX_REF_RADIUS) {
+                const isVisible = lh.dist <= range;
+
+                // Style based on visibility
+                let iconClass = isVisible ? "text-yellow-500 animate-pulse" : "text-gray-300";
+                let textClass = isVisible ? "text-slate-700" : "text-gray-400";
+                let distClass = isVisible ? "text-gray-500" : "text-gray-300";
+
+                const icon = `<i class="fas fa-lightbulb ${iconClass}"></i>`;
 
                 return `
                     <div class="flex flex-col items-center leading-tight">
-                        <span class="font-bold text-slate-700">${lh.name}</span>
-                        <span class="text-[9px] text-gray-400">${icon} ${lh.dist.toFixed(1)} NM</span>
+                        <span class="font-bold ${textClass} text-[10px]">${lh.name}</span>
+                        <span class="text-[9px] ${distClass} font-mono">${icon} ${lh.dist.toFixed(1)} NM (Alc: ${range}M)</span>
                     </div>
                 `;
-            } else if (lh) {
-                return `<span class="text-gray-300 text-[9px]">${lh.name} (${lh.dist.toFixed(0)}NM)</span>`;
+            } else {
+                return '<span class="text-gray-200 text-[9px]">-</span>';
             }
         }
-        return '<span class="text-gray-300">-</span>';
+        return '<span class="text-gray-200">-</span>';
     },
     /**
      * Atualiza os cartões de estatística (Dashboard)

@@ -8,8 +8,9 @@ import os
 try:
     from scraping_weather import WeatherCollector, WeatherData
 except ImportError:
-    print("ERRO: O arquivo scraping_weather.py não foi encontrado.")
-    sys.exit(1)
+    print("ERRO: O arquivo scraping_weather.py não foi encontrado. O script update_weather falhará ao rodar, mas o servidor permanecerá online.")
+    # sys.exit(1) REMOVED to avoid crashing the server on import
+    WeatherCollector = None
 
 # Configurar Logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

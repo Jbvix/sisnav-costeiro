@@ -1,134 +1,90 @@
-# Manual do Usuário - SISNAV Costeiro P-14
+# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.4.0
 
-**Versão:** 3.1 (Dezembro 2025)
-**Destinatário:** Comandantes e Oficiais de Navegação
+## 1. Visão Geral
 
----
+O **SISNAV Costeiro** é uma ferramenta de auxílio ao planejamento e monitoramento de viagens costeiras, projetada para facilitar a elaboração de planos de viagem, cálculos de ETA, análises de marés e gestão de riscos.
 
-## 1. Introdução
-O **SISNAV Costeiro** é uma ferramenta de auxílio ao planejamento de viagens costeiras para rebocadores. Ele automatiza o cálculo de distâncias, estimativa de chegada (ETA), análise de marés e gera o **Relatório de Planejamento de Viagem (Appraisal)** em conformidade com as normas de segurança.
+O sistema é dividido em três módulos principais:
 
----
-
-## 2. Roteiro Passo a Passo
-
-O sistema é dividido em abas lógicas que seguem o fluxo de planejamento da IMO A.893(21).
-
-### Passo 1: Configuração da Viagem (Dashboard)
-Ao abrir o sistema, a aba "Planning" é exibida.
-1.  **Dados do Navio**: Preencha (ou verifique) o nome do Comandante, Tripulação e calados (Popa/Proa).
-2.  **Portos e Datas** (Barra Lateral Esquerda):
-    *   **Porto de Saída**: Selecione na lista.
-    *   **Porto de Chegada**: Selecione na lista.
-    *   **ETD (Partida)**: Defina a data e hora de saída.
-    *   *Nota*: Ao selecionar os portos, o sistema traçará automaticamente a rota se ela existir no banco de dados e calculará o **ETA** (Chegada Estimada) com base na velocidade média.
-
-### Passo 2: Definição da Rota
-Caso a rota não seja automática, você pode:
-*   **Importar GPX**: Clicar em "Carregar Rota (GPX)" e selecionar um arquivo exportado do ECDIS ou OpenCPN.
-*   **Planejamento Manual**: Clicar no botão "+" no mapa para plotar waypoints manualmente.
-
-### Passo 3: Segurança e Documentação (Aba Appraisal)
-Nesta seção, você valida a segurança da viagem.
-*   **Cartas Náuticas**: Selecione as cartas que serão utilizadas na viagem.
-*   **Meteomarinha**: Copie o texto completo do boletim meteorológico vigente e cole na caixa de texto.
-*   **Navarea V**: Copie o texto dos avisos-rádio e cole na caixa de texto correspondente.
-*   **Marés**: O sistema carrega automaticamente os dados de maré dos portos. Você pode anexar tábuas adicionais (PDF) se necessário.
-
-### Passo 4: Contatos e Tripulação
-Adicione os contatos de terra (Agência, Praticagem, Terminal) e a lista da tripulação para constar no relatório.
+1. **APPRAISAL (Avaliação)**: Configuração inicial da viagem.
+2. **PLAN (Planejamento)**: Detalhamento da rota, waypoints e referências.
+3. **MONITOR (Monitoramento)**: Acompanhamento em tempo real (quando conectado).
 
 ---
 
-## 3. Análise Automática de Marés
+## 2. Módulo Appraisal (Avaliação)
 
-O sistema possui uma inteligência integrada para marés:
-*   **Gráfico de Maré**: Ao definir Data/Hora e Porto, o sistema gera automaticamente um gráfico da maré para uma janela de +/- 3 horas em relação à chegada/saída.
-*   **Cálculo de Altura**: A altura da maré no momento exato da manobra é calculada e exibida no relatório.
+Nesta tela, você define os parâmetros fundamentais da viagem.
 
----
+### 2.1. Configuração da Viagem
 
-## 4. Geração do Relatório (PDF)
+- **Portos**: Selecione o Porto de Origem e Destino.
+- **Datas**:
+  - **ETD (Partida)**: Selecione a data e hora de saída.
+  - **ETA (Chegada)**: Calculado automaticamente com base na distância e velocidade. *Campo bloqueado para edição manual.*
+- **Navio**:
+  - **Velocidade de Cruzeiro**: Velocidade média planejada.
+  - **Consumo/Estoque**: Dados para cálculo de autonomia.
 
-Ao finalizar o preenchimento:
-1.  Verifique se todas as luzes de status na barra lateral estão "Verdes" (OK).
-2.  Clique no botão **"Exportar PDF"** na barra lateral.
-3.  O sistema irá gerar um arquivo contendo:
-    *   Dados da Embarcação e Viagem.
-    *   Plano de Viagem detalhado (Waypoints, Rumos, Distâncias).
-    *   Tabela de Distâncias Perna-a-Perna.
-    *   Análise de Marés (Gráficos).
-    *   Anexos completos de Meteomarinha e Navarea.
-    *   Contatos e Tripulação.
+### 2.2. Novas Funcionalidades (v3.4)
 
-Salve o arquivo PDF digitalmente ou imprima para assinatura.
-
----
-
-## 5. Perguntas Frequentes (FAQ)
-
-**P: O ETA não aparece.**
-R: Certifique-se de que selecionou **ambos** os portos (Origem e Destino). O sistema precisa da rota para calcular a distância e o tempo.
-
-**P: Como atualizo os dados de maré?**
-R: Os dados de maré são atualizados via script Python (`rebuild_csv.py`) quando há conexão com internet. A bordo (offline), o sistema utiliza a última base de dados carregada.
-
-**P: Posso colar texto formatado do Meteomarinha?**
-R: Sim, o sistema aceita texto simples. Copie do site da Marinha ou email e cole diretamente. O formato será ajustado no relatório final.
+- **Configuração de Reboque**:
+  - Defina o arranjo (Reboque Simples, Duplo, Empurrador).
+  - Informe o comprimento do cabo de reboque.
+- **Comunicações**:
+  - Lista de Estações Costeiras monitoradas.
+  - Canal de Trabalho (VHF principal).
+  - **Contatos da Empresa**: Lista de contatos de emergência e suporte em terra.
+- **Gestão de Riscos**:
+  - Checklist simplificado para riscos operacionais (Mau tempo, Pirataria, Tráfego, etc.).
+- **Tábuas de Marés**:
+  - Seleção de arquivos da biblioteca digital para os portos de saída e chegada.
 
 ---
 
-## 6. Monitoramento em Tempo Real (Fleet Tracking)
+## 3. Módulo Plan (Planejamento)
 
-O sistema permite que o navio transmita sua posição em tempo real para o escritório ou para outros navios da frota.
+O coração do sistema, onde a rota é visualizada e ajustada.
 
-### 6.1 A Bordo (Rebocador - Transmissão)
-Para iniciar a transmissão de dados:
-1.  Na aba **1. Appraisal**, certifique-se de que o **Rebocador e Filial** corretos estão selecionados (Ex: SAAM CHILE / PECÉM). O sistema usa este nome para identificar o sinal.
-2.  Prossiga para a aba **3. Monitor**.
-3.  Clique no botão **"GPS Real"** (Verde).
-4.  Aguarde a conexão. O botão ficará **VERMELHO** com o texto **"GPS ATIVO"**.
-    *   **Nota:** Se o botão ficar vermelho, significa que o sinal está sendo enviado com sucesso para a nuvem.
+### 3.1. Mapa Interativo
 
-### 6.2 Em Terra (Escritório - Visualização)
-Para monitorar a frota sem acessar as ferramentas de planejamento:
-1.  Acesse o link do sistema adicionando `?mode=viewer` ao final do endereço.
-    *   Exemplo: `https://tuglife.live/sisnav/?mode=viewer`
-    *   Alternativamente, abra o sistema normal e vá para aba Monitor.
-2.  O sistema entrará em **Modo Visualizador** (Tela Cheia).
-3.  Se houver navios transmitindo, um painel **"Frota SISNAV"** aparecerá automaticamente.
-4.  Clique no nome do navio para focar o mapa em sua posição atual.
-5.  O painel exibe SOG (Velocidade) e Atualização (Último sinal recebido) em tempo real.
+- **Visualização**: Cartas náuticas, linhas de costa e batimetria.
+- **Interação**: Arraste waypoints para ajustar a rota. O quadro de cronograma é atualizado instantaneamente.
+- **Modo Visual (Snapper)**: Ferramenta para traçar rotas clicando em rotas conhecidas pré-mapeadas.
 
+### 3.2. Tabela de Rota
+
+A tabela detalha cada pernada (leg) da viagem:
+
+- **WP / Posição**: Coordenadas do ponto.
+- **Rumo / Distância**: Vetor para o próximo ponto.
+- **ETA**: Previsão de passagem pelo ponto.
+- **REF. FAROL (Novidade)**:
+  - **Ícone Amarelo**: Farol visível (dentro do alcance nominal).
+  - **Ícone Cinza**: Farol de referência (fora de alcance visual, mas próximo - até 50 NM).
+  - **Alcance**: Exibe o alcance luminoso real (ex: "Alc: 18M").
+
+### 3.3. Dados Ambientais
+
+- **Meteo-Oceanografia**: Previsão de vento, onda e tempo para cada ponto da rota (via integração API).
+- **Atualização**: Utilize o botão de "Atualizar" no cabeçalho para buscar dados recentes.
 
 ---
 
-## 7. Gest�o T�cnica de Dados de Mar� (2026+)
+## 4. Módulo Monitor (Monitoramento)
 
-O SISNAV Costeiro opera com uma base de dados interna de mar�s. Caso necessite inserir dados de novos portos ou atualizar para o pr�ximo ano (ex: 2026), siga o procedimento oficial garantido pela ferramenta de importa��o.
+Modo de execução da viagem.
 
-### 7.1 Como Inserir Novos Dados
-1.  **Formatamento**: Crie um arquivo CSV (Ex: mares_2026.csv) com o seguinte layout padr�o:
-    `csv
-    porto,data,hora,altura_m,tipo_mare,fonte
-    SUAPE,01/01/2026,02:01,2.09,preamar,DHN
-    SUAPE,01/01/2026,08:14,0.38,baixa-mar,DHN
-    ...
-    ` 
-    *Nota: Respeite a altern�ncia f�sica entre PREAMAR e BAIXA-MAR. Duas mar�s iguais seguidas ser�o rejeitadas pelo validador.*
+- Exibe o progresso do navio sobre a rota planejada.
+- Alertas de desvio de rota (XTE).
+- Monitoramento de combustível e autonomia em tempo real.
 
-2.  **Execu��o da Ferramenta**:
-    *   Coloque o arquivo csv na pasta raiz do sistema.
-    *   Execute o script de importa��o segura:
-        `ash
-        python tools/import_mares_2026.py
-        ` 
+## 5. Relatórios
 
-3.  **Resultado**:
-    *   O script far� o backup da base atual.
-    *   Validar� a integridade (Regra de Ouro).
-    *   Inserir� os novos dados e correlacionar� automaticamente com os IDs do sistema (ex: PORTO DE SUAPE -> BR_SUA).
+Geração de documentos para arquivo ou inspeção (Port State Control).
 
-### 7.2 Em Caso de Aus�ncia de Dados
-Se n�o houver dados oficiais carregados para um porto espec�fico, o sistema **n�o deixar� o relat�rio em branco**.
-Ele entrar� automaticamente no **Modo de Simula��o Harm�nica**, gerando uma curva de mar� matem�tica aproximada para permitir a visualiza��o da tend�ncia (Enchente/Vazante) e garantir a continuidade do planejamento.
+- Exportação do Plano de Viagem em **PDF** ou **Excel**.
+- Inclui todas as seções configuradas no Appraisal e a tabela de rota detalhada.
+
+---
+**Suporte Técnico**: Em caso de dúvdas, contate o administrador do sistema.

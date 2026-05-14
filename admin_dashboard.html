@@ -150,7 +150,7 @@
     </div>
 
     <script type="module">
-        import AuthService from './js/services/AuthService.js?v=Hotfix3';
+        import AuthService from './js/services/AuthService.js?v=Hotfix4';
         import DatabaseService from './js/services/DatabaseService.js';
 
         // 1. Auth Check
@@ -216,7 +216,7 @@
                         <td class="p-3 text-right">
                              <button class="text-green-500 hover:text-green-400 mx-1" onclick="window.sendWa('${inv.token}')" title="Enviar WhatsApp"><i class="fab fa-whatsapp"></i></button>
                              <button class="text-slate-400 hover:text-white mx-1" onclick="window.reShare('${inv.token}')" title="Ver Detalhes"><i class="fas fa-eye"></i></button>
-                             ${inv.status !== 'revoked' ? `<button class="text-red-400 hover:text-red-600 mx-1" onclick="window.revoke('${inv.token}')" title="Revogar"><i class="fas fa-ban"></i></button>` : ''}
+                             ${inv.status !== 'revoked' ? `<button class="text-red-400 hover:text-red-600 mx-1" onclick="window.revoke('${inv.token}')" title="Revogar"><i class="fas fa-ban"></i></button>` : `<button class="text-red-700 hover:text-red-500 mx-1" onclick="window.remove('${inv.token}')" title="Excluir Permanentemente"><i class="fas fa-trash"></i></button>`}
                         </td>
                     `;
                     list.appendChild(tr);
@@ -268,6 +268,13 @@
             }
         };
 
+        window.remove = async (token) => {
+            if (confirm('ATENÇÃO: Deseja excluir este convite permanentemente? Esta ação não pode ser desfeita.')) {
+                await DatabaseService.deleteInvite(token);
+                await render();
+            }
+        };
+
         window.reShare = async (token) => {
             const inv = await DatabaseService.findInviteByToken(token);
             if (inv) openShareModal(inv.token, inv.password, inv.type);
@@ -283,8 +290,8 @@
         };
 
         function formatMessage(token, pass, type) {
-            // Fix: Use current location path to resolve subdirectories
-            const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
+            // Reverted: Use current location path to resolve subdirectories
+            const baseUrl = "https://sisnav.tuglife.live";
             const link = `${baseUrl}/login.html?token=${token}`;
             const roleName = type === 'planning' ? 'PLANEJAMENTO 🗺️' : 'MONITORAMENTO 📡';
 
@@ -298,7 +305,8 @@
         // Modal Logic
         function openShareModal(token, pass, type) {
             const msg = formatMessage(token, pass, type);
-            const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/'));
+            // Reverted: Use local baseUrl
+            const baseUrl = "https://sisnav.tuglife.live";
 
             document.getElementById('share-link-box').innerText = `${baseUrl}/login.html?token=${token}`;
             document.getElementById('share-pass-box').innerText = pass;
