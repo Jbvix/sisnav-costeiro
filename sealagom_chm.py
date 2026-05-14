@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Agrega dados para Meteomarinha, Avisos de Mau Tempo (CHM oficial) e NAVAREA / avisos costeiros (Sealagom).
+Agrega dados para Meteomarinha, Avisos de Mau Tempo (CHM oficial, HTML marinha.mil.br)
+e NAVAREA / avisos costeiros (API Sealagom — não inclui texto Meteomarinha CHM).
 O token Sealagom é passado pelo servidor (env: SEALAGOM_API_TOKEN ou sisnav_costeiro no cPanel).
-Documentação: https://www.sealagom.com/api/docs/
+Documentação Sealagom: https://www.sealagom.com/api/docs/
 """
 
 import logging
@@ -16,10 +17,16 @@ logger = logging.getLogger(__name__)
 
 SEALAGOM_BASE = "https://sealagom.com/api/v1"
 
-URLS_CHM = {
-    "meteoromarinha": "https://www.marinha.mil.br/chm/dados-do-smm-meteoromarinha/previsao-24-horas",
-    "avisos_mau_tempo": "https://www.marinha.mil.br/chm/dados-do-smm-avisos-de-mau-tempo/avisos-de-mau-tempo",
-}
+# Páginas HTML oficiais do CHM (não há endpoint Sealagom para Meteomarinha / aviso texto CHM).
+# Ordem: tentar 24h, depois 48h (meteo); WAF da Marinha pode bloquear IPs de datacenter (403).
+CHM_HOME = "https://www.marinha.mil.br/chm/"
+URLS_CHM_METEO = [
+    "https://www.marinha.mil.br/chm/dados-do-smm-meteoromarinha/previsao-24-horas",
+    "https://www.marinha.mil.br/chm/dados-do-smm-meteoromarinha/previsao-48-horas",
+]
+URLS_CHM_MAU = [
+    "https://www.marinha.mil.br/chm/dados-do-smm-avisos-de-mau-tempo/avisos-de-mau-tempo",
+]
 
 # Mesmos IDs/lat/lon que js/services/PortDatabase.js (derrota origem–destino)
 PORT_COORDS: Dict[str, Tuple[float, float]] = {
@@ -120,15 +127,32 @@ def _fetch_sealagom_paginated(first_url: str, token: str) -> List[Dict[str, Any]
     return items
 
 
+def _chm_browser_headers(referer: str) -> Dict[str, str]:
+    """Cabeçalhos próximos de um browser; reduz 403 por WAF em relação a User-Agent mínimo."""
+    return {
+        "User-Agent": (
+            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) "
+            "Chrome/131.0.0.0 Safari/537.36"
+        ),
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "Accept-Language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
+        "Referer": referer,
+        "Upgrade-Insecure-Requests": "1",
+        "Cache-Control": "max-age=0",
+    }
+
+
 def _chm_page_plaintext(url: str, max_chars: int = 250_000) -> str:
-    r = requests.get(
-        url,
-        timeout=45,
-        headers={
-            "User-Agent": "Mozilla/5.0 (compatible; SISNAV-Costeiro/1.0; +https://github.com/Jbvix/sisnav-costeiro)"
-        },
-    )
-    r.raise_for_status()
+    """GET HTML do CHM com sessão + cookies (warm-up na home do CHM)."""
+    headers = _chm_browser_headers(CHM_HOME)
+    with requests.Session() as s:
+        s.headers.update(headers)
+        try:
+            s.get(CHM_HOME, timeout=25, allow_redirects=True)
+        except requests.RequestException as exc:
+            logger.info("CHM warm-up %s: %s", CHM_HOME, exc)
+        r = s.get(url, timeout=45, allow_redirects=True)
+        r.raise_for_status()
     soup = BeautifulSoup(r.text, "html.parser")
     for tag in soup(["script", "style", "nav", "header", "footer"]):
         tag.decompose()
@@ -138,6 +162,35 @@ def _chm_page_plaintext(url: str, max_chars: int = 250_000) -> str:
     lines = [ln.strip() for ln in block.get_text("\n", strip=True).split("\n") if ln.strip()]
     text = "\n".join(lines)
     return text[:max_chars]
+
+
+def _chm_fetch_first_ok(urls: List[str], label: str, max_chars: int = 250_000) -> str:
+    """Tenta várias URLs CHM; útil se uma página responder 403 e outra não."""
+    last: Optional[BaseException] = None
+    for u in urls:
+        try:
+            return _chm_page_plaintext(u, max_chars=max_chars)
+        except requests.HTTPError as e:
+            last = e
+            code = e.response.status_code if e.response is not None else "?"
+            logger.warning("CHM %s HTTP %s — %s", label, code, u)
+        except Exception as e:
+            last = e
+            logger.warning("CHM %s falhou — %s: %s", label, u, e)
+    if last is not None:
+        raise last
+    raise RuntimeError(f"CHM {label}: lista de URLs vazia")
+
+
+def _chm_error_message(label: str, exc: BaseException) -> str:
+    base = f"(Erro ao obter {label} do CHM: {exc})"
+    if isinstance(exc, requests.HTTPError) and exc.response is not None and exc.response.status_code == 403:
+        base += (
+            " [403: o marinha.mil.br costuma bloquear pedidos automatizados ou IPs de alojamento "
+            "(WAF). A API Sealagom não substitui estas páginas — use o site no browser e «Colar», "
+            "ou um proxy no Brasil se o bloqueio for por geolocalização.]"
+        )
+    return base
 
 
 def format_navarea_v_block(items: List[Dict[str, Any]], bbox: Optional[Dict[str, float]]) -> str:
@@ -261,16 +314,16 @@ def fetch_all(dep_port: Optional[str], arr_port: Optional[str], token: str) -> D
     coastal_text = format_coastal_block(coastal_items, bbox)
 
     try:
-        meteo = _chm_page_plaintext(URLS_CHM["meteoromarinha"])
+        meteo = _chm_fetch_first_ok(URLS_CHM_METEO, "Meteomarinha")
     except Exception as e:
         logger.warning("CHM meteo fetch failed: %s", e)
-        meteo = f"(Erro ao obter Meteomarinha do CHM: {e})"
+        meteo = _chm_error_message("Meteomarinha", e)
 
     try:
-        mau_chm = _chm_page_plaintext(URLS_CHM["avisos_mau_tempo"])
+        mau_chm = _chm_fetch_first_ok(URLS_CHM_MAU, "Avisos de Mau Tempo")
     except Exception as e:
         logger.warning("CHM mau tempo fetch failed: %s", e)
-        mau_chm = f"(Erro ao obter Avisos de Mau Tempo do CHM: {e})"
+        mau_chm = _chm_error_message("Avisos de Mau Tempo", e)
 
     # Caixa “Avisos de Mau Tempo”: texto oficial CHM + bloco costeiro Sealagom (avisos localizados)
     mau_combined = (
