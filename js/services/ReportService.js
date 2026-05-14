@@ -1,4 +1,4 @@
-import NavMath from '../core/NavMath.js';
+import NavMath from '../core/NavMath.js?v=8';
 import TideCSVService from './TideCSVService.js';
 import ChartService from './ChartService.js';
 

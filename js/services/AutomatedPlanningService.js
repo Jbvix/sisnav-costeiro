@@ -7,7 +7,7 @@
  * 2. Faróis e Auxílios (Baseado em Proximidade)
  */
 
-import NavMath from '../core/NavMath.js';
+import NavMath from '../core/NavMath.js?v=8';
 import PortDatabase from './PortDatabase.js';
 
 const AutomatedPlanningService = {

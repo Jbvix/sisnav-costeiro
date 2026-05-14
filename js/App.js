@@ -7,7 +7,7 @@
  */
 
 import State from './core/State.js?v=7';
-import NavMath from './core/NavMath.js?v=7';
+import NavMath from './core/NavMath.js?v=8';
 import MapService from './services/MapService.js?v=7';
 import WeatherAPI from './services/WeatherAPI.js?v=7';
 import GPXParser from './utils/GPXParser.js?v=7';
