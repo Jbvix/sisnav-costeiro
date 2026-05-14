@@ -6,10 +6,10 @@
 const CHMService = {
 
     init: function () {
-        const btn = document.getElementById('btn-update-chm');
-        if (btn) {
-            btn.addEventListener('click', () => this.fetchAndPopulate({ silent: false }));
-        }
+        const handler = () => this.fetchAndPopulate({ silent: false });
+        document.querySelectorAll('.btn-chm-autofill').forEach((btn) => {
+            btn.addEventListener('click', handler);
+        });
     },
 
     /**
@@ -17,14 +17,14 @@ const CHMService = {
      */
     fetchAndPopulate: async function (options = {}) {
         const silent = options.silent === true;
-        const btn = document.getElementById('btn-update-chm');
-        const originalHtml = btn ? btn.innerHTML : '';
+        const buttons = Array.from(document.querySelectorAll('.btn-chm-autofill'));
+        const originals = buttons.map((b) => b.innerHTML);
 
         try {
-            if (btn) {
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ...';
-                btn.disabled = true;
-            }
+            buttons.forEach((b) => {
+                b.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ...';
+                b.disabled = true;
+            });
 
             const dep = (window.State && window.State.voyage && window.State.voyage.depPort) || '';
             const arr = (window.State && window.State.voyage && window.State.voyage.arrPort) || '';
@@ -52,10 +52,10 @@ const CHMService = {
                 alert('Erro ao buscar dados: ' + error.message);
             }
         } finally {
-            if (btn) {
-                btn.innerHTML = originalHtml;
-                btn.disabled = false;
-            }
+            buttons.forEach((b, i) => {
+                b.innerHTML = originals[i] || b.innerHTML;
+                b.disabled = false;
+            });
         }
     },
 
