@@ -208,7 +208,11 @@ def fetch_all(dep_port: Optional[str], arr_port: Optional[str], token: str) -> D
     if dep_port and arr_port:
         bbox = route_bbox(dep_port, arr_port)
 
-    q = "include_messages=true&include_coordinates=true&include_enhanced_coordinates=true&include_keywords=true"
+    # include_all=true: subscrição Full Sealagom (mais dados por mensagem/área)
+    q = (
+        "include_messages=true&include_coordinates=true&include_enhanced_coordinates=true"
+        "&include_keywords=true&include_all=true"
+    )
     warnings: List[str] = []
     nav_items: List[Dict[str, Any]] = []
     coastal_items: List[Dict[str, Any]] = []
