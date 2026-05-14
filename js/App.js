@@ -7,21 +7,21 @@
  */
 
 import State from './core/State.js?v=7';
-import NavMath from './core/NavMath.js?v=9';
-import MapService from './services/MapService.js?v=7';
-import WeatherAPI from './services/WeatherAPI.js?v=7';
-import GPXParser from './utils/GPXParser.js?v=7';
-import UIManager from './utils/UIManager.js?v=7';
+import NavMath from './core/NavMath.js?v=10';
+import MapService from './services/MapService.js?v=8';
+import WeatherAPI from './services/WeatherAPI.js?v=10';
+import GPXParser from './utils/GPXParser.js?v=8';
+import UIManager from './utils/UIManager.js?v=8';
 import PortDatabase from './services/PortDatabase.js?v=7';
 import PersistenceService from './services/PersistenceService.js?v=1';
 import UpdateService from './services/UpdateService.js?v=1';
 import { tideJSONService } from './services/TideJSONService.js'; // NEW
-import TideCSVService from './services/TideCSVService.js?v=7';
-import ReportService from './services/ReportService.js?v=9';
+import TideCSVService from './services/TideCSVService.js?v=10';
+import ReportService from './services/ReportService.js?v=10';
 import TideLocator from './services/TideLocator.js';
 import AuthService from './services/AuthService.js?v=Hotfix4'; // SPRINT 4
 import HelpService from './services/HelpService.js'; // SPRINT 6
-import AutomatedPlanningService from './services/AutomatedPlanningService.js?v=2'; // AUTOMATION
+import AutomatedPlanningService from './services/AutomatedPlanningService.js?v=3'; // AUTOMATION
 import {
     getStationsAlongRoute,
     STATION_ORDER_NORTH_SOUTH,

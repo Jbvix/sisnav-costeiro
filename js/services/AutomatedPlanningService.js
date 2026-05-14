@@ -7,7 +7,7 @@
  * 2. Faróis e Auxílios (Baseado em Proximidade)
  */
 
-import NavMathImport from '../core/NavMath.js?v=9';
+import NavMathImport from '../core/NavMath.js?v=10';
 
 /** Preferir instância global (preenchida em NavMath.js) se o import estiver em cache antigo. */
 const NavMath = (typeof globalThis !== 'undefined' && globalThis.NavMath && typeof globalThis.NavMath.calcLeg === 'function')
