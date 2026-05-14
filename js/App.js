@@ -22,6 +22,11 @@ import TideLocator from './services/TideLocator.js';
 import AuthService from './services/AuthService.js?v=Hotfix4'; // SPRINT 4
 import HelpService from './services/HelpService.js'; // SPRINT 6
 import AutomatedPlanningService from './services/AutomatedPlanningService.js'; // AUTOMATION
+import {
+    getStationsAlongRoute,
+    STATION_ORDER_NORTH_SOUTH,
+    stationForDepartureLat
+} from './services/CoastalRadioStations.js?v=1';
 
 const App = {
     init: function () {
@@ -1173,6 +1178,10 @@ const App = {
                 el.addEventListener(eventType, (e) => {
                     State.voyage[key] = e.target.value;
 
+                    if (key === 'depPort' || key === 'arrPort') {
+                        App.updateCoastalStationsSelect();
+                    }
+
                     // Sync ETD Sidebar
                     if (key === 'depTime') {
                         const mainEtd = document.getElementById('input-etd');
@@ -1224,6 +1233,57 @@ const App = {
         };
         syncPort('select-port-dep', 'select-dep');
         syncPort('select-port-arr', 'select-arr');
+
+        this.updateCoastalStationsSelect();
+    },
+
+    /**
+     * Repõe o select de Estação Costeira com as estações cujo enquadramento
+     * intercepta o trecho em latitude entre porto origem e destino; pré-seleciona
+     * a estação da área de partida.
+     */
+    updateCoastalStationsSelect: function () {
+        const selComm = document.getElementById('select-comm-station');
+        if (!selComm) return;
+
+        const depEl = document.getElementById('select-port-dep');
+        const arrEl = document.getElementById('select-port-arr');
+        const depId = depEl && depEl.value ? depEl.value : '';
+        const arrId = arrEl && arrEl.value ? arrEl.value : '';
+
+        const prev = (State.appraisal && State.appraisal.communications && State.appraisal.communications.station) || selComm.value;
+
+        const fillOptions = (stationValues) => {
+            selComm.innerHTML = '<option value="">Selecione...</option>';
+            stationValues.forEach((v) => {
+                const opt = document.createElement('option');
+                opt.value = v;
+                opt.textContent = v;
+                selComm.appendChild(opt);
+            });
+        };
+
+        if (!depId || !arrId) {
+            fillOptions(STATION_ORDER_NORTH_SOUTH);
+            if (prev && [...selComm.options].some((o) => o.value === prev)) {
+                selComm.value = prev;
+            }
+            return;
+        }
+
+        const along = getStationsAlongRoute(depId, arrId, PortDatabase);
+        const list = along && along.length ? along : STATION_ORDER_NORTH_SOUTH;
+        fillOptions(list);
+
+        if (!State.appraisal.communications) State.appraisal.communications = {};
+
+        const depPort = PortDatabase.find((p) => p.id === depId);
+        const preferred = depPort ? stationForDepartureLat(depPort.lat) : null;
+        const pick = preferred && list.includes(preferred) ? preferred : list[0];
+
+        selComm.value = pick;
+        State.appraisal.communications.station = pick;
+        selComm.dispatchEvent(new Event('change', { bubbles: true }));
     },
 
     // --- FARÓIS ---
