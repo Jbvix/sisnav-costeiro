@@ -38,15 +38,8 @@ if not os.path.exists(DATA_DIR):
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Serve Static Files (Default)
-@app.route('/')
-def index():
-    return send_from_directory(BASE_DIR, 'index.html')
-
-@app.route('/<path:path>')
-def serve_static(path):
-    # Security: Ensure path is within current directory
-    return send_from_directory(BASE_DIR, path)
+# NOTA: rotas estáticas (/, /<path>) ficam no FIM do ficheiro com methods GET/HEAD apenas,
+# para não capturarem POST em /api/... (evita HTTP 405 em /api/chm/fetch).
 
 @app.route('/api/update-data', methods=['POST'])
 def update_data():
@@ -459,6 +452,18 @@ def get_system_info():
         'port': 5000,
         'hostname': socket.gethostname() 
     })
+
+
+# --- Ficheiros estáticos (por último: catch-all só GET/HEAD) ---
+@app.route('/', methods=['GET', 'HEAD'])
+def index():
+    return send_from_directory(BASE_DIR, 'index.html')
+
+
+@app.route('/<path:path>', methods=['GET', 'HEAD'])
+def serve_static(path):
+    return send_from_directory(BASE_DIR, path)
+
 
 if __name__ == '__main__':
     local_ip = get_ip()
