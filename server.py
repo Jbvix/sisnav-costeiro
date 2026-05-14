@@ -414,12 +414,16 @@ except ImportError:
 def chm_fetch():
     """
     Corpo JSON opcional: { "depPort": "BR_SAL", "arrPort": "BR_RIG" }
-    Requer SEALAGOM_API_TOKEN no ambiente (cPanel → variáveis ou passenger_wsgi).
+    Token no ambiente: SEALAGOM_API_TOKEN ou sisnav_costeiro (Web Application cPanel).
     """
     if not sealagom_chm:
         return jsonify({'status': 'error', 'message': 'Módulo sealagom_chm não disponível.'}), 500
 
-    token = os.environ.get('SEALAGOM_API_TOKEN', '').strip()
+    token = (
+        os.environ.get('SEALAGOM_API_TOKEN')
+        or os.environ.get('sisnav_costeiro')
+        or ''
+    ).strip()
     body = request.get_json(silent=True) or {}
     dep = body.get('depPort') or body.get('dep')
     arr = body.get('arrPort') or body.get('arr')

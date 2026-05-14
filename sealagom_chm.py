@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 Agrega dados para Meteomarinha, Avisos de Mau Tempo (CHM oficial) e NAVAREA / avisos costeiros (Sealagom).
-O token Sealagom vem de SEALAGOM_API_TOKEN (nunca expor no browser).
+O token Sealagom é passado pelo servidor (env: SEALAGOM_API_TOKEN ou sisnav_costeiro no cPanel).
 Documentação: https://www.sealagom.com/api/docs/
 """
 
@@ -199,7 +199,10 @@ def format_coastal_block(items: List[Dict[str, Any]], bbox: Optional[Dict[str, f
 
 def fetch_all(dep_port: Optional[str], arr_port: Optional[str], token: str) -> Dict[str, Any]:
     if not token or not str(token).strip():
-        return {"status": "error", "message": "SEALAGOM_API_TOKEN não definido no servidor."}
+        return {
+            "status": "error",
+            "message": "Token Sealagom não definido (use SEALAGOM_API_TOKEN ou sisnav_costeiro no servidor).",
+        }
 
     bbox = None
     if dep_port and arr_port:
