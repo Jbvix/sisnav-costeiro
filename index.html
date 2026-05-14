@@ -19,6 +19,8 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
     <!-- DEPENDÊNCIAS EXTERNAS (CDNs) -->
     <!-- <script src="js/services/TideCSVService.js"></script> REMOVED: Loaded via Module import in App.js -->
     <!-- ReportService loaded via Module in App.js -->
+    <!-- Tailwind via CDN: prático para deploy estático; o próprio CDN emite aviso no console em produção.
+         Migração recomendada: https://tailwindcss.com/docs/installation (CLI ou PostCSS). -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -1094,7 +1096,7 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
     </div>
 
     <!-- SCRIPT PRINCIPAL (MÓDULO) - Carregado após as dependências -->
-    <script type="module" src="js/App.js?v=32"></script>
+    <script type="module" src="js/App.js?v=33"></script>
 </body>
 
 </html>

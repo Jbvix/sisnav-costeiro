@@ -423,7 +423,8 @@ def chm_fetch():
 
     try:
         result = sealagom_chm.fetch_all(dep, arr, token)
-        code = 200 if result.get('status') == 'success' else 503
+        st = result.get('status')
+        code = 200 if st in ('success', 'partial') else 503
         return jsonify(result), code
     except Exception as e:
         logger.exception("chm_fetch")

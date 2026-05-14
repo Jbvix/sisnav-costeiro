@@ -37,10 +37,22 @@ const CHMService = {
 
             const result = await response.json().catch(() => ({}));
 
-            if (result.status === 'success' && result.data) {
+            if ((result.status === 'success' || result.status === 'partial') && result.data) {
                 this.populateFields(result.data);
+                if (result.status === 'partial' && result.warnings && result.warnings.length) {
+                    if (silent) {
+                        console.warn('CHM/Sealagom (parcial):', result.warnings.join(' | '));
+                    }
+                }
                 if (!silent) {
-                    alert('Dados atualizados (CHM + Sealagom).');
+                    const extra = (result.warnings && result.warnings.length)
+                        ? '\n\nAvisos:\n' + result.warnings.join('\n')
+                        : '';
+                    alert(
+                        result.status === 'partial'
+                            ? ('Dados atualizados com ressalvas (CHM + Sealagom).' + extra)
+                            : ('Dados atualizados (CHM + Sealagom).' + extra)
+                    );
                 }
             } else {
                 const msg = result.message || result.error || `HTTP ${response.status}`;

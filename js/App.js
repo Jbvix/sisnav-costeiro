@@ -27,7 +27,7 @@ import {
     STATION_ORDER_NORTH_SOUTH,
     stationForDepartureLat
 } from './services/CoastalRadioStations.js?v=1';
-import CHMService from './services/CHMService.js?v=2';
+import CHMService from './services/CHMService.js?v=3';
 
 const App = {
     init: function () {

@@ -198,36 +198,60 @@ def format_coastal_block(items: List[Dict[str, Any]], bbox: Optional[Dict[str, f
 
 
 def fetch_all(dep_port: Optional[str], arr_port: Optional[str], token: str) -> Dict[str, Any]:
-    if not token or not str(token).strip():
-        return {
-            "status": "error",
-            "message": "Token Sealagom não definido (use SEALAGOM_API_TOKEN ou sisnav_costeiro no servidor).",
-        }
-
+    """
+    Meteomarinha e avisos CHM (HTML) são sempre tentados.
+    Sealagom (NAVAREA + costeiro) é opcional: falhas HTTP (ex.: 403 token/plano)
+    não impedem o restante; o cliente recebe status 'partial' e avisos em 'warnings'.
+    """
+    token = (token or "").strip()
     bbox = None
     if dep_port and arr_port:
         bbox = route_bbox(dep_port, arr_port)
 
     q = "include_messages=true&include_coordinates=true&include_enhanced_coordinates=true&include_keywords=true"
-    nav_url = f"{SEALAGOM_BASE}/navarea/?{q}"
+    warnings: List[str] = []
+    nav_items: List[Dict[str, Any]] = []
+    coastal_items: List[Dict[str, Any]] = []
 
-    try:
-        nav_items = _fetch_sealagom_paginated(nav_url, token)
-    except requests.HTTPError as e:
-        logger.exception("Sealagom navarea HTTP")
-        return {"status": "error", "message": f"Sealagom NAVAREA: {e.response.status_code}"}
-
-    coastal_url = f"{SEALAGOM_BASE}/coastal/?{q}&country=Brazil"
-    try:
-        coastal_items = _fetch_sealagom_paginated(coastal_url, token)
-    except requests.HTTPError:
-        logger.info("Sealagom coastal com country=Brazil falhou; tentando sem filtro país.")
-        coastal_url = f"{SEALAGOM_BASE}/coastal/?{q}"
+    if token:
+        nav_url = f"{SEALAGOM_BASE}/navarea/?{q}"
         try:
-            coastal_items = _fetch_sealagom_paginated(coastal_url, token)
-        except requests.HTTPError as e2:
-            logger.exception("Sealagom coastal HTTP")
-            return {"status": "error", "message": f"Sealagom coastal: {e2.response.status_code}"}
+            nav_items = _fetch_sealagom_paginated(nav_url, token)
+        except requests.HTTPError as e:
+            code = e.response.status_code if e.response is not None else "?"
+            logger.warning("Sealagom NAVAREA HTTP %s", code)
+            warnings.append(
+                f"NAVAREA Sealagom recusada (HTTP {code}). "
+                "Verifique SEALAGOM_API_TOKEN e o plano em https://www.sealagom.com/profile/#api — "
+                "403 costuma indicar token inválido, expirado ou escopo sem NAVAREA."
+            )
+        except Exception as e:
+            logger.exception("Sealagom NAVAREA")
+            warnings.append(f"NAVAREA Sealagom: {e}")
+
+        coastal_urls = [
+            f"{SEALAGOM_BASE}/coastal/?{q}&country=Brazil",
+            f"{SEALAGOM_BASE}/coastal/?{q}",
+        ]
+        coastal_ok = False
+        for coastal_url in coastal_urls:
+            try:
+                coastal_items = _fetch_sealagom_paginated(coastal_url, token)
+                coastal_ok = True
+                break
+            except requests.HTTPError as e:
+                code = e.response.status_code if e.response is not None else "?"
+                logger.info("Sealagom coastal HTTP %s — %s", code, coastal_url)
+        if not coastal_ok:
+            warnings.append(
+                "Avisos costeiros Sealagom indisponíveis (HTTP em todas as tentativas). "
+                "O bloco costeiro abaixo pode estar vazio."
+            )
+    else:
+        warnings.append(
+            "Token Sealagom não definido no servidor (SEALAGOM_API_TOKEN ou sisnav_costeiro). "
+            "NAVAREA e avisos costeiros Sealagom serão omitidos."
+        )
 
     nav_text = format_navarea_v_block(nav_items, bbox)
     coastal_text = format_coastal_block(coastal_items, bbox)
@@ -252,6 +276,11 @@ def fetch_all(dep_port: Optional[str], arr_port: Optional[str], token: str) -> D
         + coastal_text
     )
 
+    if warnings:
+        banner = "=== AVISOS DE INTEGRAÇÃO (Sealagom / servidor) ===\n" + "\n".join(f"- {w}" for w in warnings) + "\n\n"
+        nav_text = banner + nav_text
+        mau_combined = banner + mau_combined
+
     if bbox:
         hdr = (
             f"Trecho considerado (caixa lat/lon com margem): "
@@ -262,11 +291,15 @@ def fetch_all(dep_port: Optional[str], arr_port: Optional[str], token: str) -> D
         nav_text = hdr + nav_text
         mau_combined = hdr + mau_combined
 
-    return {
-        "status": "success",
+    status = "partial" if warnings else "success"
+    out: Dict[str, Any] = {
+        "status": status,
         "data": {
             "meteo": meteo,
             "mau_tempo": mau_combined,
             "navarea": nav_text,
         },
     }
+    if warnings:
+        out["warnings"] = warnings
+    return out
