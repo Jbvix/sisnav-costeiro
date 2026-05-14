@@ -17,7 +17,7 @@ import PersistenceService from './services/PersistenceService.js?v=1';
 import UpdateService from './services/UpdateService.js?v=1';
 import { tideJSONService } from './services/TideJSONService.js'; // NEW
 import TideCSVService from './services/TideCSVService.js?v=7';
-import ReportService from './services/ReportService.js?v=7';
+import ReportService from './services/ReportService.js?v=8';
 import TideLocator from './services/TideLocator.js';
 import AuthService from './services/AuthService.js?v=Hotfix4'; // SPRINT 4
 import HelpService from './services/HelpService.js'; // SPRINT 6
@@ -1272,6 +1272,8 @@ const App = {
                 infoClear.classList.add('hidden');
                 infoClear.innerHTML = '';
             }
+            if (!State.appraisal.communications) State.appraisal.communications = {};
+            State.appraisal.communications.routeStations = [];
             fillOptions(STATION_ORDER_NORTH_SOUTH);
             if (prev && [...selComm.options].some((o) => o.value === prev)) {
                 selComm.value = prev;
@@ -1302,6 +1304,7 @@ const App = {
         }
 
         if (!State.appraisal.communications) State.appraisal.communications = {};
+        State.appraisal.communications.routeStations = list.slice();
 
         const depPort = PortDatabase.find((p) => p.id === depId);
         const preferred = depPort ? stationForDepartureLat(depPort.lat) : null;

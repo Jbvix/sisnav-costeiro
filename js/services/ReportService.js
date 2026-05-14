@@ -523,6 +523,49 @@ const renderRouteAndDistances = (doc, y, state) => {
     return doc.lastAutoTable.finalY + 10;
 };
 
+/** Labels alinhados às options de `#select-comm-channel` em index.html */
+const COMM_CHANNEL_LABELS = {
+    '': '—',
+    '16': '16 (Emergência/Chamada)',
+    '11': '11 (VTS)',
+    '12': '12 (Porto)',
+    '14': '14 (Operações)',
+    '68': '68 (Manobra)'
+};
+
+const renderMaritimeCommunications = (doc, y, state) => {
+    const comm = (state.appraisal && state.appraisal.communications) ? state.appraisal.communications : {};
+    const station = comm.station ? String(comm.station) : '';
+    const ch = comm.channel != null && comm.channel !== '' ? String(comm.channel) : '';
+    const channelLabel = COMM_CHANNEL_LABELS[ch] || (ch ? `Canal ${ch}` : '—');
+    const routeList = Array.isArray(comm.routeStations) ? comm.routeStations.filter(Boolean) : [];
+
+    if (!station && !ch && routeList.length === 0) return y;
+
+    if (y + 28 > 280) { doc.addPage(); y = 20; }
+    doc.setFont(undefined, 'bold'); doc.setFontSize(9);
+    doc.setTextColor(0, 100, 0);
+    doc.text('2.2 COMUNICAÇÕES (RÁDIO COSTEIRO)', 14, y + 4);
+    doc.setTextColor(0);
+    doc.setFont(undefined, 'normal'); doc.setFontSize(8);
+
+    const routeJoined = routeList.length ? routeList.join('  ·  ') : '—';
+    const routeCell = routeList.length ? doc.splitTextToSize(routeJoined, 118).join('\n') : '—';
+
+    doc.autoTable({
+        startY: y + 6,
+        body: [
+            ['Estação principal (registro):', station || '—'],
+            ['Canal de trabalho (VHF):', channelLabel],
+            ['Estações no trecho (N → S):', routeCell]
+        ],
+        theme: 'plain',
+        styles: { fontSize: 8, cellPadding: 1.5 },
+        columnStyles: { 0: { fontStyle: 'bold', cellWidth: 62 }, 1: { cellWidth: 118 } }
+    });
+    return doc.lastAutoTable.finalY + 8;
+};
+
 const renderPrints = (doc, y, state) => {
     const safePrints = (state.appraisal && state.appraisal.prints) ? state.appraisal.prints : [];
     if (safePrints.length > 0) {
@@ -846,6 +889,9 @@ const ReportService = {
 
             // 2. ROTA PLANEJADA
             currentY = renderRouteAndDistances(doc, currentY, state);
+
+            // 2.2 COMUNICAÇÕES (VHF / estações do trecho)
+            currentY = renderMaritimeCommunications(doc, currentY, state);
 
             // 2.1 PRINTS
             currentY = renderPrints(doc, currentY, state);
