@@ -186,6 +186,12 @@ const UIManager = {
         };
 
         // Loop para criar as linhas
+        const escAttr = (s) => String(s)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+
         for (let i = 0; i < routePoints.length; i++) {
             const pCurrent = routePoints[i];
             const pNext = routePoints[i + 1]; // Can be undefined for last point
@@ -280,8 +286,13 @@ const UIManager = {
                 }
             }
 
-            // LIGHTHOUSE INFO
+            // LIGHTHOUSE INFO + nome do GPX (se existir)
             const lhHtml = this.renderLighthouseInfo(pCurrent.lat, pCurrent.lon);
+            const gpxNameRaw = pCurrent.name && String(pCurrent.name).trim();
+            const gpxName = gpxNameRaw ? escAttr(gpxNameRaw) : '';
+            const refCell = (gpxName
+                ? `<div class="text-[10px] font-bold text-slate-800 leading-tight mb-0.5" title="Nome no GPX">${gpxName}</div>`
+                : '') + lhHtml;
 
             // RENDER ROW
             const row = document.createElement('tr');
@@ -293,7 +304,7 @@ const UIManager = {
                 <td class="p-2 text-center font-bold text-blue-800">${chartId}</td>
                 
                 <td class="p-2 text-left border-l border-gray-50 max-w-[150px] overflow-hidden">
-                   ${lhHtml}
+                   ${refCell}
                 </td>
 
                 <td class="p-2 text-center font-mono text-gray-500 leading-tight">

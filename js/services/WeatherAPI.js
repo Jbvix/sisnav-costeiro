@@ -7,7 +7,7 @@
  */
 
 import TideLocator from './TideLocator.js?v=6';
-import TideCSVService from './TideCSVService.js?v=11';
+import TideCSVService from './TideCSVService.js?v=12';
 
 const WeatherAPI = {
 
@@ -85,8 +85,16 @@ const WeatherAPI = {
             }
 
             // 4. Get Weather (Wind/Wave/Temp)
-            // Use dateObj (full date needed for day matching)
-            const weather = TideCSVService.getWeatherAt(tideCheck.station.csvName, dateObj);
+            // Primeiro o dia pedido (±1 dia); se vazio e a estação tiver outras datas, encaixa viagens longas
+            // no primeiro/último dia disponível com a mesma hora — sempre com aviso em coverageNote.
+            let weather = TideCSVService.getWeatherAt(tideCheck.station.csvName, dateObj);
+            let clampMeta = null;
+            if (!weather && tideCheck.station.csvName) {
+                clampMeta = TideCSVService.getEffectiveWeatherMomentForStation(tideCheck.station.csvName, dateObj);
+                if (clampMeta && clampMeta.clamped) {
+                    weather = TideCSVService.getWeatherAt(tideCheck.station.csvName, clampMeta.effective);
+                }
+            }
 
             if (weather) {
                 // Parse Weather Data
@@ -110,6 +118,18 @@ const WeatherAPI = {
 
                 result.marine.waveHeight = weather.waveHeight;
                 result.marine.waveDir = weather.waveDir;
+
+                if (clampMeta && clampMeta.clamped) {
+                    const fmtDay = (d) => d.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                    const fmtHm = (d) => d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                    const pedido = !isNaN(dateObj.getTime()) ? `${fmtDay(dateObj)} ${fmtHm(dateObj)}` : 'o instante pedido';
+                    const usado = `${fmtDay(clampMeta.effective)} ${fmtHm(clampMeta.effective)}`;
+                    if (clampMeta.clamped === 'after') {
+                        result.coverageNote = `A data/hora pedida (${pedido}) está depois do último dia com clima no CSV desta estação. Os valores mostrados correspondem a ${usado} (último dia disponível, mesma hora) — referência aproximada, não previsão real para viagens longas. Atualize «Atualizar dados» para alargar a janela.`;
+                    } else {
+                        result.coverageNote = `A data/hora pedida (${pedido}) é anterior ao primeiro dia com clima no CSV desta estação. Os valores mostrados correspondem a ${usado} (primeiro dia disponível, mesma hora) — referência aproximada.`;
+                    }
+                }
             } else {
                 const wr = typeof TideCSVService.getWeatherDateRange === 'function'
                     ? TideCSVService.getWeatherDateRange()

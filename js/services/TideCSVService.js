@@ -153,7 +153,49 @@ const TideCSVService = {
             return `${d}/${m}/${y}`;
         };
 
-        return { min: toDMY(minDate), max: toDMY(maxDate) };
+        return { min: toDMY(minDate), max: toDMY(maxDate), minIso: minDate, maxIso: maxDate };
+    },
+
+    /**
+     * Intervalo de datas com clima no CSV para uma estação (YYYY-MM-DD).
+     */
+    getStationWeatherDateBounds: function (csvStationName) {
+        if (!this.isLoaded || !csvStationName) return null;
+        const stationMap = this.weatherCache.get(csvStationName);
+        if (!stationMap || stationMap.size === 0) return null;
+        let minD = null;
+        let maxD = null;
+        for (const k of stationMap.keys()) {
+            if (!minD || k < minD) minD = k;
+            if (!maxD || k > maxD) maxD = k;
+        }
+        return { min: minD, max: maxD };
+    },
+
+    /**
+     * Se o instante pedido cair fora do calendário coberto pela estação, devolve o mesmo
+     * relógio (hora/min) no primeiro ou último dia disponível — para encaixar viagens longas
+     * com aviso explícito na UI (não é previsão real à ETA).
+     */
+    getEffectiveWeatherMomentForStation: function (csvStationName, dateObj) {
+        const b = this.getStationWeatherDateBounds(csvStationName);
+        if (!b) return { effective: dateObj, clamped: null };
+
+        const want = this._getDateKey(dateObj);
+        if (want >= b.min && want <= b.max) {
+            return { effective: new Date(dateObj.getTime()), clamped: null };
+        }
+
+        const [y1, m1, d1] = b.min.split('-').map(Number);
+        const [y2, m2, d2] = b.max.split('-').map(Number);
+
+        if (want < b.min) {
+            const eff = new Date(y1, m1 - 1, d1, dateObj.getHours(), dateObj.getMinutes(), dateObj.getSeconds(), dateObj.getMilliseconds());
+            return { effective: eff, clamped: 'before' };
+        }
+
+        const eff = new Date(y2, m2 - 1, d2, dateObj.getHours(), dateObj.getMinutes(), dateObj.getSeconds(), dateObj.getMilliseconds());
+        return { effective: eff, clamped: 'after' };
     },
 
     getTide: function (csvStationName, dateObj) {

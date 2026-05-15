@@ -6,17 +6,17 @@
  * VERSÃO: 3.4.0 (Fix Date Input & Error 400)
  */
 
-import State from './core/State.js?v=7';
+import State from './core/State.js?v=8';
 import NavMath from './core/NavMath.js?v=10';
 import MapService from './services/MapService.js?v=8';
-import WeatherAPI from './services/WeatherAPI.js?v=12';
-import GPXParser from './utils/GPXParser.js?v=8';
-import UIManager from './utils/UIManager.js?v=9';
+import WeatherAPI from './services/WeatherAPI.js?v=13';
+import GPXParser from './utils/GPXParser.js?v=9';
+import UIManager from './utils/UIManager.js?v=10';
 import PortDatabase from './services/PortDatabase.js?v=7';
 import PersistenceService from './services/PersistenceService.js?v=1';
 import UpdateService from './services/UpdateService.js?v=1';
 import { tideJSONService } from './services/TideJSONService.js'; // NEW
-import TideCSVService from './services/TideCSVService.js?v=11';
+import TideCSVService from './services/TideCSVService.js?v=12';
 import ReportService from './services/ReportService.js?v=11';
 import TideLocator from './services/TideLocator.js';
 import AuthService from './services/AuthService.js?v=Hotfix4'; // SPRINT 4
@@ -224,6 +224,10 @@ const App = {
     handleRouteEdit: function (action, idx, lat, lon) {
         if (!State.routePoints) State.routePoints = [];
 
+        if (action !== 'move') {
+            State.routeSource = null;
+        }
+
         // Safety Check for Index Actions
         if ((action === 'move' || action === 'delete' || action === 'insert') &&
             (idx === undefined || idx === null || idx < 0 || idx >= State.routePoints.length)) {
@@ -280,6 +284,7 @@ const App = {
     clearRoute: function () {
         if (confirm("Tem certeza que deseja apagar TODA a derrota?")) {
             State.routePoints = [];
+            State.routeSource = null;
 
             // UPDATE VISUALS & DATA
             this.recalculateVoyage();
@@ -1922,6 +1927,8 @@ const App = {
         // Adiciona ao State
         if (!State.routePoints) State.routePoints = [];
 
+        State.routeSource = null;
+
         State.routePoints.push({
             sequence: State.routePoints.length + 1,
             lat: lat,
@@ -1993,7 +2000,12 @@ const App = {
                 console.log(`App: ${points.length} pontos.`);
                 ProgressOverlay.setProgress(45, 'Ficheiro GPX', `${points.length} waypoints encontrados.`);
 
-                // Check Reversal
+                if (!points || points.length === 0) {
+                    ProgressOverlay.hide(0);
+                    alert('Não foram encontrados pontos válidos no GPX (trkpt, rtept ou wpt). Verifique o ficheiro.');
+                    event.target.parentElement.classList.remove('upload-active');
+                    return;
+                }
                 const chkReverse = document.getElementById('chk-reverse-gpx');
                 if (chkReverse && chkReverse.checked) {
                     points.reverse();
@@ -2001,6 +2013,7 @@ const App = {
                 }
 
                 State.routePoints = points;
+                State.routeSource = points.length > 0 ? 'gpx' : null;
                 State.currentRouteId = file.name; // Store ID for sharing
 
                 ProgressOverlay.setProgress(62, 'Ficheiro GPX', 'A detetar portos e planear cartas…');
@@ -2166,6 +2179,8 @@ const App = {
             // Atualiza dados ambientais
             this.updateEnviroData(etdDate, etaDate);
 
+            this.updateWeatherStatusUI();
+
             // SYNC TABLE (Ensure Plan Table matches new ETA/Speed/Coords)
             if (UIManager && typeof UIManager.renderRouteTable === 'function') {
                 UIManager.renderRouteTable(State.routePoints);
@@ -2313,24 +2328,40 @@ const App = {
         const spanStatus = document.getElementById('weather-status-display');
         if (!spanStatus) return;
 
-        // Ensure service loaded
-        // Use imported service or window object
         const svc = window.TideCSVService || TideCSVService;
 
         if (svc && svc.isLoaded) {
             const range = svc.getWeatherDateRange();
             if (range) {
-                spanStatus.textContent = `CSV clima: ${range.min} → ${range.max}`;
-                spanStatus.classList.remove('text-red-500', 'bg-red-50');
+                let base = `CSV clima: ${range.min} → ${range.max}`;
+                spanStatus.classList.remove('text-red-500', 'bg-red-50', 'text-amber-800', 'bg-amber-50');
                 spanStatus.classList.add('text-green-600', 'bg-green-50');
+
+                const etdEl = document.getElementById('input-etd');
+                const voyage = State && State.voyage;
+                if (range.minIso && range.maxIso && etdEl && etdEl.value && voyage && voyage.arrTime) {
+                    try {
+                        const etdD = new Date(etdEl.value);
+                        const etaD = new Date(voyage.arrTime);
+                        if (!isNaN(etdD.getTime()) && !isNaN(etaD.getTime()) && typeof svc._getDateKey === 'function') {
+                            const etdKey = svc._getDateKey(etdD);
+                            const etaKey = svc._getDateKey(etaD);
+                            if (etdKey < range.minIso || etdKey > range.maxIso || etaKey < range.minIso || etaKey > range.maxIso) {
+                                base += ' · viagem fora da janela';
+                                spanStatus.classList.remove('text-green-600', 'bg-green-50');
+                                spanStatus.classList.add('text-amber-800', 'bg-amber-50');
+                            }
+                        }
+                    } catch (e) { /* ignore */ }
+                }
+
+                spanStatus.textContent = base;
             } else {
-                spanStatus.textContent = "Dados: Indisponíveis";
+                spanStatus.textContent = 'Dados: Indisponíveis';
                 spanStatus.classList.add('text-red-500', 'bg-red-50');
             }
         } else {
-            // Maybe wait for load?
             if (svc) {
-                // Check again in a bit
                 setTimeout(() => this.updateWeatherStatusUI(), 1000);
             }
         }
@@ -2359,7 +2390,7 @@ const App = {
         const depId = document.getElementById('select-dep').value;
         const arrId = document.getElementById('select-arr').value;
 
-        if (depId && arrId) {
+        if (depId && arrId && State.routeSource !== 'gpx') {
             this.autoFindRoute(depId, arrId);
         }
 
@@ -2592,6 +2623,7 @@ const App = {
                         visitedPortIds.push(...intermediates);
 
                         State.routePoints = finalPoints;
+                        State.routeSource = 'known';
                         ProgressOverlay.setProgress(82, 'Rota automática', 'A atualizar mapa, tabela e dados ambientais…');
                         this.recalculateVoyage();
                         MapService.plotRoute(finalPoints);
@@ -2729,7 +2761,6 @@ const App = {
             const sel = document.getElementById('select-dep');
             if (sel) {
                 sel.value = depMatch.port.id;
-                sel.dispatchEvent(new Event('change')); // Trigger fetch
             }
             console.log(`App: Auto-selecionado Partida: ${depMatch.port.name} (${depMatch.dist.toFixed(1)} NM)`);
         }
@@ -2738,7 +2769,6 @@ const App = {
             const sel = document.getElementById('select-arr');
             if (sel) {
                 sel.value = arrMatch.port.id;
-                sel.dispatchEvent(new Event('change')); // Trigger fetch
             }
             console.log(`App: Auto-selecionado Chegada: ${arrMatch.port.name} (${arrMatch.dist.toFixed(1)} NM)`);
         }

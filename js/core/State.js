@@ -18,6 +18,8 @@
 const State = {
     // Dados de Navegação
     routePoints: [],      // Array contendo os waypoints carregados do GPX
+    /** 'gpx' = manter geometria do ficheiro; 'known' = rota de known_routes; null = manual/outros */
+    routeSource: null,
     totalDistance: 0,     // Distância total da rota em NM
 
     // Perfil da Embarcação (Dados Operacionais)
@@ -81,6 +83,7 @@ const State = {
      */
     resetVoyage: function () {
         this.routePoints = [];
+        this.routeSource = null;
         this.totalDistance = 0;
         this.appraisal.isValid = false;
         this.appraisal.selectedCharts = [];

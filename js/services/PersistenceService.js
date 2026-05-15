@@ -6,7 +6,7 @@
  * VERSÃO: 1.0.0
  */
 
-import State from '../core/State.js?v=7';
+import State from '../core/State.js?v=8';
 import UIManager from '../utils/UIManager.js?v=7';
 import MapService from './MapService.js?v=7';
 
@@ -45,6 +45,7 @@ const PersistenceService = {
                 voyage: State.voyage,         // Calculados
                 shipProfile: State.shipProfile, // Inputs
                 routePoints: State.routePoints, // GPX Data
+                routeSource: State.routeSource || null,
                 appraisal: { ...State.appraisal }, // Deep Copy needed for files handling
                 weatherData: State.weatherData
             };
@@ -123,6 +124,7 @@ const PersistenceService = {
                 // 1. Restaurar Estado Simples
                 State.shipProfile = json.shipProfile || State.shipProfile;
                 State.routePoints = json.routePoints || [];
+                State.routeSource = json.routeSource != null ? json.routeSource : null;
                 State.voyage = json.voyage || {};
                 State.weatherData = json.weatherData || {};
 
