@@ -1117,6 +1117,8 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
         <div id="kratos-panel" class="hidden flex flex-col max-h-[min(55vh,560px)] border-t border-slate-800 bg-slate-950">
             <div id="kratos-status-line"
                 class="px-3 py-1.5 text-[10px] text-slate-500 border-b border-slate-800 font-mono">A carregar estado…</div>
+            <div id="kratos-companion-line" role="status"
+                class="hidden px-3 py-1.5 text-[10px] text-amber-100/95 border-b border-amber-900/40 bg-amber-950/35 font-mono leading-snug"></div>
             <label
                 class="flex items-start gap-2 px-3 py-2 border-b border-slate-800 bg-slate-900/60 text-[11px] text-slate-400 cursor-pointer select-none hover:bg-slate-900/90">
                 <input type="checkbox" id="kratos-web-validate"
@@ -1129,7 +1131,7 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
             <div class="p-2 border-t border-slate-800 flex gap-2 items-end bg-slate-900 shrink-0">
                 <textarea id="kratos-input" rows="2"
                     class="flex-1 resize-none rounded border border-slate-600 bg-slate-900 text-slate-100 text-sm px-2 py-1.5 focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 placeholder-slate-500"
-                    placeholder="Pergunte sobre derrota, faróis, combustível, NAVAREA V, meteorologia, perigos… (Shift+Enter nova linha)"></textarea>
+                    placeholder="Peça double-check aos dados do Appraisal/Planeamento, derrota, meteo, NAVAREA, motor… (Shift+Enter nova linha)"></textarea>
                 <button type="button" id="kratos-send"
                     class="px-4 py-2 rounded bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-bold shrink-0 h-[42px]">Enviar</button>
             </div>
@@ -1137,7 +1139,7 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
     </div>
 
     <!-- SCRIPT PRINCIPAL (MÓDULO) - Carregado após as dependências -->
-    <script type="module" src="js/App.js?v=45"></script>
+    <script type="module" src="js/App.js?v=47"></script>
 </body>
 
 </html>

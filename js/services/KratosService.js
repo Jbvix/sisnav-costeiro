@@ -328,7 +328,12 @@ const KratosService = {
                 navareaTexto: this._truncate(appraisal.navareaText || '', 6000),
                 mauTempoTexto: this._truncate(appraisal.badWeatherText || '', 8000)
             },
-            indicadorCsvClima: wx ? wx.innerText.trim() : null
+            indicadorCsvClima: wx ? wx.innerText.trim() : null,
+            operacaoAssistente: {
+                modo: 'acompanhamento_comandante',
+                doubleCheckColaborativo: true,
+                descricaoPt: 'Este JSON reflecte o formulário neste instante. Acompanha o comandante: faz double-check colaborativo — relembra implicações de segurança e coerência dos dados preenchidos (meteo vs ETD, consumo vs margem, motor vs decisão de saída, NAVAREA). Usa confirmações, não ordens.'
+            }
         };
         ctx.formularioAssistencia = this._buildFormularioAssistencia();
         ctx.comentariosSobreFormulario = this._buildFormComments(ctx);
@@ -405,6 +410,47 @@ const KratosService = {
         document.getElementById('kratos-thinking-row')?.remove();
     },
 
+    _companionDebounceMs: 1600,
+
+    _clearCompanionHint: function () {
+        const el = document.getElementById('kratos-companion-line');
+        if (el) {
+            el.classList.add('hidden');
+            el.textContent = '';
+        }
+        if (this._companionTimer) {
+            clearTimeout(this._companionTimer);
+            this._companionTimer = null;
+        }
+    },
+
+    _scheduleCompanionHint: function () {
+        if (this._companionTimer) clearTimeout(this._companionTimer);
+        this._companionTimer = setTimeout(() => {
+            this._companionTimer = null;
+            const el = document.getElementById('kratos-companion-line');
+            if (!el) return;
+            el.textContent = 'Alterações nos formulários (Appraisal / planeamento / motor) — ao enviar mensagem, o KRATOS recebe o estado actualizado. Peça um double-check (ex.: «revê meteo e ETD», «confirma consumo e margem»).';
+            el.classList.remove('hidden');
+        }, this._companionDebounceMs);
+    },
+
+    _onCompanionFieldActivity: function (ev) {
+        const t = ev.target;
+        if (!t || typeof t.closest !== 'function') return;
+        if (t.closest('#kratos-dock')) return;
+        const inForm = t.closest('#view-appraisal') || t.closest('#view-planning') || t.closest('#modal-engine-checklist');
+        if (!inForm) return;
+        this._scheduleCompanionHint();
+    },
+
+    _bindCompanionWatch: function () {
+        if (this._companionWatchBound) return;
+        this._companionWatchBound = true;
+        document.addEventListener('input', (e) => this._onCompanionFieldActivity(e), true);
+        document.addEventListener('change', (e) => this._onCompanionFieldActivity(e), true);
+    },
+
     refreshStatus: async function () {
         const line = document.getElementById('kratos-status-line');
         if (!line) return;
@@ -460,6 +506,7 @@ const KratosService = {
             const reply = j.reply || '';
             this._messages.push({ role: 'assistant', content: reply });
             this._appendBubble('assistant', this._formatAssistantHtml(reply));
+            this._clearCompanionHint();
         } catch (e) {
             this._appendBubble('assistant', this._formatAssistantHtml('Falha de rede: ' + (e.message || String(e))));
             this._messages.pop();
@@ -543,14 +590,15 @@ const KratosService = {
         if (box && !box.dataset.seeded) {
             box.dataset.seeded = '1';
             this._appendBubble('assistant', this._formatAssistantHtml(
-                'Olá. Sou KRATOS, assistente náutico (xAI). Tenho acesso ao contexto da sua derrota no SISNAV, '
-                + 'aos dados que preencher no Appraisal e no planeamento (enviados em cada mensagem), '
-                + 'à documentação em library/docs/kratos_instructions.md, aos PDF em library/ (texto extraído no servidor) '
+                'Olá. Sou KRATOS, assistente náutico (xAI). Acompanho o preenchimento no sentido de que cada mensagem envia o estado actual do Appraisal e do planeamento para double-check consigo. '
+                + 'Relembro implicações de segurança dos dados que indicar e peço confirmações onde fizer sentido — a decisão é sempre sua. '
+                + 'Tenho acesso à derrota, documentação em library/docs/kratos_instructions.md, PDF em library/ no servidor '
                 + 'e, se ativar «Base + validação Web», a um resumo DuckDuckGo para cruzar factos gerais. '
-                + 'Nas respostas, comento o que estiver preenchido e o que faltar, nas áreas da minha competência. '
                 + 'Enquanto processa, verá o ícone dinâmico na barra. A decisão final é sempre do comandante.'
             ));
         }
+
+        this._bindCompanionWatch();
     }
 };
 

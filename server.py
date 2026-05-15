@@ -707,6 +707,7 @@ def kratos_chat():
         + 'Usa estes dados como base factual. O JSON pode incluir «comentariosSobreFormulario» e «formularioAssistencia» '
         + 'sobre o Appraisal e o planeamento — incorpora essas notas nas respostas (reconhecer o preenchido e alertar para lacunas '
         + 'de segurança quando relevante), antes ou junto da resposta à pergunta do utilizador. '
+        + 'Trata o comandante como titular da decisão: acompanhamento e double-check colaborativo (perguntas de confirmação, lembretes de implicações dos dados), sem substituir o comandante. '
         + 'Se faltar informação, indica lacunas e sugere preenchimento no SISNAV '
         '(GPX, portos, CHM/Sealagom, perfil de consumo, velocidade).\n\n'
         + '```json\n'
