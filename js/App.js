@@ -17,7 +17,7 @@ import PersistenceService from './services/PersistenceService.js?v=1';
 import UpdateService from './services/UpdateService.js?v=1';
 import { tideJSONService } from './services/TideJSONService.js'; // NEW
 import TideCSVService from './services/TideCSVService.js?v=10';
-import ReportService from './services/ReportService.js?v=10';
+import ReportService from './services/ReportService.js?v=11';
 import TideLocator from './services/TideLocator.js';
 import AuthService from './services/AuthService.js?v=Hotfix4'; // SPRINT 4
 import HelpService from './services/HelpService.js'; // SPRINT 6
@@ -27,7 +27,8 @@ import {
     STATION_ORDER_NORTH_SOUTH,
     stationForDepartureLat
 } from './services/CoastalRadioStations.js?v=1';
-import CHMService from './services/CHMService.js?v=3';
+import CHMService from './services/CHMService.js?v=4';
+import ProgressOverlay from './utils/ProgressOverlay.js?v=1';
 
 const App = {
     init: function () {
@@ -41,6 +42,7 @@ const App = {
         window.TideJSONService = tideJSONService; // Expose new service
         window.ReportService = ReportService; // Assign imported module to global
         window.State = State; // Expose State for inline handlers or debug
+        window.ProgressOverlay = ProgressOverlay;
 
         // Load JSON Data (Async)
         tideJSONService.load().then(ok => {
@@ -1985,8 +1987,10 @@ const App = {
         const reader = new FileReader();
         reader.onload = (e) => {
             try {
+                ProgressOverlay.show('Ficheiro GPX', 'A ler e interpretar pontos…', 10);
                 let points = GPXParser.parse(e.target.result);
                 console.log(`App: ${points.length} pontos.`);
+                ProgressOverlay.setProgress(45, 'Ficheiro GPX', `${points.length} waypoints encontrados.`);
 
                 // Check Reversal
                 const chkReverse = document.getElementById('chk-reverse-gpx');
@@ -1998,6 +2002,8 @@ const App = {
                 State.routePoints = points;
                 State.currentRouteId = file.name; // Store ID for sharing
 
+                ProgressOverlay.setProgress(62, 'Ficheiro GPX', 'A detetar portos e planear cartas…');
+
                 // Tenta auto-selecionar portos baseados na rota GPX
                 this.autoSelectPortsFromGPX(points);
 
@@ -2006,6 +2012,7 @@ const App = {
 
                 this.recalculateVoyage();
 
+                ProgressOverlay.setProgress(88, 'Ficheiro GPX', 'A desenhar rota no mapa…');
                 MapService.plotRoute(points);
                 UIManager.renderRouteTable(points);
                 UIManager.unlockPlanningDashboard();
@@ -2013,10 +2020,13 @@ const App = {
                 setTimeout(() => {
                     UIManager.switchTab('view-planning');
                     event.target.parentElement.classList.remove('upload-active');
+                    ProgressOverlay.setProgress(100, 'Ficheiro GPX', 'Concluído.');
+                    ProgressOverlay.hide(350);
                 }, 500);
 
             } catch (error) {
                 console.error("App: Erro GPX:", error);
+                ProgressOverlay.hide(0);
                 alert(`Erro GPX: ${error.message}`);
                 event.target.parentElement.classList.remove('upload-active');
             }
@@ -2378,6 +2388,8 @@ const App = {
         fetch(`js/data/known_routes.json?v=${new Date().getTime()}`)
             .then(r => r.json())
             .then(routes => {
+                try {
+                ProgressOverlay.show('Rota automática', `A analisar ${routes.length} rotas conhecidas…`, 8);
                 // 1. Construir o Grafo (Melhorado: Detecta portos INTERMEDIÁRIOS)
                 const graph = {};
                 // INCREASED THRESHOLD to 90NM to handle wide approach points (e.g. Rio de Janeiro on offshore routes)
@@ -2450,6 +2462,8 @@ const App = {
                     }
                 });
 
+                ProgressOverlay.setProgress(26, 'Rota automática', 'Grafo de segmentos pronto. A calcular melhor percurso…');
+
                 // Debug Graph Connections
                 Object.keys(graph).forEach(k => {
                     console.log(`Debug: Node ${k} connects to: ${graph[k].map(e => e.target).join(', ')}`);
@@ -2500,6 +2514,8 @@ const App = {
                     }
                 }
 
+                ProgressOverlay.setProgress(48, 'Rota automática', found ? 'Percurso encontrado. A reconstruir waypoints…' : 'A verificar ligações entre portos…');
+
                 // Populate pathMap from best path for compatibility with reconstruction code
                 if (found && finalState) {
                     let trace = finalState;
@@ -2528,6 +2544,7 @@ const App = {
 
                         // AUTO-ACCEPT
                         console.log("App: Costurando rotas (AUTO)...");
+                        ProgressOverlay.setProgress(68, 'Rota automática', 'A unir segmentos GPX…');
 
                         let finalPoints = [];
                         let seq = 1;
@@ -2576,6 +2593,7 @@ const App = {
                         visitedPortIds.push(...intermediates);
 
                         State.routePoints = finalPoints;
+                        ProgressOverlay.setProgress(82, 'Rota automática', 'A atualizar mapa, tabela e dados ambientais…');
                         this.recalculateVoyage();
                         MapService.plotRoute(finalPoints);
 
@@ -2595,8 +2613,15 @@ const App = {
                     console.log("App: Nenhuma conexão encontrada no Grafo.");
                     alert(`Não foi possível calcular uma rota automática entre ${pDep.name} e ${pArr.name}.\n\nO sistema tentou conectar trechos de arquivos conhecidos, mas não encontrou continuidade.\n\nPor favor, envie o arquivo GPX manualmente.`);
                 }
+                } finally {
+                    ProgressOverlay.setProgress(100, 'Rota automática', 'Concluído.');
+                    ProgressOverlay.hide(280);
+                }
             })
-            .catch(e => console.error("App: Erro no auto-route", e));
+            .catch(e => {
+                try { ProgressOverlay.hide(0); } catch (err) { /* ignore */ }
+                console.error("App: Erro no auto-route", e);
+            });
     },
 
     /**

@@ -1,6 +1,7 @@
 import NavMath from '../core/NavMath.js?v=10';
 import TideCSVService from './TideCSVService.js';
 import ChartService from './ChartService.js';
+import ProgressOverlay from '../utils/ProgressOverlay.js?v=1';
 
 // --- CONSTANTS & PARSERS ---
 
@@ -817,6 +818,7 @@ const ReportService = {
 
         try {
             console.log("ReportService: Iniciando geração do PDF (Modular)...");
+            ProgressOverlay.show('Relatório PDF', 'A preparar bibliotecas e imagens…', 3);
             const { jsPDF } = window.jspdf;
             if (!jsPDF) throw new Error("Biblioteca jsPDF não carregada.");
             const doc = new jsPDF();
@@ -827,6 +829,7 @@ const ReportService = {
                 img.onload = () => resolve(img); img.onerror = () => resolve(null);
             });
             const [bgImg, logoImg] = await Promise.all([loadImage('./library/img/chart_bg.png'), loadImage('./library/img/saam_logo.png')]);
+            ProgressOverlay.setProgress(14, 'Relatório PDF', 'Capa e identidade visual…');
 
             // --- COVER PAGE ---
             if (bgImg) {
@@ -884,6 +887,8 @@ const ReportService = {
             // 🏗️ ORDEM DE IMPRESSÃO (MODULAR v3 - REORDENADO)
             // --------------------------------------------------------------------------
 
+            ProgressOverlay.setProgress(22, 'Relatório PDF', 'Secções: embarcação, rota, comunicações…');
+
             // 1. DADOS DA EMBARCAÇÃO
             currentY = renderVesselInfo(doc, currentY, state);
 
@@ -892,6 +897,8 @@ const ReportService = {
 
             // 2.2 COMUNICAÇÕES (VHF / estações do trecho)
             currentY = renderMaritimeCommunications(doc, currentY, state);
+
+            ProgressOverlay.setProgress(40, 'Relatório PDF', 'Prints, faróis, contactos…');
 
             // 2.1 PRINTS
             currentY = renderPrints(doc, currentY, state);
@@ -902,6 +909,8 @@ const ReportService = {
             // 4. SEGURANÇA (CONTATOS)
             currentY = renderSecurityContacts(doc, currentY, state);
 
+            ProgressOverlay.setProgress(58, 'Relatório PDF', 'Documentação, marés e máquinas…');
+
             // 5. DOCUMENTAÇÃO
             currentY = renderDocsReference(doc, currentY, state);
 
@@ -910,6 +919,8 @@ const ReportService = {
 
             // 7. DADOS DE MÁQUINAS
             currentY = renderMachineInfo(doc, currentY, state);
+
+            ProgressOverlay.setProgress(72, 'Relatório PDF', 'Anexos (Meteomarinha, NAVAREA)…');
 
             // 7.1 CHECKLIST (REMOVED AS PER USER REQUEST)
             // currentY = renderMachineryChecklist(doc, currentY, state);
@@ -948,11 +959,16 @@ const ReportService = {
             // ASSINATURAS FINAL
             renderSignatures(doc);
 
+            ProgressOverlay.setProgress(94, 'Relatório PDF', 'A gravar ficheiro PDF…');
+
             doc.save(`Plano_Viagem_${state.shipProfile.name || 'Export'}.pdf`);
 
         } catch (error) {
             console.error("ReportService Error:", error);
             alert("Falha ao gerar PDF:\n" + error.message);
+        } finally {
+            ProgressOverlay.setProgress(100, 'Relatório PDF', 'Concluído.');
+            ProgressOverlay.hide(400);
         }
     }
 };

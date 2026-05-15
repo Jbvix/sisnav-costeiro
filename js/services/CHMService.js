@@ -3,6 +3,8 @@
  * via POST /api/chm/fetch (token só no servidor).
  */
 
+import ProgressOverlay from '../utils/ProgressOverlay.js?v=1';
+
 const CHMService = {
 
     init: function () {
@@ -26,8 +28,20 @@ const CHMService = {
                 b.disabled = true;
             });
 
+            if (!silent) {
+                ProgressOverlay.show(
+                    'CHM e Sealagom',
+                    'A preparar pedido ao servidor…',
+                    5
+                );
+            }
+
             const dep = (window.State && window.State.voyage && window.State.voyage.depPort) || '';
             const arr = (window.State && window.State.voyage && window.State.voyage.arrPort) || '';
+
+            if (!silent) {
+                ProgressOverlay.setProgress(18, 'CHM e Sealagom', 'A obter Meteomarinha, avisos e NAVAREA (pode demorar)…');
+            }
 
             const response = await fetch('/api/chm/fetch', {
                 method: 'POST',
@@ -35,7 +49,15 @@ const CHMService = {
                 body: JSON.stringify({ depPort: dep, arrPort: arr })
             });
 
+            if (!silent) {
+                ProgressOverlay.setProgress(72, 'CHM e Sealagom', 'A processar resposta do servidor…');
+            }
+
             const result = await response.json().catch(() => ({}));
+
+            if (!silent) {
+                ProgressOverlay.setProgress(88, 'CHM e Sealagom', 'A preencher campos no formulário…');
+            }
 
             if ((result.status === 'success' || result.status === 'partial') && result.data) {
                 this.populateFields(result.data);
@@ -64,6 +86,10 @@ const CHMService = {
                 alert('Erro ao buscar dados: ' + error.message);
             }
         } finally {
+            if (!silent) {
+                ProgressOverlay.setProgress(100, 'CHM e Sealagom', 'Concluído.');
+                ProgressOverlay.hide(420);
+            }
             buttons.forEach((b, i) => {
                 b.innerHTML = originals[i] || b.innerHTML;
                 b.disabled = false;
