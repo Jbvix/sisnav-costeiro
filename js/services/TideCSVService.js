@@ -148,13 +148,12 @@ const TideCSVService = {
 
         if (!minDate || !maxDate) return null;
 
-        // Format to DD/MM
-        const toDDMM = (iso) => {
+        const toDMY = (iso) => {
             const [y, m, d] = iso.split('-');
-            return `${d}/${m}`;
+            return `${d}/${m}/${y}`;
         };
 
-        return { min: toDDMM(minDate), max: toDDMM(maxDate) };
+        return { min: toDMY(minDate), max: toDMY(maxDate) };
     },
 
     getTide: function (csvStationName, dateObj) {

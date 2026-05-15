@@ -491,6 +491,7 @@ const UIManager = {
                         ${tideDisplay}
                     </div>
                 </div>
+                ${data.coverageNote ? `<p class="text-[9px] text-amber-900 bg-amber-50 border border-amber-200 rounded p-1.5 mt-1 leading-snug">${data.coverageNote}</p>` : ''}
                 
                 <!-- Expanded Tide Table (Optional, maybe accordion style later) -->
                 ${data.marine.exactTideHeight !== undefined ? this.renderTideInfo(data.marine, true) : ''}

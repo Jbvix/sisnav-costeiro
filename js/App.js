@@ -9,14 +9,14 @@
 import State from './core/State.js?v=7';
 import NavMath from './core/NavMath.js?v=10';
 import MapService from './services/MapService.js?v=8';
-import WeatherAPI from './services/WeatherAPI.js?v=10';
+import WeatherAPI from './services/WeatherAPI.js?v=12';
 import GPXParser from './utils/GPXParser.js?v=8';
-import UIManager from './utils/UIManager.js?v=8';
+import UIManager from './utils/UIManager.js?v=9';
 import PortDatabase from './services/PortDatabase.js?v=7';
 import PersistenceService from './services/PersistenceService.js?v=1';
 import UpdateService from './services/UpdateService.js?v=1';
 import { tideJSONService } from './services/TideJSONService.js'; // NEW
-import TideCSVService from './services/TideCSVService.js?v=10';
+import TideCSVService from './services/TideCSVService.js?v=11';
 import ReportService from './services/ReportService.js?v=11';
 import TideLocator from './services/TideLocator.js';
 import AuthService from './services/AuthService.js?v=Hotfix4'; // SPRINT 4
@@ -39,6 +39,7 @@ const App = {
         CHMService.init();
 
         window.TideCSVService = TideCSVService;
+        window.WeatherAPI = WeatherAPI;
         window.TideJSONService = tideJSONService; // Expose new service
         window.ReportService = ReportService; // Assign imported module to global
         window.State = State; // Expose State for inline handlers or debug
@@ -2252,61 +2253,59 @@ const App = {
         UIManager.renderWeatherCard('dep', null);
         UIManager.renderWeatherCard('arr', null);
 
-        if (WeatherAPI) {
-            // Busca dados. Se der erro 400 em um, o outro ainda funciona.
-            if (WeatherAPI) {
+        const W = (WeatherAPI && typeof WeatherAPI.fetchMetOcean === 'function')
+            ? WeatherAPI
+            : (typeof globalThis !== 'undefined' && globalThis.WeatherAPI && typeof globalThis.WeatherAPI.fetchMetOcean === 'function'
+                ? globalThis.WeatherAPI
+                : null);
 
-                // Lógica: Se houver porto selecionado no dropdown, usa coord dele.
-                // Se não, usa coord do GPX.
+        if (!W) {
+            console.error('App: WeatherAPI.fetchMetOcean indisponível — possível cache antigo. Use Ctrl+F5.');
+            const err = { status: 'ERROR', message: 'Recarregue a página (Ctrl+F5) para atualizar o módulo meteorológico.' };
+            UIManager.renderWeatherCard('dep', err);
+            UIManager.renderWeatherCard('arr', err);
+            return;
+        }
 
-                const selDepVal = document.getElementById('select-dep').value;
-                const selArrVal = document.getElementById('select-arr').value;
+        try {
+            const selDepVal = document.getElementById('select-dep').value;
+            const selArrVal = document.getElementById('select-arr').value;
 
-                let lat1 = State.routePoints[0].lat;
-                let lon1 = State.routePoints[0].lon;
-                let lat2 = State.routePoints[State.routePoints.length - 1].lat;
-                let lon2 = State.routePoints[State.routePoints.length - 1].lon;
+            let lat1 = State.routePoints[0].lat;
+            let lon1 = State.routePoints[0].lon;
+            let lat2 = State.routePoints[State.routePoints.length - 1].lat;
+            let lon2 = State.routePoints[State.routePoints.length - 1].lon;
 
-                if (selDepVal) {
-                    const pDep = PortDatabase.find(p => p.id === selDepVal);
-                    if (pDep) { lat1 = pDep.lat; lon1 = pDep.lon; }
-                }
-
-                if (selArrVal) {
-                    const pArr = PortDatabase.find(p => p.id === selArrVal);
-                    if (pArr) { lat2 = pArr.lat; lon2 = pArr.lon; }
-                }
-
-                // Busca dados
-                const depPromise = WeatherAPI.fetchMetOcean(lat1, lon1, etd);
-                const arrPromise = WeatherAPI.fetchMetOcean(lat2, lon2, eta);
-
-                // Promise.allSettled é melhor aqui, pois se um falhar, o outro carrega
-                // Mas para simplificar, usaremos o try/catch interno do WeatherAPI que já retorna objeto de erro
-                // Improved Error Handling: Use allSettled to prevent one failure from blocking the other
-                try {
-                    const results = await Promise.allSettled([depPromise, arrPromise]);
-
-                    // Departure Handling
-                    if (results[0].status === 'fulfilled') {
-                        UIManager.renderWeatherCard('dep', results[0].value);
-                    } else {
-                        console.error("App: Falha ao carregar dados de Partida:", results[0].reason);
-                        UIManager.renderWeatherCard('dep', { status: 'ERROR', message: "Dados indisponíveis" });
-                    }
-
-                    // Arrival Handling
-                    if (results[1].status === 'fulfilled') {
-                        UIManager.renderWeatherCard('arr', results[1].value);
-                    } else {
-                        console.error("App: Falha ao carregar dados de Chegada:", results[1].reason);
-                        UIManager.renderWeatherCard('arr', { status: 'ERROR', message: "Dados indisponíveis" });
-                    }
-
-                } catch (e) {
-                    console.error("App: Erro crítico inesperado na atualização ambiental", e);
-                }
+            if (selDepVal) {
+                const pDep = PortDatabase.find(p => p.id === selDepVal);
+                if (pDep) { lat1 = pDep.lat; lon1 = pDep.lon; }
             }
+
+            if (selArrVal) {
+                const pArr = PortDatabase.find(p => p.id === selArrVal);
+                if (pArr) { lat2 = pArr.lat; lon2 = pArr.lon; }
+            }
+
+            const depPromise = W.fetchMetOcean(lat1, lon1, etd);
+            const arrPromise = W.fetchMetOcean(lat2, lon2, eta);
+
+            const results = await Promise.allSettled([depPromise, arrPromise]);
+
+            if (results[0].status === 'fulfilled') {
+                UIManager.renderWeatherCard('dep', results[0].value);
+            } else {
+                console.error('App: Falha ao carregar dados de Partida:', results[0].reason);
+                UIManager.renderWeatherCard('dep', { status: 'ERROR', message: 'Dados indisponíveis' });
+            }
+
+            if (results[1].status === 'fulfilled') {
+                UIManager.renderWeatherCard('arr', results[1].value);
+            } else {
+                console.error('App: Falha ao carregar dados de Chegada:', results[1].reason);
+                UIManager.renderWeatherCard('arr', { status: 'ERROR', message: 'Dados indisponíveis' });
+            }
+        } catch (e) {
+            console.error('App: Erro crítico inesperado na atualização ambiental', e);
         }
     },
 
@@ -2321,7 +2320,7 @@ const App = {
         if (svc && svc.isLoaded) {
             const range = svc.getWeatherDateRange();
             if (range) {
-                spanStatus.textContent = `Dados: ${range.min} a ${range.max}`;
+                spanStatus.textContent = `CSV clima: ${range.min} → ${range.max}`;
                 spanStatus.classList.remove('text-red-500', 'bg-red-50');
                 spanStatus.classList.add('text-green-600', 'bg-green-50');
             } else {

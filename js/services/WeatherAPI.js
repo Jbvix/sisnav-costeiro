@@ -7,7 +7,7 @@
  */
 
 import TideLocator from './TideLocator.js?v=6';
-import TideCSVService from './TideCSVService.js?v=10';
+import TideCSVService from './TideCSVService.js?v=11';
 
 const WeatherAPI = {
 
@@ -110,9 +110,19 @@ const WeatherAPI = {
 
                 result.marine.waveHeight = weather.waveHeight;
                 result.marine.waveDir = weather.waveDir;
+            } else {
+                const wr = typeof TideCSVService.getWeatherDateRange === 'function'
+                    ? TideCSVService.getWeatherDateRange()
+                    : null;
+                const when = dateObj && !isNaN(dateObj.getTime())
+                    ? dateObj.toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' })
+                    : 'esta data';
+                if (wr && wr.min && wr.max) {
+                    result.coverageNote = `Sem vento/temperatura/ondas em CSV para ${when}. Cobertura dos ficheiros: ${wr.min} a ${wr.max}. Use «Atualizar dados» ou planeie dentro do intervalo.`;
+                } else {
+                    result.coverageNote = `Sem dados meteorológicos em CSV para ${when}.`;
+                }
             }
-
-            // 5. Get Tide Table Events (for context display)
             const table = TideCSVService.getTide(tideCheck.station.csvName, dateObj);
             if (table && table.events) {
                 result.marine.tideEvents = table.events;
