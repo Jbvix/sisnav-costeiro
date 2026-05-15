@@ -29,6 +29,7 @@ import {
 } from './services/CoastalRadioStations.js?v=1';
 import CHMService from './services/CHMService.js?v=4';
 import ProgressOverlay from './utils/ProgressOverlay.js?v=1';
+import KratosService from './services/KratosService.js?v=1';
 
 const App = {
     init: function () {
@@ -105,6 +106,8 @@ const App = {
         }
 
         this.updateWeatherStatusUI();
+
+        KratosService.init();
     },
 
     initViewerMode: function () {

@@ -9,6 +9,7 @@ import sys
 import logging
 import json
 import time
+import requests
 
 # Import scripts (Ensure they are clean/modular)
 try:
@@ -394,6 +395,126 @@ def validate_invite():
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+
+# --- KRATOS (xAI Grok) — assistente náutico ---------------------------------
+def _load_kratos_instruction_files():
+    """Documentação anexa ao system prompt (Markdown)."""
+    chunks = []
+    for rel in ('library/docs/kratos_instructions.md', 'data/kratos_operator_knowledge.md'):
+        p = os.path.join(BASE_DIR, *rel.split('/'))
+        if os.path.isfile(p):
+            try:
+                with open(p, 'r', encoding='utf-8') as fh:
+                    chunks.append(fh.read())
+            except OSError as e:
+                logger.warning('KRATOS: não leu %s — %s', p, e)
+    return '\n\n---\n\n'.join(chunks) if chunks else ''
+
+
+@app.route('/api/kratos/status', methods=['GET'])
+def kratos_status():
+    key = (os.environ.get('XAI_API_KEY') or '').strip()
+    return jsonify({
+        'configured': bool(key),
+        'model': (os.environ.get('XAI_MODEL') or 'grok-4.20-reasoning').strip(),
+    })
+
+
+@app.route('/api/kratos/chat', methods=['POST'])
+def kratos_chat():
+    """
+    Corpo JSON: { "messages": [ { "role":"user"|"assistant", "content":"..." } ], "voyageContext": { ... } }
+    Ambiente: XAI_API_KEY (obrigatório), XAI_MODEL (opcional; defeito: grok-4.20-reasoning).
+    """
+    api_key = (os.environ.get('XAI_API_KEY') or '').strip()
+    if not api_key:
+        return jsonify({
+            'error': 'Assistente KRATOS não configurado no servidor (defina XAI_API_KEY).',
+            'code': 'missing_key',
+        }), 503
+
+    body = request.get_json(silent=True) or {}
+    user_messages = body.get('messages')
+    if not isinstance(user_messages, list):
+        return jsonify({'error': 'O campo "messages" deve ser uma lista.'}), 400
+
+    voyage_ctx = body.get('voyageContext')
+
+    static_docs = _load_kratos_instruction_files()
+    if not (static_docs or '').strip():
+        static_docs = (
+            'És KRATOS, assistente náutico do SISNAV Costeiro (xAI). '
+            'Coloque o ficheiro library/docs/kratos_instructions.md no servidor para documentação anexa.'
+        )
+
+    try:
+        voyage_json = json.dumps(voyage_ctx, ensure_ascii=False, indent=2) if voyage_ctx is not None else '{}'
+    except (TypeError, ValueError):
+        voyage_json = '{}'
+    if len(voyage_json) > 120000:
+        voyage_json = voyage_json[:120000] + '\n… (truncado)'
+
+    system_content = (
+        static_docs
+        + '\n\n---\n\n## Contexto dinâmico da viagem (JSON — fonte de verdade)\n\n'
+        + 'Usa estes dados como base factual. Se faltar informação, indica lacunas e sugere preenchimento no SISNAV '
+        '(GPX, portos, CHM/Sealagom, perfil de consumo, velocidade).\n\n'
+        + '```json\n'
+        + voyage_json
+        + '\n```'
+    )
+    if len(system_content) > 145000:
+        system_content = system_content[:145000] + '\n… (system prompt truncado)'
+
+    clean_msgs = []
+    for m in user_messages[-24:]:
+        if not isinstance(m, dict):
+            continue
+        role = m.get('role')
+        content = m.get('content')
+        if role not in ('user', 'assistant') or not isinstance(content, str):
+            continue
+        content = content.strip()
+        if not content:
+            continue
+        clean_msgs.append({'role': role, 'content': content[:12000]})
+
+    if not clean_msgs or clean_msgs[-1]['role'] != 'user':
+        return jsonify({'error': 'Envie pelo menos uma mensagem do utilizador por turno.'}), 400
+
+    messages = [{'role': 'system', 'content': system_content}] + clean_msgs
+
+    model = (os.environ.get('XAI_MODEL') or 'grok-4.20-reasoning').strip()
+    url = 'https://api.x.ai/v1/chat/completions'
+
+    try:
+        r = requests.post(
+            url,
+            headers={
+                'Authorization': f'Bearer {api_key}',
+                'Content-Type': 'application/json',
+            },
+            json={
+                'model': model,
+                'messages': messages,
+                'temperature': 0.25,
+                'max_tokens': 4096,
+            },
+            timeout=120,
+        )
+        if not r.ok:
+            detail = (r.text or '')[:800]
+            logger.error('KRATOS xAI HTTP %s: %s', r.status_code, detail)
+            return jsonify({'error': f'Erro xAI HTTP {r.status_code}', 'detail': detail}), 502
+
+        data = r.json()
+        choice0 = (data.get('choices') or [{}])[0]
+        reply = (choice0.get('message') or {}).get('content') or ''
+        return jsonify({'reply': reply, 'model': model})
+    except requests.RequestException as e:
+        logger.exception('KRATOS request')
+        return jsonify({'error': f'Falha de rede ou tempo esgotado: {e!s}'}), 502
 
 
 # --- CHM / Sealagom (Meteo, Mau tempo, NAVAREA) ---
