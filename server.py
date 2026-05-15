@@ -412,20 +412,232 @@ def _load_kratos_instruction_files():
     return '\n\n---\n\n'.join(chunks) if chunks else ''
 
 
+# Texto extraído de PDFs em library/ para o KRATOS (cache por impressão digital dos ficheiros)
+_kratos_library_pdf_cache = {'fingerprint': None, 'text': None}
+
+
+def _library_pdf_fingerprint(lib_path):
+    """(max_mtime, count, total_size) — altera quando PDFs são adicionados, removidos ou gravados."""
+    max_m = 0.0
+    count = 0
+    total_sz = 0
+    if not os.path.isdir(lib_path):
+        return (0.0, 0, 0)
+    for root, _, files in os.walk(lib_path):
+        for fname in files:
+            if not fname.lower().endswith('.pdf'):
+                continue
+            fp = os.path.join(root, fname)
+            try:
+                st = os.stat(fp)
+                max_m = max(max_m, st.st_mtime)
+                total_sz += int(st.st_size)
+                count += 1
+            except OSError:
+                continue
+    return (max_m, count, total_sz)
+
+
+def _extract_text_from_pdf(path, max_chars):
+    try:
+        from pypdf import PdfReader
+    except ImportError:
+        return None
+    try:
+        reader = PdfReader(path)
+        parts = []
+        for page in reader.pages:
+            try:
+                t = page.extract_text() or ''
+            except Exception:
+                t = ''
+            if t:
+                parts.append(t)
+        full = '\n'.join(parts)
+        full = ' '.join(full.split())  # normaliza espaços
+        if len(full) > max_chars:
+            return full[:max_chars] + '\n[… texto truncado por limite por ficheiro …]'
+        return full
+    except Exception as e:
+        logger.warning('KRATOS PDF: falha a ler %s — %s', path, e)
+        return None
+
+
+def get_kratos_library_pdf_corpus():
+    """
+    Extrai texto de todos os *.pdf sob library/ (recursivo).
+    Limites: KRATOS_LIBRARY_PDF_MAX_PER_FILE (defeito 6000), KRATOS_LIBRARY_PDF_MAX_TOTAL (defeito 72000).
+    PDFs só com imagem (digitalização) podem devolver pouco ou nenhum texto.
+    """
+    global _kratos_library_pdf_cache
+    lib_path = os.path.join(BASE_DIR, 'library')
+    fp = _library_pdf_fingerprint(lib_path)
+    if _kratos_library_pdf_cache['fingerprint'] == fp and _kratos_library_pdf_cache['text'] is not None:
+        return _kratos_library_pdf_cache['text']
+
+    try:
+        from pypdf import PdfReader  # noqa: F401 — verificar dependência cedo
+    except ImportError:
+        return (
+            '[KRATOS] Biblioteca pypdf não instalada. No servidor: pip install pypdf\n'
+            '(reinicie o Flask após instalar.)\n'
+        )
+
+    max_per = int(os.environ.get('KRATOS_LIBRARY_PDF_MAX_PER_FILE') or '6000')
+    max_total = int(os.environ.get('KRATOS_LIBRARY_PDF_MAX_TOTAL') or '72000')
+
+    pdf_paths = []
+    for root, _, files in os.walk(lib_path):
+        for fname in files:
+            if fname.lower().endswith('.pdf'):
+                pdf_paths.append(os.path.join(root, fname))
+    pdf_paths.sort()
+
+    blocks = []
+    used = 0
+    for path in pdf_paths:
+        if used >= max_total:
+            blocks.append('\n[… limite global KRATOS_LIBRARY_PDF_MAX_TOTAL atingido; restantes PDFs omitidos …]\n')
+            break
+        rel = os.path.relpath(path, BASE_DIR).replace('\\', '/')
+        raw = _extract_text_from_pdf(path, max_per)
+        if not raw or not str(raw).strip():
+            block = f'\n### PDF: {rel}\n(sem texto extraível — possível digitalização só-imagem ou PDF protegido)\n'
+        else:
+            block = f'\n### PDF: {rel}\n{raw}\n'
+        if used + len(block) > max_total:
+            block = block[: max(0, max_total - used)]
+        blocks.append(block)
+        used += len(block)
+
+    text = '\n'.join(blocks)
+    if not text.strip():
+        text = '(Nenhum PDF encontrado em library/ ou todos vazios após extração.)\n'
+
+    logger.info(
+        'KRATOS: corpus PDF library/ atualizado (%d ficheiros, %d chars, fingerprint=%s)',
+        len(pdf_paths), len(text), fp,
+    )
+    _kratos_library_pdf_cache['fingerprint'] = fp
+    _kratos_library_pdf_cache['text'] = text
+    return text
+
+
+def _kratos_last_user_text(user_messages):
+    if not isinstance(user_messages, list):
+        return ''
+    for m in reversed(user_messages):
+        if isinstance(m, dict) and m.get('role') == 'user' and isinstance(m.get('content'), str):
+            return m.get('content', '').strip()
+    return ''
+
+
+def _kratos_build_web_search_query(body, voyage_ctx, last_user_text):
+    explicit = (body.get('webSearchQuery') or '').strip()
+    if explicit:
+        return explicit[:220]
+    parts = []
+    if isinstance(voyage_ctx, dict):
+        portos = voyage_ctx.get('portos') or {}
+        if portos.get('partidaNome'):
+            parts.append(str(portos['partidaNome']))
+        if portos.get('chegadaNome'):
+            parts.append(str(portos['chegadaNome']))
+    if last_user_text:
+        parts.append(last_user_text[:140])
+    q = ' '.join(parts).strip()
+    return q[:220] if q else ''
+
+
+def fetch_duckduckgo_instant_answer(query, max_chars=3500):
+    """
+    Instant Answer público DuckDuckGo (sem API key). Uso: cruzar factos gerais, não fonte regulatória.
+    """
+    q = (query or '').strip()
+    if len(q) < 3:
+        return ''
+    try:
+        r = requests.get(
+            'https://api.duckduckgo.com/',
+            params={'q': q[:220], 'format': 'json', 'no_html': 1, 'skip_disambig': 1},
+            timeout=14,
+            headers={
+                'User-Agent': 'SISNAV-Costeiro/Kratos (nautical planning; +https://github.com/)',
+                'Accept': 'application/json',
+            },
+        )
+        r.raise_for_status()
+        j = r.json()
+    except Exception as e:
+        logger.warning('KRATOS web DDG: %s', e)
+        return f'(DuckDuckGo indisponível: {e!s})'
+
+    chunks = []
+    heading = j.get('Heading') or ''
+    abs_txt = (j.get('AbstractText') or '').strip()
+    abs_url = (j.get('AbstractURL') or '').strip()
+    if heading or abs_txt:
+        line = heading
+        if abs_txt:
+            line = f'{heading}: {abs_txt}' if heading else abs_txt
+        if abs_url:
+            line += f'\nURL: {abs_url}'
+        chunks.append(line)
+
+    for rt in (j.get('RelatedTopics') or [])[:8]:
+        if isinstance(rt, dict):
+            t = (rt.get('Text') or '').strip()
+            u = (rt.get('FirstURL') or '').strip()
+            if t:
+                chunks.append(f'• {t}' + (f'\n  {u}' if u else ''))
+        elif isinstance(rt, str) and rt.strip():
+            chunks.append(f'• {rt.strip()}')
+
+    infobox = j.get('Infobox')
+    if isinstance(infobox, dict):
+        for inf in (infobox.get('content') or [])[:12]:
+            if isinstance(inf, dict):
+                lab = (inf.get('label') or '').strip()
+                val = (inf.get('value') or '').strip()
+                if lab and val:
+                    chunks.append(f'{lab}: {val}')
+
+    out = '\n\n'.join(chunks).strip()
+    if not out:
+        return '(DuckDuckGo não devolveu resumo instantâneo para esta consulta — tente outras palavras-chave.)'
+    if len(out) > max_chars:
+        return out[:max_chars] + '\n… (truncado)'
+    return out
+
+
 @app.route('/api/kratos/status', methods=['GET'])
 def kratos_status():
     key = (os.environ.get('XAI_API_KEY') or '').strip()
+    lib_path = os.path.join(BASE_DIR, 'library')
+    pdf_fp = _library_pdf_fingerprint(lib_path)
+    try:
+        import pypdf  # noqa: F401
+        pypdf_ok = True
+    except ImportError:
+        pypdf_ok = False
     return jsonify({
         'configured': bool(key),
         'model': (os.environ.get('XAI_MODEL') or 'grok-4.20-reasoning').strip(),
+        'libraryPdfCount': pdf_fp[1],
+        'pypdfInstalled': pypdf_ok,
+        'kratosPdfMaxTotal': int(os.environ.get('KRATOS_LIBRARY_PDF_MAX_TOTAL') or '72000'),
+        'kratosPdfMaxPerFile': int(os.environ.get('KRATOS_LIBRARY_PDF_MAX_PER_FILE') or '6000'),
+        'webValidationSupported': True,
     })
 
 
 @app.route('/api/kratos/chat', methods=['POST'])
 def kratos_chat():
     """
-    Corpo JSON: { "messages": [ { "role":"user"|"assistant", "content":"..." } ], "voyageContext": { ... } }
-    Ambiente: XAI_API_KEY (obrigatório), XAI_MODEL (opcional; defeito: grok-4.20-reasoning).
+    Corpo JSON: { "messages": [...], "voyageContext": {...},
+      "webValidation": true/false — opcional; se true, o servidor consulta DuckDuckGo Instant Answer
+      e injeta um bloco de texto para cruzar factos (não é fonte oficial).
+      "webSearchQuery": "..." — opcional; sobrepõe a query automática (portos + última pergunta).
     """
     api_key = (os.environ.get('XAI_API_KEY') or '').strip()
     if not api_key:
@@ -455,8 +667,42 @@ def kratos_chat():
     if len(voyage_json) > 120000:
         voyage_json = voyage_json[:120000] + '\n… (truncado)'
 
+    pdf_corpus = get_kratos_library_pdf_corpus()
+    pdf_section = ''
+    if (pdf_corpus or '').strip():
+        pdf_section = (
+            '\n\n---\n\n## Texto extraído de PDFs (pasta library/, recursivo)\n\n'
+            'Conteúdo obtido no servidor com extração automática (pypdf). Pode haver erros de OCR '
+            'ou tabelas desformatadas; PDFs só-imagem podem aparecer vazios. Não substitui carta '
+            'oficial nem decisão do comandante.\n\n'
+            + pdf_corpus
+        )
+
+    last_user_raw = _kratos_last_user_text(user_messages)
+    web_section = ''
+    web_used = False
+    wv = body.get('webValidation')
+    if wv in (True, 'true', '1', 1, 'on', 'yes'):
+        wq = _kratos_build_web_search_query(body, voyage_ctx, last_user_raw)
+        if wq:
+            snippets = fetch_duckduckgo_instant_answer(
+                wq,
+                max_chars=int(os.environ.get('KRATOS_WEB_SNIPPET_MAX') or '3500'),
+            )
+            if snippets:
+                web_used = True
+                web_section = (
+                    '\n\n---\n\n## Validação rápida na Web (DuckDuckGo Instant Answer)\n\n'
+                    f'Consulta usada no servidor: «{wq}»\n\n'
+                    'Isto é um resumo automático de enciclopédia / tópicos relacionados — pode estar incompleto ou desatualizado. '
+                    'Não substitui avisos à navegação, CHM, Marinha nem carta. Cruzar com o JSON da viagem e com os PDFs em library/.\n\n'
+                    + snippets
+                )
+
     system_content = (
         static_docs
+        + pdf_section
+        + web_section
         + '\n\n---\n\n## Contexto dinâmico da viagem (JSON — fonte de verdade)\n\n'
         + 'Usa estes dados como base factual. Se faltar informação, indica lacunas e sugere preenchimento no SISNAV '
         '(GPX, portos, CHM/Sealagom, perfil de consumo, velocidade).\n\n'
@@ -464,8 +710,9 @@ def kratos_chat():
         + voyage_json
         + '\n```'
     )
-    if len(system_content) > 145000:
-        system_content = system_content[:145000] + '\n… (system prompt truncado)'
+    max_sys = int(os.environ.get('KRATOS_MAX_SYSTEM_CHARS') or '190000')
+    if len(system_content) > max_sys:
+        system_content = system_content[:max_sys] + '\n… (system prompt truncado)\n'
 
     clean_msgs = []
     for m in user_messages[-24:]:
@@ -511,7 +758,7 @@ def kratos_chat():
         data = r.json()
         choice0 = (data.get('choices') or [{}])[0]
         reply = (choice0.get('message') or {}).get('content') or ''
-        return jsonify({'reply': reply, 'model': model})
+        return jsonify({'reply': reply, 'model': model, 'webValidationUsed': web_used})
     except requests.RequestException as e:
         logger.exception('KRATOS request')
         return jsonify({'error': f'Falha de rede ou tempo esgotado: {e!s}'}), 502

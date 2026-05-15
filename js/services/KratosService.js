@@ -183,6 +183,47 @@ const KratosService = {
         if (ta) ta.disabled = on;
     },
 
+    _showThinking: function () {
+        const ind = document.getElementById('kratos-dock-thinking');
+        if (ind) {
+            ind.classList.remove('hidden');
+            ind.classList.add('inline-flex');
+        }
+        const rob = document.getElementById('kratos-robot-icon');
+        if (rob) {
+            rob.classList.add('animate-pulse', 'text-cyan-200');
+        }
+        const box = document.getElementById('kratos-messages');
+        if (!box || document.getElementById('kratos-thinking-row')) return;
+        const wrap = document.createElement('div');
+        wrap.id = 'kratos-thinking-row';
+        wrap.className = 'mr-6 rounded-lg px-3 py-3 bg-slate-900/90 text-slate-200 border border-cyan-800/40 flex items-center gap-3';
+        wrap.innerHTML = `
+            <span class="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-cyan-950 border border-cyan-700/50">
+                <i class="fas fa-brain text-lg text-cyan-300 animate-pulse"></i>
+                <i class="fas fa-circle-notch fa-spin absolute text-cyan-500/80 text-xs -bottom-0.5 -right-0.5"></i>
+            </span>
+            <div class="flex flex-col gap-0.5 min-w-0">
+                <span class="text-[10px] uppercase font-bold text-cyan-500 tracking-wide">KRATOS</span>
+                <span class="text-xs text-slate-300">A processar a base local${document.getElementById('kratos-web-validate')?.checked ? ' e validação Web' : ''}…</span>
+            </div>`;
+        box.appendChild(wrap);
+        box.scrollTop = box.scrollHeight;
+    },
+
+    _hideThinking: function () {
+        const ind = document.getElementById('kratos-dock-thinking');
+        if (ind) {
+            ind.classList.add('hidden');
+            ind.classList.remove('inline-flex');
+        }
+        const rob = document.getElementById('kratos-robot-icon');
+        if (rob) {
+            rob.classList.remove('animate-pulse', 'text-cyan-200');
+        }
+        document.getElementById('kratos-thinking-row')?.remove();
+    },
+
     refreshStatus: async function () {
         const line = document.getElementById('kratos-status-line');
         if (!line) return;
@@ -190,7 +231,9 @@ const KratosService = {
             const r = await fetch('/api/kratos/status');
             const j = await r.json();
             if (j.configured) {
-                line.textContent = `Modelo: ${j.model || 'grok'} · Chave configurada no servidor`;
+                const pdf = typeof j.libraryPdfCount === 'number' ? `${j.libraryPdfCount} PDF(s) em library/` : '';
+                const py = j.pypdfInstalled === false ? ' · sem pypdf' : '';
+                line.textContent = `Modelo: ${j.model || 'grok'} · Chave OK${pdf ? ' · ' + pdf : ''}${py}`;
                 line.className = 'px-3 py-1 text-[10px] text-emerald-600/90 border-b border-slate-800 font-mono';
             } else {
                 line.textContent = 'Servidor sem XAI_API_KEY — respostas desativadas até configurar o ambiente.';
@@ -212,15 +255,18 @@ const KratosService = {
         this._messages.push({ role: 'user', content: text });
         this._appendBubble('user', this._formatAssistantHtml(text));
         this._setLoading(true);
+        this._showThinking();
 
         try {
             const voyageContext = this.buildVoyageContext();
+            const webVal = !!document.getElementById('kratos-web-validate')?.checked;
             const r = await fetch('/api/kratos/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     messages: this._messages,
-                    voyageContext
+                    voyageContext,
+                    webValidation: webVal
                 })
             });
             const j = await r.json().catch(() => ({}));
@@ -237,6 +283,7 @@ const KratosService = {
             this._appendBubble('assistant', this._formatAssistantHtml('Falha de rede: ' + (e.message || String(e))));
             this._messages.pop();
         } finally {
+            this._hideThinking();
             this._setLoading(false);
         }
     },
@@ -297,8 +344,9 @@ const KratosService = {
             box.dataset.seeded = '1';
             this._appendBubble('assistant', this._formatAssistantHtml(
                 'Olá. Sou KRATOS, assistente náutico (xAI). Tenho acesso ao contexto da sua derrota no SISNAV, '
-                + 'à documentação em library/docs/kratos_instructions.md no servidor e à integração Sealagom descrita no backend. '
-                + 'Pergunte sobre passagem, faróis, combustível, NAVAREA V, meteorologia ou perigos — a decisão final é sempre do comandante.'
+                + 'à documentação em library/docs/kratos_instructions.md, aos PDF em library/ (texto extraído no servidor) '
+                + 'e, se ativar «Base + validação Web», a um resumo DuckDuckGo para cruzar factos gerais. '
+                + 'Enquanto processa, verá o ícone dinâmico na barra. A decisão final é sempre do comandante.'
             ));
         }
     }

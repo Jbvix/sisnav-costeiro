@@ -1098,16 +1098,33 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
     <!-- KRATOS — assistente xAI (barra inferior) -->
     <div id="kratos-dock" class="hidden fixed bottom-0 left-0 right-0 z-[190] flex flex-col shadow-[0_-6px_32px_rgba(0,0,0,0.28)] border-t border-slate-700 bg-slate-900 text-slate-100">
         <button type="button" id="kratos-toggle"
-            class="flex items-center justify-between px-4 py-2.5 text-left hover:bg-slate-800 transition w-full shrink-0">
-            <span class="flex items-center gap-2 text-sm font-bold tracking-wide">
-                <i class="fas fa-robot text-cyan-400"></i> KRATOS
-                <span class="text-[10px] font-normal text-slate-400 font-mono hidden sm:inline">xAI · derrota &amp; passagem</span>
+            class="flex items-center justify-between px-4 py-2.5 text-left hover:bg-slate-800 transition w-full shrink-0 gap-2">
+            <span class="flex items-center gap-2 text-sm font-bold tracking-wide min-w-0">
+                <i id="kratos-robot-icon" class="fas fa-robot text-cyan-400 shrink-0"></i>
+                <span class="truncate">KRATOS</span>
+                <span class="text-[10px] font-normal text-slate-400 font-mono hidden sm:inline shrink-0">xAI · derrota &amp; passagem</span>
             </span>
-            <span id="kratos-chevron" class="text-slate-400 text-xs"><i class="fas fa-chevron-up"></i></span>
+            <span class="flex items-center gap-2 shrink-0">
+                <span id="kratos-dock-thinking" class="hidden items-center gap-1.5 text-cyan-400 text-[11px] font-mono whitespace-nowrap"
+                    aria-live="polite">
+                    <i class="fas fa-brain text-cyan-300 animate-pulse"></i>
+                    <i class="fas fa-circle-notch fa-spin text-cyan-400"></i>
+                    <span>A pensar…</span>
+                </span>
+                <span id="kratos-chevron" class="text-slate-400 text-xs"><i class="fas fa-chevron-up"></i></span>
+            </span>
         </button>
         <div id="kratos-panel" class="hidden flex flex-col max-h-[min(55vh,560px)] border-t border-slate-800 bg-slate-950">
             <div id="kratos-status-line"
                 class="px-3 py-1.5 text-[10px] text-slate-500 border-b border-slate-800 font-mono">A carregar estado…</div>
+            <label
+                class="flex items-start gap-2 px-3 py-2 border-b border-slate-800 bg-slate-900/60 text-[11px] text-slate-400 cursor-pointer select-none hover:bg-slate-900/90">
+                <input type="checkbox" id="kratos-web-validate"
+                    class="mt-0.5 rounded border-slate-600 bg-slate-800 text-cyan-600 focus:ring-cyan-500 focus:ring-offset-0">
+                <span><span class="text-cyan-400/95 font-semibold">Base + validação Web</span> — O servidor consulta o
+                    <span class="font-mono text-slate-300">Instant Answer</span> do DuckDuckGo para cruzar factos gerais
+                    (não substitui CHM, Marinha ou carta).</span>
+            </label>
             <div id="kratos-messages" class="flex-1 min-h-[120px] max-h-[42vh] overflow-y-auto p-3 space-y-3 text-[13px] leading-snug"></div>
             <div class="p-2 border-t border-slate-800 flex gap-2 items-end bg-slate-900 shrink-0">
                 <textarea id="kratos-input" rows="2"
@@ -1120,7 +1137,7 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
     </div>
 
     <!-- SCRIPT PRINCIPAL (MÓDULO) - Carregado após as dependências -->
-    <script type="module" src="js/App.js?v=41"></script>
+    <script type="module" src="js/App.js?v=43"></script>
 </body>
 
 </html>
