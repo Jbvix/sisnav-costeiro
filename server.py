@@ -704,7 +704,10 @@ def kratos_chat():
         + pdf_section
         + web_section
         + '\n\n---\n\n## Contexto dinâmico da viagem (JSON — fonte de verdade)\n\n'
-        + 'Usa estes dados como base factual. Se faltar informação, indica lacunas e sugere preenchimento no SISNAV '
+        + 'Usa estes dados como base factual. O JSON pode incluir «comentariosSobreFormulario» e «formularioAssistencia» '
+        + 'sobre o Appraisal e o planeamento — incorpora essas notas nas respostas (reconhecer o preenchido e alertar para lacunas '
+        + 'de segurança quando relevante), antes ou junto da resposta à pergunta do utilizador. '
+        + 'Se faltar informação, indica lacunas e sugere preenchimento no SISNAV '
         '(GPX, portos, CHM/Sealagom, perfil de consumo, velocidade).\n\n'
         + '```json\n'
         + voyage_json

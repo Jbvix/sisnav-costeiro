@@ -29,6 +29,181 @@ const KratosService = {
     },
 
     /**
+     * Dados de formulário (Appraisal / planeamento) alinhados às competências do assistente.
+     */
+    _buildFormularioAssistencia: function () {
+        const appraisal = State.appraisal || {};
+        const ship = State.shipProfile || {};
+        const voyage = State.voyage || {};
+        const eng = appraisal.engine || {};
+        const engObs = String(eng.observations || eng.obs || '').trim();
+        const comm = appraisal.communications || {};
+
+        let chkDomTotal = 0;
+        let chkDomOk = 0;
+        try {
+            document.querySelectorAll('.engine-check').forEach((el) => {
+                chkDomTotal++;
+                if (el.checked) chkDomOk++;
+            });
+        } catch (_) { /* ignore */ }
+
+        const towSel = document.getElementById('select-tow-config');
+        const towLabel = towSel && towSel.selectedOptions[0]
+            ? towSel.selectedOptions[0].text.trim()
+            : '';
+
+        const contacts = (appraisal.shoreContacts || []).slice(0, 12).map((c) => ({
+            nome: (c && c.name) ? String(c.name).slice(0, 80) : '',
+            telefone: (c && c.phone) ? String(c.phone).slice(0, 40) : '',
+            email: (c && c.email) ? String(c.email).slice(0, 80) : ''
+        }));
+
+        return {
+            checklistAppraisalAprovado: appraisal.isValid === true,
+            portosPlaneamentoIds: {
+                partidaAppraisalOuPlaneamento: voyage.depPort || null,
+                chegadaAppraisalOuPlaneamento: voyage.arrPort || null
+            },
+            embarcacaoFormulario: {
+                comandante: ship.commander || '',
+                filial: ship.branch || '',
+                tripulacaoPlaneada: ship.crew != null ? Number(ship.crew) : null,
+                caladoPopaM: ship.draft?.aft,
+                caladoProaM: ship.draft?.fwd,
+                velocidadeRebocoKn: ship.towSpeed != null ? Number(ship.towSpeed) : null,
+                configuracaoRebocadorTexto: towLabel || null
+            },
+            praçaMaquinas: {
+                statusMotor: eng.status || 'pending',
+                checklistMarcadosNoDom: chkDomOk,
+                checklistItensNoDom: chkDomTotal,
+                observacoes: this._truncate(engObs, 2000)
+            },
+            comunicacoesCosteiras: {
+                estacaoOuFrequencia: comm.station || '',
+                canal: comm.channel || ''
+            },
+            impressoesAppraisal: Array.isArray(appraisal.prints) ? appraisal.prints.length : 0,
+            contactosCosta: contacts
+        };
+    },
+
+    /**
+     * Observações em PT sobre o preenchimento (para o modelo comentar de forma consistente).
+     */
+    _buildFormComments: function (ctx) {
+        const lines = [];
+        const app = ctx.appraisal || {};
+        const form = ctx.formularioAssistencia || {};
+        const der = ctx.derrota || {};
+        const comb = ctx.combustivelResumo || {};
+        const port = ctx.portos || {};
+        const cron = ctx.cronograma || {};
+
+        if (form.checklistAppraisalAprovado) {
+            lines.push('Checklist de Appraisal marcado como aprovado no sistema.');
+        } else {
+            lines.push('Checklist de Appraisal ainda não está aprovado — rever itens obrigatórios no SISNAV.');
+        }
+
+        const nCharts = (app.cartasSelecionadas && app.cartasSelecionadas.length) || 0;
+        if (nCharts === 0) {
+            lines.push('Nenhuma carta náutica selecionada no Appraisal.');
+        } else {
+            lines.push(`Cartas náuticas selecionadas: ${nCharts} (ver lista no JSON).`);
+        }
+
+        const nLh = (app.faroisSelecionados && app.faroisSelecionados.length) || 0;
+        if (nLh === 0) {
+            lines.push('Nenhum farol/auxílio listado no Appraisal — pode ser relevante para derrota costeira.');
+        } else {
+            lines.push(`Faróis/auxílios no Appraisal: ${nLh}.`);
+        }
+
+        const nSh = (app.abrigos && app.abrigos.length) || 0;
+        lines.push(nSh === 0
+            ? 'Nenhum abrigo/emergência listado no Appraisal.'
+            : `Abrigos listados: ${nSh}.`);
+
+        const st = (form.praçaMaquinas && form.praçaMaquinas.statusMotor) || 'pending';
+        const chkT = form.praçaMaquinas?.checklistItensNoDom || 0;
+        const chkOk = form.praçaMaquinas?.checklistMarcadosNoDom || 0;
+        if (st === 'no-go') {
+            lines.push('Motor / praça de máquinas: status NO-GO — itens críticos de segurança não conformes.');
+        } else if (st === 'restricted') {
+            lines.push('Motor / praça de máquinas: status RESTRITO — checklist incompleto ou itens pendentes.');
+        } else if (st === 'ok') {
+            lines.push('Motor / praça de máquinas: status OK (checklist completo conforme regras do app).');
+        } else if (chkT === 0) {
+            lines.push('Checklist de máquinas ainda não gravado na UI (modal).');
+        } else {
+            lines.push(`Checklist de máquinas: ${chkOk}/${chkT} itens marcados no formulário; rever antes de navegar.`);
+        }
+
+        if ((der.numeroWps || 0) === 0) {
+            lines.push('Sem waypoints na derrota — importar GPX ou gerar rota.');
+        } else {
+            lines.push(`Derrota com ${der.numeroWps} waypoint(s).`);
+        }
+
+        if (!cron.etd) {
+            lines.push('ETD não definido — ETAs por perna ficam só relativas (sem âncora temporal).');
+        }
+
+        if (!port.partidaId || !port.chegadaId) {
+            lines.push('Portos de partida e/ou chegada (planeamento principal) ainda não selecionados.');
+        }
+
+        const saldo = comb.saldoChegadaEstimadoL;
+        if (typeof saldo === 'number' && saldo < 0) {
+            lines.push('Saldo estimado de combustível à chegada é negativo — rever velocidade, consumo ou stock.');
+        }
+
+        const meteoChars = (app.meteomarinhaTexto || '').length;
+        const navChars = (app.navareaTexto || '').length;
+        if (meteoChars === 0) {
+            lines.push('Área Meteomarinha / texto de meteorologia vazio — preencher ou colar boletim.');
+        } else {
+            lines.push(`Texto Meteomarinha presente (~${meteoChars} caracteres no contexto).`);
+        }
+        if (navChars === 0) {
+            lines.push('Texto NAVAREA / avisos (área Sealagom) vazio — integrar CHM quando aplicável.');
+        } else {
+            lines.push(`Texto NAVAREA/avisos presente (~${navChars} caracteres no contexto).`);
+        }
+
+        const mauLen = (app.mauTempoTexto || '').length;
+        if (mauLen === 0 && (der.numeroWps || 0) > 0) {
+            lines.push('Campo «mau tempo / contingência» (texto) vazio — útil documentar decisão.');
+        } else if (mauLen > 0) {
+            lines.push('Texto de mau tempo / contingência preenchido (ver appraisal no JSON).');
+        }
+
+        if (!(app.meteoLink || '').trim() && !(app.navareaLink || '').trim()) {
+            lines.push('Links externos Meteo/NAVAREA opcionais ainda vazios.');
+        }
+
+        const nCont = (form.contactosCosta && form.contactosCosta.length) || 0;
+        lines.push(nCont === 0
+            ? 'Sem contactos de praia/porto cadastrados no Appraisal.'
+            : `Contactos costeiros cadastrados: ${nCont}.`);
+
+        const est = (form.comunicacoesCosteiras && form.comunicacoesCosteiras.estacaoOuFrequencia) || '';
+        if (!String(est).trim()) {
+            lines.push('Estação costeira de trabalho ainda não indicada no planeamento.');
+        } else {
+            lines.push('Estação costeira de trabalho indicada (ver JSON).');
+        }
+
+        if (!(form.embarcacaoFormulario && String(form.embarcacaoFormulario.comandante || '').trim())) {
+            lines.push('Nome do comandante em branco no perfil da embarcação.');
+        }
+
+        return lines.slice(0, 22);
+    },
+
+    /**
      * Resumo da derrota, ETAs por WP, combustível por perna, referência de farol.
      */
     buildVoyageContext: function () {
@@ -115,7 +290,7 @@ const KratosService = {
         const totalFuelL = cumH * fuelRate;
 
         const appraisal = State.appraisal || {};
-        return {
+        const ctx = {
             geradoEm: new Date().toISOString(),
             sealagomDocumentacao: 'https://www.sealagom.com/api/docs/',
             notaFontes: 'NAVAREA V e avisos costeiros costumam ser integrados via botão CHM/Sealagom no Appraisal (token no servidor).',
@@ -149,10 +324,15 @@ const KratosService = {
                 abrigos: (appraisal.shelters || []).slice(0, 30),
                 meteoLink: appraisal.meteoLink || '',
                 navareaLink: appraisal.navareaLink || '',
+                meteomarinhaTexto: this._truncate(appraisal.meteoText || '', 6000),
+                navareaTexto: this._truncate(appraisal.navareaText || '', 6000),
                 mauTempoTexto: this._truncate(appraisal.badWeatherText || '', 8000)
             },
             indicadorCsvClima: wx ? wx.innerText.trim() : null
         };
+        ctx.formularioAssistencia = this._buildFormularioAssistencia();
+        ctx.comentariosSobreFormulario = this._buildFormComments(ctx);
+        return ctx;
     },
 
     _appendBubble: function (role, htmlBody) {
@@ -364,8 +544,10 @@ const KratosService = {
             box.dataset.seeded = '1';
             this._appendBubble('assistant', this._formatAssistantHtml(
                 'Olá. Sou KRATOS, assistente náutico (xAI). Tenho acesso ao contexto da sua derrota no SISNAV, '
+                + 'aos dados que preencher no Appraisal e no planeamento (enviados em cada mensagem), '
                 + 'à documentação em library/docs/kratos_instructions.md, aos PDF em library/ (texto extraído no servidor) '
                 + 'e, se ativar «Base + validação Web», a um resumo DuckDuckGo para cruzar factos gerais. '
+                + 'Nas respostas, comento o que estiver preenchido e o que faltar, nas áreas da minha competência. '
                 + 'Enquanto processa, verá o ícone dinâmico na barra. A decisão final é sempre do comandante.'
             ));
         }
