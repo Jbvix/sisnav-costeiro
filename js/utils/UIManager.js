@@ -68,6 +68,8 @@ const UIManager = {
 
                 // Trigger initial Tab (Appraisal) to start the first tour
                 this.switchTab('view-appraisal');
+
+                window.dispatchEvent(new CustomEvent('sisnav-cover-dismissed'));
             }, 500);
         }
     },

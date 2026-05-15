@@ -5,6 +5,7 @@
 
 import State from '../core/State.js?v=8';
 import NavMath from '../core/NavMath.js?v=10';
+import AuthService from './AuthService.js?v=Hotfix4';
 
 const KratosService = {
     _messages: [],
@@ -319,8 +320,27 @@ const KratosService = {
                 setTimeout(() => this.showDock(), 650);
             });
         }
+        if (!this._coverDismissListenerRegistered) {
+            this._coverDismissListenerRegistered = true;
+            window.addEventListener('sisnav-cover-dismissed', () => this.showDock());
+        }
+
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('mode') === 'monitor') {
+        const monitorUrl = urlParams.get('mode') === 'monitor';
+        let monitorSession = false;
+        try {
+            const sess = AuthService.getSession && AuthService.getSession();
+            if (sess && sess.type === 'monitor') monitorSession = true;
+        } catch (_) { /* ignore */ }
+
+        const cover = document.getElementById('view-cover');
+        let coverAlreadyGone = false;
+        if (cover) {
+            coverAlreadyGone = cover.style.display === 'none'
+                || window.getComputedStyle(cover).display === 'none';
+        }
+
+        if (monitorUrl || monitorSession || coverAlreadyGone) {
             this.showDock();
         }
 

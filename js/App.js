@@ -11,7 +11,7 @@ import NavMath from './core/NavMath.js?v=10';
 import MapService from './services/MapService.js?v=8';
 import WeatherAPI from './services/WeatherAPI.js?v=13';
 import GPXParser from './utils/GPXParser.js?v=9';
-import UIManager from './utils/UIManager.js?v=10';
+import UIManager from './utils/UIManager.js?v=11';
 import PortDatabase from './services/PortDatabase.js?v=7';
 import PersistenceService from './services/PersistenceService.js?v=1';
 import UpdateService from './services/UpdateService.js?v=1';
@@ -29,7 +29,7 @@ import {
 } from './services/CoastalRadioStations.js?v=1';
 import CHMService from './services/CHMService.js?v=4';
 import ProgressOverlay from './utils/ProgressOverlay.js?v=1';
-import KratosService from './services/KratosService.js?v=3';
+import KratosService from './services/KratosService.js?v=4';
 
 const App = {
     init: function () {
