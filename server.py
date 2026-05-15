@@ -656,8 +656,8 @@ def kratos_chat():
     static_docs = _load_kratos_instruction_files()
     if not (static_docs or '').strip():
         static_docs = (
-            'És KRATOS, assistente náutico do SISNAV Costeiro (xAI). '
-            'Coloque o ficheiro library/docs/kratos_instructions.md no servidor para documentação anexa.'
+            'Você é KRATOS, assistente náutico do SISNAV Costeiro (xAI). Responda em português do Brasil. '
+            'Coloque o arquivo library/docs/kratos_instructions.md no servidor para documentação anexa.'
         )
 
     try:
@@ -694,8 +694,8 @@ def kratos_chat():
                 web_section = (
                     '\n\n---\n\n## Validação rápida na Web (DuckDuckGo Instant Answer)\n\n'
                     f'Consulta usada no servidor: «{wq}»\n\n'
-                    'Isto é um resumo automático de enciclopédia / tópicos relacionados — pode estar incompleto ou desatualizado. '
-                    'Não substitui avisos à navegação, CHM, Marinha nem carta. Cruzar com o JSON da viagem e com os PDFs em library/.\n\n'
+                    'Isso é um resumo automático de enciclopédia / tópicos relacionados — pode estar incompleto ou desatualizado. '
+                    'Não substitui avisos à navegação, CHM, Marinha nem carta. Cruze com o JSON da viagem e com os PDFs em library/.\n\n'
                     + snippets
                 )
 
@@ -704,11 +704,13 @@ def kratos_chat():
         + pdf_section
         + web_section
         + '\n\n---\n\n## Contexto dinâmico da viagem (JSON — fonte de verdade)\n\n'
-        + 'Usa estes dados como base factual. O JSON pode incluir «comentariosSobreFormulario» e «formularioAssistencia» '
-        + 'sobre o Appraisal e o planeamento — incorpora essas notas nas respostas (reconhecer o preenchido e alertar para lacunas '
-        + 'de segurança quando relevante), antes ou junto da resposta à pergunta do utilizador. '
-        + 'Trata o comandante como titular da decisão: acompanhamento e double-check colaborativo (perguntas de confirmação, lembretes de implicações dos dados), sem substituir o comandante. '
-        + 'Se faltar informação, indica lacunas e sugere preenchimento no SISNAV '
+        + 'Use estes dados como base factual. O JSON pode incluir «comentariosSobreFormulario», «formularioAssistencia» e «doubleCheckNavareaDerrota» '
+        + 'sobre o Appraisal e o planejamento — incorpore essas notas nas respostas (reconheça o preenchido e alerte para lacunas '
+        + 'de segurança quando relevante), antes ou junto da resposta à pergunta do usuário. '
+        + 'Trate o comandante como titular da decisão: acompanhamento e double-check colaborativo em pt-BR (confirmações, lembretes sobre implicações dos dados), '
+        + 'incluindo cruzamento NAVAREA/avisos com o trecho da derrota quando houver texto. '
+        + 'Sem substituir o comandante. '
+        + 'Se faltar informação, indique lacunas e sugira preenchimento no SISNAV '
         '(GPX, portos, CHM/Sealagom, perfil de consumo, velocidade).\n\n'
         + '```json\n'
         + voyage_json
@@ -732,7 +734,7 @@ def kratos_chat():
         clean_msgs.append({'role': role, 'content': content[:12000]})
 
     if not clean_msgs or clean_msgs[-1]['role'] != 'user':
-        return jsonify({'error': 'Envie pelo menos uma mensagem do utilizador por turno.'}), 400
+        return jsonify({'error': 'Envie pelo menos uma mensagem do usuário por turno.'}), 400
 
     messages = [{'role': 'system', 'content': system_content}] + clean_msgs
 

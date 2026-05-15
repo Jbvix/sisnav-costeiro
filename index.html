@@ -1109,14 +1109,14 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                     aria-live="polite">
                     <i class="fas fa-brain text-cyan-300 animate-pulse"></i>
                     <i class="fas fa-circle-notch fa-spin text-cyan-400"></i>
-                    <span>A pensar…</span>
+                    <span>Pensando…</span>
                 </span>
                 <span id="kratos-chevron" class="text-slate-400 text-xs"><i class="fas fa-chevron-up"></i></span>
             </span>
         </button>
         <div id="kratos-panel" class="hidden flex flex-col max-h-[min(55vh,560px)] border-t border-slate-800 bg-slate-950">
             <div id="kratos-status-line"
-                class="px-3 py-1.5 text-[10px] text-slate-500 border-b border-slate-800 font-mono">A carregar estado…</div>
+                class="px-3 py-1.5 text-[10px] text-slate-500 border-b border-slate-800 font-mono">Carregando estado…</div>
             <div id="kratos-companion-line" role="status"
                 class="hidden px-3 py-1.5 text-[10px] text-amber-100/95 border-b border-amber-900/40 bg-amber-950/35 font-mono leading-snug"></div>
             <label
@@ -1124,14 +1124,14 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                 <input type="checkbox" id="kratos-web-validate"
                     class="mt-0.5 rounded border-slate-600 bg-slate-800 text-cyan-600 focus:ring-cyan-500 focus:ring-offset-0">
                 <span><span class="text-cyan-400/95 font-semibold">Base + validação Web</span> — O servidor consulta o
-                    <span class="font-mono text-slate-300">Instant Answer</span> do DuckDuckGo para cruzar factos gerais
+                    <span class="font-mono text-slate-300">Instant Answer</span> do DuckDuckGo para cruzar fatos gerais
                     (não substitui CHM, Marinha ou carta).</span>
             </label>
             <div id="kratos-messages" class="flex-1 min-h-[120px] max-h-[42vh] overflow-y-auto p-3 space-y-3 text-[13px] leading-snug"></div>
             <div class="p-2 border-t border-slate-800 flex gap-2 items-end bg-slate-900 shrink-0">
                 <textarea id="kratos-input" rows="2"
                     class="flex-1 resize-none rounded border border-slate-600 bg-slate-900 text-slate-100 text-sm px-2 py-1.5 focus:ring-1 focus:ring-cyan-500 focus:border-cyan-500 placeholder-slate-500"
-                    placeholder="Peça double-check aos dados do Appraisal/Planeamento, derrota, meteo, NAVAREA, motor… (Shift+Enter nova linha)"></textarea>
+                    placeholder="Peça double-check (Appraisal/planejamento, derrota, meteo, NAVAREA no trecho, observações de máquinas…) — Shift+Enter nova linha"></textarea>
                 <button type="button" id="kratos-send"
                     class="px-4 py-2 rounded bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-bold shrink-0 h-[42px]">Enviar</button>
             </div>
@@ -1139,7 +1139,7 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
     </div>
 
     <!-- SCRIPT PRINCIPAL (MÓDULO) - Carregado após as dependências -->
-    <script type="module" src="js/App.js?v=47"></script>
+    <script type="module" src="js/App.js?v=48"></script>
 </body>
 
 </html>

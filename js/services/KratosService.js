@@ -35,18 +35,8 @@ const KratosService = {
         const appraisal = State.appraisal || {};
         const ship = State.shipProfile || {};
         const voyage = State.voyage || {};
-        const eng = appraisal.engine || {};
-        const engObs = String(eng.observations || eng.obs || '').trim();
+        const engObs = String((appraisal.engine && (appraisal.engine.observations || appraisal.engine.obs)) || '').trim();
         const comm = appraisal.communications || {};
-
-        let chkDomTotal = 0;
-        let chkDomOk = 0;
-        try {
-            document.querySelectorAll('.engine-check').forEach((el) => {
-                chkDomTotal++;
-                if (el.checked) chkDomOk++;
-            });
-        } catch (_) { /* ignore */ }
 
         const towSel = document.getElementById('select-tow-config');
         const towLabel = towSel && towSel.selectedOptions[0]
@@ -75,10 +65,8 @@ const KratosService = {
                 configuracaoRebocadorTexto: towLabel || null
             },
             praçaMaquinas: {
-                statusMotor: eng.status || 'pending',
-                checklistMarcadosNoDom: chkDomOk,
-                checklistItensNoDom: chkDomTotal,
-                observacoes: this._truncate(engObs, 2000)
+                observacoesTexto: this._truncate(engObs, 2000),
+                nota: 'Checklist estruturado de praça de máquinas não é enviado ao KRATOS; só o campo de observações livres, quando preenchido.'
             },
             comunicacoesCosteiras: {
                 estacaoOuFrequencia: comm.station || '',
@@ -90,7 +78,7 @@ const KratosService = {
     },
 
     /**
-     * Observações em PT sobre o preenchimento (para o modelo comentar de forma consistente).
+     * Observações em pt-BR sobre o preenchimento (para o modelo comentar de forma consistente).
      */
     _buildFormComments: function (ctx) {
         const lines = [];
@@ -104,7 +92,7 @@ const KratosService = {
         if (form.checklistAppraisalAprovado) {
             lines.push('Checklist de Appraisal marcado como aprovado no sistema.');
         } else {
-            lines.push('Checklist de Appraisal ainda não está aprovado — rever itens obrigatórios no SISNAV.');
+            lines.push('Checklist de Appraisal ainda não aprovado — revise itens obrigatórios no SISNAV.');
         }
 
         const nCharts = (app.cartasSelecionadas && app.cartasSelecionadas.length) || 0;
@@ -126,23 +114,15 @@ const KratosService = {
             ? 'Nenhum abrigo/emergência listado no Appraisal.'
             : `Abrigos listados: ${nSh}.`);
 
-        const st = (form.praçaMaquinas && form.praçaMaquinas.statusMotor) || 'pending';
-        const chkT = form.praçaMaquinas?.checklistItensNoDom || 0;
-        const chkOk = form.praçaMaquinas?.checklistMarcadosNoDom || 0;
-        if (st === 'no-go') {
-            lines.push('Motor / praça de máquinas: status NO-GO — itens críticos de segurança não conformes.');
-        } else if (st === 'restricted') {
-            lines.push('Motor / praça de máquinas: status RESTRITO — checklist incompleto ou itens pendentes.');
-        } else if (st === 'ok') {
-            lines.push('Motor / praça de máquinas: status OK (checklist completo conforme regras do app).');
-        } else if (chkT === 0) {
-            lines.push('Checklist de máquinas ainda não gravado na UI (modal).');
+        const obsPm = (form.praçaMaquinas && form.praçaMaquinas.observacoesTexto) || '';
+        if (!String(obsPm).trim()) {
+            lines.push('Praça de máquinas: campo de observações livres vazio (checklist estruturado não é enviado ao KRATOS).');
         } else {
-            lines.push(`Checklist de máquinas: ${chkOk}/${chkT} itens marcados no formulário; rever antes de navegar.`);
+            lines.push('Praça de máquinas: há texto em observações livres (ver JSON).');
         }
 
         if ((der.numeroWps || 0) === 0) {
-            lines.push('Sem waypoints na derrota — importar GPX ou gerar rota.');
+            lines.push('Sem waypoints na derrota — importe GPX ou gere rota.');
         } else {
             lines.push(`Derrota com ${der.numeroWps} waypoint(s).`);
         }
@@ -152,30 +132,30 @@ const KratosService = {
         }
 
         if (!port.partidaId || !port.chegadaId) {
-            lines.push('Portos de partida e/ou chegada (planeamento principal) ainda não selecionados.');
+            lines.push('Portos de partida e/ou chegada (planejamento principal) ainda não selecionados.');
         }
 
         const saldo = comb.saldoChegadaEstimadoL;
         if (typeof saldo === 'number' && saldo < 0) {
-            lines.push('Saldo estimado de combustível à chegada é negativo — rever velocidade, consumo ou stock.');
+            lines.push('Saldo estimado de combustível na chegada negativo — revise velocidade, consumo ou estoque.');
         }
 
         const meteoChars = (app.meteomarinhaTexto || '').length;
         const navChars = (app.navareaTexto || '').length;
         if (meteoChars === 0) {
-            lines.push('Área Meteomarinha / texto de meteorologia vazio — preencher ou colar boletim.');
+            lines.push('Área Meteomarinha / texto de meteorologia vazio — preencha ou cole boletim.');
         } else {
             lines.push(`Texto Meteomarinha presente (~${meteoChars} caracteres no contexto).`);
         }
         if (navChars === 0) {
-            lines.push('Texto NAVAREA / avisos (área Sealagom) vazio — integrar CHM quando aplicável.');
+            lines.push('Texto NAVAREA / avisos (Sealagom) vazio — integre CHM quando aplicável.');
         } else {
-            lines.push(`Texto NAVAREA/avisos presente (~${navChars} caracteres no contexto).`);
+            lines.push(`Texto NAVAREA/avisos presente (~${navChars} caracteres). Cruze com o trecho da derrota e alerte perigos citados (derrelicto, reboque, exercício militar etc.) só se constarem no texto.`);
         }
 
         const mauLen = (app.mauTempoTexto || '').length;
         if (mauLen === 0 && (der.numeroWps || 0) > 0) {
-            lines.push('Campo «mau tempo / contingência» (texto) vazio — útil documentar decisão.');
+            lines.push('Campo de mau tempo / contingência vazio — documente a decisão se fizer sentido.');
         } else if (mauLen > 0) {
             lines.push('Texto de mau tempo / contingência preenchido (ver appraisal no JSON).');
         }
@@ -186,12 +166,12 @@ const KratosService = {
 
         const nCont = (form.contactosCosta && form.contactosCosta.length) || 0;
         lines.push(nCont === 0
-            ? 'Sem contactos de praia/porto cadastrados no Appraisal.'
-            : `Contactos costeiros cadastrados: ${nCont}.`);
+            ? 'Sem contatos de praia/porto cadastrados no Appraisal.'
+            : `Contatos costeiros cadastrados: ${nCont}.`);
 
         const est = (form.comunicacoesCosteiras && form.comunicacoesCosteiras.estacaoOuFrequencia) || '';
         if (!String(est).trim()) {
-            lines.push('Estação costeira de trabalho ainda não indicada no planeamento.');
+            lines.push('Estação costeira de trabalho ainda não indicada no planejamento.');
         } else {
             lines.push('Estação costeira de trabalho indicada (ver JSON).');
         }
@@ -200,7 +180,7 @@ const KratosService = {
             lines.push('Nome do comandante em branco no perfil da embarcação.');
         }
 
-        return lines.slice(0, 22);
+        return lines.slice(0, 24);
     },
 
     /**
@@ -259,7 +239,7 @@ const KratosService = {
                     let nota = 'indeterminado';
                     if (rng != null && !isNaN(rng) && rng > 0) {
                         if (lh.dist <= rng) nota = 'distância ≤ alcance declarado (geométrico; meteorologia não modelada)';
-                        else if (lh.dist <= rng * 1.25) nota = 'marginal vs alcance declarado';
+                        else if (lh.dist <= rng * 1.25) nota = 'marginal em relação ao alcance declarado';
                         else nota = 'fora do alcance declarado (geométrico)';
                     }
                     refFarol = {
@@ -293,7 +273,7 @@ const KratosService = {
         const ctx = {
             geradoEm: new Date().toISOString(),
             sealagomDocumentacao: 'https://www.sealagom.com/api/docs/',
-            notaFontes: 'NAVAREA V e avisos costeiros costumam ser integrados via botão CHM/Sealagom no Appraisal (token no servidor).',
+            notaFontes: 'NAVAREA V e avisos costeiros costumam ser integrados pelo botão CHM/Sealagom no Appraisal (token no servidor).',
             portos: { partidaId: depSel?.value || null, partidaNome: depLabel, chegadaId: arrSel?.value || null, chegadaNome: arrLabel },
             embarcacao: {
                 nome: State.shipProfile?.name,
@@ -329,10 +309,14 @@ const KratosService = {
                 mauTempoTexto: this._truncate(appraisal.badWeatherText || '', 8000)
             },
             indicadorCsvClima: wx ? wx.innerText.trim() : null,
+            doubleCheckNavareaDerrota: {
+                instrucaoPtBr: 'Responda em pt-BR. No double-check, cruze NAVAREA V e demais avisos do JSON com o trecho da derrota (waypoints/portos). Alerte derrelicto, operação de reboque, exercício militar, zonas restritas etc. somente se constarem nos textos de aviso; não invente coordenadas nem áreas.'
+            },
             operacaoAssistente: {
                 modo: 'acompanhamento_comandante',
                 doubleCheckColaborativo: true,
-                descricaoPt: 'Este JSON reflecte o formulário neste instante. Acompanha o comandante: faz double-check colaborativo — relembra implicações de segurança e coerência dos dados preenchidos (meteo vs ETD, consumo vs margem, motor vs decisão de saída, NAVAREA). Usa confirmações, não ordens.'
+                idioma: 'pt-BR',
+                descricaoPtBr: 'Este JSON reflete o formulário neste instante. Acompanhe o comandante com double-check colaborativo: implicações de segurança e coerência (meteorologia vs ETD, consumo vs margem, NAVAREA vs derrota). Use confirmações, não ordens.'
             }
         };
         ctx.formularioAssistencia = this._buildFormularioAssistencia();
@@ -391,7 +375,7 @@ const KratosService = {
             </span>
             <div class="flex flex-col gap-0.5 min-w-0">
                 <span class="text-[10px] uppercase font-bold text-cyan-500 tracking-wide">KRATOS</span>
-                <span class="text-xs text-slate-300">A processar a base local${document.getElementById('kratos-web-validate')?.checked ? ' e validação Web' : ''}…</span>
+                <span class="text-xs text-slate-300">Processando base local${document.getElementById('kratos-web-validate')?.checked ? ' e validação Web' : ''}…</span>
             </div>`;
         box.appendChild(wrap);
         box.scrollTop = box.scrollHeight;
@@ -430,7 +414,7 @@ const KratosService = {
             this._companionTimer = null;
             const el = document.getElementById('kratos-companion-line');
             if (!el) return;
-            el.textContent = 'Alterações nos formulários (Appraisal / planeamento / motor) — ao enviar mensagem, o KRATOS recebe o estado actualizado. Peça um double-check (ex.: «revê meteo e ETD», «confirma consumo e margem»).';
+            el.textContent = 'Alterações nos formulários (Appraisal / planejamento / observações de máquinas) — ao enviar mensagem, o KRATOS recebe o estado atualizado. Peça um double-check (ex.: «revise meteo e ETD», «confirme consumo e NAVAREA no trecho»).';
             el.classList.remove('hidden');
         }, this._companionDebounceMs);
     },
@@ -439,7 +423,7 @@ const KratosService = {
         const t = ev.target;
         if (!t || typeof t.closest !== 'function') return;
         if (t.closest('#kratos-dock')) return;
-        const inForm = t.closest('#view-appraisal') || t.closest('#view-planning') || t.closest('#modal-engine-checklist');
+        const inForm = t.closest('#view-appraisal') || t.closest('#view-planning');
         if (!inForm) return;
         this._scheduleCompanionHint();
     },
@@ -467,7 +451,7 @@ const KratosService = {
                 line.className = 'px-3 py-1 text-[10px] text-amber-400 border-b border-slate-800 font-mono';
             }
         } catch {
-            line.textContent = 'Não foi possível contactar /api/kratos/status (servidor Flask ativo?)';
+            line.textContent = 'Não foi possível contatar /api/kratos/status (servidor Flask ativo?)';
             line.className = 'px-3 py-1 text-[10px] text-red-400 border-b border-slate-800 font-mono';
         }
     },
@@ -590,11 +574,11 @@ const KratosService = {
         if (box && !box.dataset.seeded) {
             box.dataset.seeded = '1';
             this._appendBubble('assistant', this._formatAssistantHtml(
-                'Olá. Sou KRATOS, assistente náutico (xAI). Acompanho o preenchimento no sentido de que cada mensagem envia o estado actual do Appraisal e do planeamento para double-check consigo. '
-                + 'Relembro implicações de segurança dos dados que indicar e peço confirmações onde fizer sentido — a decisão é sempre sua. '
-                + 'Tenho acesso à derrota, documentação em library/docs/kratos_instructions.md, PDF em library/ no servidor '
-                + 'e, se ativar «Base + validação Web», a um resumo DuckDuckGo para cruzar factos gerais. '
-                + 'Enquanto processa, verá o ícone dinâmico na barra. A decisão final é sempre do comandante.'
+                'Olá. Sou KRATOS, assistente náutico (xAI). Falo em português do Brasil. Cada mensagem envia o estado atual do Appraisal e do planejamento para fazermos double-check juntos — inclusive NAVAREA V em relação ao trecho da derrota, quando houver texto de aviso. '
+                + 'Relembro implicações de segurança e peço confirmações quando fizer sentido; a decisão é sempre sua. '
+                + 'Tenho acesso à derrota, à documentação em library/docs/kratos_instructions.md e aos PDF em library/ no servidor '
+                + 'e, se ativar «Base + validação Web», a um resumo DuckDuckGo para cruzar fatos gerais. '
+                + 'Enquanto processo, você verá o ícone dinâmico na barra. A decisão final é sempre do comandante.'
             ));
         }
 
