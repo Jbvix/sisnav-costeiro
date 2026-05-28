@@ -30,14 +30,20 @@ const MapService = {
         // Salva referência no State
         State.mapInstance = map;
 
-        // Adiciona camada de tiles (OpenStreetMap)
-        // Adiciona camada de tiles (OpenStreetMap)
+        // Adiciona camada de tiles (OpenStreetMap - Base)
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors',
             maxZoom: 18
         }).addTo(map);
 
-        // Adiciona camada Náutica (OpenSeaMap) - Marks
+        // Adiciona as Cartas Náuticas (RNC) Oficiais (Servidor TugLife cPanel)
+        L.tileLayer('https://charts.tuglife.live/charts/tiles/{z}/{x}/{y}.png', {
+            attribution: '&copy; Marinha do Brasil / TugLife Charts',
+            maxZoom: 18,
+            opacity: 0.9 // Leve transparência para mesclar com a costa do OSM
+        }).addTo(map);
+
+        // Adiciona camada Náutica Colaborativa (OpenSeaMap) - Marks
         L.tileLayer('https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenSeaMap',
             maxZoom: 18
