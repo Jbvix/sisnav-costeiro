@@ -80,8 +80,8 @@ const MapService = {
             "💡 Faróis": State.layers.lighthouses
         };
 
-        // Adiciona o controle no canto superior esquerdo (abaixo do zoom)
-        L.control.layers(baseMaps, overlayMaps, { position: 'topleft' }).addTo(map);
+        // Adiciona o controle no canto inferior esquerdo (evita conflito com o cadeado)
+        L.control.layers(baseMaps, overlayMaps, { position: 'bottomleft' }).addTo(map);
 
         console.log("MapService: ECDIS Inicializado com sucesso.");
     },

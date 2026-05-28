@@ -8,7 +8,7 @@
 
 import State from './core/State.js?v=8';
 import NavMath from './core/NavMath.js?v=10';
-import MapService from './services/MapService.js?v=10';
+import MapService from './services/MapService.js?v=11';
 import WeatherAPI from './services/WeatherAPI.js?v=13';
 import GPXParser from './utils/GPXParser.js?v=9';
 import UIManager from './utils/UIManager.js?v=11';
