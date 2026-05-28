@@ -807,18 +807,27 @@ def kratos_chat():
         data = r.json()
         reply = ''
 
-        # 1. Try Responses API structure: output[0].content[0].text
-        if 'output' in data and isinstance(data['output'], list) and len(data['output']) > 0:
-            out_item = data['output'][0]
-            if isinstance(out_item, dict) and 'content' in out_item and isinstance(out_item['content'], list):
-                for block in out_item['content']:
-                    if isinstance(block, dict) and block.get('type') == 'output_text':
-                        reply = block.get('text') or ''
-                        break
-                if not reply and len(out_item['content']) > 0:
-                    first_block = out_item['content'][0]
-                    if isinstance(first_block, dict):
-                        reply = first_block.get('text') or first_block.get('content') or ''
+        # 1. Try Responses API structure: iterate over all items in output array
+        if 'output' in data and isinstance(data['output'], list):
+            for out_item in data['output']:
+                if isinstance(out_item, dict) and 'content' in out_item and isinstance(out_item['content'], list):
+                    for block in out_item['content']:
+                        if isinstance(block, dict) and block.get('type') == 'output_text':
+                            reply = block.get('text') or ''
+                            break
+                if reply:
+                    break
+            
+            # Fallback if we found content but not of type 'output_text'
+            if not reply:
+                for out_item in data['output']:
+                    if isinstance(out_item, dict) and 'content' in out_item and isinstance(out_item['content'], list):
+                        if len(out_item['content']) > 0:
+                            first_block = out_item['content'][0]
+                            if isinstance(first_block, dict):
+                                reply = first_block.get('text') or first_block.get('content') or ''
+                                if reply:
+                                    break
 
         # 2. Try legacy chat completions structure as fallback
         if not reply and 'choices' in data and isinstance(data['choices'], list) and len(data['choices']) > 0:
