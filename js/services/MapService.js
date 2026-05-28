@@ -18,7 +18,8 @@ import NavMath from '../core/NavMath.js?v=10';
 const ExternalMapLayer = L.Layer.extend({
     options: {
         urlBuilder: null,
-        interactive: true
+        interactive: true,
+        maxUrlZoom: null
     },
     initialize: function (options) {
         L.setOptions(this, options);
@@ -28,7 +29,8 @@ const ExternalMapLayer = L.Layer.extend({
         this._container = L.DomUtil.create('div', 'external-map-layer');
         Object.assign(this._container.style, {
             position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-            zIndex: 50, backgroundColor: '#050814', pointerEvents: 'none'
+            zIndex: 50, backgroundColor: '#050814', pointerEvents: 'none',
+            overflow: 'hidden'
         });
         this._iframe = L.DomUtil.create('iframe', '', this._container);
         Object.assign(this._iframe.style, {
@@ -114,6 +116,15 @@ const ExternalMapLayer = L.Layer.extend({
             this._iframe.src = url;
             console.log("Updated External Layer:", lat, lon, zoom);
         }
+
+        // Apply scale transformation to the iframe if zoom exceeds maxUrlZoom
+        if (this.options.maxUrlZoom && zoom > this.options.maxUrlZoom) {
+            const scale = Math.pow(2, zoom - this.options.maxUrlZoom);
+            this._iframe.style.transform = `scale(${scale})`;
+            this._iframe.style.transformOrigin = 'center';
+        } else {
+            this._iframe.style.transform = '';
+        }
     }
 });
 
@@ -174,6 +185,7 @@ const MapService = {
         });
 
         const windyLayer = new ExternalMapLayer({
+            maxUrlZoom: 11,
             urlBuilder: (lat, lon, zoom) => {
                 const safeZoom = Math.min(zoom, 11);
                 return `https://embed.windy.com/embed.html?type=map&location=coordinates&zoom=${safeZoom}&lat=${lat}&lon=${lon}&detailLat=${lat}&detailLon=${lon}&metricWind=kt&metricTemp=%C2%B0C`;

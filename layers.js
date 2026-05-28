@@ -4,7 +4,8 @@
 const ExternalMapLayer = L.Layer.extend({
     options: {
         urlBuilder: null, // Function(lat, lon, zoom) -> url
-        interactive: true
+        interactive: true,
+        maxUrlZoom: null
     },
 
     initialize: function (options) {
@@ -24,7 +25,8 @@ const ExternalMapLayer = L.Layer.extend({
             height: '100%',
             zIndex: 50,
             backgroundColor: '#050814',
-            pointerEvents: 'none' // CRITICAL: Let clicks pass through
+            pointerEvents: 'none', // CRITICAL: Let clicks pass through
+            overflow: 'hidden'
         });
 
         // Create Iframe
@@ -133,6 +135,15 @@ const ExternalMapLayer = L.Layer.extend({
             this._iframe.src = url;
             console.log("Updated External Layer:", lat, lon, zoom);
         }
+
+        // Apply scale transformation to the iframe if zoom exceeds maxUrlZoom
+        if (this.options.maxUrlZoom && zoom > this.options.maxUrlZoom) {
+            const scale = Math.pow(2, zoom - this.options.maxUrlZoom);
+            this._iframe.style.transform = `scale(${scale})`;
+            this._iframe.style.transformOrigin = 'center';
+        } else {
+            this._iframe.style.transform = '';
+        }
     }
 });
 
@@ -184,6 +195,7 @@ const marineTrafficLayer = new ExternalMapLayer({
 });
 
 const windyLayer = new ExternalMapLayer({
+    maxUrlZoom: 11,
     urlBuilder: (lat, lon, zoom) => {
         const safeZoom = Math.min(zoom, 11);
         return `https://embed.windy.com/embed.html?type=map&location=coordinates&zoom=${safeZoom}&lat=${lat}&lon=${lon}&detailLat=${lat}&detailLon=${lon}&metricWind=kt&metricTemp=%C2%B0C`;
