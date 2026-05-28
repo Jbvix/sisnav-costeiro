@@ -631,6 +631,7 @@ def fetch_duckduckgo_instant_answer(query, max_chars=3500):
 @app.route('/api/kratos/status', methods=['GET'])
 def kratos_status():
     key = (os.environ.get('XAI_API_KEY') or '').strip()
+    xai_models = None
     
     # Query xAI available models and log them to kratos_debug.log
     if key:
@@ -641,8 +642,8 @@ def kratos_status():
                 timeout=10
             )
             if r.ok:
-                models_data = r.json()
-                _log_kratos_error(summary="Querying xAI Models", detail=json.dumps(models_data, indent=2))
+                xai_models = r.json()
+                _log_kratos_error(summary="Querying xAI Models", detail=json.dumps(xai_models, indent=2))
             else:
                 _log_kratos_error(summary=f"Querying xAI Models failed with HTTP {r.status_code}", detail=r.text)
         except Exception as e:
@@ -657,12 +658,13 @@ def kratos_status():
         pypdf_ok = False
     return jsonify({
         'configured': bool(key),
-        'model': (os.environ.get('XAI_MODEL') or 'grok-2').strip(),
+        'model': (os.environ.get('XAI_MODEL') or 'grok-4.3').strip(),
         'libraryPdfCount': pdf_fp[1],
         'pypdfInstalled': pypdf_ok,
         'kratosPdfMaxTotal': int(os.environ.get('KRATOS_LIBRARY_PDF_MAX_TOTAL') or '72000'),
         'kratosPdfMaxPerFile': int(os.environ.get('KRATOS_LIBRARY_PDF_MAX_PER_FILE') or '6000'),
         'webValidationSupported': True,
+        'xaiModels': xai_models,
     })
 
 
@@ -773,7 +775,7 @@ def kratos_chat():
 
     messages = [{'role': 'system', 'content': system_content}] + clean_msgs
 
-    model = (os.environ.get('XAI_MODEL') or 'grok-2').strip()
+    model = (os.environ.get('XAI_MODEL') or 'grok-4.3').strip()
     url = 'https://api.x.ai/v1/chat/completions'
 
     try:
