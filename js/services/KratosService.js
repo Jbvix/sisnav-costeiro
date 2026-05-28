@@ -574,7 +574,7 @@ const KratosService = {
         if (box && !box.dataset.seeded) {
             box.dataset.seeded = '1';
             this._appendBubble('assistant', this._formatAssistantHtml(
-                'Olá. Sou KRATOS, assistente náutico (xAI). Falo em português do Brasil. Cada mensagem envia o estado atual do Appraisal e do planejamento para fazermos double-check juntos — inclusive NAVAREA V em relação ao trecho da derrota, quando houver texto de aviso. '
+                'Olá. Sou KRATOS. Cada mensagem envia o estado atual do Appraisal e do planejamento para fazermos double-check juntos — inclusive NAVAREA V em relação ao trecho da derrota, quando houver texto de aviso. '
                 + 'Relembro implicações de segurança e peço confirmações quando fizer sentido; a decisão é sempre sua. '
                 + 'Tenho acesso à derrota, à documentação em library/docs/kratos_instructions.md e aos PDF em library/ no servidor '
                 + 'e, se ativar «Base + validação Web», a um resumo DuckDuckGo para cruzar fatos gerais. '
