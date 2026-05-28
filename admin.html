@@ -17,7 +17,10 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {\n            background-color: #0f172a;\n        }\n    </style>
+        body {
+            background-color: #0f172a;
+        }
+    </style>
 </head>
 
 <body class="flex items-center justify-center h-screen text-slate-200">
@@ -55,20 +58,21 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
         // Check if already logged as admin
         if (AuthService.isAdmin()) {
             // In Sprint 2, this would redirect to dashboard.
-            // For Sprint 1, we just alert or show \"Logged in\".
+            // For Sprint 1, we just alert or show "Logged in".
             window.location.href = 'admin_dashboard.html'; // Future file
         }
 
         document.getElementById('admin-form').addEventListener('submit', (e) => {
             e.preventDefault();
-            const user = document.getElementById('admin-user').value;\n            const pass = document.getElementById('admin-pass').value;
+            const user = document.getElementById('admin-user').value;
+            const pass = document.getElementById('admin-pass').value;
 
             const res = AuthService.adminLogin(user, pass);
             if (res.success) {
                 // Redirect to Dashboard (Sprint 2)
                 window.location.href = 'admin_dashboard.html';
             } else {
-                alert(\"Acesso Negado.\");
+                alert("Acesso Negado.");
             }
         });
     </script>
