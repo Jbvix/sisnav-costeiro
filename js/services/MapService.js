@@ -50,8 +50,7 @@ const MapService = {
 
         const tuglifeChartsLayer = L.tileLayer('https://charts.tuglife.live/tiles/{z}/{x}/{y}.png', {
             attribution: '&copy; Marinha do Brasil / TugLife Charts',
-            maxZoom: 18,
-            minZoom: 8
+            maxZoom: 18
         });
 
         // 2. Definição das Sobreposições (Overlays estáticos)
