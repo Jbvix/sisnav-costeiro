@@ -658,7 +658,7 @@ def kratos_status():
         pypdf_ok = False
     return jsonify({
         'configured': bool(key),
-        'model': (os.environ.get('XAI_MODEL') or 'grok-4.3').strip(),
+        'model': (os.environ.get('XAI_MODEL') or 'grok-4.20-reasoning').strip(),
         'libraryPdfCount': pdf_fp[1],
         'pypdfInstalled': pypdf_ok,
         'kratosPdfMaxTotal': int(os.environ.get('KRATOS_LIBRARY_PDF_MAX_TOTAL') or '72000'),
@@ -775,23 +775,25 @@ def kratos_chat():
 
     messages = [{'role': 'system', 'content': system_content}] + clean_msgs
 
-    model = (os.environ.get('XAI_MODEL') or 'grok-4.3').strip()
-    url = 'https://api.x.ai/v1/chat/completions'
+    model = (os.environ.get('XAI_MODEL') or 'grok-4.20-reasoning').strip()
+    url = 'https://api.x.ai/v1/responses'
 
     try:
+        payload = {
+            'model': model,
+            'input': messages,
+            'temperature': 0.25,
+            'max_output_tokens': 4096,
+        }
+
         r = requests.post(
             url,
             headers={
                 'Authorization': f'Bearer {api_key}',
                 'Content-Type': 'application/json',
             },
-            json={
-                'model': model,
-                'messages': messages,
-                'temperature': 0.25,
-                'max_tokens': 4096,
-            },
-            timeout=120,
+            json=payload,
+            timeout=240,
         )
         if not r.ok:
             detail = (r.text or '')[:800]
@@ -803,8 +805,40 @@ def kratos_chat():
             return jsonify({'error': f'Erro xAI HTTP {r.status_code}', 'detail': detail}), 500
 
         data = r.json()
-        choice0 = (data.get('choices') or [{}])[0]
-        reply = (choice0.get('message') or {}).get('content') or ''
+        reply = ''
+
+        # 1. Try Responses API structure: output[0].content[0].text
+        if 'output' in data and isinstance(data['output'], list) and len(data['output']) > 0:
+            out_item = data['output'][0]
+            if isinstance(out_item, dict) and 'content' in out_item and isinstance(out_item['content'], list):
+                for block in out_item['content']:
+                    if isinstance(block, dict) and block.get('type') == 'output_text':
+                        reply = block.get('text') or ''
+                        break
+                if not reply and len(out_item['content']) > 0:
+                    first_block = out_item['content'][0]
+                    if isinstance(first_block, dict):
+                        reply = first_block.get('text') or first_block.get('content') or ''
+
+        # 2. Try legacy chat completions structure as fallback
+        if not reply and 'choices' in data and isinstance(data['choices'], list) and len(data['choices']) > 0:
+            choice0 = data['choices'][0]
+            if isinstance(choice0, dict):
+                msg = choice0.get('message') or {}
+                if isinstance(msg, dict):
+                    reply = msg.get('content') or ''
+
+        # 3. Simple direct output_text fallback
+        if not reply and 'output_text' in data:
+            reply = data.get('output_text') or ''
+
+        if not reply:
+            logger.warning('Could not extract reply from xAI response: %s', json.dumps(data))
+            _log_kratos_error(
+                summary="Failed to parse response content from xAI Responses API",
+                detail=json.dumps(data, indent=2)
+            )
+
         return jsonify({'reply': reply, 'model': model, 'webValidationUsed': web_used})
     except requests.RequestException as e:
         logger.exception('KRATOS request')
