@@ -631,6 +631,23 @@ def fetch_duckduckgo_instant_answer(query, max_chars=3500):
 @app.route('/api/kratos/status', methods=['GET'])
 def kratos_status():
     key = (os.environ.get('XAI_API_KEY') or '').strip()
+    
+    # Query xAI available models and log them to kratos_debug.log
+    if key:
+        try:
+            r = requests.get(
+                'https://api.x.ai/v1/models',
+                headers={'Authorization': f'Bearer {key}'},
+                timeout=10
+            )
+            if r.ok:
+                models_data = r.json()
+                _log_kratos_error(summary="Querying xAI Models", detail=json.dumps(models_data, indent=2))
+            else:
+                _log_kratos_error(summary=f"Querying xAI Models failed with HTTP {r.status_code}", detail=r.text)
+        except Exception as e:
+            _log_kratos_error(summary="Exception querying xAI Models", exception=e)
+
     lib_path = os.path.join(BASE_DIR, 'library')
     pdf_fp = _library_pdf_fingerprint(lib_path)
     try:
