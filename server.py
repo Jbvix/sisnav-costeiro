@@ -398,6 +398,24 @@ def validate_invite():
 
 
 # --- KRATOS (xAI Grok) — assistente náutico ---------------------------------
+def _log_kratos_error(summary, detail=None, exception=None):
+    """Grava logs detalhados de erros do Kratos na pasta local data/."""
+    log_path = os.path.join(DATA_DIR, 'kratos_debug.log')
+    import traceback
+    timestamp = time.strftime('%Y-%m-%d %H:%M:%S')
+    try:
+        with open(log_path, 'a', encoding='utf-8') as f:
+            f.write(f"[{timestamp}] ERROR: {summary}\n")
+            if detail:
+                f.write(f"Detail: {detail}\n")
+            if exception:
+                f.write(f"Exception: {str(exception)}\n")
+                f.write(traceback.format_exc())
+            f.write("-" * 50 + "\n")
+    except Exception as e:
+        logger.error("Falha ao gravar log do Kratos: %s", e)
+
+
 def _load_kratos_instruction_files():
     """Documentação anexa ao system prompt (Markdown)."""
     chunks = []
@@ -622,7 +640,7 @@ def kratos_status():
         pypdf_ok = False
     return jsonify({
         'configured': bool(key),
-        'model': (os.environ.get('XAI_MODEL') or 'grok-4.20-reasoning').strip(),
+        'model': (os.environ.get('XAI_MODEL') or 'grok-2').strip(),
         'libraryPdfCount': pdf_fp[1],
         'pypdfInstalled': pypdf_ok,
         'kratosPdfMaxTotal': int(os.environ.get('KRATOS_LIBRARY_PDF_MAX_TOTAL') or '72000'),
@@ -738,7 +756,7 @@ def kratos_chat():
 
     messages = [{'role': 'system', 'content': system_content}] + clean_msgs
 
-    model = (os.environ.get('XAI_MODEL') or 'grok-4.20-reasoning').strip()
+    model = (os.environ.get('XAI_MODEL') or 'grok-2').strip()
     url = 'https://api.x.ai/v1/chat/completions'
 
     try:
@@ -759,7 +777,11 @@ def kratos_chat():
         if not r.ok:
             detail = (r.text or '')[:800]
             logger.error('KRATOS xAI HTTP %s: %s', r.status_code, detail)
-            return jsonify({'error': f'Erro xAI HTTP {r.status_code}', 'detail': detail}), 502
+            _log_kratos_error(
+                summary=f"xAI API returned HTTP {r.status_code}",
+                detail=detail
+            )
+            return jsonify({'error': f'Erro xAI HTTP {r.status_code}', 'detail': detail}), 500
 
         data = r.json()
         choice0 = (data.get('choices') or [{}])[0]
@@ -767,7 +789,11 @@ def kratos_chat():
         return jsonify({'reply': reply, 'model': model, 'webValidationUsed': web_used})
     except requests.RequestException as e:
         logger.exception('KRATOS request')
-        return jsonify({'error': f'Falha de rede ou tempo esgotado: {e!s}'}), 502
+        _log_kratos_error(
+            summary="Network or timeout failure when calling xAI API",
+            exception=e
+        )
+        return jsonify({'error': f'Falha de rede ou tempo esgotado: {e!s}'}), 500
 
 
 # --- CHM / Sealagom (Meteo, Mau tempo, NAVAREA) ---
