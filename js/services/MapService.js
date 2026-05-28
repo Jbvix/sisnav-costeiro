@@ -37,9 +37,10 @@ const MapService = {
         }).addTo(map);
 
         // Adiciona as Cartas Náuticas (RNC) Oficiais (Servidor TugLife cPanel)
-        L.tileLayer('https://charts.tuglife.live/charts/tiles/{z}/{x}/{y}.png', {
+        L.tileLayer('https://charts.tuglife.live/tiles/{z}/{x}/{y}.png', {
             attribution: '&copy; Marinha do Brasil / TugLife Charts',
             maxZoom: 18,
+            minZoom: 8, // Cartas Raster costumam só aparecer de perto
             opacity: 0.9 // Leve transparência para mesclar com a costa do OSM
         }).addTo(map);
 
