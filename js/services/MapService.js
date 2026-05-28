@@ -14,6 +14,109 @@
 import State from '../core/State.js';
 import NavMath from '../core/NavMath.js?v=10';
 
+// --- EXTERNAL MAP LAYERS (Iframe Integration for MarineTraffic/Windy) ---
+const ExternalMapLayer = L.Layer.extend({
+    options: {
+        urlBuilder: null,
+        interactive: true
+    },
+    initialize: function (options) {
+        L.setOptions(this, options);
+    },
+    onAdd: function (map) {
+        this._map = map;
+        this._container = L.DomUtil.create('div', 'external-map-layer');
+        Object.assign(this._container.style, {
+            position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+            zIndex: 50, backgroundColor: '#050814', pointerEvents: 'none'
+        });
+        this._iframe = L.DomUtil.create('iframe', '', this._container);
+        Object.assign(this._iframe.style, {
+            width: '100%', height: '100%', border: 'none', pointerEvents: 'none'
+        });
+        this._updateUrl();
+        map.getContainer().appendChild(this._container);
+        map.on('moveend', this._updateUrl, this);
+        map.on('zoomend', this._updateUrl, this);
+        map.on('movestart', this._onMoveStart, this);
+        map.on('move', this._onMove, this);
+        this._addInteractionControl();
+        return this;
+    },
+    onRemove: function (map) {
+        if (this._container) this._container.parentNode.removeChild(this._container);
+        map.off('moveend', this._updateUrl, this);
+        map.off('zoomend', this._updateUrl, this);
+        map.off('movestart', this._onMoveStart, this);
+        map.off('move', this._onMove, this);
+        if (this._interactionCtrl) { map.removeControl(this._interactionCtrl); this._interactionCtrl = null; }
+    },
+    _addInteractionControl: function () {
+        if (this._interactionCtrl) return;
+        const self = this;
+        const InteractionControl = L.Control.extend({
+            options: { position: 'topright' },
+            onAdd: function (map) {
+                const btn = L.DomUtil.create('button', 'interaction-toggle-btn');
+                btn.innerHTML = '👆';
+                btn.title = 'Ativar Interação com Fundo';
+                btn.style.backgroundColor = 'white';
+                btn.style.width = '30px';
+                btn.style.height = '30px';
+                btn.style.fontSize = '18px';
+                btn.style.cursor = 'pointer';
+                btn.style.border = '2px solid rgba(0,0,0,0.2)';
+                btn.style.borderRadius = '4px';
+                let interactive = false;
+                btn.onclick = function () {
+                    interactive = !interactive;
+                    self._setInteractive(interactive);
+                    if (interactive) {
+                        btn.innerHTML = '🖐';
+                        btn.style.backgroundColor = '#ffcc00';
+                        btn.title = 'Desativar Interação';
+                    } else {
+                        btn.innerHTML = '👆';
+                        btn.style.backgroundColor = 'white';
+                        btn.title = 'Ativar Interação';
+                    }
+                };
+                L.DomEvent.disableClickPropagation(btn);
+                return btn;
+            }
+        });
+        this._interactionCtrl = new InteractionControl();
+        this._map.addControl(this._interactionCtrl);
+    },
+    _setInteractive: function (enable) {
+        const val = enable ? 'auto' : 'none';
+        if (this._container) this._container.style.pointerEvents = val;
+        if (this._iframe) this._iframe.style.pointerEvents = val;
+    },
+    _onMoveStart: function () { this._startCenter = this._map.getCenter(); },
+    _onMove: function () {
+        if (!this._startCenter) return;
+        const pointNow = this._map.latLngToContainerPoint(this._startCenter);
+        const centerScreen = this._map.getSize().divideBy(2);
+        const x = pointNow.x - centerScreen.x;
+        const y = pointNow.y - centerScreen.y;
+        this._container.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+    },
+    _updateUrl: function () {
+        if (this._container) this._container.style.transform = '';
+        if (!this._map || !this.options.urlBuilder) return;
+        const center = this._map.getCenter();
+        const zoom = this._map.getZoom();
+        const lat = center.lat.toFixed(5);
+        const lon = center.lng.toFixed(5);
+        const url = this.options.urlBuilder(lat, lon, zoom);
+        if (this._iframe.src !== url) {
+            this._iframe.src = url;
+            console.log("Updated External Layer:", lat, lon, zoom);
+        }
+    }
+});
+
 const MapService = {
 
     /**
@@ -63,11 +166,27 @@ const MapService = {
         osmLayer.addTo(map);
         openSeaMapLayer.addTo(map);
 
+        const marineTrafficLayer = new ExternalMapLayer({
+            urlBuilder: (lat, lon, zoom) => {
+                const safeZoom = Math.min(zoom, 18);
+                return `https://www.marinetraffic.com/en/ais/embed/zoom:${safeZoom}/centerx:${lon}/centery:${lat}/maptype:0/shownames:true/showmenu:false/showtrack:false`;
+            }
+        });
+
+        const windyLayer = new ExternalMapLayer({
+            urlBuilder: (lat, lon, zoom) => {
+                const safeZoom = Math.min(zoom, 11);
+                return `https://embed.windy.com/embed.html?type=map&location=coordinates&zoom=${safeZoom}&lat=${lat}&lon=${lon}&detailLat=${lat}&detailLon=${lon}&metricWind=kt&metricTemp=%C2%B0C`;
+            }
+        });
+
         // 3. Configuração do Controle de Camadas (Menu interativo)
         const baseMaps = {
             "🗺️ OpenStreetMap": osmLayer,
             "🛰️ Satélite (Esri)": satelliteLayer,
-            "⚓ Cartas Náuticas (TugLife)": tuglifeChartsLayer
+            "⚓ Cartas Náuticas (TugLife)": tuglifeChartsLayer,
+            "⛴️ MarineTraffic": marineTrafficLayer,
+            "🌪️ Windy (Tempo)": windyLayer
         };
 
         const overlayMaps = {
