@@ -89,7 +89,9 @@
                     Módulo de Planejamento</a></li>
             <li><a href="#cap4" class="hover:text-cyan-600 block"><span class="font-bold text-slate-400 mr-2">04</span>
                     Módulo de Monitoramento</a></li>
-            <li><a href="#cap5" class="hover:text-cyan-600 block"><span class="font-bold text-slate-400 mr-2">05</span>
+            <li><a href="#capkratos" class="hover:text-cyan-600 block"><span class="font-bold text-slate-400 mr-2">05</span>
+                    Assistente KRATOS</a></li>
+            <li><a href="#cap5" class="hover:text-cyan-600 block"><span class="font-bold text-slate-400 mr-2">06</span>
                     Painel Administrativo</a></li>
             <li><a href="#anexo" class="hover:text-cyan-600 block"><span
                         class="font-bold text-slate-400 mr-2">ANEXO</span> Glossário de Ícones</a></li>
@@ -154,16 +156,31 @@
             dados de telemetria (SOG, COG, Heading) são exibidos em destaque no topo da tela.</p>
     </section>
 
+    <section id="capkratos" class="chapter">
+        <h2 class="text-3xl mb-6 flex items-center gap-3"><span class="text-cyan-500 text-4xl">05</span> Assistente KRATOS (xAI)</h2>
+        <p>O SISNAV Costeiro possui integração nativa com o <strong>KRATOS</strong>, um assistente náutico alimentado por Inteligência Artificial (xAI).</p>
+        
+        <h3 class="text-xl mt-6 mb-3">5.1 Double-Check Operacional</h3>
+        <p>O KRATOS trabalha em conjunto com o Comandante atuando como co-piloto. Ele analisa em tempo real os dados preenchidos no Appraisal e Planejamento, alertando sobre eventuais riscos, margens de combustível inadequadas e cruzando perigos reportados no NAVAREA com a rota plotada.</p>
+
+        <h3 class="text-xl mt-6 mb-3">5.2 Consulta à Biblioteca</h3>
+        <p>O assistente consegue realizar leituras dinâmicas da biblioteca de documentos em PDF do navio, como tábuas de marés e normas internas, fornecendo respostas embasadas.</p>
+
+        <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 text-sm text-yellow-800 my-4">
+            <strong>Atenção:</strong> O KRATOS atua como ferramenta consultiva. Suas recomendações não substituem as decisões do Comandante ou as regulamentações (SOLAS/IMO). A responsabilidade sobre a navegação é sempre humana.
+        </div>
+    </section>
+
     <section id="cap5" class="chapter">
-        <h2 class="text-3xl mb-6 flex items-center gap-3"><span class="text-cyan-500 text-4xl">05</span> Painel
+        <h2 class="text-3xl mb-6 flex items-center gap-3"><span class="text-cyan-500 text-4xl">06</span> Painel
             Administrativo</h2>
         <p>Destinado aos Gestores do Sistema (SysAdmin/Armador).</p>
 
-        <h3 class="text-xl mt-6 mb-3">5.1 Acesso ao Painel</h3>
+        <h3 class="text-xl mt-6 mb-3">6.1 Acesso ao Painel</h3>
         <p>O painel de controle fica em uma URL segura separada: <code>/admin.html</code>. É necessário autenticação de
             nível "Admin".</p>
 
-        <h3 class="text-xl mt-6 mb-3">5.2 Gerenciando Convites</h3>
+        <h3 class="text-xl mt-6 mb-3">6.2 Gerenciando Convites</h3>
         <p>O SISNAV não possui cadastro aberto. O Admin deve criar convites para cada comandante ou navio.</p>
         <ul class="list-disc pl-6 mb-4 space-y-2">
             <li><strong>Criar Convite:</strong> Clique em "Novo Convite", defina um nome (ex: "Cmte. Silva") e o nível
@@ -174,7 +191,7 @@
                 troca de tripulação.</li>
         </ul>
 
-        <h3 class="text-xl mt-6 mb-3">5.3 Níveis de Acesso</h3>
+        <h3 class="text-xl mt-6 mb-3">6.3 Níveis de Acesso</h3>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
             <div class="p-4 border border-slate-200 rounded bg-slate-50">
                 <strong class="text-cyan-700">Planning</strong>

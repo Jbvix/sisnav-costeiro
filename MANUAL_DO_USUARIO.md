@@ -79,7 +79,15 @@ Modo de execução da viagem.
 - Alertas de desvio de rota (XTE).
 - Monitoramento de combustível e autonomia em tempo real.
 
-## 5. Relatórios
+## 5. Assistente Inteligente KRATOS (xAI)
+
+O SISNAV Costeiro conta com o assistente náutico KRATOS, alimentado por Inteligência Artificial (xAI Grok).
+
+- **Double-Check Operacional:** O KRATOS analisa em tempo real os dados preenchidos no Appraisal e no Planejamento de Rota, alertando sobre discrepâncias de combustível, ETA e perigos à navegação cruzados com avisos NAVAREA.
+- **Consultas Rápidas:** Pode responder dúvidas operacionais utilizando a documentação da biblioteca (arquivos PDF) e cruzando informações de forma inteligente.
+- **Importante:** O assistente atua de forma consultiva e colaborativa, a decisão e responsabilidade finais são sempre do Comandante.
+
+## 6. Relatórios
 
 Geração de documentos para arquivo ou inspeção (Port State Control).
 
