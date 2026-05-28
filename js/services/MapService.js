@@ -30,32 +30,58 @@ const MapService = {
         // Salva referência no State
         State.mapInstance = map;
 
-        // Adiciona camada de tiles (OpenStreetMap - Base)
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        // Inicializa grupos de camadas de dados Dinâmicos (Sempre visíveis inicialmente)
+        State.layers.track = L.layerGroup().addTo(map);
+        State.layers.ship = L.layerGroup().addTo(map);
+        State.layers.waypoints = L.layerGroup().addTo(map);
+        State.layers.ports = L.layerGroup().addTo(map);
+        State.layers.lighthouses = L.layerGroup().addTo(map);
+
+        // 1. Definição dos Mapas Base
+        const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenStreetMap contributors',
             maxZoom: 18
-        }).addTo(map);
+        });
 
-        // Adiciona as Cartas Náuticas (RNC) Oficiais (Servidor TugLife cPanel)
-        L.tileLayer('https://charts.tuglife.live/tiles/{z}/{x}/{y}.png', {
+        const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: '&copy; Esri',
+            maxZoom: 18
+        });
+
+        const tuglifeChartsLayer = L.tileLayer('https://charts.tuglife.live/tiles/{z}/{x}/{y}.png', {
             attribution: '&copy; Marinha do Brasil / TugLife Charts',
             maxZoom: 18,
-            minZoom: 8, // Cartas Raster costumam só aparecer de perto
-            opacity: 0.9 // Leve transparência para mesclar com a costa do OSM
-        }).addTo(map);
+            minZoom: 8
+        });
 
-        // Adiciona camada Náutica Colaborativa (OpenSeaMap) - Marks
-        L.tileLayer('https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', {
+        // 2. Definição das Sobreposições (Overlays estáticos)
+        const openSeaMapLayer = L.tileLayer('https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', {
             attribution: '&copy; OpenSeaMap',
             maxZoom: 18
-        }).addTo(map);
+        });
 
-        // Inicializa grupos de camadas para facilitar limpeza posterior
-        State.layers.track = L.layerGroup().addTo(map);
-        State.layers.ship = L.layerGroup().addTo(map); // Grupo separado para o navio
-        State.layers.waypoints = L.layerGroup().addTo(map); // Grupo separado para WPs
-        State.layers.ports = L.layerGroup().addTo(map); // Grupo para Portos (Âncoras)
-        State.layers.lighthouses = L.layerGroup().addTo(map); // Grupo para Faróis
+        // Adiciona as camadas iniciais ao mapa
+        osmLayer.addTo(map);
+        openSeaMapLayer.addTo(map);
+
+        // 3. Configuração do Controle de Camadas (Menu interativo)
+        const baseMaps = {
+            "🗺️ OpenStreetMap": osmLayer,
+            "🛰️ Satélite (Esri)": satelliteLayer,
+            "⚓ Cartas Náuticas (TugLife)": tuglifeChartsLayer
+        };
+
+        const overlayMaps = {
+            "🚢 Sinalização (OpenSeaMap)": openSeaMapLayer,
+            "📍 Linha da Rota": State.layers.track,
+            "🚩 Waypoints": State.layers.waypoints,
+            "⛴️ Embarcação": State.layers.ship,
+            "⚓ Portos": State.layers.ports,
+            "💡 Faróis": State.layers.lighthouses
+        };
+
+        // Adiciona o controle no canto superior esquerdo (abaixo do zoom)
+        L.control.layers(baseMaps, overlayMaps, { position: 'topleft' }).addTo(map);
 
         console.log("MapService: ECDIS Inicializado com sucesso.");
     },
