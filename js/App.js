@@ -1,3 +1,6 @@
+/* v3.5.0-sec | 2026-10-13 18:45 (UTC-3) | Jossian Brito (assistido por Claude)
+ * Modificação: chamadas /api/upload-gpx e /api/update-data enviam o cabeçalho
+ * X-Invite-Token (convite da sessão), exigido agora pelo servidor. */
 /**
  * ARQUIVO: App.js
  * MÓDULO: Controlador Principal
@@ -319,7 +322,7 @@ const App = {
         overlay.className = "fixed inset-0 z-[1000] bg-slate-900/90 flex flex-col items-center justify-center p-4 backdrop-blur-sm";
         overlay.innerHTML = `
             <div class="bg-white rounded-lg shadow-2xl w-full max-w-md overflow-hidden animate-fade-in-up">
-                <header class="bg-blue-900 text-white p-4 border-b border-blue-800">
+                <header class="bg-blue-900 text-white p-4 border-b border-blue-800"><meta charset="utf-8">
                     <h2 class="text-xl font-bold flex items-center gap-2"><i class="fas fa-ship"></i> Frota SISNAV</h2>
                     <p class="text-xs text-blue-300">Selecione uma embarcação para monitorar</p>
                 </header>
@@ -749,6 +752,7 @@ const App = {
                 try {
                     const res = await fetch('/api/upload-gpx', {
                         method: 'POST',
+                        headers: { 'X-Invite-Token': ((JSON.parse(sessionStorage.getItem('sisnav_session_v1') || '{}')).token || '') }, // v3.5.0-sec
                         body: formData
                     });
                     const json = await res.json();
@@ -2206,7 +2210,7 @@ const App = {
 
         try {
             console.log("App: Solicitando atualização ao servidor...");
-            const response = await fetch('/api/update-data', { method: 'POST' });
+            const response = await fetch('/api/update-data', { method: 'POST', headers: { 'X-Invite-Token': ((JSON.parse(sessionStorage.getItem('sisnav_session_v1') || '{}')).token || '') } }); // v3.5.0-sec: envia o convite da sessão
 
             if (!response.body) throw new Error("ReadableStream não suportado.");
 
