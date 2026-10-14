@@ -1,5 +1,20 @@
 # CHANGELOG — SISNAV Costeiro
 
+## [3.5.0-sec] - 2026-10-13 18:45 (UTC-3) - Hardening de segurança
+Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
+
+### Segurança
+- **Servidor decide o acesso**: rotas `/api/invites/create|list|update|delete` e `/api/system-info` exigem o cabeçalho `X-Admin-Key` (chave em `~/.sisnav_admin_key` ou variável `SISNAV_ADMIN_KEY`), comparada em tempo constante.
+- **Convite obrigatório** em `/api/update-data` e `/api/upload-gpx` (cabeçalho `X-Invite-Token`).
+- **Novo** `/api/admin/login`: login de admin validado no servidor (antes: localStorage do navegador).
+- **Upload GPX**: nome saneado com `secure_filename` (bloqueia `../`).
+- **Arquivos estáticos**: lista de permissões; `server.py`, `data/`, scripts, ocultos e `.txt/.csv` da raiz retornam 404.
+- **Front-end**: removidos convites e senha de admin escritos em `DatabaseService.js`; os 2 convites foram migrados para `data/sisnav_invites_db.json` (substituir!).
+- **Apache (.htaccess)**: CGI desligado; bloqueio de .py/.zip/.bak/.php/.md/ocultos e das pastas internas.
+
+### Ações pendentes
+- Gerar novos convites pelo painel admin e revogar os 2 migrados (senhas eram públicas).
+
 > Histórico oficial de versões do sistema.  
 > Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/).  
 > Versionamento segue [Semantic Versioning](https://semver.org/lang/pt-BR/).

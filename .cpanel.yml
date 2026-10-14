@@ -1,7 +1,36 @@
 ---
+# =============================================================================
+# .cpanel.yml - SISNAV COSTEIRO (deploy cPanel Git Version Control)
+# Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
+# Data: 2026-10-14   Versão: 2.0
+# -----------------------------------------------------------------------------
+# HISTÓRICO
+#  v1.0 - cp -R * para ~/sisnav_app
+#  v2.0 - (1) Preserva data/ (banco de convites/frota) antes e depois da cópia;
+#         (2) Reinicia o app Passenger (tmp/restart.txt) - server.py novo entra
+#             em vigor na hora; (3) Registra cada deploy em ~/deploy_log.txt.
+# NOTAS
+#  - "cp -R *" NÃO copia arquivos ocultos: o .htaccess de produção (com as
+#    chaves XAI/SEALAGOM e as regras de bloqueio) nunca é sobrescrito.
+#  - "cp -R" não apaga arquivos removidos do repositório (limpeza é manual).
+#  - Cada linha "- " roda em sequência na mesma sessão de shell; "|| true"
+#    evita que um passo opcional aborte o deploy.
+# =============================================================================
 deployment:
   tasks:
     - export DEPLOYPATH=/home/c62gtwye66po/sisnav_app
+    - export BKP=/home/c62gtwye66po/deploy_backups/sisnav_data_last
+    # 1) Fotografia do banco de dados de produção (convites/frota)
+    - /bin/mkdir -p $BKP
+    - /bin/cp -a $DEPLOYPATH/data/. $BKP/ 2>/dev/null || true
+    # 2) Cópia do código do repositório para produção
     - /bin/cp -R * $DEPLOYPATH
-    # Se precisar reinstalar dependências a cada deploy (opcional, deixa mais lento)
-    # - /home/c62gtwye66po/virtualenv/sisnav/3.9/bin/pip install -r $DEPLOYPATH/requirements.txt
+    # 3) Restaura os dados de produção (se o repositório trouxer data/, produção prevalece)
+    - /bin/cp -a $BKP/. $DEPLOYPATH/data/ 2>/dev/null || true
+    # 4) Reinicia o Passenger (equivale a "Restart" no Setup Python App)
+    - /bin/mkdir -p $DEPLOYPATH/tmp
+    - /bin/touch $DEPLOYPATH/tmp/restart.txt
+    # 5) Diário de bordo do deploy
+    - /bin/echo "$(/bin/date '+%Y-%m-%d %H:%M:%S') sisnav-costeiro $(git rev-parse --short HEAD 2>/dev/null)" >> /home/c62gtwye66po/deploy_log.txt || true
+    # Dependências (opcional, deixa o deploy mais lento):
+    # - /home/c62gtwye66po/virtualenv/sisnav_app/3.9/bin/pip install -r $DEPLOYPATH/requirements.txt

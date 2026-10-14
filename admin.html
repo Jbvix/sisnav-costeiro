@@ -9,8 +9,8 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
 <!DOCTYPE html>
 <html lang="pt-BR">
 
-<head>
-    <meta charset="UTF-8">
+<head><meta charset="utf-8">
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SISNAV Admin Console</title>
     <!-- Tailwind CSS -->
@@ -51,7 +51,7 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
     </div>
 
     <script type="module">
-        import AuthService from './js/services/AuthService.js?v=Hotfix4';
+        import AuthService from './js/services/AuthService.js?v=Sec350';
 
         AuthService.init();
 
@@ -62,12 +62,12 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
             window.location.href = 'admin_dashboard.html'; // Future file
         }
 
-        document.getElementById('admin-form').addEventListener('submit', (e) => {
+        document.getElementById('admin-form').addEventListener('submit', async (e) => { // v3.5.0-sec: login validado no servidor
             e.preventDefault();
             const user = document.getElementById('admin-user').value;
             const pass = document.getElementById('admin-pass').value;
 
-            const res = AuthService.adminLogin(user, pass);
+            const res = await AuthService.adminLogin(user, pass);
             if (res.success) {
                 // Redirect to Dashboard (Sprint 2)
                 window.location.href = 'admin_dashboard.html';

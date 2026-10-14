@@ -96,3 +96,11 @@ Geração de documentos para arquivo ou inspeção (Port State Control).
 
 ---
 **Suporte Técnico**: Em caso de dúvdas, contate o administrador do sistema.
+
+
+---
+## Acesso Administrativo (v3.5.0-sec - 2026-10-13)
+1. Abra `https://sisnav.tuglife.live/admin.html`.
+2. **Usuário**: qualquer identificação (registro). **Senha**: a *chave de administrador* guardada no servidor em `~/.sisnav_admin_key` (cPanel > Gerenciador de Arquivos > pasta inicial, com "mostrar arquivos ocultos").
+3. A chave fica apenas na aba aberta e some ao sair/fechar. Para trocar a chave, edite o arquivo e salve - vale imediatamente.
+4. Convites agora existem **somente no servidor**. Usuários comuns entram por `login.html` com token + senha; o app envia o convite em cada operação sensível (upload de GPX, atualização de dados).

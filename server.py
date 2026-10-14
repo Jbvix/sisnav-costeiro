@@ -1,3 +1,29 @@
+# =============================================================================
+# SISNAV COSTEIRO - server.py (Flask / Passenger)
+# Autor: Jossian Brito (Charlie Bravo) | TugLife Systems
+# Data/Hora: 2026-10-13 18:30 (UTC-3)   Versão: 3.5.0-sec
+# -----------------------------------------------------------------------------
+# HISTÓRICO DE MODIFICAÇÕES
+#  v3.5.0-sec (2026-10-13) - Hardening de segurança (assistido por Claude):
+#   [1] require_admin: rotas administrativas (/api/invites/create|list|update|
+#       delete e /api/system-info) exigem o cabeçalho X-Admin-Key, comparado em
+#       tempo constante (hmac.compare_digest) com a chave lida da variável de
+#       ambiente SISNAV_ADMIN_KEY ou do arquivo ~/.sisnav_admin_key (fora da
+#       área pública). Sem chave configurada => tudo negado (falha segura).
+#   [2] require_invite: /api/update-data e /api/upload-gpx exigem o cabeçalho
+#       X-Invite-Token com um convite válido (status active/pending) no banco
+#       do servidor - ou a chave de admin.
+#   [3] /api/admin/login: valida a chave de admin no servidor (antes era só
+#       localStorage do navegador, trivial de burlar).
+#   [4] upload-gpx: nome do arquivo saneado com secure_filename (impede
+#       gravação fora de gpx/ via "../").
+#   [5] serve_static: deixa de entregar QUALQUER arquivo da pasta; agora só
+#       extensões de front-end e nunca data/, scripts/, tools/, ocultos etc.
+# -----------------------------------------------------------------------------
+# ANALOGIA: antes o portão tinha guarita mas a chave ficava pendurada do lado
+# de fora (validação no navegador). Agora quem decide é o servidor - o
+# "passadiço" - e o navegador só apresenta a credencial.
+# =============================================================================
 from flask import Flask, send_from_directory, jsonify, Response, request
 try:
     from flask_cors import CORS
@@ -39,10 +65,65 @@ if not os.path.exists(DATA_DIR):
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# =============================================================================
+# SEGURANÇA (v3.5.0-sec) - autenticação no servidor
+# =============================================================================
+import hmac
+from functools import wraps
+from werkzeug.utils import secure_filename
+
+# Arquivo da chave fica um nível ACIMA de sisnav_app (home do usuário),
+# portanto fora do alcance do Apache/Flask.
+ADMIN_KEY_FILE = os.path.join(os.path.dirname(BASE_DIR), '.sisnav_admin_key')
+
+def _load_admin_key():
+    """Prioridade: variável de ambiente > arquivo. Retorna None se ausente."""
+    env_key = os.environ.get('SISNAV_ADMIN_KEY', '').strip()
+    if env_key:
+        return env_key
+    try:
+        with open(ADMIN_KEY_FILE, 'r') as f:
+            k = f.read().strip()
+            return k or None
+    except Exception:
+        return None
+
+def _is_admin_request():
+    """compare_digest leva o mesmo tempo para qualquer entrada: impede que um
+    atacante descubra a chave medindo a demora da resposta (timing attack)."""
+    expected = _load_admin_key()
+    given = request.headers.get('X-Admin-Key', '')
+    if not expected or not given:
+        return False
+    return hmac.compare_digest(given.encode('utf-8'), expected.encode('utf-8'))
+
+def require_admin(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        if not _is_admin_request():
+            return jsonify({'error': 'Acesso administrativo negado'}), 401
+        return fn(*args, **kwargs)
+    return wrapper
+
+def require_invite(fn):
+    """Aceita convite válido (X-Invite-Token) ou a chave de admin."""
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        if _is_admin_request():
+            return fn(*args, **kwargs)
+        token = request.headers.get('X-Invite-Token', '').strip()
+        if token:
+            for inv in load_invites():
+                if inv.get('token') == token and inv.get('status') in ('active', 'pending'):
+                    return fn(*args, **kwargs)
+        return jsonify({'error': 'Convite inválido ou ausente'}), 401
+    return wrapper
+
 # NOTA: rotas estáticas (/, /<path>) ficam no FIM do ficheiro com methods GET/HEAD apenas,
 # para não capturarem POST em /api/... (evita HTTP 405 em /api/chm/fetch).
 
 @app.route('/api/update-data', methods=['POST'])
+@require_invite
 def update_data():
     def generate():
         yield f"data: {json.dumps({'status': 'Iniciando atualização...', 'progress': 5})}\\n\\n"
@@ -75,6 +156,7 @@ def update_data():
     return Response(generate(), mimetype='text/event-stream')
 
 @app.route('/api/upload-gpx', methods=['POST'])
+@require_invite
 def upload_gpx():
     from flask import request
     
@@ -88,7 +170,10 @@ def upload_gpx():
     if file and file.filename.lower().endswith('.gpx'):
         try:
             # Save to gpx/ folder
-            save_path = os.path.join(os.getcwd(), 'gpx', file.filename)
+            safe_name = secure_filename(file.filename)  # v3.5.0-sec [4]
+            if not safe_name.lower().endswith('.gpx'):
+                return jsonify({'error': 'Nome de arquivo inválido'}), 400
+            save_path = os.path.join(os.getcwd(), 'gpx', safe_name)
             file.save(save_path)
             
             # Rebuild Index
@@ -278,6 +363,7 @@ def save_invites(data):
         return False
 
 @app.route('/api/invites/create', methods=['POST'])
+@require_admin
 def create_invite():
     try:
         data = request.json
@@ -301,11 +387,13 @@ def create_invite():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/invites/list', methods=['GET'])
+@require_admin
 def list_invites():
     # In production, check for Admin Session here!
     return jsonify(load_invites())
 
 @app.route('/api/invites/update', methods=['POST'])
+@require_admin
 def update_invite():
     try:
         data = request.json
@@ -334,6 +422,7 @@ def update_invite():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/invites/delete', methods=['POST'])
+@require_admin
 def delete_invite():
     try:
         data = request.json
@@ -908,6 +997,7 @@ def get_ip():
     return IP
 
 @app.route('/api/system-info', methods=['GET'])
+@require_admin
 def get_system_info():
     """Returns the server network info for client-side link generation."""
     return jsonify({
@@ -915,6 +1005,18 @@ def get_system_info():
         'port': 5000,
         'hostname': socket.gethostname() 
     })
+
+
+# --- v3.5.0-sec [3] Login administrativo validado no servidor ---
+@app.route('/api/admin/login', methods=['POST'])
+def admin_login():
+    data = request.get_json(silent=True) or {}
+    expected = _load_admin_key()
+    given = str(data.get('key', ''))
+    if expected and given and hmac.compare_digest(given.encode('utf-8'), expected.encode('utf-8')):
+        return jsonify({'success': True})
+    time.sleep(1)  # freio contra tentativas em massa (força bruta)
+    return jsonify({'success': False, 'error': 'Credenciais inválidas'}), 401
 
 
 # --- Ficheiros estáticos (por último: catch-all só GET/HEAD) ---
@@ -925,7 +1027,24 @@ def index():
 
 @app.route('/<path:path>', methods=['GET', 'HEAD'])
 def serve_static(path):
-    return send_from_directory(BASE_DIR, path)
+    # v3.5.0-sec [5]: lista de permissões. Só entrega arquivos de front-end;
+    # código-fonte, bancos (data/), scripts e arquivos ocultos => 404.
+    norm = path.replace('\\', '/').lstrip('/')
+    parts = norm.split('/')
+    ext = os.path.splitext(norm)[1].lower()
+    if (any(p.startswith('.') for p in parts)
+            or parts[0] in STATIC_BLOCKED_DIRS
+            or ext not in STATIC_ALLOWED_EXT
+            or (ext in ('.txt', '.csv') and len(parts) == 1)):
+        return jsonify({'error': 'Not found'}), 404
+    return send_from_directory(BASE_DIR, norm)
+
+
+STATIC_ALLOWED_EXT = {'.html', '.js', '.mjs', '.css', '.map', '.json', '.txt',
+                      '.png', '.jpg', '.jpeg', '.gif', '.svg', '.webp', '.ico',
+                      '.woff', '.woff2', '.ttf', '.gpx', '.pdf'}
+STATIC_BLOCKED_DIRS = {'data', 'scripts', 'tools', 'tmp', '_arquivos_temporarios',
+                       '__pycache__', 'relatorios', 'cgi-bin', 'docs'}
 
 
 if __name__ == '__main__':
