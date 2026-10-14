@@ -39,7 +39,11 @@ const UpdateService = {
         try {
             const response = await fetch('/api/update-data', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { // v3.5.0-sec: envia o convite da sessão (validado no servidor)
+                    'Content-Type': 'application/json',
+                    'X-Invite-Token': ((JSON.parse(sessionStorage.getItem('sisnav_session_v1') || '{}')).token || ''),
+                    'X-Admin-Key': (sessionStorage.getItem('sisnav_admin_key') || '')
+                },
                 body: JSON.stringify({ mode: 'full' })
             });
 

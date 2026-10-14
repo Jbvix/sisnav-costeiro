@@ -4,6 +4,15 @@
  * DESCRIÇÃO:
  * Gerencia o armazenamento local de dados de convites, usuários e configurações.
  * Utiliza LocalStorage para simular um banco de dados persistente no navegador.
+ *
+ * Autor: Jossian Brito (Charlie Bravo) | Data: 2026-10-13 18:45 (UTC-3)
+ * Versão: 3.5.0-sec
+ * MODIFICAÇÕES v3.5.0-sec (assistido por Claude):
+ *  - Removidos os convites e a senha de admin escritos no código (qualquer
+ *    visitante lia este arquivo). Convites agora existem só no servidor.
+ *  - Chamadas administrativas enviam o cabeçalho X-Admin-Key (guardado só na
+ *    sessão da aba, sessionStorage) e o servidor valida.
+ *  - validateAdmin passa a consultar /api/admin/login (servidor decide).
  */
 
 const DatabaseService = {
@@ -15,35 +24,24 @@ const DatabaseService = {
     },
 
     // SPRINT (HOTFIX): Convites Hardcoded como Fallback (Backup)
-    STATIC_INVITES: [
-        {
-            token: 'tmtk5s1hwm6vtv2iw3',
-            password: '2WR-N3U',
-            type: 'planning',
-            status: 'active',
-            email: 'usuario.producao@sisnav.com'
-        },
-        {
-            token: 'vts-monitor-access',
-            password: 'VIEW-ONLY',
-            type: 'monitor',
-            status: 'active',
-            email: 'ponte.comando@sisnav.com'
-        }
-    ],
+    STATIC_INVITES: [], // v3.5.0-sec: removidos (migrados para data/sisnav_invites_db.json no servidor)
 
     /**
      * Inicializa o banco de dados.
      */
     init: function () {
-        // Admin Local (Simplificado)
-        if (!localStorage.getItem(this.KEYS.ADMIN)) {
-            const defaultAdmin = {
-                username: 'admin',
-                passwordHash: 'admin123'
-            };
-            localStorage.setItem(this.KEYS.ADMIN, JSON.stringify(defaultAdmin));
-        }
+        // v3.5.0-sec: admin padrão local removido - login de admin é validado no servidor.
+    },
+
+    /**
+     * v3.5.0-sec: monta cabeçalhos JSON + chave de admin (se houver sessão admin).
+     * A chave nunca é gravada em localStorage: some ao fechar a aba.
+     */
+    _jsonHeaders: function () {
+        const h = { 'Content-Type': 'application/json' };
+        const k = sessionStorage.getItem('sisnav_admin_key');
+        if (k) h['X-Admin-Key'] = k;
+        return h;
     },
 
     /**
@@ -52,7 +50,7 @@ const DatabaseService = {
     getInvites: async function () {
         try {
             // Use relative path to support subdirectories
-            const response = await fetch('api/invites/list', { cache: 'no-store' });
+            const response = await fetch('api/invites/list', { cache: 'no-store', headers: this._jsonHeaders() });
             if (!response.ok) throw new Error('Falha ao buscar convites');
             const serverInvites = await response.json();
 
@@ -71,7 +69,7 @@ const DatabaseService = {
         try {
             const response = await fetch('api/invites/create', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: this._jsonHeaders(),
                 body: JSON.stringify(invite)
             });
             return response.ok;
@@ -88,7 +86,7 @@ const DatabaseService = {
         try {
             const response = await fetch('api/invites/update', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: this._jsonHeaders(),
                 body: JSON.stringify({ token, updates })
             });
             return response.ok;
@@ -105,7 +103,7 @@ const DatabaseService = {
         try {
             const response = await fetch('api/invites/delete', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: this._jsonHeaders(),
                 body: JSON.stringify({ token })
             });
             return response.ok;
@@ -131,7 +129,7 @@ const DatabaseService = {
         try {
             const response = await fetch('api/invites/validate', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: this._jsonHeaders(),
                 body: JSON.stringify({ token, password })
             });
 
@@ -155,11 +153,21 @@ const DatabaseService = {
     },
 
     /**
-     * Valida admin (Mantido Local por enquanto).
+     * [ASYNC] v3.5.0-sec: valida a chave de admin NO SERVIDOR.
+     * O campo "senha" da tela de admin é a chave guardada em ~/.sisnav_admin_key.
      */
-    validateAdmin: function (user, pass) {
-        const stored = JSON.parse(localStorage.getItem(this.KEYS.ADMIN));
-        return (stored.username === user && stored.passwordHash === pass);
+    validateAdmin: async function (user, pass) {
+        try {
+            const r = await fetch('api/admin/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user: user, key: pass })
+            });
+            return r.ok;
+        } catch (e) {
+            console.error('Erro ao validar admin:', e);
+            return false;
+        }
     }
 };
 

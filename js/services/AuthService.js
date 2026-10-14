@@ -4,9 +4,15 @@
  * DESCRIÇÃO:
  * Gerencia o ciclo de vida da sessão (Login, Logout, Validação).
  * Abstrai a lógica de verificação de tokens e senhas.
+ *
+ * Autor: Jossian Brito (Charlie Bravo) | Data: 2026-10-13 18:45 (UTC-3)
+ * Versão: 3.5.0-sec
+ * MODIFICAÇÕES v3.5.0-sec: adminLogin agora é assíncrono e validado no
+ * servidor; a chave aprovada fica só na sessão da aba (sessionStorage) e é
+ * removida no logout.
  */
 
-import DatabaseService from './DatabaseService.js?v=Hotfix4';
+import DatabaseService from './DatabaseService.js?v=Sec350';
 
 const AuthService = {
 
@@ -43,8 +49,9 @@ const AuthService = {
     /**
      * Login Administrativo.
      */
-    adminLogin: function (user, pass) {
-        if (DatabaseService.validateAdmin(user, pass)) {
+    adminLogin: async function (user, pass) {
+        if (await DatabaseService.validateAdmin(user, pass)) {
+            sessionStorage.setItem('sisnav_admin_key', pass); // v3.5.0-sec
             const session = {
                 type: 'admin',
                 user: user,
@@ -81,6 +88,7 @@ const AuthService = {
 
     logout: function () {
         sessionStorage.removeItem(this.SESSION_KEY);
+        sessionStorage.removeItem('sisnav_admin_key'); // v3.5.0-sec
         window.location.href = 'login.html'; // Redireciona
     }
 };
