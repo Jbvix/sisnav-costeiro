@@ -1,5 +1,17 @@
 # CHANGELOG — SISNAV Costeiro
 
+## [3.8.1] - 2026-10-30 17:06 (UTC-3) - Correções pequenas (versão única e documentação)
+Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
+
+### Corrigido
+- `/api/health` informava a versão fixa `3.6.0-cloud`. Agora lê a constante `SISNAV_VERSION` do novo `version.py` (fonte única) e informa também `release` (data da versão).
+- Textos de versão visíveis no front: título da aba e cabeçalho do `index.html` ("v3.1 Modular" → "v3.8.1") e mensagem de inicialização do `js/App.js` ("v3.4.0" → "v3.8.1").
+
+### Documentação
+- `.env.example` e `docs/DEPLOY_CLOUD.md`: removido `SEALAGOM_API_TOKEN` (Sealagom desligado desde a v3.7.0); documentadas as opcionais `DHN_AVRADIO_CACHE_S` e `DHN_AVRADIO_URL`.
+- `docs/DEPLOY_CLOUD.md`: corrigido o passo do Railway — em serviços novos o `railway.json` não é lido; start command e healthcheck são definidos no painel (passo a passo). Nova seção 4, favorito "Enviar ao SISNAV": testes de bloqueio, criação no Chrome/Edge, uso diário e mensagens.
+- Relatório de migração: nova seção "Avisos-Rádio DHN".
+
 ## [3.8.0] - 2026-10-30 (UTC-3) - Favorito "Enviar ao SISNAV" (Avisos-Rádio DHN)
 Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
 

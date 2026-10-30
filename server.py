@@ -1,9 +1,14 @@
 # =============================================================================
 # SISNAV COSTEIRO - server.py (Flask / Passenger)
 # Autor: Jossian Brito (Charlie Bravo) | TugLife Systems
-# Data/Hora: 2026-10-29 21:30 (UTC-3)   Versão: 3.6.0-cloud
+# Data/Hora: 2026-10-30 17:06 (UTC-3)   Versão: 3.8.1
 # -----------------------------------------------------------------------------
 # HISTÓRICO DE MODIFICAÇÕES
+#  v3.8.1 (2026-10-30 17:06) - Assistido por Claude:
+#   [1] /api/health devolvia a versão fixa '3.6.0-cloud'. Agora lê a constante
+#       SISNAV_VERSION de version.py (fonte única) e informa também a data
+#       da versão ('release'). Assim o healthcheck confirma qual versão está
+#       de fato rodando no Railway após cada deploy.
 #  v3.6.0-cloud (2026-10-29) - Migração cPanel -> Railway (API) + Netlify (front)
 #                              + Supabase (banco). Assistido por Claude:
 #   [1] Persistência de convites/frota/dados dinâmicos delegada ao módulo
@@ -53,6 +58,7 @@ import time
 import requests
 
 import sisnav_store as store  # v3.6.0 [1]
+from version import SISNAV_VERSION, SISNAV_RELEASE_DATE  # v3.8.1 [1]
 
 # Import scripts (Ensure they are clean/modular)
 try:
@@ -360,8 +366,10 @@ def dhn_avradio_upload():
 
 @app.route('/api/health', methods=['GET'])
 def health():
-    """v3.6.0 [7]: usado pelo healthcheck do Railway."""
-    return jsonify({'status': 'ok', 'version': '3.6.0-cloud', 'storage': store.backend_name()})
+    """v3.6.0 [7]: usado pelo healthcheck do Railway.
+    v3.8.1 [1]: versão lida de version.py (antes texto fixo '3.6.0-cloud')."""
+    return jsonify({'status': 'ok', 'version': SISNAV_VERSION,
+                    'release': SISNAV_RELEASE_DATE, 'storage': store.backend_name()})
 
 
 @app.route('/api/fleet', methods=['GET'])

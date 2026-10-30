@@ -1,0 +1,18 @@
+# =============================================================================
+# SISNAV COSTEIRO - version.py
+# Autor: Jossian Brito (Charlie Bravo) | TugLife Systems
+# Data/Hora: 2026-10-30 17:06 (UTC-3)   Versão: 3.8.1
+# -----------------------------------------------------------------------------
+# HISTÓRICO DE MODIFICAÇÕES
+#  v3.8.1 (2026-10-30 17:06) - Arquivo NOVO (assistido por Claude): fonte única
+#                              da versão do sistema. /api/health lê daqui.
+# -----------------------------------------------------------------------------
+# COMO USAR: a cada nova versão, altere SÓ estas duas constantes (e registre no
+# CHANGELOG.md). Quem precisa da versão importa daqui em vez de repetir o texto.
+# ANALOGIA: é o Diário de Navegação oficial - um só livro; os outros registros
+# copiam dele. Antes, cada arquivo tinha o seu "caderninho" e cada um marcava
+# uma versão diferente (o health dizia 3.6.0-cloud com o sistema já na 3.8.0).
+# =============================================================================
+
+SISNAV_VERSION = "3.8.1"            # Versionamento semântico: MAIOR.MENOR.CORREÇÃO
+SISNAV_RELEASE_DATE = "2026-10-30"  # Data da versão (UTC-3)

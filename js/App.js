@@ -1,3 +1,6 @@
+/* v3.8.1 | 2026-10-30 17:06 (UTC-3) | Jossian Brito (assistido por Claude)
+ * Modificação: mensagem de inicialização no console mostrava "v3.4.0";
+ * agora mostra a versão atual (3.8.1, igual a version.py do servidor). */
 /* v3.5.0-sec | 2026-10-13 18:45 (UTC-3) | Jossian Brito (assistido por Claude)
  * Modificação: chamadas /api/upload-gpx e /api/update-data enviam o cabeçalho
  * X-Invite-Token (convite da sessão), exigido agora pelo servidor. */
@@ -36,7 +39,7 @@ import KratosService from './services/KratosService.js?v=9';
 
 const App = {
     init: function () {
-        console.log("App: Inicializando v3.4.0...");
+        console.log("App: Inicializando v3.8.1..."); // v3.8.1: manter igual a version.py
 
         // Init Help (Sprint 6)
         HelpService.init();

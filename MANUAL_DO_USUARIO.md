@@ -1,4 +1,4 @@
-# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.6.0-cloud
+# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.8.1
 
 > Atualizado em 2026-10-29 21:30 (UTC-3) — Jossian Brito (Charlie Bravo). Novidades da v3.6.0 no fim do manual.
 
@@ -140,8 +140,13 @@ Geração de documentos para arquivo ou inspeção (Port State Control).
 
 ### v3.8.0 (2026-10-30) — Atualizar os Avisos-Rádio da DHN (favorito "Enviar ao SISNAV")
 O site da Marinha só entrega os avisos-rádio a navegadores abertos por pessoas. Por isso a atualização é feita por um favorito:
-1. Crie o favorito uma vez (ver instruções no chat/README: nome "Enviar ao SISNAV", URL = linha que começa com `javascript:` em `tools/favorito_enviar_ao_sisnav.js`).
+1. Crie o favorito uma vez: nome "Enviar ao SISNAV", URL = linha que começa com `javascript:` em `tools/favorito_enviar_ao_sisnav.js`. Passo a passo clique a clique (Chrome e Edge) e tabela de mensagens em `docs/DEPLOY_CLOUD.md`, seção 4.
 2. Abra a página oficial: Avisos-Rádio Náuticos e SAR (CHM).
 3. Clique no favorito. Na 1ª vez, cole o token do seu convite (o código depois de `token=` no link).
 4. Abre uma aba com "Avisos-Rádio recebidos". Pronto: o botão CHM do formulário já usa os dados novos.
 5. Se o formulário mostrar "ATENÇÃO: cópia com N h", repita os passos 2 e 3.
+
+### v3.8.1 (2026-10-30) — Conferir a versão em produção
+1. O número da versão aparece no cabeçalho do app (abaixo de "PLANO DE VIAGEM") e no título da aba.
+2. Para conferir a versão do servidor, abra `https://sisnav-costeiro-production.up.railway.app/api/health`. A resposta mostra `"version"` (ex.: `3.8.1`), `"release"` (data) e `"storage": "supabase"`.
+3. Se a versão do cabeçalho e a do servidor forem diferentes logo após uma atualização, aguarde 2 a 3 minutos (o deploy ainda está em andamento) e recarregue a página com `Ctrl+F5`.
