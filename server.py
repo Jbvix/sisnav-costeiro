@@ -66,6 +66,15 @@ app = Flask(__name__)
 # PRODUÇÃO: Debug desligado para segurança
 app.config['DEBUG'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = False
+app.config['MAX_CONTENT_LENGTH'] = 8 * 1024 * 1024  # v3.8.0: teto de 8 MB por envio
+# v3.8.0: o JSON da DHN (~0,6 MB) chega num campo de formulário; o limite
+# padrão do Werkzeug para campos é 500 KB -> erro 413. Sobe para 8 MB.
+app.config['MAX_FORM_MEMORY_SIZE'] = 8 * 1024 * 1024
+try:
+    from flask import Request as _Req
+    _Req.max_form_memory_size = 8 * 1024 * 1024
+except Exception:
+    pass
 
 # Enable CORS safely
 if CORS:
@@ -310,6 +319,43 @@ def get_contacts_raw():
         return jsonify({'error': 'Not found'}), 404
     with open(path, 'r', encoding='utf-8') as f:
         return Response(f.read(), mimetype='text/plain', headers={'Cache-Control': 'no-store'})
+
+
+@app.route('/api/dhn/avradio-upload', methods=['POST'])
+def dhn_avradio_upload():
+    """v3.8.0 - recebe os Avisos-Rádio da DHN enviados pelo favorito
+    "Enviar ao SISNAV" (clicado na página oficial da Marinha).
+    POR QUE FORMULÁRIO E NÃO fetch(): a página da Marinha tem CSP
+    connect-src 'self' (bloqueia fetch para outros sites), mas permite
+    form-action https: - então o favorito envia um <form> POST.
+    Campos: token (convite SISNAV) e payload (JSON da DHN).
+    Resposta: página HTML curta com o resultado."""
+    import html as _html
+    import dhn_avradio
+
+    def page(titulo, msg, ok):
+        cor = '#16a34a' if ok else '#dc2626'
+        body = (f"<!doctype html><meta charset='utf-8'><meta name='viewport' content='width=device-width'>"
+                f"<title>SISNAV - {_html.escape(titulo)}</title>"
+                f"<body style='font-family:system-ui;background:#0f172a;color:#e2e8f0;padding:24px'>"
+                f"<h2 style='color:{cor}'>{_html.escape(titulo)}</h2><p>{_html.escape(msg)}</p>"
+                f"<p style='color:#94a3b8'>Pode fechar esta aba.</p></body>")
+        return Response(body, status=200 if ok else 400, mimetype='text/html')
+
+    token = (request.form.get('token') or request.headers.get('X-Invite-Token') or '').strip()
+    if not (_is_admin_request() or (token and store.invite_is_usable(token))):
+        return page('Convite inválido', 'Token de convite ausente, revogado ou incorreto. '
+                    'Clique de novo no favorito e informe o token do seu convite SISNAV.', False)
+    raw = request.form.get('payload')
+    try:
+        payload = json.loads(raw) if raw else (request.get_json(silent=True) or {})
+        inv = store.get_invite(token) or {}
+        res = dhn_avradio.save_upload(payload, quem=str(inv.get('type') or 'admin'))
+    except Exception as e:
+        logger.warning(f"avradio-upload rejeitado: {e}")
+        return page('Envio rejeitado', str(e), False)
+    titulo = 'Avisos-Rádio recebidos' if res['status'] == 'ok' else 'Nada a atualizar'
+    return page(titulo, res['message'], True)
 
 
 @app.route('/api/health', methods=['GET'])

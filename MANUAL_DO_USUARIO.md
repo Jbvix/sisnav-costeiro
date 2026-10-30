@@ -137,3 +137,11 @@ Geração de documentos para arquivo ou inspeção (Port State Control).
 3. O sistema preenche: **Meteoromarinha** (CHM), **Avisos de Mau Tempo** (CHM) + **avisos-rádio costeiros** da rota, e **NAVAREA V / SAR** da rota — todos da DHN.
 4. O cabeçalho de cada bloco mostra a hora de atualização da DHN e quantos avisos caem na área da rota. Avisos sem posição ficam numa lista "avaliar manualmente".
 5. Pode ser usado a qualquer momento; o servidor guarda a consulta por até 30 minutos.
+
+### v3.8.0 (2026-10-30) — Atualizar os Avisos-Rádio da DHN (favorito "Enviar ao SISNAV")
+O site da Marinha só entrega os avisos-rádio a navegadores abertos por pessoas. Por isso a atualização é feita por um favorito:
+1. Crie o favorito uma vez (ver instruções no chat/README: nome "Enviar ao SISNAV", URL = linha que começa com `javascript:` em `tools/favorito_enviar_ao_sisnav.js`).
+2. Abra a página oficial: Avisos-Rádio Náuticos e SAR (CHM).
+3. Clique no favorito. Na 1ª vez, cole o token do seu convite (o código depois de `token=` no link).
+4. Abre uma aba com "Avisos-Rádio recebidos". Pronto: o botão CHM do formulário já usa os dados novos.
+5. Se o formulário mostrar "ATENÇÃO: cópia com N h", repita os passos 2 e 3.

@@ -1,5 +1,19 @@
 # CHANGELOG — SISNAV Costeiro
 
+## [3.8.0] - 2026-10-30 (UTC-3) - Favorito "Enviar ao SISNAV" (Avisos-Rádio DHN)
+Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
+
+### Contexto
+- Testes de 30/10: o site da Marinha bloqueia a área de Avisos-Rádio para Railway (403), Cloudflare Worker (403), PowerShell no PC (403) e navegador headless (desafio "Um momento…"). Só um navegador real, aberto por uma pessoa, passa.
+
+### Adicionado
+- `POST /api/dhn/avradio-upload`: recebe o JSON oficial da DHN enviado pelo favorito, exige convite válido (ou chave admin), valida o formato, recusa versões mais antigas que a salva e grava em `sisnav_kv`.
+- `tools/favorito_enviar_ao_sisnav.js`: favorito (bookmarklet) para clicar na página oficial de Avisos-Rádio; envia por formulário porque a CSP da Marinha bloqueia `fetch` para outros sites.
+- Formulário avisa quando a cópia tem mais de 24 h.
+
+### Corrigido
+- Série "I" deixou de ser rotulada como NAVAREA V; NAVAREA V é reconhecido pelo número do aviso. Nomes das séries serão confirmados com os dados reais do primeiro envio.
+
 ## [3.7.1] - 2026-10-30 (UTC-3) - Avisos-rádio DHN: correção do 403 em produção
 Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
 

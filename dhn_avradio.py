@@ -57,7 +57,9 @@ CHM_HOME = "https://www.marinha.mil.br/chm/"
 CACHE_TTL_S = int(os.environ.get("DHN_AVRADIO_CACHE_S") or "1800")  # 30 min
 
 COSTA_NOMES = {
-    "I": "NAVAREA V",
+    "NAV": "NAVAREA V",
+    "SEM": "Sem série informada",
+    "I": "Série I",
     "N": "Costa Norte",
     "E": "Costa Leste",
     "S": "Costa Sul",
@@ -144,19 +146,20 @@ def discover_json_url(session: requests.Session) -> str:
 
 
 def fetch_avisos(force: bool = False) -> Dict[str, Any]:
-    """Retorna {"atualizado", "avisos", "url", "origem"}.
-    Cache em memória de CACHE_TTL_S s. Se a DHN falhar, devolve a última leitura
-    boa guardada no banco, marcada com origem='copia' (o texto avisa o usuário)."""
+    """Retorna {"atualizado", "avisos", "url", "origem", "enviado_em"?}.
+    v3.8.0: o firewall da Marinha só libera NAVEGADORES de verdade (desafio
+    "Um momento..."). Por isso a fonte principal passa a ser a cópia enviada
+    pelo botão "Enviar ao SISNAV" (save_upload). A busca direta continua como
+    tentativa quando ainda não existe nenhuma cópia no banco."""
     now = time.time()
-    if not force and _cache["data"] and now - _cache["t"] < CACHE_TTL_S:
+    if not force and _cache["data"] and now - _cache["t"] < min(CACHE_TTL_S, 300):
         return _cache["data"]
-    try:
+    saved = _kv_get("dhn_avradio_last")
+    if saved:
+        data = json.loads(saved)
+    else:
         with requests.Session() as s:
             s.headers.update(_headers(CHM_HOME))
-            try:
-                s.get(CHM_HOME, timeout=20)  # aquece cookies do WAF
-            except requests.RequestException as exc:
-                logger.info("DHN warm-up: %s", exc)
             url = discover_json_url(s)
             r = s.get(url, timeout=60, headers=_headers(AVRADIO_PAGE))
             r.raise_for_status()
@@ -164,15 +167,58 @@ def fetch_avisos(force: bool = False) -> Dict[str, Any]:
         data = {"atualizado": raw.get("atualizado") or "", "avisos": raw.get("avisos") or [],
                 "url": url, "origem": "dhn"}
         _kv_set("dhn_avradio_last", json.dumps(data, ensure_ascii=False))
-    except Exception as exc:
-        saved = _kv_get("dhn_avradio_last")
-        if not saved:
-            raise
-        logger.warning("DHN indisponível (%s); usando última cópia salva.", exc)
-        data = json.loads(saved)
-        data["origem"] = "copia"
     _cache.update(t=now, data=data, url=data.get("url"))
     return data
+
+
+def _parse_atualizado(txt: str) -> float:
+    """'30/10/2026 03:22' (hora de Brasília) -> epoch. 0 se inválido."""
+    try:
+        from datetime import datetime, timedelta, timezone
+        dt = datetime.strptime((txt or "").strip(), "%d/%m/%Y %H:%M")
+        return dt.replace(tzinfo=timezone(timedelta(hours=-3))).timestamp()
+    except Exception:
+        return 0.0
+
+
+def save_upload(payload: Dict[str, Any], quem: str) -> Dict[str, Any]:
+    """Valida e grava o JSON enviado pelo botão "Enviar ao SISNAV".
+    Regras (evitam dado falso ou velho sobrescrevendo o bom):
+      - precisa ter 'atualizado' no formato da DHN e lista 'avisos' (1 a 5000);
+      - cada aviso precisa de 'numero' e 'costa';
+      - só substitui a cópia atual se 'atualizado' for igual ou MAIS NOVO."""
+    atual = (payload.get("atualizado") or "").strip()
+    avisos = payload.get("avisos")
+    t_new = _parse_atualizado(atual)
+    if not t_new:
+        raise ValueError("Campo 'atualizado' ausente ou fora do formato da DHN (dd/mm/aaaa hh:mm).")
+    if not isinstance(avisos, list) or not (1 <= len(avisos) <= 5000):
+        raise ValueError("Lista de avisos ausente ou com tamanho inválido.")
+    limpos = []
+    for a in avisos:
+        if not isinstance(a, dict) or "numero" not in a or "costa" not in a:
+            raise ValueError("Aviso sem 'numero' ou 'costa' — arquivo não parece ser da DHN.")
+        limpos.append({k: (str(a.get(k)) if a.get(k) is not None else "")
+                       for k in ("numero", "costa", "tipo", "textoPT", "textoEN", "geometry")})
+    fonte = str(payload.get("fonte") or "")
+    if fonte and not fonte.startswith("https://www.marinha.mil.br/"):
+        raise ValueError("Fonte não é o site da Marinha.")
+
+    saved = _kv_get("dhn_avradio_last")
+    if saved:
+        t_old = _parse_atualizado(json.loads(saved).get("atualizado", ""))
+        if t_old and t_new < t_old:
+            return {"status": "ignorado", "message":
+                    f"O SISNAV já tem uma versão mais nova (DHN {json.loads(saved).get('atualizado')})."}
+
+    data = {"atualizado": atual, "avisos": limpos, "url": fonte, "origem": "navegador",
+            "enviado_em": time.strftime("%d/%m/%Y %H:%M", time.gmtime(time.time() - 3 * 3600)),
+            "enviado_por": quem}
+    _kv_set("dhn_avradio_last", json.dumps(data, ensure_ascii=False))
+    if fonte:
+        _kv_set("dhn_avradio_url", fonte)
+    _cache.update(t=0.0, data=None)  # força releitura
+    return {"status": "ok", "message": f"{len(limpos)} avisos da DHN (atualizados em {atual}) recebidos."}
 
 
 # -----------------------------------------------------------------------------
@@ -214,7 +260,7 @@ def select_for_route(avisos: List[Dict[str, Any]], bbox: Optional[Dict[str, floa
         costa = (a.get("costa") or "").strip()
         pts = aviso_points(a)
         if not pts:
-            if costa in ("I", "SAR"):
+            if classify(a) in ("NAV", "SAR"):
                 sem_pos.append(a)
             continue
         if bbox is None or any(_in_bbox(la, lo, bbox) for la, lo in pts):
@@ -227,6 +273,27 @@ def _fmt(a: Dict[str, Any]) -> str:
     return f"--- {a.get('numero', '?')} ---\n{texto}"
 
 
+def _aviso_idade(atualizado: str) -> str:
+    """Alerta quando a cópia tem mais de 24 h: o oficial deve reenviar."""
+    t = _parse_atualizado(atualizado)
+    if t and time.time() - t > 24 * 3600:
+        h = int((time.time() - t) // 3600)
+        return (f"ATENÇÃO: cópia com {h} h. Abra a página de Avisos-Rádio da DHN e clique no "
+                f"favorito 'Enviar ao SISNAV' para atualizar.\n")
+    return ""
+
+
+def classify(a: Dict[str, Any]) -> str:
+    """Série do aviso. v3.8.0: 'I' NÃO é tratado como NAVAREA V (correção);
+    NAVAREA V é reconhecido pelo número ('NAVAREA ...'). Códigos ainda a
+    confirmar com os dados reais ficam com nome neutro ('Série I')."""
+    num = (a.get("numero") or "").upper()
+    if "NAVAREA" in num:
+        return "NAV"
+    c = (a.get("costa") or "").strip()
+    return c or "SEM"
+
+
 def format_blocks(data: Dict[str, Any], bbox: Optional[Dict[str, float]]) -> Dict[str, str]:
     """Gera os dois textos que o front exibe:
        navarea  -> NAVAREA V + SAR (na rota) + NAVAREA/SAR sem posição
@@ -235,9 +302,10 @@ def format_blocks(data: Dict[str, Any], bbox: Optional[Dict[str, float]]) -> Dic
     cab = (
         f"Fonte: DHN/CHM — Avisos-Rádio Náuticos e SAR (oficial)\n"
         f"Atualizado pela DHN em: {data.get('atualizado') or '?'}"
-        + (" (CÓPIA SALVA — a DHN não respondeu agora)" if data.get("origem") == "copia" else "")
+        + (f" | enviado ao SISNAV em {data['enviado_em']}" if data.get("enviado_em") else "")
         + "\n"
-        f"Total publicado: {len(data['avisos'])} avisos | na área da rota: {len(na_rota)}\n"
+        + _aviso_idade(data.get("atualizado", ""))
+        + f"Total publicado: {len(data['avisos'])} avisos | na área da rota: {len(na_rota)}\n"
         + "=" * 60
     )
 
@@ -245,7 +313,7 @@ def format_blocks(data: Dict[str, Any], bbox: Optional[Dict[str, float]]) -> Dic
         partes = [cab]
         n = 0
         for c in costas:
-            itens = [a for a in na_rota if (a.get("costa") or "").strip() == c]
+            itens = [a for a in na_rota if classify(a) == c]
             if not itens:
                 continue
             partes.append(f"\n## {COSTA_NOMES.get(c, c)} — {len(itens)} aviso(s)\n")
@@ -259,6 +327,6 @@ def format_blocks(data: Dict[str, Any], bbox: Optional[Dict[str, float]]) -> Dic
         return "\n".join(partes)
 
     return {
-        "navarea": bloco(["I", "SAR"], sem_pos),
-        "costeiro": bloco(["N", "E", "S", "HG"]),
+        "navarea": bloco(["NAV", "SAR"], sem_pos),
+        "costeiro": bloco(["N", "E", "S", "I", "HG", "SEM"]),
     }
