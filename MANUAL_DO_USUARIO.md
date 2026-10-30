@@ -127,3 +127,6 @@ Geração de documentos para arquivo ou inspeção (Port State Control).
 | "Convite inválido ou ausente" ao abrir a frota | Sessão expirada | Sair e entrar de novo em `login.html` |
 | KRATOS "não configurado" | Falta `XAI_API_KEY` no Railway | Railway > serviço > Variables |
 | Erro de CORS no console | `ALLOWED_ORIGINS` sem o domínio do Netlify | Incluir `https://<site>.netlify.app,https://sisnav.tuglife.live` |
+
+### v3.6.1 (2026-10-30) — Link do convite
+- O link enviado no convite (WhatsApp ou "olho") usa o endereço onde o painel admin está aberto. Depois do corte de DNS, gere convites sempre por `https://sisnav.tuglife.live/admin.html`.

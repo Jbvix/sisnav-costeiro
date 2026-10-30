@@ -1,5 +1,11 @@
 # CHANGELOG — SISNAV Costeiro
 
+## [3.6.1] - 2026-10-30 (UTC-3) - Link de convite dinâmico
+Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
+
+### Alterado
+- Painel admin: o link do convite usa o endereço da página aberta (`window.location.origin`) em vez de `https://sisnav.tuglife.live` fixo no código. Convites gerados no Netlify apontam para o Netlify; após o corte de DNS, para o domínio oficial.
+
 ## [3.6.0-cloud] - 2026-10-29 21:30 (UTC-3) - Migração para nuvem (Netlify + Railway + Supabase)
 Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
 

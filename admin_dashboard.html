@@ -307,9 +307,16 @@
             }
         };
 
+        // v3.6.1 (2026-10-30 - Jossian Brito / assistido por Claude):
+        // o endereço do link deixa de ser fixo ("https://sisnav.tuglife.live").
+        // Agora vem da própria página aberta: no Netlify gera link do Netlify,
+        // no domínio oficial gera link do domínio, em teste local gera localhost.
+        // Analogia: o convite informa o porto onde o navio ESTÁ atracado,
+        // e não um porto escrito à mão numa carta antiga.
+        const inviteBaseUrl = () => window.location.origin;
+
         function formatMessage(token, pass, type) {
-            // Reverted: Use current location path to resolve subdirectories
-            const baseUrl = "https://sisnav.tuglife.live";
+            const baseUrl = inviteBaseUrl();
             const link = `${baseUrl}/login.html?token=${token}`;
             const roleName = type === 'planning' ? 'PLANEJAMENTO 🗺️' : 'MONITORAMENTO 📡';
 
@@ -323,8 +330,7 @@
         // Modal Logic
         function openShareModal(token, pass, type) {
             const msg = formatMessage(token, pass, type);
-            // Reverted: Use local baseUrl
-            const baseUrl = "https://sisnav.tuglife.live";
+            const baseUrl = inviteBaseUrl(); // v3.6.1
 
             document.getElementById('share-link-box').innerText = `${baseUrl}/login.html?token=${token}`;
             document.getElementById('share-pass-box').innerText = pass;
