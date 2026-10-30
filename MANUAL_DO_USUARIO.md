@@ -1,4 +1,6 @@
-# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.4.0
+# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.6.0-cloud
+
+> Atualizado em 2026-10-29 21:30 (UTC-3) — Jossian Brito (Charlie Bravo). Novidades da v3.6.0 no fim do manual.
 
 ## 1. Visão Geral
 
@@ -104,3 +106,24 @@ Geração de documentos para arquivo ou inspeção (Port State Control).
 2. **Usuário**: qualquer identificação (registro). **Senha**: a *chave de administrador* guardada no servidor em `~/.sisnav_admin_key` (cPanel > Gerenciador de Arquivos > pasta inicial, com "mostrar arquivos ocultos").
 3. A chave fica apenas na aba aberta e some ao sair/fechar. Para trocar a chave, edite o arquivo e salve - vale imediatamente.
 4. Convites agora existem **somente no servidor**. Usuários comuns entram por `login.html` com token + senha; o app envia o convite em cada operação sensível (upload de GPX, atualização de dados).
+
+
+## Versão 3.6.0-cloud — Nuvem (2026-10-29)
+
+### O que muda para o usuário
+1. **Endereço**: o app passa a ser servido pelo Netlify (o endereço oficial continua `https://sisnav.tuglife.live` depois que o DNS for apontado). O assistente KRATOS, marés, frota e convites rodam no servidor Railway — você não precisa fazer nada diferente.
+2. **Login**: igual (token + senha). Os convites existentes continuam válidos.
+3. **Frota e contatos**: só aparecem para quem está logado com convite válido.
+4. **Atualizar Dados (marés/meteo)**: a barra de progresso agora mostra cada etapa (antes ficava parada).
+
+### Para o administrador
+1. Login em `/admin.html` com a chave de administrador — agora definida na variável `SISNAV_ADMIN_KEY` do Railway (Variables), não mais em arquivo do cPanel.
+2. **Reenviar convite / WhatsApp**: como o servidor guarda só o *hash* da senha, o botão gera uma **senha nova** e a anterior deixa de valer. Analogia: perdeu a chave do paiol, troca-se o segredo — não se faz cópia.
+3. Os dados ficam no Supabase (projeto *tuglife-core*, tabelas `sisnav_*`). Backup: Supabase > Database > Backups.
+
+### Problemas comuns
+| Sintoma | Causa provável | Ação |
+|---|---|---|
+| "Convite inválido ou ausente" ao abrir a frota | Sessão expirada | Sair e entrar de novo em `login.html` |
+| KRATOS "não configurado" | Falta `XAI_API_KEY` no Railway | Railway > serviço > Variables |
+| Erro de CORS no console | `ALLOWED_ORIGINS` sem o domínio do Netlify | Incluir `https://<site>.netlify.app,https://sisnav.tuglife.live` |

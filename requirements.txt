@@ -1,5 +1,7 @@
-flask
-requests
-beautifulsoup4
-flask-cors
-pypdf
+# SISNAV COSTEIRO - dependências do back-end (v3.6.0-cloud, 2026-10-29)
+flask>=3.0,<4
+requests>=2.31
+beautifulsoup4>=4.12
+flask-cors>=4.0
+pypdf>=4.0
+gunicorn>=22.0

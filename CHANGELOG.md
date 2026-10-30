@@ -1,5 +1,30 @@
 # CHANGELOG — SISNAV Costeiro
 
+## [3.6.0-cloud] - 2026-10-29 21:30 (UTC-3) - Migração para nuvem (Netlify + Railway + Supabase)
+Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
+
+### Arquitetura
+- **Front-end → Netlify** (`netlify.toml`, `scripts/build_netlify.sh`): publica só `dist/` (HTML/JS/CSS/biblioteca pública). Código Python, scripts de debug, `.docx` de viagens, fotos e planilhas ficam fora.
+- **Back-end Flask → Railway** (`Procfile`, `railway.json`, `.python-version`, `gunicorn`): healthcheck em `/api/health`, porta via `$PORT`.
+- **Banco → Supabase** (projeto *tuglife-core*, tabelas `sisnav_invites`, `sisnav_fleet`, `sisnav_kv`, RLS ligado sem políticas = só o servidor acessa). Migração em `supabase/migrations/20261029_sisnav_init.sql`.
+- **Novo** `sisnav_store.py`: camada de persistência (Supabase se `SUPABASE_URL` + `SUPABASE_SERVICE_ROLE_KEY` existirem; senão JSON em `data/` — cPanel/local continuam funcionando).
+- **Novo** `js/config.js`: roteia `api/...` para o Railway (`SISNAV_API_BASE`) e anexa `X-Invite-Token`/`X-Admin-Key` da sessão; marés/meteo/índice de rotas lidos de `/api/data/<arquivo>`.
+
+### Segurança
+- Senhas de convite com hash **PBKDF2-SHA256 (200.000 iterações + sal)**; senhas antigas em texto puro são convertidas no primeiro login. Os 2 convites de produção foram migrados já com hash (as senhas atuais continuam valendo).
+- `/api/invites/list` não devolve mais senhas.
+- `/api/fleet`, `/api/position` e `/api/contacts` agora exigem convite (antes abertas).
+- `library/CONTACTS.txt` (telefones/e-mails reais) sai da área pública: servido por `/api/library/contacts.txt` com convite.
+- CORS restrito a `ALLOWED_ORIGINS`.
+
+### Corrigido
+- `/api/update-data` emitia `\n\n` literal no fluxo SSE → a barra de progresso nunca atualizava.
+- `/api/contacts` separava colunas por `\t` literal → lista de contatos sempre vazia.
+- `UpdateService.js` abria um `EventSource` GET órfão (erro 405 a cada atualização).
+
+### Alterado
+- Painel admin: "Reenviar"/"WhatsApp" geram **nova senha** (o servidor não guarda mais a senha legível).
+
 ## [3.5.0-sec] - 2026-10-13 18:45 (UTC-3) - Hardening de segurança
 Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
 

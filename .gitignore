@@ -33,3 +33,10 @@ package_for_deploy.py
 # OS
 .DS_Store
 Thumbs.db
+
+# v3.6.0-cloud (2026-10-29)
+.netlify/
+dist/
+.env
+data/
+*.zip

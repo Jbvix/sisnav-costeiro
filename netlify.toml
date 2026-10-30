@@ -1,0 +1,26 @@
+# =============================================================================
+# SISNAV COSTEIRO - netlify.toml (front-end estático)
+# Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
+# Data/Hora: 2026-10-29 21:30 (UTC-3)   Versão: 1.0 (v3.6.0-cloud)
+# -----------------------------------------------------------------------------
+# O Netlify serve só o casco (HTML/JS/CSS). O motor (Flask) roda no Railway.
+# Defina SISNAV_API_BASE no painel do Netlify (Site configuration > Environment
+# variables) com a URL pública do Railway, ex.: https://sisnav-api.up.railway.app
+# =============================================================================
+[build]
+  command = "bash scripts/build_netlify.sh"
+  publish = "dist"
+
+# Página inicial: o app exige sessão; protected_route.js redireciona ao login.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Dados que mudam com frequência: nunca guardar em cache
+[[headers]]
+  for = "/js/config.js"
+  [headers.values]
+    Cache-Control = "no-cache"

@@ -20,18 +20,9 @@ const UpdateService = {
         console.log("UpdateService: Conectando ao servidor...");
         onProgress("Conectando...", 0);
 
-        const eventSource = new EventSource('/api/update-data', {
-            method: 'POST' // EventSource is usually GET, check browser support. 
-            // Native EventSource is GET only. 
-            // For POST, we might need 'fetch' with reader, 
-            // BUT server.py implements GET for SSE usually? 
-            // Flask route is POST. Wait. EventSource doesn't support POST.
-            // I will change server.py to GET or use fetch stream.
-        });
-
-        // ERROR: EventSource DOES NOT support POST args in standard API.
-        // Changing strategy: Use FETCH with ReadableStream
-
+        // v3.6.0-cloud (2026-10-29): removido o EventSource órfão (GET) que era
+        // aberto aqui e nunca usado - gerava requisição inútil com erro 405.
+        // O progresso vem do fetch em streaming abaixo (POST + ReadableStream).
         this.runFetchStream(onProgress, onComplete);
     },
 

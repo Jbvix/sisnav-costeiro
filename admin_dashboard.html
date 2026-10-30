@@ -2,6 +2,8 @@
 <html lang="pt-BR">
 
 <head>
+    <!-- v3.6.0-cloud: roteador Front->API (Railway). Deve vir antes de qualquer módulo. -->
+    <script src="js/config.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SISNAV - Admin Dashboard</title>
@@ -275,15 +277,31 @@
             }
         };
 
+        // v3.6.0-cloud (2026-10-29): o servidor guarda só o HASH da senha, então
+        // não existe mais "senha antiga" para reenviar. Reenviar = gerar senha
+        // nova (o servidor converte em hash) e compartilhar a nova.
+        // Analogia: perdeu a chave do paiol? Troca-se o segredo, não se copia.
+        async function rotatePassword(inv) {
+            if (!confirm('Para reenviar, será gerada uma NOVA senha (a anterior deixa de valer). Continuar?')) return null;
+            const newPass = generatePass();
+            const ok = await DatabaseService.updateInvite(inv.token, { password: newPass });
+            if (!ok) { alert('Erro ao gerar nova senha.'); return null; }
+            return newPass;
+        }
+
         window.reShare = async (token) => {
             const inv = await DatabaseService.findInviteByToken(token);
-            if (inv) openShareModal(inv.token, inv.password, inv.type);
+            if (!inv) return;
+            const pass = await rotatePassword(inv);
+            if (pass) openShareModal(inv.token, pass, inv.type);
         };
 
         window.sendWa = async (token) => {
             const inv = await DatabaseService.findInviteByToken(token);
             if (inv) {
-                const msg = formatMessage(inv.token, inv.password, inv.type);
+                const pass = await rotatePassword(inv);
+                if (!pass) return;
+                const msg = formatMessage(inv.token, pass, inv.type);
                 const url = `https://wa.me/?text=${encodeURIComponent(msg)}`;
                 window.open(url, '_blank');
             }

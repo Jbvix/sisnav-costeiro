@@ -1,9 +1,24 @@
 # =============================================================================
 # SISNAV COSTEIRO - server.py (Flask / Passenger)
 # Autor: Jossian Brito (Charlie Bravo) | TugLife Systems
-# Data/Hora: 2026-10-13 18:30 (UTC-3)   Versão: 3.5.0-sec
+# Data/Hora: 2026-10-29 21:30 (UTC-3)   Versão: 3.6.0-cloud
 # -----------------------------------------------------------------------------
 # HISTÓRICO DE MODIFICAÇÕES
+#  v3.6.0-cloud (2026-10-29) - Migração cPanel -> Railway (API) + Netlify (front)
+#                              + Supabase (banco). Assistido por Claude:
+#   [1] Persistência de convites/frota/dados dinâmicos delegada ao módulo
+#       sisnav_store.py (Supabase quando configurado, JSON local como reserva).
+#   [2] Senhas de convite com hash PBKDF2 (ver sisnav_store.py); /invites/list
+#       não devolve mais senha alguma ao navegador.
+#   [3] /api/fleet e /api/position agora exigem convite válido (antes eram
+#       abertas: qualquer um lia a posição da frota ou injetava posição falsa).
+#   [4] CORRIGIDO: /api/update-data enviava "\\n\\n" literal no fluxo SSE; o
+#       front separa eventos por quebra de linha real -> barra de progresso
+#       nunca atualizava. Mesmo defeito corrigido em /api/contacts ("\\t").
+#   [5] CORS restrito às origens de ALLOWED_ORIGINS (ex.: o domínio Netlify).
+#   [6] Nova rota /api/data/<arquivo> entrega marés/meteo/índice de rotas
+#       atualizados (o disco do Railway é efêmero - o dado vive no Supabase).
+#   [7] /api/health para o healthcheck do Railway; porta lida de $PORT.
 #  v3.5.0-sec (2026-10-13) - Hardening de segurança (assistido por Claude):
 #   [1] require_admin: rotas administrativas (/api/invites/create|list|update|
 #       delete e /api/system-info) exigem o cabeçalho X-Admin-Key, comparado em
@@ -37,6 +52,8 @@ import json
 import time
 import requests
 
+import sisnav_store as store  # v3.6.0 [1]
+
 # Import scripts (Ensure they are clean/modular)
 try:
     import rebuild_csv
@@ -52,7 +69,10 @@ app.config['PROPAGATE_EXCEPTIONS'] = False
 
 # Enable CORS safely
 if CORS:
-    CORS(app)
+    # v3.6.0 [5]: só as origens autorizadas (vírgula). Vazio => '*' (modo local).
+    _origins = [o.strip() for o in (os.environ.get('ALLOWED_ORIGINS') or '').split(',') if o.strip()]
+    CORS(app, resources={r"/api/*": {"origins": _origins or '*'}},
+         allow_headers=['Content-Type', 'X-Invite-Token', 'X-Admin-Key'])
 else:
     print("Warning: Flask-CORS not found. CORS is disabled.")
 
@@ -112,10 +132,8 @@ def require_invite(fn):
         if _is_admin_request():
             return fn(*args, **kwargs)
         token = request.headers.get('X-Invite-Token', '').strip()
-        if token:
-            for inv in load_invites():
-                if inv.get('token') == token and inv.get('status') in ('active', 'pending'):
-                    return fn(*args, **kwargs)
+        if token and store.invite_is_usable(token):  # v3.6.0 [1]
+            return fn(*args, **kwargs)
         return jsonify({'error': 'Convite inválido ou ausente'}), 401
     return wrapper
 
@@ -126,32 +144,34 @@ def require_invite(fn):
 @require_invite
 def update_data():
     def generate():
-        yield f"data: {json.dumps({'status': 'Iniciando atualização...', 'progress': 5})}\\n\\n"
+        yield f"data: {json.dumps({'status': 'Iniciando atualização...', 'progress': 5})}\n\n"
         
         try:
             # 1. Tides
-            yield f"data: {json.dumps({'status': 'Baixando Marés (Base Nacional)...', 'progress': 20})}\\n\\n"
+            yield f"data: {json.dumps({'status': 'Baixando Marés (Base Nacional)...', 'progress': 20})}\n\n"
             # Redirect stdout to capture logs? Or just run blind?
             # ideally modify rebuild_csv to yield progress, but for now blocking call
             if rebuild_csv and rebuild_csv.TideDataCollector:
                 rebuild_csv.run() 
-                yield f"data: {json.dumps({'status': 'Marés Atualizadas!', 'progress': 50})}\\n\\n"
+                _publish_data_file('tides_scraped.csv')  # v3.6.0 [6]
+                yield f"data: {json.dumps({'status': 'Marés Atualizadas!', 'progress': 50})}\n\n"
             else:
-                 yield f"data: {json.dumps({'status': 'Ignorando Marés (Módulo ausente)', 'progress': 50})}\\n\\n"
+                 yield f"data: {json.dumps({'status': 'Ignorando Marés (Módulo ausente)', 'progress': 50})}\n\n"
 
             # 2. Weather
-            yield f"data: {json.dumps({'status': 'Baixando Meteorologia (18 Portos)...', 'progress': 60})}\\n\\n"
+            yield f"data: {json.dumps({'status': 'Baixando Meteorologia (18 Portos)...', 'progress': 60})}\n\n"
             if update_weather_batch and update_weather_batch.WeatherCollector:
                 update_weather_batch.run()
-                yield f"data: {json.dumps({'status': 'Meteorologia Atualizada!', 'progress': 90})}\\n\\n"
+                _publish_data_file('weather_scraped.csv')  # v3.6.0 [6]
+                yield f"data: {json.dumps({'status': 'Meteorologia Atualizada!', 'progress': 90})}\n\n"
             else:
-                 yield f"data: {json.dumps({'status': 'Ignorando Clima (Módulo ausente)', 'progress': 90})}\\n\\n"
+                 yield f"data: {json.dumps({'status': 'Ignorando Clima (Módulo ausente)', 'progress': 90})}\n\n"
 
-            yield f"data: {json.dumps({'status': 'Concluído!', 'progress': 100})}\\n\\n"
+            yield f"data: {json.dumps({'status': 'Concluído!', 'progress': 100})}\n\n"
             
         except Exception as e:
             logger.error(f"Update Error: {e}")
-            yield f"data: {json.dumps({'status': f'Erro: {str(e)}', 'progress': 0, 'error': True})}\\n\\n"
+            yield f"data: {json.dumps({'status': f'Erro: {str(e)}', 'progress': 0, 'error': True})}\n\n"
 
     return Response(generate(), mimetype='text/event-stream')
 
@@ -184,6 +204,7 @@ def upload_gpx():
             # We can mock the print or just trust it.
             if build_route_index:
                 build_route_index.build_index(gpx_dir, output_file)
+                _publish_data_file('known_routes.json', output_file)  # v3.6.0 [6]
             
             return jsonify({'status': 'OK', 'message': f'Rota {file.filename} adicionada e índice atualizado!'})
         except Exception as e:
@@ -205,6 +226,7 @@ def list_tide_files():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/contacts', methods=['GET'])
+@require_invite  # v3.6.0: telefones/e-mails reais - só com convite
 def get_contacts():
     try:
         contacts_path = os.path.join(BASE_DIR, 'library', 'CONTACTS.txt')
@@ -218,7 +240,7 @@ def get_contacts():
             start_idx = 1 if lines and 'NAME' in lines[0].upper() else 0
             
             for line in lines[start_idx:]:
-                parts = line.strip().split('\\t')
+                parts = line.strip().split('\t')
                 if len(parts) >= 2: # At least Name and Phone
                     contacts.append({
                         'name': parts[0].strip(),
@@ -231,259 +253,215 @@ def get_contacts():
         logger.error(f"Error reading contacts: {e}")
         return jsonify({'error': str(e)}), 500
 
-# File-Based Persistence
-# CHANGE: Use local 'data' folder instead of tempfile to avoid permission issues
-FLEET_FILE = os.path.join(DATA_DIR, 'sisnav_fleet_data.json')
+# =============================================================================
+# v3.6.0-cloud - FROTA, CONVITES E DADOS DINÂMICOS via sisnav_store
+# -----------------------------------------------------------------------------
+# Toda leitura/gravação passa pelo "paiol" (sisnav_store). O Flask só decide
+# QUEM pode fazer O QUÊ; ONDE o dado mora (Supabase ou JSON) é problema do store.
+# =============================================================================
+FLEET_ACTIVE_WINDOW_S = 86400    # 24 h: embarcação aparece no mapa da frota
+FLEET_PURGE_AFTER_S = 172800     # 48 h: registro é apagado do banco
 
-def load_fleet_data():
-    try:
-        if os.path.exists(FLEET_FILE):
-            with open(FLEET_FILE, 'r') as f:
-                return json.load(f)
-    except Exception as e:
-        sys.stderr.write(f"Error loading: {e}\\n")
-    return {}
 
-def save_fleet_data(data):
+def _publish_data_file(name, path=None):
+    """Copia um arquivo gerado no disco efêmero para o banco (sisnav_kv), para
+    que o front (Netlify) leia sempre a versão mais recente via /api/data/<name>."""
     try:
-        with open(FLEET_FILE, 'w') as f:
-            json.dump(data, f)
-        return True, None
+        path = path or os.path.join(os.getcwd(), name)
+        with open(path, 'r', encoding='utf-8') as f:
+            store.kv_set(name, f.read())
     except Exception as e:
-        err_msg = f"Save Error: {str(e)}"
-        sys.stderr.write(err_msg + "\\n")
-        return False, err_msg
+        logger.error(f"Falha ao publicar {name} no banco: {e}")
+
+
+DATA_FILES = {
+    'tides_scraped.csv': ('text/csv', os.path.join(BASE_DIR, 'tides_scraped.csv')),
+    'weather_scraped.csv': ('text/csv', os.path.join(BASE_DIR, 'weather_scraped.csv')),
+    'known_routes.json': ('application/json', os.path.join(BASE_DIR, 'js', 'data', 'known_routes.json')),
+}
+
+
+@app.route('/api/data/<name>', methods=['GET'])
+def get_data_file(name):
+    """v3.6.0 [6]: banco primeiro; se vazio, o arquivo que veio no repositório."""
+    if name not in DATA_FILES:
+        return jsonify({'error': 'Not found'}), 404
+    mime, path = DATA_FILES[name]
+    try:
+        content = store.kv_get(name)
+    except Exception as e:
+        logger.error(f"kv_get {name}: {e}")
+        content = None
+    if content is None:
+        if not os.path.exists(path):
+            return jsonify({'error': 'Not found'}), 404
+        with open(path, 'r', encoding='utf-8') as f:
+            content = f.read()
+    return Response(content, mimetype=mime, headers={'Cache-Control': 'no-store'})
+
+
+@app.route('/api/library/contacts.txt', methods=['GET'])
+@require_invite
+def get_contacts_raw():
+    """v3.6.0: CONTACTS.txt tem telefones/e-mails de pessoas reais - sai da área
+    pública do Netlify e passa a ser entregue só a quem tem convite válido."""
+    path = os.path.join(BASE_DIR, 'library', 'CONTACTS.txt')
+    if not os.path.exists(path):
+        return jsonify({'error': 'Not found'}), 404
+    with open(path, 'r', encoding='utf-8') as f:
+        return Response(f.read(), mimetype='text/plain', headers={'Cache-Control': 'no-store'})
+
+
+@app.route('/api/health', methods=['GET'])
+def health():
+    """v3.6.0 [7]: usado pelo healthcheck do Railway."""
+    return jsonify({'status': 'ok', 'version': '3.6.0-cloud', 'storage': store.backend_name()})
+
 
 @app.route('/api/fleet', methods=['GET'])
+@require_invite  # v3.6.0 [3]
 def get_fleet():
-    fleet_positions = load_fleet_data()
-    
-    # Return list of active vessels (seen in last 24h)
-    now = time.time()
-    active_fleet = []
-    
-    # Clean up stale data while we are at it
-    clean_needed = False
-    
-    for vid, data in list(fleet_positions.items()):
-        timestamp = data.get('timestamp', 0)
-        # Filter active (e.g., seen in last 24h)
-        if now - timestamp < 86400:
-             active_fleet.append({
-                 "id": vid,
-                 "name": data.get('name', vid),
-                 "lat": data.get('lat'),
-                 "lon": data.get('lon'),
-                 "sog": data.get('sog'),
-                 "last_seen": timestamp
-             })
-        else:
-            # Mark for cleanup if very old (> 48h) to keep file small
-            if now - timestamp > 172800: 
-                del fleet_positions[vid]
-                clean_needed = True
-    
-    if clean_needed:
-        save_fleet_data(fleet_positions)
-        
-    return jsonify(active_fleet)
+    try:
+        store.purge_fleet_older_than(FLEET_PURGE_AFTER_S)
+        now = time.time()
+        active_fleet = []
+        for vid, data in store.load_fleet().items():
+            timestamp = data.get('timestamp', 0) or 0
+            if now - timestamp < FLEET_ACTIVE_WINDOW_S:
+                active_fleet.append({
+                    "id": vid,
+                    "name": data.get('name', vid),
+                    "lat": data.get('lat'),
+                    "lon": data.get('lon'),
+                    "sog": data.get('sog'),
+                    "last_seen": timestamp
+                })
+        return jsonify(active_fleet)
+    except Exception as e:
+        logger.error(f"fleet: {e}")
+        return jsonify({'error': 'Falha ao ler a frota'}), 500
+
 
 @app.route('/api/position', methods=['GET', 'POST'])
+@require_invite  # v3.6.0 [3]
 def handle_position():
     if request.method == 'POST':
         try:
-            data = request.json
-            vessel_id = data.get('id') 
-            
+            data = request.get_json(silent=True) or {}
+            vessel_id = str(data.get('id') or '').strip()
             if not vessel_id:
                 return jsonify({"error": "Missing vessel ID"}), 400
-
-            # 1. Load current state
-            fleet = load_fleet_data()
-            
-            # 2. Update vessel
-            fleet[vessel_id] = {
-                "name": data.get('name', vessel_id),
-                "lat": data.get('lat'),
-                "lon": data.get('lon'),
-                "sog": data.get('sog'),
-                "cog": data.get('cog'),
-                "routeId": data.get('routeId'),
-                "destination": data.get('destination'),
-                "timestamp": time.time()
-            }
-            
-            # 3. Save state
-            success, err = save_fleet_data(fleet)
-            
-            if not success:
-                return jsonify({"error": err}), 500
-            
+            store.upsert_position(vessel_id, data)
             return jsonify({"status": "success", "id": vessel_id}), 200
         except Exception as e:
-            return jsonify({"error": str(e)}), 400
+            logger.error(f"position POST: {e}")
+            return jsonify({"error": "Falha ao gravar posição"}), 500
 
-    else: # GET
-        # Get specific vessel
-        vessel_id = request.args.get('id')
-        if vessel_id:
-            fleet = load_fleet_data()
-            data = fleet.get(vessel_id)
-            if data:
-                return jsonify(data)
-            else:
-                return jsonify({"error": "Vessel not found"}), 404
-        else:
-            return jsonify({"error": "Please specify vessel ID"}), 400
+    vessel_id = request.args.get('id')
+    if not vessel_id:
+        return jsonify({"error": "Please specify vessel ID"}), 400
+    data = store.get_position(vessel_id)
+    if data:
+        return jsonify(data)
+    return jsonify({"error": "Vessel not found"}), 404
 
 
 # -------------------------------------------------------------------
-# INVITES SYSTEM (Backend Persistence)
+# INVITES SYSTEM (Backend Persistence) - v3.6.0 via sisnav_store
 # -------------------------------------------------------------------
-
-# CHANGE: Use local 'data' folder
-INVITES_FILE = os.path.join(DATA_DIR, 'sisnav_invites_db.json')
-
 def load_invites():
-    try:
-        if os.path.exists(INVITES_FILE):
-            with open(INVITES_FILE, 'r') as f:
-                return json.load(f)
-    except Exception as e:
-        logger.error(f"Error loading invites: {e}")
-    return []
+    """Compatibilidade com código legado: lista SEM senhas."""
+    return store.list_invites()
 
-def save_invites(data):
-    try:
-        with open(INVITES_FILE, 'w') as f:
-            json.dump(data, f)
-        return True
-    except Exception as e:
-        logger.error(f"Error saving invites: {e}")
-        return False
 
 @app.route('/api/invites/create', methods=['POST'])
 @require_admin
 def create_invite():
     try:
-        data = request.json
+        data = request.get_json(silent=True)
         if not data or 'token' not in data:
             return jsonify({'error': 'Invalid data'}), 400
-            
-        invites = load_invites()
-        
-        # Check duplicate
-        if any(i['token'] == data['token'] for i in invites):
-             return jsonify({'error': 'Token already exists'}), 409
-
-        invites.append(data)
-        
-        if save_invites(invites):
-            return jsonify({'status': 'success'})
-        else:
-            return jsonify({'error': 'Failed to save'}), 500
-            
+        if store.create_invite(data) == 'duplicate':
+            return jsonify({'error': 'Token already exists'}), 409
+        return jsonify({'status': 'success'})
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        logger.error(f"create_invite: {e}")
+        return jsonify({'error': 'Failed to save'}), 500
+
 
 @app.route('/api/invites/list', methods=['GET'])
 @require_admin
 def list_invites():
-    # In production, check for Admin Session here!
-    return jsonify(load_invites())
+    return jsonify(store.list_invites())
+
 
 @app.route('/api/invites/update', methods=['POST'])
 @require_admin
 def update_invite():
     try:
-        data = request.json
+        data = request.get_json(silent=True) or {}
         token = data.get('token')
         updates = data.get('updates')
-        
         if not token or not updates:
             return jsonify({'error': 'Missing params'}), 400
-            
-        invites = load_invites()
-        found = False
-        
-        for i in range(len(invites)):
-            if invites[i]['token'] == token:
-                invites[i].update(updates)
-                found = True
-                break
-        
-        if found:
-            save_invites(invites)
+        if store.update_invite(token, updates):
             return jsonify({'status': 'success'})
-        else:
-            return jsonify({'error': 'Token not found'}), 404
-            
+        return jsonify({'error': 'Token not found'}), 404
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        logger.error(f"update_invite: {e}")
+        return jsonify({'error': 'Failed to update'}), 500
+
 
 @app.route('/api/invites/delete', methods=['POST'])
 @require_admin
 def delete_invite():
     try:
-        data = request.json
+        data = request.get_json(silent=True) or {}
         token = data.get('token')
-        
         if not token:
             return jsonify({'error': 'Missing token'}), 400
-            
-        invites = load_invites()
-        
-        # Filter out the invite with the matching token
-        new_invites = [i for i in invites if i['token'] != token]
-        
-        if len(new_invites) < len(invites):
-            save_invites(new_invites)
+        if store.delete_invite(token):
             return jsonify({'status': 'success'})
-        else:
-            return jsonify({'error': 'Token not found'}), 404
-            
+        return jsonify({'error': 'Token not found'}), 404
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        logger.error(f"delete_invite: {e}")
+        return jsonify({'error': 'Failed to delete'}), 500
+
 
 @app.route('/api/invites/validate', methods=['POST'])
 def validate_invite():
     try:
-        data = request.json
+        data = request.get_json(silent=True) or {}
         token = data.get('token')
         password = data.get('password')
-        
-        # 1. Check Static/Hardcoded first (Fallback/Recovery)
-        # Note: We can implement static check in Python too if we want backend to be single source of truth, 
-        # but for now let's focus on the dynamic DB.
-        
-        # 2. Check Dynamic DB
-        invites = load_invites()
-        invite = next((i for i in invites if i['token'] == token), None)
-        
+
+        invite = store.get_invite(token, include_secret=True)
         if not invite:
+            time.sleep(0.5)  # freio contra varredura de tokens
             return jsonify({'valid': False, 'error': 'Token inválido'}), 404
-            
-        if invite.get('status') != 'active' and invite.get('status') != 'pending':
+
+        if invite.get('status') not in ('active', 'pending'):
             return jsonify({'valid': False, 'error': 'Convite revogado ou inativo'}), 403
-            
-        if invite.get('password') != password:
+
+        stored = invite.get('password')
+        if not store.verify_password(password, stored):
+            time.sleep(0.5)
             return jsonify({'valid': False, 'error': 'Senha incorreta'}), 401
-            
-        # Success
-        # Auto-activate pending
+
+        updates = {}
+        if not store.is_hashed(stored):
+            updates['password'] = password  # migração preguiçosa -> vira hash
         if invite.get('status') == 'pending':
-            invite['status'] = 'active'
-            invite['firstAccess'] = time.time()
-            save_invites(invites)
-            
-        return jsonify({
-            'valid': True, 
-            'type': invite.get('type'), 
-            'email': invite.get('email')
-        })
-        
+            updates['status'] = 'active'
+            updates['firstAccess'] = time.time()
+        if updates:
+            store.update_invite(token, updates)
+
+        return jsonify({'valid': True, 'type': invite.get('type'), 'email': invite.get('email')})
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        logger.error(f"validate_invite: {e}")
+        return jsonify({'error': 'Falha na validação'}), 500
+
 
 
 # --- KRATOS (xAI Grok) — assistente náutico ---------------------------------
@@ -1053,4 +1031,5 @@ if __name__ == '__main__':
     print(f" > Local:   http://localhost:5000")
     print(f" > Rede:    http://{local_ip}:5000 (Acesse por este IP)")
     print(f"---------------------------------------------------")
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    port = int(os.environ.get('PORT', '5000'))  # v3.6.0 [7]
+    app.run(debug=os.environ.get('FLASK_DEBUG') == '1', host='0.0.0.0', port=port)
