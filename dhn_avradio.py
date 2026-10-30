@@ -2,7 +2,7 @@
 # =============================================================================
 # SISNAV COSTEIRO - dhn_avradio.py (Avisos-Rádio Náuticos oficiais da DHN/CHM)
 # Autor: Jossian Brito (Charlie Bravo) | TugLife Systems | Assistido por Claude
-# Data/Hora: 2026-10-30 (UTC-3)   Versão: 3.7.0 (Etapa A)
+# Data/Hora: 2026-10-30 (UTC-3)   Versão: 3.7.1 (Etapa A)
 # -----------------------------------------------------------------------------
 # HISTÓRICO DE MODIFICAÇÕES
 #  v3.7.0 (2026-10-30) - Arquivo NOVO. Substitui a API paga Sealagom pela fonte
@@ -10,6 +10,10 @@
 #   "Avisos-Rádio Náuticos e SAR" do CHM (marinha.mil.br). O nome do arquivo
 #   muda a cada publicação (ex.: .../files/2026-10-[DEV]/avradio_88.json), por
 #   isso o endereço é DESCOBERTO lendo a página a cada consulta (com cache).
+#  v3.7.1 (2026-10-30) - Em produção (Railway) a página respondeu 403 (WAF).
+#   Correções: cabeçalhos idênticos aos da Meteoromarinha (que passa no WAF),
+#   sessão com cabeçalhos fixos, e "plano B" no banco: último endereço do JSON
+#   e última leitura boa ficam em sisnav_kv e são usados se a DHN recusar.
 # -----------------------------------------------------------------------------
 # ESTRUTURA DO JSON (observada em 30/10/2026, 636 avisos):
 #   {"atualizado": "30/10/2026 03:22",
@@ -33,6 +37,7 @@
 #   decimal = graus + minutos / 60 ;  sinal negativo para S e W
 #   ex.: 00-58.18S -> -(0 + 58.18/60) = -0.96967
 # =============================================================================
+import json
 import logging
 import os
 import re
@@ -74,56 +79,99 @@ _cache: Dict[str, Any] = {"t": 0.0, "data": None, "url": None}
 # DOWNLOAD
 # -----------------------------------------------------------------------------
 def _headers(referer: str) -> Dict[str, str]:
+    """v3.7.1: mesmos cabeçalhos de navegador usados na Meteoromarinha (que o WAF
+    da Marinha aceita a partir do Railway). Antes faltavam Upgrade-Insecure-Requests
+    e Cache-Control, e a página de avisos-rádio respondia 403."""
     return {
         "User-Agent": (
             "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
             "(KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36"
         ),
-        "Accept": "text/html,application/json;q=0.9,*/*;q=0.8",
-        "Accept-Language": "pt-BR,pt;q=0.9,en;q=0.7",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "Accept-Language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
         "Referer": referer,
+        "Upgrade-Insecure-Requests": "1",
+        "Cache-Control": "max-age=0",
     }
+
+
+def _kv_get(key: str) -> Optional[str]:
+    try:
+        import sisnav_store
+        return sisnav_store.kv_get(key)
+    except Exception as exc:  # banco fora do ar não pode derrubar a consulta
+        logger.info("kv_get %s: %s", key, exc)
+        return None
+
+
+def _kv_set(key: str, value: str) -> None:
+    try:
+        import sisnav_store
+        sisnav_store.kv_set(key, value)
+    except Exception as exc:
+        logger.info("kv_set %s: %s", key, exc)
 
 
 def discover_json_url(session: requests.Session) -> str:
     """Lê a página de avisos-rádio e devolve o endereço atual do avradio_NN.json.
-    DHN_AVRADIO_URL no ambiente força um endereço fixo (contingência)."""
+    Ordem de tentativa (v3.7.1):
+      1) DHN_AVRADIO_URL no ambiente (contingência manual);
+      2) link encontrado na página do CHM;
+      3) último endereço que funcionou, guardado no banco (sisnav_kv)."""
     forced = (os.environ.get("DHN_AVRADIO_URL") or "").strip()
     if forced:
         return forced
-    r = session.get(AVRADIO_PAGE, timeout=45, headers=_headers(CHM_HOME))
-    r.raise_for_status()
-    found = _RE_JSON_HREF.findall(r.text)
-    if not found:
-        raise RuntimeError("Arquivo avradio_*.json não encontrado na página de Avisos-Rádio do CHM.")
-    # Se houver mais de um, usa o de maior número (o mais recente).
-    def num(u: str) -> int:
-        m = re.search(r"avradio_(\d+)\.json", u)
-        return int(m.group(1)) if m else -1
-    best = max(found, key=num)
-    return urljoin(AVRADIO_PAGE, best)
+    try:
+        r = session.get(AVRADIO_PAGE, timeout=45, headers=_headers(CHM_HOME))
+        r.raise_for_status()
+        found = _RE_JSON_HREF.findall(r.text)
+        if not found:
+            raise RuntimeError("Arquivo avradio_*.json não encontrado na página de Avisos-Rádio do CHM.")
+
+        def num(u: str) -> int:
+            m = re.search(r"avradio_(\d+)\.json", u)
+            return int(m.group(1)) if m else -1
+
+        url = urljoin(AVRADIO_PAGE, max(found, key=num))  # maior número = mais recente
+        _kv_set("dhn_avradio_url", url)
+        return url
+    except Exception as exc:
+        last = _kv_get("dhn_avradio_url")
+        if last:
+            logger.warning("DHN: página indisponível (%s); usando último endereço salvo.", exc)
+            return last
+        raise
 
 
 def fetch_avisos(force: bool = False) -> Dict[str, Any]:
-    """Retorna {"atualizado", "avisos", "url"}; usa cache de CACHE_TTL_S segundos."""
+    """Retorna {"atualizado", "avisos", "url", "origem"}.
+    Cache em memória de CACHE_TTL_S s. Se a DHN falhar, devolve a última leitura
+    boa guardada no banco, marcada com origem='copia' (o texto avisa o usuário)."""
     now = time.time()
     if not force and _cache["data"] and now - _cache["t"] < CACHE_TTL_S:
         return _cache["data"]
-    with requests.Session() as s:
-        try:
-            s.get(CHM_HOME, timeout=20, headers=_headers(CHM_HOME))  # aquece cookies do WAF
-        except requests.RequestException as exc:
-            logger.info("DHN warm-up: %s", exc)
-        url = discover_json_url(s)
-        r = s.get(url, timeout=60, headers=_headers(AVRADIO_PAGE))
-        r.raise_for_status()
-        raw = r.json()
-    data = {
-        "atualizado": raw.get("atualizado") or "",
-        "avisos": raw.get("avisos") or [],
-        "url": url,
-    }
-    _cache.update(t=now, data=data, url=url)
+    try:
+        with requests.Session() as s:
+            s.headers.update(_headers(CHM_HOME))
+            try:
+                s.get(CHM_HOME, timeout=20)  # aquece cookies do WAF
+            except requests.RequestException as exc:
+                logger.info("DHN warm-up: %s", exc)
+            url = discover_json_url(s)
+            r = s.get(url, timeout=60, headers=_headers(AVRADIO_PAGE))
+            r.raise_for_status()
+            raw = r.json()
+        data = {"atualizado": raw.get("atualizado") or "", "avisos": raw.get("avisos") or [],
+                "url": url, "origem": "dhn"}
+        _kv_set("dhn_avradio_last", json.dumps(data, ensure_ascii=False))
+    except Exception as exc:
+        saved = _kv_get("dhn_avradio_last")
+        if not saved:
+            raise
+        logger.warning("DHN indisponível (%s); usando última cópia salva.", exc)
+        data = json.loads(saved)
+        data["origem"] = "copia"
+    _cache.update(t=now, data=data, url=data.get("url"))
     return data
 
 
@@ -186,7 +234,9 @@ def format_blocks(data: Dict[str, Any], bbox: Optional[Dict[str, float]]) -> Dic
     na_rota, sem_pos = select_for_route(data["avisos"], bbox)
     cab = (
         f"Fonte: DHN/CHM — Avisos-Rádio Náuticos e SAR (oficial)\n"
-        f"Atualizado pela DHN em: {data.get('atualizado') or '?'}\n"
+        f"Atualizado pela DHN em: {data.get('atualizado') or '?'}"
+        + (" (CÓPIA SALVA — a DHN não respondeu agora)" if data.get("origem") == "copia" else "")
+        + "\n"
         f"Total publicado: {len(data['avisos'])} avisos | na área da rota: {len(na_rota)}\n"
         + "=" * 60
     )

@@ -1,5 +1,12 @@
 # CHANGELOG — SISNAV Costeiro
 
+## [3.7.1] - 2026-10-30 (UTC-3) - Avisos-rádio DHN: correção do 403 em produção
+Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
+
+### Corrigido
+- No Railway, a página de Avisos-Rádio do CHM respondeu 403 (WAF). `dhn_avradio.py` passa a usar os mesmos cabeçalhos de navegador da Meteoromarinha (que passa no WAF).
+- Plano B no banco (`sisnav_kv`): o último endereço do JSON (`dhn_avradio_url`) e a última leitura boa (`dhn_avradio_last`) são usados quando a DHN recusa; o texto avisa "CÓPIA SALVA".
+
 ## [3.7.0] - 2026-10-30 (UTC-3) - Etapa A: NAVAREA V oficial da DHN
 Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
 
