@@ -1,5 +1,18 @@
 # CHANGELOG — SISNAV Costeiro
 
+## [3.8.2] - 2026-10-30 21:20 (UTC-3) - Proxy pelo Netlify (login em redes que bloqueiam o Railway)
+Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
+
+### Corrigido
+- Login com "Erro de conexão com servidor" em redes que bloqueiam `*.up.railway.app` (Wi-Fi de bordo/empresa, antivírus, extensões), mesmo com o servidor no ar.
+
+### Alterado
+- O Netlify passa a repassar `/api/*` ao Railway (proxy). A regra é gerada em `dist/_redirects` por `scripts/build_netlify.sh` a partir de `SISNAV_API_BASE`.
+- `js/config.js`: no domínio oficial e em `*.netlify.app`, as chamadas à API usam a própria origem; o navegador não fala mais com `railway.app` nem precisa de CORS.
+- Exceções que continuam direto ao Railway (o proxy do Netlify corta respostas acima de ~26 s): KRATOS (`/api/kratos/chat`), "Atualizar Dados" (`/api/update-data`) e o botão CHM (`/api/chm/fetch`).
+- Novo diagnóstico no console: `SISNAV_ROUTE_INFO`.
+- Versão 3.8.2 em `version.py`, `index.html` e `js/App.js`.
+
 ## [3.8.1] - 2026-10-30 17:06 (UTC-3) - Correções pequenas (versão única e documentação)
 Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
 

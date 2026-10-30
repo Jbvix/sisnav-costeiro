@@ -1,7 +1,13 @@
 # =============================================================================
 # SISNAV COSTEIRO - netlify.toml (front-end estático)
 # Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
-# Data/Hora: 2026-10-29 21:30 (UTC-3)   Versão: 1.0 (v3.6.0-cloud)
+# Data/Hora: 2026-10-30 21:20 (UTC-3)   Versão: 1.1 (v3.8.2)
+# -----------------------------------------------------------------------------
+# HISTÓRICO DE MODIFICAÇÕES
+#  1.1 (v3.8.2) - Proxy /api/* -> Railway. A regra NÃO fica aqui: é gerada em
+#                 dist/_redirects por scripts/build_netlify.sh a partir de
+#                 SISNAV_API_BASE (endereço do Railway num só lugar).
+#  1.0 (v3.6.0-cloud) - Versão inicial.
 # -----------------------------------------------------------------------------
 # O Netlify serve só o casco (HTML/JS/CSS). O motor (Flask) roda no Railway.
 # Defina SISNAV_API_BASE no painel do Netlify (Site configuration > Environment

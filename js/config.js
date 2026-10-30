@@ -2,9 +2,22 @@
  * =============================================================================
  * SISNAV COSTEIRO - js/config.js (Roteador de chamadas Front -> API)
  * Autor: Jossian Brito (Charlie Bravo) | TugLife Systems | Assistido por Claude
- * Data/Hora: 2026-10-29 21:30 (UTC-3)   Versão: 3.6.0-cloud
+ * Data/Hora: 2026-10-30 21:20 (UTC-3)   Versão: 3.8.2
  * -----------------------------------------------------------------------------
  * HISTÓRICO DE MODIFICAÇÕES
+ *  v3.8.2 (2026-10-30 21:20) - Proxy pelo Netlify (assistido por Claude):
+ *   [6] PROBLEMA: em algumas redes (Wi-Fi de bordo/empresa, antivírus,
+ *       extensões) o domínio *.up.railway.app é bloqueado e o login dava
+ *       "Erro de conexão com servidor", embora o servidor estivesse no ar.
+ *   [7] SOLUÇÃO: quando a página é servida pelo Netlify (sisnav.tuglife.live
+ *       ou *.netlify.app), as chamadas vão para a MESMA ORIGEM ("/api/...")
+ *       e o Netlify repassa ao Railway (regra [[redirects]] no netlify.toml).
+ *       O navegador nunca fala com railway.app => sem bloqueio e sem CORS.
+ *   [8] EXCEÇÕES (ROTAS_LONGAS): o repasse do Netlify corta respostas com
+ *       mais de ~26 s. KRATOS (até 240 s), "Atualizar Dados" (fluxo SSE
+ *       longo) e o botão CHM (consultas à Marinha de até 60 s) continuam
+ *       indo direto ao Railway.
+ *   [9] Diagnóstico no console: SISNAV_ROUTE_INFO mostra o modo em uso.
  *  v3.6.0-cloud (2026-10-29) - Arquivo NOVO (migração para Netlify + Railway):
  *   [1] SISNAV_API_BASE: endereço do back-end Flask no Railway. Vazio = mesma
  *       origem (modo cPanel ou servidor local "python server.py").
@@ -38,6 +51,31 @@
     API_BASE = API_BASE.replace(/\/+$/, '');
     window.SISNAV_API_BASE = API_BASE;
 
+    // [7] v3.8.2 - Modo proxy: página servida pelo Netlify (domínio oficial ou
+    //     *.netlify.app). Nesse caso a "base" das rotas comuns é a própria
+    //     origem (string vazia => URL relativa "/api/..."). Fora do Netlify
+    //     (cPanel, servidor local) nada muda: PROXY = false.
+    //     Fórmula: PROXY = (API_BASE definido) E (host é Netlify).
+    //       - API_BASE vazio  -> modo mesma origem antigo (cPanel/local).
+    //       - host Netlify    -> rotas comuns via proxy; longas direto.
+    //       - outro host      -> tudo direto no API_BASE (como na v3.6.0).
+    var HOST = (window.location && window.location.hostname) || '';
+    var PROXY = !!API_BASE && (HOST === 'sisnav.tuglife.live' || /\.netlify\.app$/.test(HOST));
+
+    // [8] Rotas que podem passar de ~26 s: nunca pelo proxy do Netlify.
+    //     Analogia: carga de projeto vai direto ao cais do terminal; o resto
+    //     passa pela Praticagem (o Netlify), que retransmite em canal liberado.
+    var ROTAS_LONGAS = ['api/kratos/chat', 'api/update-data', 'api/chm/fetch'];
+
+    /** Base a usar para um caminho "api/...": '' (proxy) ou API_BASE (direto). */
+    function baseFor(path) {
+        if (!PROXY) return API_BASE;
+        return ROTAS_LONGAS.indexOf(path) >= 0 ? API_BASE : '';
+    }
+
+    // [9] Diagnóstico: digite SISNAV_ROUTE_INFO no console (F12).
+    window.SISNAV_ROUTE_INFO = { proxy: PROXY, host: HOST, apiBase: API_BASE, rotasDiretas: ROTAS_LONGAS };
+
     // [4] arquivo estático -> rota da API
     var DATA_FILES = {
         'tides_scraped.csv': 'tides_scraped.csv',
@@ -65,13 +103,13 @@
         var path = clean.split('?')[0];
 
         if (path.indexOf('api/') === 0) {
-            return { url: API_BASE + '/' + clean, api: true };
+            return { url: baseFor(path) + '/' + clean, api: true, direct: !!baseFor(path) };  // v3.8.2 [7][8]
         }
         if (API_BASE && path === 'library/CONTACTS.txt') {
-            return { url: API_BASE + '/api/library/contacts.txt', api: true };
+            return { url: baseFor('api/library/contacts.txt') + '/api/library/contacts.txt', api: true, direct: !PROXY };
         }
         if (API_BASE && DATA_FILES[path]) {
-            return { url: API_BASE + '/api/data/' + DATA_FILES[path], api: true };
+            return { url: baseFor('api/data') + '/api/data/' + DATA_FILES[path], api: true, direct: !PROXY };
         }
         return null;
     }
@@ -89,7 +127,7 @@
             if (!headers.get(k)) headers.set(k, extra[k]);
         });
         init.headers = headers;
-        if (API_BASE) init.mode = 'cors';
+        if (r.direct) init.mode = 'cors';  // v3.8.2: só chamadas diretas ao Railway são cross-origin
         return nativeFetch(r.url, init);
     };
 

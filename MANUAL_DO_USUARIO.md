@@ -1,4 +1,4 @@
-# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.8.1
+# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.8.2
 
 > Atualizado em 2026-10-29 21:30 (UTC-3) — Jossian Brito (Charlie Bravo). Novidades da v3.6.0 no fim do manual.
 
@@ -150,3 +150,9 @@ O site da Marinha só entrega os avisos-rádio a navegadores abertos por pessoas
 1. O número da versão aparece no cabeçalho do app (abaixo de "PLANO DE VIAGEM") e no título da aba.
 2. Para conferir a versão do servidor, abra `https://sisnav-costeiro-production.up.railway.app/api/health`. A resposta mostra `"version"` (ex.: `3.8.1`), `"release"` (data) e `"storage": "supabase"`.
 3. Se a versão do cabeçalho e a do servidor forem diferentes logo após uma atualização, aguarde 2 a 3 minutos (o deploy ainda está em andamento) e recarregue a página com `Ctrl+F5`.
+
+### v3.8.2 (2026-10-30) — Login em qualquer rede
+1. O navegador agora conversa só com `https://sisnav.tuglife.live`; o próprio site repassa os pedidos ao servidor. Redes que bloqueavam o servidor (Wi-Fi de bordo ou da empresa) deixam de causar "Erro de conexão com servidor" no login.
+2. Para conferir a versão em produção, use `https://sisnav.tuglife.live/api/health` (mesma resposta do endereço do Railway).
+3. **Exceções:** o assistente KRATOS, o botão "Atualizar Dados" e o botão CHM continuam falando direto com o servidor (são consultas longas). Se apenas esses três falharem na sua rede, a causa é bloqueio do domínio `railway.app`: teste pelo 4G do celular ou peça liberação de `*.up.railway.app` ao TI.
+4. Diagnóstico (para o suporte): aperte `F12` > aba **Console** > digite `SISNAV_ROUTE_INFO` > `Enter`. Deve aparecer `proxy: true`.

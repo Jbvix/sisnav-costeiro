@@ -1,7 +1,8 @@
-# DEPLOY NA NUVEM — SISNAV COSTEIRO v3.8.1
+# DEPLOY NA NUVEM — SISNAV COSTEIRO v3.8.2
 > Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude | Criado 2026-10-29 21:30 · Atualizado 2026-10-30 17:06 (UTC-3)
 >
 > **Histórico deste guia**
+> - v3.8.2 (2026-10-30): proxy `/api/*` do Netlify para o Railway (`dist/_redirects` gerado no build); `ALLOWED_ORIGINS` passa a valer só para as rotas diretas.
 > - v3.8.1 (2026-10-30): removido `SEALAGOM_API_TOKEN`; Railway configurado pelo painel (o `railway.json` não é lido em serviços novos); `/api/health` mostra a versão; nova seção 4 (favorito "Enviar ao SISNAV").
 > - v3.6.0-cloud (2026-10-29): versão inicial (Netlify + Railway + Supabase).
 
@@ -47,7 +48,8 @@
 ## 3. Netlify (front-end)
 1. app.netlify.com > **Add new project** > **Import from Git** > `Jbvix/sisnav-costeiro` (o `netlify.toml` já define build e publish).
 2. **Environment variables**: `SISNAV_API_BASE = https://<url-do-railway>` (sem barra no fim) → **Trigger deploy**.
-3. Domínio: *Domain management* > `sisnav.tuglife.live` → no DNS do domínio, CNAME `sisnav` → `<site>.netlify.app`.
+3. **Proxy (v3.8.2, automático):** o build grava `dist/_redirects` com `/api/*  <SISNAV_API_BASE>/api/:splat  200!`. O navegador chama `https://sisnav.tuglife.live/api/...` e o Netlify repassa ao Railway. Exceções diretas ao Railway (respostas > ~26 s): `/api/kratos/chat`, `/api/update-data`, `/api/chm/fetch` — por isso `ALLOWED_ORIGINS` continua necessário. Conferência: `https://sisnav.tuglife.live/api/health` deve responder a versão atual.
+4. Domínio: *Domain management* > `sisnav.tuglife.live` → no DNS do domínio, CNAME `sisnav` → `<site>.netlify.app`.
 
 ## 4. Avisos-Rádio DHN — favorito "Enviar ao SISNAV" (v3.8.0)
 
