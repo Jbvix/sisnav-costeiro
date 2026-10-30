@@ -1,5 +1,14 @@
 # CHANGELOG — SISNAV Costeiro
 
+## [3.7.0] - 2026-10-30 (UTC-3) - Etapa A: NAVAREA V oficial da DHN
+Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
+
+### Alterado
+- **NAVAREA V, SAR e avisos-rádio costeiros** passam a vir da fonte oficial e gratuita da DHN/CHM (JSON público da página "Avisos-Rádio Náuticos e SAR"), no lugar da API paga Sealagom. Novo módulo `dhn_avradio.py`.
+- Filtro pela derrota: entra todo aviso com qualquer ponto (marcador, polígono, linha, círculo ou coordenada escrita no texto) dentro da caixa da rota (portos ± 1°). Avisos NAVAREA V/SAR sem posição aparecem em lista separada para avaliação manual.
+- O endereço do JSON é descoberto automaticamente (o nome muda a cada publicação); cache de 30 min (`DHN_AVRADIO_CACHE_S`); contingência: `DHN_AVRADIO_URL`.
+- `SEALAGOM_API_TOKEN` deixa de ser necessário.
+
 ## [3.6.1] - 2026-10-30 (UTC-3) - Link de convite dinâmico
 Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
 

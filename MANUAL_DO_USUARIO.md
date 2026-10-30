@@ -130,3 +130,10 @@ Geração de documentos para arquivo ou inspeção (Port State Control).
 
 ### v3.6.1 (2026-10-30) — Link do convite
 - O link enviado no convite (WhatsApp ou "olho") usa o endereço onde o painel admin está aberto. Depois do corte de DNS, gere convites sempre por `https://sisnav.tuglife.live/admin.html`.
+
+### v3.7.0 (2026-10-30) — NAVAREA V oficial (DHN)
+1. No Appraisal, informe **porto de saída** e **porto de chegada**.
+2. Clique no botão de preenchimento automático **CHM** (ícone de nuvem/onda ao lado dos campos de Meteomarinha).
+3. O sistema preenche: **Meteoromarinha** (CHM), **Avisos de Mau Tempo** (CHM) + **avisos-rádio costeiros** da rota, e **NAVAREA V / SAR** da rota — todos da DHN.
+4. O cabeçalho de cada bloco mostra a hora de atualização da DHN e quantos avisos caem na área da rota. Avisos sem posição ficam numa lista "avaliar manualmente".
+5. Pode ser usado a qualquer momento; o servidor guarda a consulta por até 30 minutos.

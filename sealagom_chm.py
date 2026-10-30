@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 """
+v3.7.0 (2026-10-30 - Jossian Brito / assistido por Claude): NAVAREA V e avisos
+costeiros agora vêm da DHN (dhn_avradio.py); Sealagom desligado. O parâmetro
+token de fetch_all() é mantido só por compatibilidade e não é mais usado.
+
 Agrega dados para Meteomarinha, Avisos de Mau Tempo (CHM oficial, HTML marinha.mil.br)
 e NAVAREA / avisos costeiros (API Sealagom — não inclui texto Meteomarinha CHM).
 O token Sealagom é passado pelo servidor (env: SEALAGOM_API_TOKEN ou sisnav_costeiro no cPanel).
@@ -261,57 +265,21 @@ def fetch_all(dep_port: Optional[str], arr_port: Optional[str], token: str) -> D
     if dep_port and arr_port:
         bbox = route_bbox(dep_port, arr_port)
 
-    # include_all=true: subscrição Full Sealagom (mais dados por mensagem/área)
-    q = (
-        "include_messages=true&include_coordinates=true&include_enhanced_coordinates=true"
-        "&include_keywords=true&include_all=true"
-    )
+    # v3.7.0 (2026-10-30, Etapa A): NAVAREA V e avisos costeiros passam a vir
+    # da fonte OFICIAL da DHN (avisos-rádio náuticos, JSON público do CHM).
+    # A API Sealagom (paga, com token) foi desligada a pedido do Comandante.
     warnings: List[str] = []
-    nav_items: List[Dict[str, Any]] = []
-    coastal_items: List[Dict[str, Any]] = []
-
-    if token:
-        nav_url = f"{SEALAGOM_BASE}/navarea/?{q}"
-        try:
-            nav_items = _fetch_sealagom_paginated(nav_url, token)
-        except requests.HTTPError as e:
-            code = e.response.status_code if e.response is not None else "?"
-            logger.warning("Sealagom NAVAREA HTTP %s", code)
-            warnings.append(
-                f"NAVAREA Sealagom recusada (HTTP {code}). "
-                "Verifique SEALAGOM_API_TOKEN e o plano em https://www.sealagom.com/profile/#api — "
-                "403 costuma indicar token inválido, expirado ou escopo sem NAVAREA."
-            )
-        except Exception as e:
-            logger.exception("Sealagom NAVAREA")
-            warnings.append(f"NAVAREA Sealagom: {e}")
-
-        coastal_urls = [
-            f"{SEALAGOM_BASE}/coastal/?{q}&country=Brazil",
-            f"{SEALAGOM_BASE}/coastal/?{q}",
-        ]
-        coastal_ok = False
-        for coastal_url in coastal_urls:
-            try:
-                coastal_items = _fetch_sealagom_paginated(coastal_url, token)
-                coastal_ok = True
-                break
-            except requests.HTTPError as e:
-                code = e.response.status_code if e.response is not None else "?"
-                logger.info("Sealagom coastal HTTP %s — %s", code, coastal_url)
-        if not coastal_ok:
-            warnings.append(
-                "Avisos costeiros Sealagom indisponíveis (HTTP em todas as tentativas). "
-                "O bloco costeiro abaixo pode estar vazio."
-            )
-    else:
-        warnings.append(
-            "Token Sealagom não definido no servidor (SEALAGOM_API_TOKEN ou sisnav_costeiro). "
-            "NAVAREA e avisos costeiros Sealagom serão omitidos."
-        )
-
-    nav_text = format_navarea_v_block(nav_items, bbox)
-    coastal_text = format_coastal_block(coastal_items, bbox)
+    try:
+        import dhn_avradio
+        dhn = dhn_avradio.fetch_avisos()
+        blocos = dhn_avradio.format_blocks(dhn, bbox)
+        nav_text = blocos["navarea"]
+        coastal_text = blocos["costeiro"]
+    except Exception as e:
+        logger.exception("DHN avisos-radio")
+        warnings.append(f"Avisos-Rádio DHN indisponíveis no momento: {e}")
+        nav_text = "(Avisos-Rádio NAVAREA V da DHN indisponíveis — consulte https://www.marinha.mil.br/chm/dados-do-segnav-aviso-radio-nautico-tela/avisos-radio-nauticos-e-sar)"
+        coastal_text = "(Avisos costeiros da DHN indisponíveis.)"
 
     try:
         meteo = _chm_fetch_first_ok(URLS_CHM_METEO, "Meteomarinha")
@@ -329,12 +297,12 @@ def fetch_all(dep_port: Optional[str], arr_port: Optional[str], token: str) -> D
     mau_combined = (
         "=== AVISOS DE MAU TEMPO (CHM / Marinha) ===\n\n"
         + mau_chm
-        + "\n\n\n=== AVISOS COSTEIROS — Sealagom (Brasil, trecho da rota quando há coordenadas) ===\n\n"
+        + "\n\n\n=== AVISOS-RÁDIO COSTEIROS — DHN (trecho da rota) ===\n\n"
         + coastal_text
     )
 
     if warnings:
-        banner = "=== AVISOS DE INTEGRAÇÃO (Sealagom / servidor) ===\n" + "\n".join(f"- {w}" for w in warnings) + "\n\n"
+        banner = "=== AVISOS DE INTEGRAÇÃO (servidor) ===\n" + "\n".join(f"- {w}" for w in warnings) + "\n\n"
         nav_text = banner + nav_text
         mau_combined = banner + mau_combined
 
