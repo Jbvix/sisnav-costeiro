@@ -3,7 +3,14 @@
  * MÓDULO: Gerenciador de Interface de Usuário (View Controller)
  * AUTOR: Jossian Brito
  * DATA: 2025-12-16
- * VERSÃO: 2.0.0
+ * VERSÃO: 2.1.0 (v3.9.1 - 2026-10-30 23:10 UTC-3)
+ * HISTÓRICO DE MODIFICAÇÕES
+ *  2.1.0 (v3.9.1, 2026-10-30) - Padrão Passadiço, Avaliação (assistido por Claude):
+ *   [1] updateAppraisalStatus(isValid, det): selo "PRONTO · GO" / "PENDENTE · n
+ *       itens" e borda verde/âmbar. 'det' (opcional) diz QUAIS itens faltam.
+ *   [2] renderResumoAvaliacao(): resumo da viagem no topo (navio, rota, ETD/ETA
+ *       no formato brasileiro) + lista de prontidão. Redesenhado também em
+ *       switchTab('view-appraisal').
  * DESCRIÇÃO: 
  * Responsável por toda manipulação direta do DOM (HTML).
  * Recebe dados brutos dos serviços e os formata para exibição humana.
@@ -105,6 +112,10 @@ const UIManager = {
             activeBtn.classList.add('bg-slate-700', 'text-blue-300');
         }
 
+        // v3.9.1: ao abrir a Avaliação, redesenha o resumo (a lista de rebocadores
+        // pode ter carregado depois do primeiro desenho).
+        if (targetViewId === 'view-appraisal') this.renderResumoAvaliacao();
+
         // Trigger Tour Context Check
         if (HelpService && typeof HelpService.checkAndStartTour === 'function') {
             HelpService.checkAndStartTour(targetViewId);
@@ -115,25 +126,93 @@ const UIManager = {
      * Atualiza o visual do Card de Appraisal (Checklist)
      * @param {boolean} isValid - Se o checklist está aprovado
      */
-    updateAppraisalStatus: function (isValid) {
+    updateAppraisalStatus: function (isValid, det) {
         const card = this.elements.appraisalCard;
         const badge = this.elements.appraisalStatus;
+        this._ultimoDet = det || this._ultimoDet || null;   // v3.9.1: guarda para o resumo
+        const faltam = this._contarPendentes(this._ultimoDet);
 
-        if (isValid) {
-            // Estilo APROVADO (Verde)
-            card.classList.remove('border-red-500');
-            card.classList.add('border-green-500');
+        // v3.9.1 [1]: âmbar = pendente (atenção), verde = pronto. Vermelho fica
+        // reservado para NO-GO real (máquinas reprovadas), que é crítico.
+        card.classList.remove('border-red-500', 'border-green-500', 'border-amber-500');
+        card.classList.add(isValid ? 'border-green-500' : 'border-amber-500');
+        badge.className = 'sn-selo ' + (isValid ? 'ok' : 'pend');
+        badge.innerText = isValid ? 'Pronto · GO' : (faltam ? `Pendente · ${faltam} ${faltam === 1 ? 'item' : 'itens'}` : 'Pendente · NO-GO');
 
-            badge.className = "text-xs px-2 py-1 bg-green-100 text-green-800 rounded font-bold uppercase";
-            badge.innerText = "APROVADO / GO";
-        } else {
-            // Estilo PENDENTE (Vermelho)
-            card.classList.remove('border-green-500');
-            card.classList.add('border-red-500');
+        this.renderResumoAvaliacao(isValid);
+    },
 
-            badge.className = "text-xs px-2 py-1 bg-red-100 text-red-800 rounded font-bold uppercase";
-            badge.innerText = "PENDENTE / NO-GO";
-        }
+    /** v3.9.1: quantos dos 4 itens obrigatórios ainda faltam. */
+    _contarPendentes: function (det) {
+        if (!det) return 0;
+        const eng = det.engine === 'ok' || det.engine === 'restricted';
+        return [det.hasCharts, det.hasMeteo, det.hasNavarea, eng].filter(v => !v).length;
+    },
+
+    /**
+     * v3.9.1 [2]: Resumo da viagem no topo da Avaliação.
+     * Lê os campos já existentes (não guarda estado próprio) e o último
+     * resultado da validação. Datas: "2026-11-03T06:00" -> "03/11/2026 06:00".
+     * @param {boolean} [isValid] - resultado da validação (opcional)
+     */
+    renderResumoAvaliacao: function (isValid) {
+        const $ = (id) => document.getElementById(id);
+        if (!$('sn-resumo')) return;
+        if (typeof isValid === 'boolean') this._ultimoValido = isValid;
+
+        const txtOpcao = (sel) => {
+            const el = $(sel);
+            if (!el || !el.value || el.selectedIndex < 0) return '';
+            // "BR_STN: Santana-AP" -> "Santana-AP" (o código interno não interessa ao oficial)
+            return (el.options[el.selectedIndex].text || '').trim().replace(/^[A-Z]{2}_[A-Z0-9]+:\s*/, '');
+        };
+        // "AAAA-MM-DDTHH:MM" -> "DD/MM/AAAA HH:MM" (sem converter fuso: é o que o oficial digitou)
+        const dataBR = (v) => {
+            const m = /^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}):(\d{2}))?/.exec(v || '');
+            return m ? `${m[3]}/${m[2]}/${m[1]}${m[4] ? ' ' + m[4] + ':' + m[5] : ''}` : '';
+        };
+
+        const navio = txtOpcao('select-ship-name');
+        const imo = ($('inp-ship-imo') && $('inp-ship-imo').value) || '';
+        $('sn-res-tag').textContent = imo ? `Rebocador · IMO ${imo}` : 'Rebocador';
+        $('sn-res-navio').textContent = navio && !/carregando|selecione/i.test(navio) ? navio : 'Selecione o rebocador';
+
+        const dep = txtOpcao('select-port-dep'), arr = txtOpcao('select-port-arr');
+        const etd = dataBR($('inp-etd') && $('inp-etd').value), eta = dataBR($('inp-eta') && $('inp-eta').value);
+        const partes = [];
+        if (dep || arr) partes.push(`${dep || '?'} → ${arr || '?'}`);
+        if (etd) partes.push(`saída ${etd}`);
+        if (eta) partes.push(`ETA ${eta}`);
+        $('sn-res-rota').textContent = partes.length ? partes.join(' · ') : 'Informe os portos de partida e chegada.';
+
+        // Prontidão: os mesmos 4 critérios de App.validateAppraisalLogic()
+        const det = this._ultimoDet || {};
+        const motor = det.engine || 'pending';
+        const motorTxt = { ok: 'aprovado', restricted: 'restrito', 'no-go': 'NO-GO', pending: 'pendente' }[motor] || 'pendente';
+        const itens = [
+            ['Cartas e NTM', !!det.hasCharts, det.nCharts ? `${det.nCharts} carta${det.nCharts > 1 ? 's' : ''}` : 'pendente'],
+            ['Meteoromarinha', !!det.hasMeteo, det.hasMeteo ? 'ok' : 'pendente'],
+            ['NAVAREA V', !!det.hasNavarea, det.hasNavarea ? 'ok' : 'pendente'],
+            ['Checklist de máquinas', motor === 'ok' || motor === 'restricted', motorTxt]
+        ];
+        const ul = $('sn-res-pront');
+        ul.innerHTML = '';
+        itens.forEach(([nome, ok, st]) => {
+            const li = document.createElement('li');
+            li.className = ok ? 'ok' : 'pend';
+            li.innerHTML = `<span class="sn-box" aria-hidden="true">${ok ? '<i class="fas fa-check"></i>' : ''}</span>` +
+                `<span></span><span class="sn-st"></span>`;
+            li.children[1].textContent = nome;
+            li.children[2].textContent = st;
+            li.setAttribute('aria-label', `${nome}: ${st}`);
+            ul.appendChild(li);
+        });
+
+        const valido = this._ultimoValido === true;
+        const faltam = this._contarPendentes(this._ultimoDet) || 4;
+        const selo = $('sn-res-selo');
+        selo.className = 'sn-selo ' + (valido ? 'ok' : 'pend');
+        selo.textContent = valido ? 'Pronto · GO' : `Pendente · ${faltam} ${faltam === 1 ? 'item' : 'itens'}`;
     },
 
     /**

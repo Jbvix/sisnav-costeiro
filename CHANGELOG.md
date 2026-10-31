@@ -1,5 +1,20 @@
 # CHANGELOG — SISNAV Costeiro
 
+## [3.9.1] - 2026-10-30 23:10 (UTC-3) - Avaliação no Padrão Passadiço
+Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
+
+### Adicionado
+- **Resumo da viagem** no topo da Avaliação: rebocador e IMO, rota (sem o código interno do porto), saída e ETA no formato brasileiro (dd/mm/aaaa hh:mm) e o selo **PRONTO · GO** / **PENDENTE · n itens**.
+- **Prontidão**: os 4 itens obrigatórios (Cartas e NTM, Meteoromarinha, NAVAREA V, Checklist de máquinas), cada um com estado visível de longe.
+
+### Alterado
+- Selo do checklist e borda do cartão: **âmbar** = pendente, **verde** = pronto (vermelho fica para NO-GO real).
+- Formulário unificado: um estilo de rótulo, caixas de grupo neutras (fim das caixas azul/laranja/verde), números em fonte de instrumento, campos com altura de toque e uma regra só de botões (primário = ação principal; secundário = apoio).
+- `validateAppraisalLogic()` passa ao UIManager quais itens faltam. **Os critérios de liberação não mudaram.**
+
+### Observação
+- Os campos de data (calendário) seguem o idioma do navegador; num Chrome em inglês continuam mm/dd/aaaa. O resumo mostra sempre o formato brasileiro.
+
 ## [3.9.0] - 2026-10-30 22:26 (UTC-3) - Padrão Passadiço (visual e iluminação)
 Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
 

@@ -1,4 +1,4 @@
-# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.9.0
+# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.9.1
 
 > Atualizado em 2026-10-29 21:30 (UTC-3) — Jossian Brito (Charlie Bravo). Novidades da v3.6.0 no fim do manual.
 
@@ -166,3 +166,13 @@ O site da Marinha só entrega os avisos-rádio a navegadores abertos por pessoas
 3. As abas agora se chamam **1 Avaliação**, **2 Planejamento** e **3 Monitoramento** (as fases da IMO A.893). No celular, só a aba aberta mostra o nome.
 4. Login: confira o código do convite mostrado no topo do formulário (ex.: `tl43••••`). Se a senha ou a conexão falharem, a mensagem aparece na própria tela, com a orientação do que fazer.
 5. Recomendação de passadiço: à noite, use **Noite** e baixe também o brilho do tablet. O olho leva de 20 a 30 minutos para se readaptar ao escuro depois de um clarão branco.
+
+### v3.9.1 (2026-10-30) — Avaliação: resumo e prontidão
+1. No topo da aba **1 Avaliação** fica o **resumo da viagem**: rebocador e IMO, rota, saída e ETA (dd/mm/aaaa hh:mm). Ele se atualiza sozinho conforme você preenche o formulário.
+2. O selo à direita mostra **PENDENTE · n itens** (âmbar) até a viagem estar liberada, e **PRONTO · GO** (verde) quando tudo estiver completo.
+3. Logo abaixo, os **4 itens obrigatórios**. Cada um fica marcado em verde quando está pronto:
+   - **Cartas e NTM:** pelo menos uma carta selecionada (mostra quantas).
+   - **Meteoromarinha:** boletim colado ou carregado (botão "Buscar pela rota" ou "Colar").
+   - **NAVAREA V:** avisos colados ou carregados pelo botão de rota.
+   - **Checklist de máquinas:** aprovado ou restrito. NO-GO mantém a viagem pendente.
+4. Os campos de data usam o calendário do navegador. Se o seu Chrome estiver em inglês, eles aparecem como mês/dia/ano; confira a data no resumo, que está sempre no formato brasileiro. Para mudar o calendário: Chrome > ⋮ > Configurações > Idiomas > coloque **Português (Brasil)** no topo e reinicie o navegador.

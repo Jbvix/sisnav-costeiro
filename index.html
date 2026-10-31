@@ -17,7 +17,7 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
     <meta name="description" content="Sistema de Navegação Costeira - IMO A.893(21)">
     <meta name="author" content="Jossian Brito | Charlie Bravo">
     <!-- v3.8.1 (2026-10-30): versão visível atualizada (antes "v3.1 Modular"). v3.9.0 em 2026-10-30. Manter igual a version.py. -->
-    <title>SISNAV Costeiro v3.9.0</title>
+    <title>SISNAV Costeiro v3.9.1</title>
 
     <!-- DEPENDÊNCIAS EXTERNAS (CDNs) -->
     <!-- <script src="js/services/TideCSVService.js"></script> REMOVED: Loaded via Module import in App.js -->
@@ -69,7 +69,7 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
         <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-x-4 gap-y-2">
             <a class="sn-brand" href="#" aria-label="SISNAV Costeiro by TugLife">
                 <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 3 L19 16 L16 29 L13 16 Z" fill="currentColor"/><circle cx="16" cy="16" r="3.2" class="sn-mark-dot"/></svg>
-                <span><b>SISNAV</b><small>COSTEIRO · BY TUGLIFE · v3.9.0</small></span>
+                <span><b>SISNAV</b><small>COSTEIRO · BY TUGLIFE · v3.9.1</small></span>
             </a>
 
             <div class="flex gap-1 text-xs md:text-sm order-3 md:order-none w-full md:w-auto justify-between md:justify-start">
@@ -124,23 +124,35 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                     <button id="btn-start-app" type="button" class="sn-btn-primary px-8 text-base">
                         <span>Iniciar</span><i class="fas fa-arrow-right"></i>
                     </button>
-                    <span class="sn-coord">v3.9.0 · TugLife Systems · Jossian Brito</span>
+                    <span class="sn-coord">v3.9.1 · TugLife Systems · Jossian Brito</span>
                 </div>
             </div>
         </section>
 
         <!-- ABA 1: APPRAISAL -->
         <section id="view-appraisal" class="view-section animate-fade-in block">
+            <!-- v3.9.1 (2026-10-30): RESUMO DA VIAGEM - o que o comandante quer ver primeiro.
+                 Preenchido por UIManager.renderResumoAvaliacao() a partir dos campos abaixo e
+                 do resultado de App.validateAppraisalLogic() (mesmos critérios de antes). -->
+            <section id="sn-resumo" class="sn-resumo mb-4" aria-label="Resumo da viagem">
+                <div class="sn-resumo-topo">
+                    <div class="grid gap-0.5">
+                        <span class="sn-tag" id="sn-res-tag">Rebocador</span>
+                        <h2 id="sn-res-navio">—</h2>
+                    </div>
+                    <div class="sn-rota" id="sn-res-rota">Informe os portos de partida e chegada.</div>
+                    <span class="sn-selo pend" id="sn-res-selo">Pendente</span>
+                </div>
+                <ul class="sn-pront" id="sn-res-pront" aria-label="Itens obrigatórios para liberar a viagem"></ul>
+            </section>
+
             <div id="card-appraisal"
-                class="bg-white p-6 rounded-lg shadow border-l-4 border-red-500 transition-colors duration-300">
+                class="bg-white p-6 rounded-lg shadow border-l-4 border-amber-500 transition-colors duration-300">
                 <header class="flex justify-between items-center mb-6 border-b pb-2">
                     <h2 class="text-lg font-bold flex items-center gap-2">
                         <i class="fas fa-clipboard-check text-slate-600"></i> Checklist Pré-Viagem
                     </h2>
-                    <span id="status-badge-appraisal"
-                        class="text-xs px-2 py-1 bg-red-100 text-red-800 rounded font-bold uppercase">
-                        Pendente
-                    </span>
+                    <span id="status-badge-appraisal" class="sn-selo pend">Pendente</span>
                 </header>
 
                 <!-- DADOS DA EMBARCAÇÃO (STAGE 1) -->
@@ -148,7 +160,7 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                     <!-- LINHA 1: Rebocador, Filial, Data -->
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">Rebocador</label>
+                            <label class="sn-lbl mb-1">Rebocador</label>
                             <div class="flex gap-2">
                                 <select id="select-ship-name"
                                     class="flex-1 p-2 border rounded text-sm bg-gray-50 focus:border-blue-500 uppercase font-bold cursor-pointer">
@@ -160,7 +172,7 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                             </div>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">Filial</label>
+                            <label class="sn-lbl mb-1">Filial</label>
                             <select id="inp-ship-branch"
                                 class="w-full p-2 border rounded text-sm bg-white focus:border-blue-500 uppercase cursor-pointer">
                                 <option value="">Selecione...</option>
@@ -183,30 +195,30 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                             </select>
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">Data Elaboração</label>
+                            <label class="sn-lbl mb-1">Data Elaboração</label>
                             <input type="date" id="inp-plan-date"
                                 class="w-full p-2 border rounded text-sm bg-white focus:border-blue-500">
                         </div>
                     </div>
 
                     <!-- LINHA 1.5: Portos e Datas (ETD/ETA) -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-blue-50 p-2 rounded border border-blue-100">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sn-grupo p-3">
                         <div>
-                            <label class="block text-[10px] font-bold text-blue-800 mb-1">Porto Origem / ETD</label>
+                            <label class="sn-lbl mb-1">Porto Origem / ETD</label>
                             <select id="select-port-dep"
-                                class="w-full p-1 border rounded text-xs mb-1 font-bold text-gray-700">
+                                class="w-full p-2 border rounded text-sm mb-1 font-bold text-gray-700">
                                 <option value="">Selecione...</option>
                             </select>
-                            <input type="datetime-local" id="inp-etd" class="w-full p-1 border rounded text-xs">
+                            <input type="datetime-local" id="inp-etd" class="w-full p-2 border rounded text-sm">
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-blue-800 mb-1">Porto Destino / ETA</label>
+                            <label class="sn-lbl mb-1">Porto Destino / ETA</label>
                             <select id="select-port-arr"
-                                class="w-full p-1 border rounded text-xs mb-1 font-bold text-gray-700">
+                                class="w-full p-2 border rounded text-sm mb-1 font-bold text-gray-700">
                                 <option value="">Selecione...</option>
                             </select>
                             <input type="datetime-local" id="inp-eta"
-                                class="w-full p-1 border rounded text-xs bg-gray-50 focus:outline-none" readonly>
+                                class="w-full p-2 border rounded text-sm bg-gray-50 focus:outline-none" readonly>
                         </div>
                     </div>
 
@@ -217,13 +229,13 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                     <!-- LINHA 2: Comandante e Tripulação -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">Comandante</label>
+                            <label class="sn-lbl mb-1">Comandante</label>
                             <input type="text" id="inp-ship-commander"
                                 class="w-full p-2 border rounded text-sm bg-white focus:border-blue-500 uppercase"
                                 placeholder="NOME DO CMT">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">Tripulação</label>
+                            <label class="sn-lbl mb-1">Tripulação</label>
                             <input type="number" id="inp-ship-crew"
                                 class="w-24 p-2 border rounded text-sm bg-white focus:border-blue-500 text-center"
                                 value="06">
@@ -231,91 +243,91 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                     </div>
 
                     <!-- LINHA 3: Parâmetros Operacionais -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-50 p-3 rounded border">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sn-grupo p-3">
                         <div>
-                            <label class="block text-[10px] font-bold text-gray-400 mb-1">Vel. Cruzeiro (kn)</label>
+                            <label class="sn-lbl mb-1">Vel. Cruzeiro (kn)</label>
                             <input type="text" id="inp-ship-speed"
-                                class="w-full p-1 border rounded text-sm text-center font-bold text-blue-800"
+                                class="w-full p-2 border rounded text-sm text-center font-semibold sn-num"
                                 value="10.0" placeholder="N/A">
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-red-400 mb-1">Vel. Reboque (kn)</label>
+                            <label class="sn-lbl mb-1">Vel. Reboque (kn)</label>
                             <input type="text" id="inp-ship-tow-speed"
-                                class="w-full p-1 border rounded text-sm text-center font-bold text-red-800" value="N/A"
+                                class="w-full p-2 border rounded text-sm text-center font-semibold sn-num" value="N/A"
                                 placeholder="N/A">
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-gray-400 mb-1">Consumo (L/h)</label>
+                            <label class="sn-lbl mb-1">Consumo (L/h)</label>
                             <input type="number" id="inp-ship-consumption"
-                                class="w-full p-1 border rounded text-sm text-center font-bold text-red-800" value="150"
+                                class="w-full p-2 border rounded text-sm text-center font-semibold sn-num" value="150"
                                 step="10">
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-gray-400 mb-1">Estoque (L)</label>
+                            <label class="sn-lbl mb-1">Estoque (L)</label>
                             <input type="number" id="inp-ship-stock"
-                                class="w-full p-1 border rounded text-sm text-center font-bold text-green-800"
+                                class="w-full p-2 border rounded text-sm text-center font-semibold sn-num"
                                 value="33200" step="100">
                         </div>
                     </div>
 
                     <!-- LINHA 4: Calados -->
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-blue-50 p-3 rounded border border-blue-100">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sn-grupo p-3">
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Calado Popa (m)</label>
+                            <label class="sn-lbl mb-1">Calado Popa (m)</label>
                             <input type="number" id="inp-draft-aft"
-                                class="w-full p-1 border rounded text-sm text-center font-bold text-slate-800"
+                                class="w-full p-2 border rounded text-sm text-center font-semibold sn-num"
                                 value="5.40" step="0.01">
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-500 mb-1">Calado Proa (m)</label>
+                            <label class="sn-lbl mb-1">Calado Proa (m)</label>
                             <input type="number" id="inp-draft-fwd"
-                                class="w-full p-1 border rounded text-sm text-center font-bold text-slate-800"
+                                class="w-full p-2 border rounded text-sm text-center font-semibold sn-num"
                                 value="5.50" step="0.01">
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-red-500 mb-1">Rebocado Popa (m)</label>
+                            <label class="sn-lbl mb-1">Rebocado Popa (m)</label>
                             <input type="number" id="inp-draft-tow-aft"
-                                class="w-full p-1 border rounded text-sm text-center font-bold text-red-800"
+                                class="w-full p-2 border rounded text-sm text-center font-semibold sn-num"
                                 placeholder="N/A" step="0.01">
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-red-500 mb-1">Rebocado Proa (m)</label>
+                            <label class="sn-lbl mb-1">Rebocado Proa (m)</label>
                             <input type="number" id="inp-draft-tow-fwd"
-                                class="w-full p-1 border rounded text-sm text-center font-bold text-red-800"
+                                class="w-full p-2 border rounded text-sm text-center font-semibold sn-num"
                                 placeholder="N/A" step="0.01">
                         </div>
                     </div>
 
                     <!-- NOVO: Configuração do Reboque -->
-                    <div class="mt-4 grid grid-cols-2 gap-4 bg-orange-50 p-3 rounded border border-orange-100">
+                    <div class="mt-4 grid grid-cols-2 gap-4 sn-grupo p-3">
                         <div>
-                            <label class="block text-[10px] font-bold text-orange-800 mb-1">Configuração de
+                            <label class="sn-lbl mb-1">Configuração de
                                 Reboque</label>
                             <select id="select-tow-config"
-                                class="w-full p-1 border rounded text-xs mb-1 font-bold text-gray-700">
+                                class="w-full p-2 border rounded text-sm mb-1 font-bold text-gray-700">
                                 <option value="">Selecione...</option>
                                 <option value="LONG_TOW">Reboque Longo</option>
                                 <option value="NO_TOW">Sem Reboque</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-orange-800 mb-1">Comprimento do Cabo
+                            <label class="sn-lbl mb-1">Comprimento do Cabo
                                 (m)</label>
                             <input type="number" id="inp-tow-length"
-                                class="w-full p-1 border rounded text-sm text-center font-bold text-gray-800"
+                                class="w-full p-2 border rounded text-sm text-center font-semibold sn-num"
                                 placeholder="0">
                         </div>
                     </div>
 
                     <!-- NOVO: Comunicações -->
-                    <div class="mt-4 bg-green-50 p-3 rounded border border-green-100">
+                    <div class="mt-4 sn-grupo p-3">
                         <label
-                            class="block text-[10px] font-bold text-green-800 mb-2 uppercase border-b border-green-200 pb-1">Comunicações</label>
+                            class="sn-lbl mb-2 pb-1 border-b border-slate-200">Comunicações</label>
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
-                                <label class="block text-[9px] text-green-700 mb-1">Estação Costeira</label>
+                                <label class="sn-lbl mb-1">Estação Costeira</label>
                                 <select id="select-comm-station"
-                                    class="w-full p-1 border rounded text-xs bg-white text-gray-700">
+                                    class="w-full p-2 border rounded text-sm bg-white text-gray-700">
                                     <option value="">Selecione...</option>
                                     <option value="Rio Rádio (PPR)">Rio Rádio (PPR)</option>
                                     <option value="Santos Rádio (PPS)">Santos Rádio (PPS)</option>
@@ -327,9 +339,9 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                                 </select>
                             </div>
                             <div>
-                                <label class="block text-[9px] text-green-700 mb-1">Canal de Trabalho</label>
+                                <label class="sn-lbl mb-1">Canal de Trabalho</label>
                                 <select id="select-comm-channel"
-                                    class="w-full p-1 border rounded text-xs bg-white text-gray-700">
+                                    class="w-full p-2 border rounded text-sm bg-white text-gray-700">
                                     <option value="">Selecione...</option>
                                     <option value="16">16 (Emergência/Chamada)</option>
                                     <option value="11">11 (VTS)</option>
@@ -351,8 +363,8 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                             </h3>
 
                             <!-- 1. CARTAS & NTM -->
-                            <div class="bg-gray-50 p-3 rounded border border-gray-200">
-                                <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Cartas e NTM
+                            <div class="sn-grupo p-3">
+                                <label class="sn-lbl mb-1">Cartas e NTM
                                     Atualizadas</label>
 
                                 <!-- LISTA PRINCIPAL (Espaço maior para a lista gerada) -->
@@ -369,15 +381,15 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                                         <option value="">+ Adicionar Manualmente...</option>
                                     </select>
                                     <button id="btn-add-chart"
-                                        class="shrink-0 px-2 bg-slate-200 text-slate-600 text-[10px] font-bold rounded hover:bg-slate-300 h-6 w-6 flex items-center justify-center border border-slate-300"><i
+                                        class="sn-btn sn-btn-ico" title="Adicionar"><i
                                             class="fas fa-plus"></i></button>
                                 </div>
                             </div>
 
                             <!-- 1.1 PRINT SCREENS (NOVO) -->
-                            <div class="bg-gray-50 p-3 rounded border border-gray-200">
+                            <div class="sn-grupo p-3">
                                 <div class="flex justify-between items-center mb-1">
-                                    <label class="block text-[10px] font-bold text-gray-400 uppercase">Print Screens da
+                                    <label class="sn-lbl mb-1">Print Screens da
                                         Carta</label>
                                     <span class="text-[9px] text-gray-400 italic">Anexos ao Relatório</span>
                                 </div>
@@ -387,7 +399,7 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                                             placeholder="Título (Ex: Canal de Acesso)"
                                             class="flex-1 p-1 border rounded text-[10px] bg-white">
                                         <button id="btn-add-print"
-                                            class="px-3 bg-blue-600 text-white rounded hover:bg-blue-700 text-[10px] font-bold shadow flex items-center gap-1">
+                                            class="sn-btn-pri sn-btn-ico" title="Adicionar">
                                             <i class="fas fa-plus"></i>
                                         </button>
                                     </div>
@@ -403,19 +415,19 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                             </div>
 
                             <!-- 2. METEO -->
-                            <div class="bg-gray-50 p-3 rounded border border-gray-200">
+                            <div class="sn-grupo p-3">
                                 <div class="flex justify-between items-center mb-1">
                                     <label
-                                        class="block text-[10px] font-bold text-gray-400 uppercase">Meteomarinha</label>
+                                        class="sn-lbl mb-1">Meteomarinha</label>
                                     <div class="flex gap-1 flex-wrap justify-end">
                                         <a href="https://www.marinha.mil.br/chm/dados-do-smm-meteoromarinha/previsao-24-horas"
                                             target="_blank"
-                                            class="px-2 py-0.5 bg-blue-100 text-blue-600 text-[9px] font-bold rounded hover:bg-blue-200 transition-colors flex items-center gap-1">
+                                            class="sn-btn">
                                             <i class="fas fa-external-link-alt"></i> Fonte Oficial
                                         </a>
                                         <button
                                             onclick="navigator.clipboard.readText().then(text => document.getElementById('txt-meteo-content').value = text).catch(err => alert('Permissão de colar negada ou não suportada.'))"
-                                            class="px-2 py-0.5 bg-gray-200 text-gray-600 text-[9px] font-bold rounded hover:bg-gray-300 transition-colors flex items-center gap-1"
+                                            class="sn-btn"
                                             title="Colar da Área de Transferência">
                                             <i class="fas fa-paste"></i> Colar
                                         </button>
@@ -429,19 +441,19 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                             </div>
 
                             <!-- 2.1 AVISOS DE MAU TEMPO (NOVO) -->
-                            <div class="bg-gray-50 p-3 rounded border border-gray-200 mt-2">
+                            <div class="sn-grupo p-3 mt-2">
                                 <div class="flex justify-between items-center mb-1">
-                                    <label class="block text-[10px] font-bold text-gray-400 uppercase">Avisos de Mau
+                                    <label class="sn-lbl mb-1">Avisos de Mau
                                         Tempo</label>
                                     <div class="flex gap-1 flex-wrap justify-end">
                                         <a href="https://www.marinha.mil.br/chm/dados-do-smm-avisos-de-mau-tempo/avisos-de-mau-tempo"
                                             target="_blank"
-                                            class="px-2 py-0.5 bg-blue-100 text-blue-600 text-[9px] font-bold rounded hover:bg-blue-200 transition-colors flex items-center gap-1">
+                                            class="sn-btn">
                                             <i class="fas fa-external-link-alt"></i> Fonte Oficial
                                         </a>
                                         <button
                                             onclick="navigator.clipboard.readText().then(text => document.getElementById('txt-bad-weather-content').value = text).catch(err => alert('Permissão de colar negada ou não suportada.'))"
-                                            class="px-2 py-0.5 bg-gray-200 text-gray-600 text-[9px] font-bold rounded hover:bg-gray-300 transition-colors flex items-center gap-1"
+                                            class="sn-btn"
                                             title="Colar da Área de Transferência">
                                             <i class="fas fa-paste"></i> Colar
                                         </button>
@@ -455,23 +467,23 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                             </div>
 
                             <!-- 3. NAVAREA V -->
-                            <div class="bg-gray-50 p-3 rounded border border-gray-200">
+                            <div class="sn-grupo p-3">
                                 <div class="flex justify-between items-center mb-1">
-                                    <label class="block text-[10px] font-bold text-gray-400 uppercase">Navarea V</label>
+                                    <label class="sn-lbl mb-1">Navarea V</label>
                                     <div class="flex gap-1 flex-wrap justify-end">
                                         <button type="button" id="btn-update-chm"
-                                            class="btn-chm-autofill px-2 py-0.5 bg-emerald-700 text-white text-[9px] font-bold rounded hover:bg-emerald-800 transition-colors flex items-center gap-1"
+                                            class="btn-chm-autofill sn-btn-pri"
                                             title="Preenche NAVAREA V e avisos costeiros (Sealagom). Use portos origem/destino.">
                                             <i class="fas fa-sync-alt"></i> Auto (rota)
                                         </button>
                                         <a href="https://www.marinha.mil.br/chm/dados-do-segnav-aviso-radio-nautico-tela/avisos-radio-nauticos-e-sar"
                                             target="_blank"
-                                            class="px-2 py-0.5 bg-blue-100 text-blue-600 text-[9px] font-bold rounded hover:bg-blue-200 transition-colors flex items-center gap-1">
+                                            class="sn-btn">
                                             <i class="fas fa-external-link-alt"></i> Fonte Oficial
                                         </a>
                                         <button
                                             onclick="navigator.clipboard.readText().then(text => document.getElementById('txt-navarea-content').value = text).catch(err => alert('Permissão de colar negada ou não suportada.'))"
-                                            class="px-2 py-0.5 bg-gray-200 text-gray-600 text-[9px] font-bold rounded hover:bg-gray-300 transition-colors flex items-center gap-1"
+                                            class="sn-btn"
                                             title="Colar da Área de Transferência">
                                             <i class="fas fa-paste"></i> Colar
                                         </button>
@@ -485,12 +497,12 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                             </div>
 
                             <!-- 4. TÁBUA DE MARÉS (UPLOAD) -->
-                            <div class="bg-gray-50 p-3 rounded border border-gray-200">
-                                <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Tábua de Marés
+                            <div class="sn-grupo p-3">
+                                <label class="sn-lbl mb-1">Tábua de Marés
                                     (Opcional)</label>
                                 <div class="grid grid-cols-2 gap-2">
                                     <div>
-                                        <label class="block text-[9px] text-gray-500 mb-1">Partida</label>
+                                        <label class="sn-lbl mb-1">Partida</label>
                                         <select id="select-tide-dep"
                                             class="w-full p-1 border rounded text-[10px] bg-white text-gray-700 mb-1">
                                             <option value="">Carregando...</option>
@@ -499,7 +511,7 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                                             class="w-full text-[10px] text-slate-500 file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                                     </div>
                                     <div>
-                                        <label class="block text-[9px] text-gray-500 mb-1">Chegada</label>
+                                        <label class="sn-lbl mb-1">Chegada</label>
                                         <select id="select-tide-arr"
                                             class="w-full p-1 border rounded text-[10px] bg-white text-gray-700 mb-1">
                                             <option value="">Carregando...</option>
@@ -511,8 +523,8 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                             </div>
 
                             <!-- 6. RISCOS (NOVO) -->
-                            <div class="bg-red-50 p-3 rounded border border-red-100 mt-2">
-                                <label class="block text-[10px] font-bold text-red-400 mb-2 uppercase">Gestão de
+                            <div class="sn-grupo sn-grupo-alerta p-3 mt-2">
+                                <label class="sn-lbl mb-1">Gestão de
                                     Riscos</label>
                                 <div class="grid grid-cols-2 gap-2 text-[10px] text-gray-600">
                                     <label class="flex items-center gap-2 cursor-pointer">
@@ -549,7 +561,7 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                         </h3>
                         <div class="hidden p-4 bg-gray-50 border rounded-md">
                             <div class="flex justify-between items-center mb-3">
-                                <label class="block text-xs font-bold text-gray-600 uppercase">Status
+                                <label class="sn-lbl mb-1">Status
                                     Operacional</label>
                                 <span id="badge-engine-status"
                                     class="hidden text-xs font-bold px-2 py-1 bg-gray-200 text-gray-600 rounded uppercase">PENDENTE</span>
@@ -560,7 +572,7 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                                 <i class="fas fa-clipboard-check"></i> Checklist de Máquinas
                             </button>
 
-                            <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Observações
+                            <label class="sn-lbl mb-1">Observações
                                 Gerais</label>
                             <textarea id="txt-engine-obs" rows="3"
                                 class="w-full p-2 border rounded text-[10px] focus:border-blue-500 font-mono bg-white shadow-inner"
@@ -572,14 +584,14 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                         <div class="space-y-2 mt-6">
                             <h3 class="text-xs font-bold uppercase text-gray-400 tracking-wider">Contatos de Apoio em
                                 Terra</h3>
-                            <div class="bg-gray-50 p-3 rounded border border-gray-200">
+                            <div class="sn-grupo p-3">
                                 <div class="flex gap-2 mb-2">
                                     <select id="select-contact-add"
                                         class="flex-1 min-w-0 p-1.5 border rounded text-xs bg-white text-gray-700">
                                         <option value="">Carregando Contatos...</option>
                                     </select>
                                     <button id="btn-add-contact"
-                                        class="shrink-0 px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded hover:bg-blue-700 w-8 h-8 flex items-center justify-center"><i
+                                        class="sn-btn-pri sn-btn-ico" title="Adicionar"><i
                                             class="fas fa-plus"></i></button>
                                 </div>
                                 <div class="overflow-x-auto">
@@ -611,8 +623,8 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                             </h3>
 
                             <!-- 1. FARÓIS -->
-                            <div class="bg-gray-50 p-3 rounded border border-gray-200">
-                                <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Lista de Faróis
+                            <div class="sn-grupo p-3">
+                                <label class="sn-lbl mb-1">Lista de Faróis
                                     (Rota)</label>
 
                                 <!-- LISTA PRINCIPAL -->
@@ -628,7 +640,7 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                                         <option value="">+ Adicionar Manualmente...</option>
                                     </select>
                                     <button id="btn-add-lighthouse"
-                                        class="shrink-0 px-2 bg-slate-200 text-slate-600 text-[10px] font-bold rounded hover:bg-slate-300 h-6 w-6 flex items-center justify-center border border-slate-300"><i
+                                        class="sn-btn sn-btn-ico" title="Adicionar"><i
                                             class="fas fa-plus"></i></button>
                                 </div>
                             </div>
@@ -639,8 +651,8 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                             <h3 class="text-xs font-bold uppercase text-gray-400 tracking-wider">Áreas de Abrigo</h3>
 
                             <!-- 2. ABRIGOS -->
-                            <div class="bg-gray-50 p-3 rounded border border-gray-200">
-                                <label class="block text-[10px] font-bold text-gray-400 mb-1 uppercase">Áreas de
+                            <div class="sn-grupo p-3">
+                                <label class="sn-lbl mb-1">Áreas de
                                     Abrigo</label>
                                 <div class="flex gap-2 mb-2">
                                     <select id="select-shelter-add"
@@ -648,7 +660,7 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
                                         <option value="">Carregando Abrigos...</option>
                                     </select>
                                     <button id="btn-add-shelter"
-                                        class="shrink-0 px-3 py-1 bg-blue-600 text-white text-xs font-bold rounded hover:bg-blue-700 w-8 h-8 flex items-center justify-center"><i
+                                        class="sn-btn-pri sn-btn-ico" title="Adicionar"><i
                                             class="fas fa-anchor"></i></button>
                                 </div>
                                 <div class="overflow-x-auto max-h-40 overflow-y-auto">
@@ -1137,7 +1149,7 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
 
     <!-- SCRIPT PRINCIPAL (MÓDULO) -->
     <script src="js/passadico_carta.js"></script>
-    <script type="module" src="js/App.js?v=55"></script>
+    <script type="module" src="js/App.js?v=56"></script>
 </body>
 
 </html>

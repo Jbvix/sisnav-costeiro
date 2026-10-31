@@ -1,9 +1,13 @@
 /* =============================================================================
  * SISNAV COSTEIRO - css/passadico.css ("Padrão Passadiço")
  * Autor: Jossian Brito (Charlie Bravo) | TugLife Systems | Assistido por Claude
- * Data/Hora: 2026-10-30 22:26 (UTC-3)   Versão: 1.0 (v3.9.0)
+ * Data/Hora: 2026-10-30 23:10 (UTC-3)   Versão: 1.1 (v3.9.1)
  * -----------------------------------------------------------------------------
  * HISTÓRICO DE MODIFICAÇÕES
+ *  1.1 (v3.9.1, 2026-10-30 23:10) - Avaliação:
+ *   [5] Componentes de formulário: .sn-lbl (rótulo), .sn-grupo (caixa de
+ *       grupo neutra), .sn-btn / .sn-btn-pri (regra única de botões).
+ *   [6] Resumo da viagem (.sn-resumo) e prontidão (.sn-pront) no topo.
  *  1.0 (v3.9.0, 2026-10-30) - Arquivo NOVO:
  *   [1] Tipografia IBM Plex: Sans (texto), Mono (números) e Sans Condensed
  *       (rótulos em MAIÚSCULAS - lembra a gravação de um instrumento).
@@ -154,3 +158,51 @@ html .tour-btn-next { background: rgb(var(--c-sky-500)); color: rgb(var(--t-whit
 }
 :root:not([data-luz="dia"]) .leaflet-control-attribution a { color: rgb(var(--t-blue-600)); }
 :root[data-luz="noite"] .leaflet-control-layers-toggle { filter: sepia(1) saturate(5) hue-rotate(-40deg) brightness(.7); }
+
+/* ---------- [5] Formulário da Avaliação (v3.9.1) ----------
+ * Antes: 6 estilos de rótulo, caixas azul/laranja/verde/vermelha e 4 estilos
+ * de botão. Agora: um rótulo, uma caixa de grupo e duas classes de botão
+ * (primário = ação principal; secundário = apoio). */
+.sn-lbl { display: block; font-family: var(--f-label); font-size: 12px; font-weight: 600; letter-spacing: .06em;
+    text-transform: uppercase; color: rgb(var(--t-slate-500)); }
+.sn-grupo { background: rgb(var(--c-slate-50)); border: 1px solid rgb(var(--b-slate-200)); border-radius: 6px; }
+.sn-grupo-alerta { border-left: 3px solid rgb(var(--b-amber-500)); }
+.sn-btn, .sn-btn-pri { font-family: var(--f-label); font-weight: 600; font-size: 12px; letter-spacing: .06em; text-transform: uppercase;
+    border-radius: 6px; padding: 6px 10px; min-height: 32px; display: inline-flex; align-items: center; justify-content: center;
+    gap: 6px; cursor: pointer; white-space: nowrap; transition: filter .15s, background-color .15s; }
+.sn-btn { background: rgb(var(--c-white)); color: rgb(var(--t-slate-700)); border: 1px solid rgb(var(--b-slate-300)); }
+.sn-btn:hover { background: rgb(var(--c-slate-100)); }
+.sn-btn-pri { background: rgb(var(--sn-accent)); color: rgb(var(--sn-accent-ink)); border: 1px solid rgb(var(--sn-accent)); }
+.sn-btn-pri:hover { filter: brightness(1.1); }
+.sn-btn:disabled, .sn-btn-pri:disabled { opacity: .6; cursor: wait; }
+.sn-btn-ico { width: 36px; height: 36px; min-height: 36px; padding: 0; flex: none; }
+#view-appraisal input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), #view-appraisal select { min-height: 38px; }
+#view-appraisal input[type="number"], #view-appraisal .sn-num { font-family: var(--f-data); font-variant-numeric: tabular-nums; }
+
+/* ---------- [6] Resumo da viagem + prontidão (v3.9.1) ---------- */
+.sn-resumo { background: rgb(var(--c-white)); border: 1px solid rgb(var(--b-slate-200)); border-radius: 8px;
+    padding: 16px 20px; display: grid; gap: 14px; }
+.sn-resumo-topo { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px 20px; align-items: center; }
+.sn-resumo .sn-tag { font-family: var(--f-label); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: rgb(var(--t-slate-500)); }
+.sn-resumo h2 { margin: 0; font-family: var(--f-label); font-size: 24px; font-weight: 700; line-height: 1.15; }
+.sn-resumo .sn-rota { font-family: var(--f-data); font-size: 13px; color: rgb(var(--t-slate-600)); min-width: 0; }
+.sn-selo { font-family: var(--f-label); font-weight: 700; font-size: 13px; letter-spacing: .1em; text-transform: uppercase;
+    padding: 7px 14px; border-radius: 999px; display: inline-flex; gap: 8px; align-items: center; white-space: nowrap; justify-self: end; }
+.sn-selo::before { content: ""; width: 9px; height: 9px; border-radius: 50%; background: currentColor; }
+.sn-selo.ok { color: rgb(var(--t-green-700)); background: rgb(var(--c-green-100)); }
+.sn-selo.pend { color: rgb(var(--t-amber-700)); background: rgb(var(--c-amber-100)); }
+.sn-pront { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.sn-pront li { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 6px; font-size: 13px; line-height: 1.25;
+    background: rgb(var(--c-slate-50)); border: 1px solid rgb(var(--b-slate-200)); min-width: 0; }
+.sn-pront .sn-box { width: 20px; height: 20px; border-radius: 4px; border: 2px solid rgb(var(--b-slate-400)); flex: none;
+    display: grid; place-items: center; font-size: 11px; }
+.sn-pront li.ok .sn-box { background: rgb(var(--c-green-600)); border-color: rgb(var(--b-green-600)); color: rgb(var(--t-white)); }
+.sn-pront li.pend { border-color: rgb(var(--b-amber-300)); }
+.sn-pront li.pend .sn-st { color: rgb(var(--t-amber-700)); }
+.sn-pront .sn-st { margin-left: auto; font-family: var(--f-data); font-size: 11px; color: rgb(var(--t-slate-500)); white-space: nowrap; }
+@media (max-width: 860px) {
+    .sn-resumo-topo { grid-template-columns: minmax(0, 1fr) auto; }
+    .sn-resumo .sn-rota { grid-column: 1 / -1; }
+    .sn-pront { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 420px) { .sn-pront { grid-template-columns: minmax(0, 1fr); } }

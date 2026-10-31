@@ -1,3 +1,6 @@
+/* v3.9.1 | 2026-10-30 23:10 (UTC-3) | Jossian Brito (assistido por Claude)
+ * Modificação: Avaliação - validateAppraisalLogic() envia ao UIManager QUAIS itens
+ * faltam (mesmos critérios); resumo da viagem atualizado a cada campo editado. */
 /* v3.9.0 | 2026-10-30 22:26 (UTC-3) | Jossian Brito (assistido por Claude)
  * Modificação: texto de versão no console -> 3.9.0 (Padrão Passadiço). */
 /* v3.8.2 | 2026-10-30 21:20 (UTC-3) | Jossian Brito (assistido por Claude)
@@ -21,7 +24,7 @@ import NavMath from './core/NavMath.js?v=10';
 import MapService from './services/MapService.js?v=14';
 import WeatherAPI from './services/WeatherAPI.js?v=13';
 import GPXParser from './utils/GPXParser.js?v=9';
-import UIManager from './utils/UIManager.js?v=11';
+import UIManager from './utils/UIManager.js?v=12'; // v3.9.1: resumo da Avaliação
 import PortDatabase from './services/PortDatabase.js?v=7';
 import PersistenceService from './services/PersistenceService.js?v=1';
 import UpdateService from './services/UpdateService.js?v=1';
@@ -43,7 +46,7 @@ import KratosService from './services/KratosService.js?v=9';
 
 const App = {
     init: function () {
-        console.log("App: Inicializando v3.9.0..."); // v3.8.1: manter igual a version.py
+        console.log("App: Inicializando v3.9.1..."); // v3.8.1: manter igual a version.py
 
         // Init Help (Sprint 6)
         HelpService.init();
@@ -697,6 +700,18 @@ const App = {
 
         const appraisalInputs = document.querySelectorAll('#view-appraisal input[type="checkbox"], #view-appraisal select');
         appraisalInputs.forEach(input => input.addEventListener('change', () => this.validateAppraisalLogic()));
+
+        // v3.9.1: resumo da viagem acompanha qualquer campo da Avaliação (navio, portos,
+        // ETD/ETA). 'input' cobre digitação; 'change' cobre selects e datas.
+        // Analogia: é o repetidor da agulha no passadiço - só mostra, não governa.
+        const viewAval = document.getElementById('view-appraisal');
+        if (viewAval) {
+            let timer = null;
+            const atualizar = () => { clearTimeout(timer); timer = setTimeout(() => UIManager.renderResumoAvaliacao(), 120); };
+            viewAval.addEventListener('input', atualizar);
+            viewAval.addEventListener('change', atualizar);
+        }
+        this.validateAppraisalLogic();
 
         // Listeners para os Dropdowns de Porto
         const selDep = document.getElementById('select-dep');
@@ -1997,7 +2012,11 @@ const App = {
         const isAllChecked = hasCharts && hasMeteo && hasNavarea; // removed hasTides
 
         if (State.appraisal) State.appraisal.isValid = (isAllChecked && isEngineValid);
-        UIManager.updateAppraisalStatus(isAllChecked && isEngineValid);
+        // v3.9.1: além do resultado, informa QUAIS itens faltam (resumo e selo da Avaliação).
+        UIManager.updateAppraisalStatus(isAllChecked && isEngineValid, {
+            hasCharts, hasMeteo, hasNavarea, engine: engStatus,
+            nCharts: State.appraisal.selectedCharts ? State.appraisal.selectedCharts.length : 0
+        });
 
         console.log(`App: Validacao - Charts: ${hasCharts}, Meteo: ${hasMeteo}, Navarea: ${hasNavarea}, Eng: ${isEngineValid}`);
     },
