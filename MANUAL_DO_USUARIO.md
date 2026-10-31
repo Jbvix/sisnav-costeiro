@@ -1,4 +1,4 @@
-# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.10.0
+# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.10.1
 
 > Atualizado em 2026-10-29 21:30 (UTC-3) — Jossian Brito (Charlie Bravo). Novidades da v3.6.0 no fim do manual.
 
@@ -206,3 +206,6 @@ O site da Marinha só entrega os avisos-rádio a navegadores abertos por pessoas
 - O horizonte é de **8 dias**: pernas além disso aparecem como "fora do horizonte".
 - O **ETA oficial** do plano não muda; a SOG corrigida pela corrente é informativa.
 - Fonte: Open-Meteo (CC BY 4.0) · Copernicus Marine / MeteoFrance.
+
+### v3.10.1 (2026-10-30) — Favorito "Enviar ao SISNAV" atualizado
+O favorito agora envia pelo endereço oficial `sisnav.tuglife.live`, que funciona em redes que bloqueiam o servidor. **Se você já criou o favorito antes desta versão, troque a URL dele** pela linha que começa com `javascript:` no fim de `tools/favorito_enviar_ao_sisnav.js` (ou pela que o administrador enviar). Passo a passo em `docs/DEPLOY_CLOUD.md`, seção 4.

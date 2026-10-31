@@ -1,3 +1,4 @@
+/* v3.10.1 | 2026-10-30 23:18 (UTC-3) | Jossian Brito - console -> 3.10.1 (favorito pelo domínio oficial). */
 /* v3.10.0 | 2026-10-30 23:05 (UTC-3) | Jossian Brito (assistido por Claude)
  * Modificação: Etapa B - importa e inicia MarineForecastService (previsão do mar por perna). */
 /* v3.9.2 | 2026-10-30 22:40 (UTC-3) | Jossian Brito (assistido por Claude)
@@ -51,7 +52,7 @@ import MarineForecastService from './services/MarineForecastService.js?v=1'; // 
 
 const App = {
     init: function () {
-        console.log("App: Inicializando v3.10.0..."); // v3.8.1: manter igual a version.py
+        console.log("App: Inicializando v3.10.1..."); // v3.8.1: manter igual a version.py
 
         // Init Help (Sprint 6)
         HelpService.init();

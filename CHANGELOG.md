@@ -1,5 +1,12 @@
 # CHANGELOG — SISNAV Costeiro
 
+## [3.10.1] - 2026-10-30 23:18 (UTC-3) - Favorito dos Avisos-Rádio pelo domínio oficial
+Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
+
+### Corrigido
+- `tools/favorito_enviar_ao_sisnav.js`: o envio vai para `https://sisnav.tuglife.live/api/dhn/avradio-upload` (o Netlify repassa ao Railway). Antes ia direto ao `*.up.railway.app`, bloqueado em algumas redes. Testado com um envio de 698 KB pelo repasse.
+- **Ação:** quem já tem o favorito precisa trocar a URL pela linha nova.
+
 ## [3.10.0] - 2026-10-30 23:06 (UTC-3) - Etapa B: previsão do mar por perna (Open-Meteo)
 Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
 

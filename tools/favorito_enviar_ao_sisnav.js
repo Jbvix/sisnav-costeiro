@@ -2,7 +2,13 @@
  * =============================================================================
  * SISNAV COSTEIRO - Favorito "Enviar ao SISNAV" (bookmarklet)
  * Autor: Jossian Brito (Charlie Bravo) | TugLife Systems | Assistido por Claude
- * Data/Hora: 2026-10-30 (UTC-3)   Versão: 1.0 (v3.8.0)
+ * Data/Hora: 2026-10-30 23:18 (UTC-3)   Versão: 1.1 (v3.10.1)
+ * HISTÓRICO DE MODIFICAÇÕES
+ *  1.1 (v3.10.1, 2026-10-30 23:18) - Envio para https://sisnav.tuglife.live (o
+ *      Netlify repassa ao Railway). Antes ia direto a *.up.railway.app, domínio
+ *      bloqueado em algumas redes de bordo/empresa. Testado com 698 KB.
+ *      QUEM JÁ TEM O FAVORITO PRECISA SUBSTITUIR A URL PELA LINHA NOVA.
+ *  1.0 (v3.8.0, 2026-10-30) - Versão inicial.
  * -----------------------------------------------------------------------------
  * USO: abrir https://www.marinha.mil.br/chm/dados-do-segnav-aviso-radio-nautico-tela/avisos-radio-nauticos-e-sar
  *      e clicar no favorito. Na 1ª vez pede o token do convite SISNAV.
@@ -22,7 +28,7 @@
  * =============================================================================
  */
 (async () => {
-  const API = 'https://sisnav-costeiro-production.up.railway.app/api/dhn/avradio-upload';
+  const API = 'https://sisnav.tuglife.live/api/dhn/avradio-upload';
   const K = 'sisnav_invite_token';
   try {
     // 1) acha o link do avradio_NN.json de maior número na página
@@ -61,5 +67,5 @@
 })();
 
 /* ---- VERSÃO EM UMA LINHA (copiar TUDO abaixo para o campo URL do favorito) ----
-javascript:(async()=>{const API='https://sisnav-costeiro-production.up.railway.app/api/dhn/avradio-upload',K='sisnav_invite_token';try{const a=[...document.documentElement.innerHTML.matchAll(/[^"'\s<>]*avradio_(\d+)\.json/g)].sort((x,y)=>Number(y[1])-Number(x[1]));if(!a.length){alert('SISNAV: abra a pagina Avisos-Radio Nauticos e SAR da DHN e clique de novo.');return}const u=new URL(a[0][0],location.href).href;let t=localStorage.getItem(K);if(!t){t=(prompt('SISNAV: cole o TOKEN do seu convite (o codigo depois de token= no link):')||'').trim();if(!t)return;localStorage.setItem(K,t)}const d=await(await fetch(u,{cache:'no-store'})).json();const p=JSON.stringify({atualizado:d.atualizado,avisos:d.avisos,fonte:u});const f=document.createElement('form');f.method='POST';f.action=API;f.target='_blank';for(const[n,v]of[['token',t],['payload',p]]){const x=document.createElement('textarea');x.name=n;x.value=v;f.appendChild(x)}f.style.display='none';document.body.appendChild(f);f.submit();f.remove()}catch(e){alert('SISNAV: erro ao enviar - '+e)}})();
+javascript:(async()=>{const API='https://sisnav.tuglife.live/api/dhn/avradio-upload',K='sisnav_invite_token';try{const a=[...document.documentElement.innerHTML.matchAll(/[^"'\s<>]*avradio_(\d+)\.json/g)].sort((x,y)=>Number(y[1])-Number(x[1]));if(!a.length){alert('SISNAV: abra a pagina Avisos-Radio Nauticos e SAR da DHN e clique de novo.');return}const u=new URL(a[0][0],location.href).href;let t=localStorage.getItem(K);if(!t){t=(prompt('SISNAV: cole o TOKEN do seu convite (o codigo depois de token= no link):')||'').trim();if(!t)return;localStorage.setItem(K,t)}const d=await(await fetch(u,{cache:'no-store'})).json();const p=JSON.stringify({atualizado:d.atualizado,avisos:d.avisos,fonte:u});const f=document.createElement('form');f.method='POST';f.action=API;f.target='_blank';for(const[n,v]of[['token',t],['payload',p]]){const x=document.createElement('textarea');x.name=n;x.value=v;f.appendChild(x)}f.style.display='none';document.body.appendChild(f);f.submit();f.remove()}catch(e){alert('SISNAV: erro ao enviar - '+e)}})();
 ---- FIM ---- */
