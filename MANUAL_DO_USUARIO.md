@@ -1,4 +1,4 @@
-# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.9.2
+# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.10.0
 
 > Atualizado em 2026-10-29 21:30 (UTC-3) — Jossian Brito (Charlie Bravo). Novidades da v3.6.0 no fim do manual.
 
@@ -183,3 +183,26 @@ O site da Marinha só entrega os avisos-rádio a navegadores abertos por pessoas
 3. Os indicadores (distância, tempo de viagem, waypoints, combustível requerido e ROB na chegada) usam números grandes, em fonte de instrumento. A autonomia continua colorida: verde = adequada, âmbar = baixa (<10 %), vermelho = crítica.
 4. **Monitoramento:** SOG e COG maiores no painel "Tempo real". As cores do botão GPS indicam o estado: verde = pronto, laranja = buscando sinal, vermelho = ativo/erro.
 5. **Painel admin:** claro no modo Dia; segue Crepúsculo e Noite como as demais telas.
+
+### v3.10.0 (2026-10-30) — Previsão do mar por perna
+**Como usar**
+1. Na aba **2 Planejamento**, importe a rota (GPX) e confira a **Partida (ETD)**.
+2. Role até o painel **Previsão do mar por perna** e clique em **Prever o mar por perna**.
+3. Em poucos segundos aparecem:
+   - **Resumo:** pior condição da viagem, onda máxima (Hs), vento máximo e quanto a corrente soma ou tira do tempo total.
+   - **Uma linha por perna:** hora prevista de passagem pelo meio da perna e rumo; onda e swell (altura, período, de onde vêm e se chegam de proa, través ou popa); vento (médio, rajada, de onde sopra, componente de proa ou popa); corrente (velocidade, para onde vai, a favor ou contra, abatimento em graus para BE/BB e SOG estimada); selo **Normal / Atenção / Restritivo**.
+4. Se mudar o ETD ou a velocidade, o painel avisa: clique de novo para atualizar.
+5. A seção sai também no **relatório PDF** (item 7.2), se a previsão tiver sido consultada antes de exportar.
+
+**Como ler a corrente** (exemplo): "0,8 kn → SW · contra 0,6 · abat. 3,2° BB · SOG 9,4"
+- a corrente corre para SW a 0,8 kn;
+- 0,6 kn dela vêm contra a proa, então a velocidade no fundo cai de 10,0 para 9,4 kn;
+- a componente lateral empurra o rebocador para **bombordo**: corrija cerca de 3° para **boreste** no rumo para manter a derrota.
+
+**Limites do selo:** Atenção a partir de Hs 2,0 m ou vento médio 20 kn; Restritivo a partir de Hs 3,0 m ou vento 28 kn. O pior dos dois manda.
+
+**Importante**
+- É uma previsão de **modelo global** (corrente com grade de ~8 km, incluindo a maré do modelo). Em barras, estuários e baías, a **tábua de marés da DHN** e a **Meteoromarinha do CHM** prevalecem.
+- O horizonte é de **8 dias**: pernas além disso aparecem como "fora do horizonte".
+- O **ETA oficial** do plano não muda; a SOG corrigida pela corrente é informativa.
+- Fonte: Open-Meteo (CC BY 4.0) · Copernicus Marine / MeteoFrance.

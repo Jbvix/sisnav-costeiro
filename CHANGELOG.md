@@ -1,5 +1,20 @@
 # CHANGELOG — SISNAV Costeiro
 
+## [3.10.0] - 2026-10-30 23:06 (UTC-3) - Etapa B: previsão do mar por perna (Open-Meteo)
+Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
+
+### Adicionado
+- `POST /api/marine/legs` (exige convite) + `marine_openmeteo.py`: onda (Hs, período, direção), swell, vento a 10 m (médio e rajada, em nós) e corrente no **ponto médio de cada perna**, na **hora prevista de passagem**. Todas as pernas numa única chamada à Marine e à Forecast; cache de 1 h; até 60 pernas; horizonte de 8 dias.
+- Corrente decomposta no rumo: componente longitudinal (a favor/contra), transversal, **SOG estimada** e **abatimento** (graus, BE/BB); vento de proa/popa; setor da onda (proa/través/popa).
+- Selo por perna: **normal / atenção** (Hs ≥ 2,0 m ou vento ≥ 20 kn) **/ restritivo** (Hs ≥ 3,0 m ou vento ≥ 28 kn). Limites em `marine_openmeteo.LIMITES`.
+- Planejamento: painel **"Previsão do mar por perna"** com resumo (pior condição, Hs máx., vento máx., efeito da corrente no tempo) e tabela; aviso quando o ETD ou a velocidade mudam.
+- Relatório PDF: seção **7.2 Condições do mar previstas por perna**, impressa quando a previsão foi consultada.
+
+### Fontes e convenções (verificadas na documentação oficial)
+- Onda e vento: direção "de onde vem"; corrente: "para onde vai". Corrente: MeteoFrance SMOC (Copernicus Marine), ~8 km, **inclui maré do modelo**; km/h convertido para nós (÷ 1,852).
+- Licença CC BY 4.0, uso não comercial gratuito (limite: 10.000 chamadas/dia, 600/min). Uso comercial exige plano pago da Open-Meteo.
+- **Complementar às fontes oficiais**: tábuas da DHN e Meteoromarinha do CHM continuam prevalecendo; o ETA oficial do plano não muda.
+
 ## [3.9.2] - 2026-10-30 22:40 (UTC-3) - Planejamento, Monitoramento e painel admin
 Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
 

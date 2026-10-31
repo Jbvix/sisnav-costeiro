@@ -1,3 +1,6 @@
+/* v3.10.0 | 2026-10-30 23:05 (UTC-3) | Jossian Brito (assistido por Claude)
+ * Modificação: nova seção "7.2 CONDIÇÕES DO MAR PREVISTAS POR PERNA (Open-Meteo)",
+ * impressa só quando a previsão foi consultada no Planejamento (State.marineForecast). */
 import NavMath from '../core/NavMath.js?v=10';
 import TideCSVService from './TideCSVService.js';
 import ChartService from './ChartService.js';
@@ -718,6 +721,60 @@ const renderMachineInfo = (doc, y, state) => {
     return doc.lastAutoTable.finalY + 5;
 };
 
+// v3.10.0: previsão do mar por perna (Etapa B). Números já calculados no servidor
+// (marine_openmeteo.py); aqui só formatação. Direções: onda/vento "de onde vem",
+// corrente "para onde vai".
+const renderMarineForecast = (doc, y, state) => {
+    const mf = state.marineForecast;
+    if (!mf || !Array.isArray(mf.pernas) || !mf.pernas.length) return y;
+    if (y > 240) { doc.addPage(); y = 20; }
+    y = addSectionTitle(doc, "7.2 CONDIÇÕES DO MAR PREVISTAS POR PERNA (Open-Meteo)", y);
+
+    const n = (v, d = 1) => (v === null || v === undefined || isNaN(v)) ? '-' : Number(v).toFixed(d).replace('.', ',');
+    const rosa = (v) => (v === null || v === undefined) ? '' : ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'][Math.round(v / 45) % 8];
+    const hora = (ms) => { const d = new Date(ms), p = (x) => String(x).padStart(2, '0'); return `${p(d.getDate())}/${p(d.getMonth() + 1)} ${p(d.getHours())}:${p(d.getMinutes())}`; };
+    const nivelTxt = { normal: 'Normal', atencao: 'ATENÇÃO', restritivo: 'RESTRITIVO' };
+
+    const rs = mf.resumo || {};
+    doc.setFontSize(8);
+    doc.text(`ETD ${hora(mf.etd_ms)} a ${n(mf.vel_kn)} kn | Pior condição: ${nivelTxt[rs.pior] || '-'} | Hs máx. ${n(rs.hs_max_m)} m | Vento máx. ${n(rs.vento_max_kn, 0)} kn | Efeito da corrente no tempo: ${rs.delta_corrente_h > 0 ? '+' : ''}${n(rs.delta_corrente_h)} h`, 14, y);
+    y += 3;
+
+    const body = mf.pernas.map(p => {
+        if (p.status !== 'ok') return [p.n, hora(p.t_ms), { content: 'Fora do horizonte de previsão (8 dias)', colSpan: 5 }];
+        const o = p.onda || {}, s = p.swell || {}, v = p.vento || {}, c = p.corrente || {};
+        const long = c.long_kn === undefined ? '' : (Math.abs(c.long_kn) < 0.05 ? 'longit. ~0' : (c.long_kn > 0 ? `a favor ${n(c.long_kn)}` : `contra ${n(-c.long_kn)}`));
+        return [
+            p.n, `${hora(p.t_ms)}\nrumo ${String(Math.round(p.rumo) % 360).padStart(3, '0')}°`,
+            `${n(o.hs_m)} m / ${n(o.periodo_s, 0)} s\nde ${rosa(o.dir_de)} (${o.setor || ''})`,
+            `${n(s.h_m)} m / ${n(s.periodo_s, 0)} s\nde ${rosa(s.dir_de)}`,
+            `${n(v.kn, 0)} kn (raj. ${n(v.rajada_kn, 0)})\nde ${rosa(v.dir_de)}`,
+            `${n(c.kn)} kn -> ${rosa(c.dir_para)}\n${long}; abat. ${n(Math.abs(c.abatimento_graus || 0))}°; SOG ${n(c.sog_kn)}`,
+            nivelTxt[p.nivel] || '-'
+        ];
+    });
+    doc.autoTable({
+        startY: y,
+        head: [['Perna', 'Passagem', 'Onda (Hs/T)', 'Swell', 'Vento 10 m', 'Corrente', 'Condição']],
+        body,
+        theme: 'grid',
+        headStyles: { fillColor: [41, 128, 185], fontSize: 7 },
+        styles: { fontSize: 7, cellPadding: 1 },
+        columnStyles: { 0: { halign: 'center', cellWidth: 11 }, 6: { halign: 'center', fontStyle: 'bold' } },
+        didParseCell: (d) => {
+            if (d.section === 'body' && d.column.index === 6) {
+                if (d.cell.raw === 'RESTRITIVO') d.cell.styles.textColor = [185, 28, 28];
+                else if (d.cell.raw === 'ATENÇÃO') d.cell.styles.textColor = [180, 83, 9];
+            }
+        }
+    });
+    y = doc.lastAutoTable.finalY + 3;
+    doc.setFontSize(7);
+    const nota = doc.splitTextToSize(`Fonte: ${mf.fonte || 'Open-Meteo'}. Previsão complementar; em barras, estuários e baías prevalecem a tábua de marés da DHN e a Meteoromarinha do CHM. Limites: atenção Hs >= 2,0 m ou vento >= 20 kn; restritivo Hs >= 3,0 m ou vento >= 28 kn.`, 182);
+    doc.text(nota, 14, y);
+    return y + nota.length * 3 + 4;
+};
+
 const renderMachineryChecklist = (doc, y, state) => {
     y = addSectionTitle(doc, "7.1. STATUS OPERACIONAL (MÁQUINAS)", y);
 
@@ -919,6 +976,9 @@ const ReportService = {
 
             // 7. DADOS DE MÁQUINAS
             currentY = renderMachineInfo(doc, currentY, state);
+
+            // 7.2 v3.10.0: CONDIÇÕES DO MAR POR PERNA (só se a previsão foi consultada)
+            currentY = renderMarineForecast(doc, currentY, state);
 
             ProgressOverlay.setProgress(72, 'Relatório PDF', 'Anexos (Meteomarinha, NAVAREA)…');
 

@@ -1,3 +1,5 @@
+/* v3.10.0 | 2026-10-30 23:05 (UTC-3) | Jossian Brito (assistido por Claude)
+ * Modificação: Etapa B - importa e inicia MarineForecastService (previsão do mar por perna). */
 /* v3.9.2 | 2026-10-30 22:40 (UTC-3) | Jossian Brito (assistido por Claude)
  * Modificação: texto de versão no console -> 3.9.2 (Planejamento/Monitoramento/admin). */
 /* v3.9.1 | 2026-10-30 22:36 (UTC-3) | Jossian Brito (assistido por Claude)
@@ -32,7 +34,7 @@ import PersistenceService from './services/PersistenceService.js?v=1';
 import UpdateService from './services/UpdateService.js?v=1';
 import { tideJSONService } from './services/TideJSONService.js'; // NEW
 import TideCSVService from './services/TideCSVService.js?v=12';
-import ReportService from './services/ReportService.js?v=11';
+import ReportService from './services/ReportService.js?v=12'; // v3.10.0: seção do mar
 import TideLocator from './services/TideLocator.js';
 import AuthService from './services/AuthService.js?v=Hotfix4'; // SPRINT 4
 import HelpService from './services/HelpService.js'; // SPRINT 6
@@ -45,13 +47,17 @@ import {
 import CHMService from './services/CHMService.js?v=4';
 import ProgressOverlay from './utils/ProgressOverlay.js?v=1';
 import KratosService from './services/KratosService.js?v=9';
+import MarineForecastService from './services/MarineForecastService.js?v=1'; // v3.10.0: Etapa B
 
 const App = {
     init: function () {
-        console.log("App: Inicializando v3.9.2..."); // v3.8.1: manter igual a version.py
+        console.log("App: Inicializando v3.10.0..."); // v3.8.1: manter igual a version.py
 
         // Init Help (Sprint 6)
         HelpService.init();
+
+        // v3.10.0: previsão do mar por perna (botão no Planejamento)
+        MarineForecastService.init(State);
         CHMService.init();
 
         window.TideCSVService = TideCSVService;

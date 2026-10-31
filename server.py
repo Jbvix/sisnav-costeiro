@@ -1,9 +1,13 @@
 # =============================================================================
 # SISNAV COSTEIRO - server.py (Flask / Passenger)
 # Autor: Jossian Brito (Charlie Bravo) | TugLife Systems
-# Data/Hora: 2026-10-30 17:06 (UTC-3)   Versão: 3.8.1
+# Data/Hora: 2026-10-30 23:05 (UTC-3)   Versão: 3.10.0
 # -----------------------------------------------------------------------------
 # HISTÓRICO DE MODIFICAÇÕES
+#  v3.10.0 (2026-10-30 23:05) - Etapa B (assistido por Claude):
+#   [1] POST /api/marine/legs: previsão do mar por perna (Open-Meteo), com
+#       corrente decomposta no rumo (SOG, abatimento) e selo de alerta.
+#       Lógica em marine_openmeteo.py. Exige convite (como /api/fleet).
 #  v3.8.1 (2026-10-30 17:06) - Assistido por Claude:
 #   [1] /api/health devolvia a versão fixa '3.6.0-cloud'. Agora lê a constante
 #       SISNAV_VERSION de version.py (fonte única) e informa também a data
@@ -362,6 +366,35 @@ def dhn_avradio_upload():
         return page('Envio rejeitado', str(e), False)
     titulo = 'Avisos-Rádio recebidos' if res['status'] == 'ok' else 'Nada a atualizar'
     return page(titulo, res['message'], True)
+
+
+@app.route('/api/marine/legs', methods=['POST'])
+@require_invite
+def marine_legs():
+    """v3.10.0 [1] - Previsão do mar por perna da rota.
+    Corpo JSON: {"pernas": [{lat, lon, t_ms, rumo, dist_nm, vel_kn}, ...]}
+      lat/lon = ponto médio da perna (graus decimais, S e W negativos)
+      t_ms    = instante (UTC, milissegundos) em que o navio passa pelo meio
+    Resposta: ver marine_openmeteo.previsao_pernas()."""
+    import marine_openmeteo
+    body = request.get_json(silent=True) or {}
+    pernas = body.get('pernas')
+    if not isinstance(pernas, list) or not pernas:
+        return jsonify({'status': 'error', 'message': 'Envie a lista "pernas".'}), 400
+    try:
+        limpas = []
+        for p in pernas:
+            lat, lon, t = float(p['lat']), float(p['lon']), float(p['t_ms'])
+            if not (-90 <= lat <= 90 and -180 <= lon <= 180):
+                raise ValueError('coordenada fora do intervalo')
+            limpas.append({'lat': lat, 'lon': lon, 't_ms': t, 'rumo': float(p.get('rumo') or 0),
+                           'dist_nm': float(p.get('dist_nm') or 0), 'vel_kn': float(p.get('vel_kn') or 10)})
+        return jsonify(marine_openmeteo.previsao_pernas(limpas))
+    except (KeyError, TypeError, ValueError) as e:
+        return jsonify({'status': 'error', 'message': f'Perna inválida: {e}'}), 400
+    except requests.RequestException as e:
+        logger.warning(f"marine_legs: Open-Meteo indisponível: {e}")
+        return jsonify({'status': 'error', 'message': 'Serviço de previsão (Open-Meteo) indisponível. Tente em alguns minutos.'}), 502
 
 
 @app.route('/api/health', methods=['GET'])
