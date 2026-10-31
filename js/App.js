@@ -1,3 +1,5 @@
+/* v3.9.0 | 2026-10-30 22:26 (UTC-3) | Jossian Brito (assistido por Claude)
+ * Modificação: texto de versão no console -> 3.9.0 (Padrão Passadiço). */
 /* v3.8.2 | 2026-10-30 21:20 (UTC-3) | Jossian Brito (assistido por Claude)
  * Modificação: texto de versão no console -> 3.8.2 (proxy Netlify, ver js/config.js). */
 /* v3.8.1 | 2026-10-30 17:06 (UTC-3) | Jossian Brito (assistido por Claude)
@@ -41,7 +43,7 @@ import KratosService from './services/KratosService.js?v=9';
 
 const App = {
     init: function () {
-        console.log("App: Inicializando v3.8.2..."); // v3.8.1: manter igual a version.py
+        console.log("App: Inicializando v3.9.0..."); // v3.8.1: manter igual a version.py
 
         // Init Help (Sprint 6)
         HelpService.init();
@@ -473,7 +475,10 @@ const App = {
         // Abas
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const targetId = e.target.getAttribute('data-target');
+                // v3.9.0: currentTarget = o próprio botão da aba. Antes era e.target,
+                // que passou a ser o <span> do número/texto (Padrão Passadiço) e
+                // devolvia null -> nenhuma aba abria.
+                const targetId = e.currentTarget.getAttribute('data-target');
                 UIManager.switchTab(targetId);
                 if (targetId === 'view-monitoring' && MapService) {
                     setTimeout(() => MapService.invalidateSize(), 100);

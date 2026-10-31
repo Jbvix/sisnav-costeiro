@@ -1,4 +1,4 @@
-# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.8.2
+# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.9.0
 
 > Atualizado em 2026-10-29 21:30 (UTC-3) — Jossian Brito (Charlie Bravo). Novidades da v3.6.0 no fim do manual.
 
@@ -156,3 +156,13 @@ O site da Marinha só entrega os avisos-rádio a navegadores abertos por pessoas
 2. Para conferir a versão em produção, use `https://sisnav.tuglife.live/api/health` (mesma resposta do endereço do Railway).
 3. **Exceções:** o assistente KRATOS, o botão "Atualizar Dados" e o botão CHM continuam falando direto com o servidor (são consultas longas). Se apenas esses três falharem na sua rede, a causa é bloqueio do domínio `railway.app`: teste pelo 4G do celular ou peça liberação de `*.up.railway.app` ao TI.
 4. Diagnóstico (para o suporte): aperte `F12` > aba **Console** > digite `SISNAV_ROUTE_INFO` > `Enter`. Deve aparecer `proxy: true`.
+
+### v3.9.0 (2026-10-30) — Padrão Passadiço: iluminação Dia, Crepúsculo e Noite
+1. No canto superior direito de qualquer tela (capa, login, app, admin) há três botões: **Dia**, **Crepúsculo** e **Noite**. No celular eles aparecem como ☀, ◐ e ☾.
+   - **Dia:** luz do sol, cores originais.
+   - **Crepúsculo:** cabine com pouca luz; fundo escuro azulado.
+   - **Noite:** quarto noturno; só vermelhos de baixa luz, sem branco nem azul, para não ofuscar a visão noturna. O mapa também fica avermelhado.
+2. A escolha fica salva neste navegador e vale para todas as páginas do SISNAV. Na primeira vez, o SISNAV segue o modo claro/escuro do aparelho.
+3. As abas agora se chamam **1 Avaliação**, **2 Planejamento** e **3 Monitoramento** (as fases da IMO A.893). No celular, só a aba aberta mostra o nome.
+4. Login: confira o código do convite mostrado no topo do formulário (ex.: `tl43••••`). Se a senha ou a conexão falharem, a mensagem aparece na própria tela, com a orientação do que fazer.
+5. Recomendação de passadiço: à noite, use **Noite** e baixe também o brilho do tablet. O olho leva de 20 a 30 minutos para se readaptar ao escuro depois de um clarão branco.

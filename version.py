@@ -1,9 +1,10 @@
 # =============================================================================
 # SISNAV COSTEIRO - version.py
 # Autor: Jossian Brito (Charlie Bravo) | TugLife Systems
-# Data/Hora: 2026-10-30 21:20 (UTC-3)   Versão: 3.8.2
+# Data/Hora: 2026-10-30 22:26 (UTC-3)   Versão: 3.9.0
 # -----------------------------------------------------------------------------
 # HISTÓRICO DE MODIFICAÇÕES
+#  v3.9.0 (2026-10-30 22:26) - Versão 3.9.0 (Padrão Passadiço: visual e iluminação).
 #  v3.8.2 (2026-10-30 21:20) - Versão 3.8.2 (proxy Netlify -> Railway).
 #  v3.8.1 (2026-10-30 17:06) - Arquivo NOVO (assistido por Claude): fonte única
 #                              da versão do sistema. /api/health lê daqui.
@@ -15,5 +16,5 @@
 # uma versão diferente (o health dizia 3.6.0-cloud com o sistema já na 3.8.0).
 # =============================================================================
 
-SISNAV_VERSION = "3.8.2"            # Versionamento semântico: MAIOR.MENOR.CORREÇÃO
+SISNAV_VERSION = "3.9.0"            # Versionamento semântico: MAIOR.MENOR.CORREÇÃO
 SISNAV_RELEASE_DATE = "2026-10-30"  # Data da versão (UTC-3)

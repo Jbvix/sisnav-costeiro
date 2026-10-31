@@ -8,6 +8,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SISNAV Costeiro - Manual do Usuário</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- v3.9.0 Padrão Passadiço: iluminação e paleta (logo após o Tailwind) -->
+    <script src="js/passadico.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;400;700&display=swap" rel="stylesheet">
     <style>
@@ -27,16 +30,17 @@
             }
         }
 
+        /* v3.9.0: fonte e cores do Padrão Passadiço (antes Outfit + hex fixos) */
         body {
-            font-family: 'Outfit', sans-serif;
-            background-color: #f8fafc;
-            color: #1e293b;
+            font-family: var(--f-body);
+            background-color: rgb(var(--c-slate-50));
+            color: rgb(var(--t-slate-800));
         }
 
         h1,
         h2,
         h3 {
-            color: #0f172a;
+            color: rgb(var(--t-slate-900));
             font-weight: bold;
         }
 
@@ -50,6 +54,8 @@
             margin-bottom: 4rem;
         }
     </style>
+    <link rel="stylesheet" href="css/passadico_paleta.css">
+    <link rel="stylesheet" href="css/passadico.css">
 </head>
 
 <body class="max-w-4xl mx-auto p-8 md:p-12 bg-white shadow-xl my-8 print:shadow-none print:my-0">

@@ -1,5 +1,25 @@
 # CHANGELOG — SISNAV Costeiro
 
+## [3.9.0] - 2026-10-30 22:26 (UTC-3) - Padrão Passadiço (visual e iluminação)
+Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
+
+### Adicionado
+- **Iluminação do passadiço** em todas as telas: **Dia**, **Crepúsculo** e **Noite** (IEC 62288). A Noite usa só vermelhos de baixa luz, para preservar a visão noturna. A escolha fica salva no navegador e vale para todas as páginas.
+- `tools/gerar_paleta_passadico.py` → gera `css/passadico_paleta.css` (2.196 variáveis) a partir da paleta oficial do Tailwind v3.4.17 (`tools/tailwind_v3_cores.json`). O Dia mantém as cores originais.
+- `js/passadico.js`: aplica a iluminação antes da página aparecer e faz o Tailwind ler as cores das variáveis (fundo, texto e borda separados).
+- `css/passadico.css`: tipografia IBM Plex (Sans, Mono, Sans Condensed), cabeçalho, seletor de luz, capa, login e admin; mapa escurecido no Crepúsculo e avermelhado à Noite.
+- `js/passadico_carta.js`: fundo de isobatimétricas (capa, login e admin).
+
+### Alterado
+- Marca **SISNAV · Costeiro by TugLife** em todas as telas; logo SAAM retirado da capa (a SAAM segue como frota).
+- Fases em português: **Avaliação**, **Planejamento**, **Monitoramento** (IMO A.893).
+- Login e admin redesenhados; erros aparecem na tela (antes: `alert`). Login mostra o convite mascarado e espera 0,3 s (antes 1,2 s).
+- Painel admin e manual passam a seguir a iluminação.
+
+### Corrigido
+- Abas do app: o clique lia `e.target` (que passou a ser o texto dentro do botão). Agora usa `e.currentTarget`.
+- Campos de formulário sem cor própria ficavam cinza no modo escuro do navegador.
+
 ## [3.8.2] - 2026-10-30 21:20 (UTC-3) - Proxy pelo Netlify (login em redes que bloqueiam o Railway)
 Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
 

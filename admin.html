@@ -1,9 +1,17 @@
-<!-- 
+<!--
 =============================================================================
 SISNAV Costeiro — Sistema de Auxílio à Navegação
 Copyright (c) 2025 Jossian Brito (TugLife). Todos os direitos reservados.
 Autor: Jossian Brito | Contato: jossiancosta@gmail.com
 Este software é proprietário e confidencial. O uso não autorizado é proibido.
+-----------------------------------------------------------------------------
+ admin.html - entrada do administrador
+ Data/Hora: 2026-10-30 22:26 (UTC-3)   Versão: 3.9.0
+ HISTÓRICO DE MODIFICAÇÕES
+  v3.9.0 (2026-10-30) - Padrão Passadiço (assistido por Claude): mesmo
+      visual do login (carta + formulário), textos em português, erro na tela
+      em vez de alert(). ids e AuthService.adminLogin mantidos.
+  v3.5.0-sec (2026-10-13) - login validado no servidor.
 =============================================================================
 -->
 <!DOCTYPE html>
@@ -12,69 +20,92 @@ Este software é proprietário e confidencial. O uso não autorizado é proibido
 <head><meta charset="utf-8">
     <!-- v3.6.0-cloud: roteador Front->API (Railway). Deve vir antes de qualquer módulo. -->
     <script src="js/config.js"></script>
-    
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISNAV Admin Console</title>
-    <!-- Tailwind CSS -->
+    <title>SISNAV Costeiro - Administração</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/passadico.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        body {
-            background-color: #0f172a;
-        }
-    </style>
+    <link rel="stylesheet" href="css/passadico_paleta.css">
+    <link rel="stylesheet" href="css/passadico.css">
 </head>
 
-<body class="flex items-center justify-center h-screen text-slate-200">
-
-    <div class="bg-slate-800 p-8 rounded border border-slate-700 w-full max-w-sm shadow-xl">
-        <h1 class="text-xl font-bold mb-6 text-red-400 border-b border-slate-700 pb-2">
-            <i class="fas fa-user-shield"></i> Admin Console
-        </h1>
-
-        <form id="admin-form">
-            <div class="mb-4">
-                <label class="block text-xs uppercase font-bold text-slate-500 mb-1">Usuário</label>
-                <input type="text" id="admin-user"
-                    class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white focus:border-red-500 outline-none">
+<body class="bg-slate-100">
+    <div class="sn-entry">
+        <section class="sn-art" aria-label="SISNAV Costeiro - Administração">
+            <canvas class="sn-isobatas" aria-hidden="true"></canvas>
+            <div class="flex justify-between items-center gap-3">
+                <span class="sn-brand">
+                    <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="14" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 3 L19 16 L16 29 L13 16 Z" fill="currentColor"/><circle cx="16" cy="16" r="3.2" class="sn-mark-dot"/></svg>
+                    <span><b>SISNAV</b><small>ADMINISTRAÇÃO · BY TUGLIFE</small></span>
+                </span>
+                <div class="sn-luz" role="group" aria-label="Iluminação do passadiço">
+                    <button type="button" data-luz-set="dia" aria-pressed="true" title="Dia"><span class="sn-luz-txt">Dia</span><span class="sn-luz-ico" aria-hidden="true">☀</span></button>
+                    <button type="button" data-luz-set="crepusculo" aria-pressed="false" title="Crepúsculo"><span class="sn-luz-txt">Crepúsculo</span><span class="sn-luz-ico" aria-hidden="true">◐</span></button>
+                    <button type="button" data-luz-set="noite" aria-pressed="false" title="Noite"><span class="sn-luz-txt">Noite</span><span class="sn-luz-ico" aria-hidden="true">☾</span></button>
+                </div>
             </div>
-
-            <div class="mb-6">
-                <label class="block text-xs uppercase font-bold text-slate-500 mb-1">Senha Mestre</label>
-                <input type="password" id="admin-pass"
-                    class="w-full bg-slate-900 border border-slate-700 rounded p-2 text-white focus:border-red-500 outline-none">
+            <div class="grid gap-3">
+                <h2>Convites, frota e acessos.</h2>
+                <p>Área restrita ao administrador do SISNAV. Gere e revogue convites de planejamento e de monitoramento.</p>
             </div>
+        </section>
 
-            <button type="submit"
-                class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded transition-colors">
-                Entrar
-            </button>
-        </form>
+        <section class="sn-form">
+            <div>
+                <form id="admin-form" class="grid gap-4" novalidate>
+                    <h3>Administração</h3>
+                    <p class="sn-sub">Entre com a chave de administrador configurada no servidor.</p>
+                    <div class="sn-field">
+                        <label for="admin-user">Usuário</label>
+                        <input type="text" id="admin-user" autocomplete="username" placeholder="Sua identificação">
+                    </div>
+                    <div class="sn-field">
+                        <label for="admin-pass">Chave de administrador</label>
+                        <input type="password" id="admin-pass" autocomplete="current-password" placeholder="••••••••">
+                    </div>
+                    <div id="admin-msg" class="sn-msg-erro hidden" role="alert"></div>
+                    <button type="submit" id="admin-btn" class="sn-btn-primary w-full">Entrar</button>
+                </form>
+                <p class="sn-foot">SISNAV Costeiro v3.9.0 · TugLife Systems</p>
+            </div>
+        </section>
     </div>
 
+    <script src="js/passadico_carta.js"></script>
     <script type="module">
         import AuthService from './js/services/AuthService.js?v=Sec350';
 
         AuthService.init();
 
-        // Check if already logged as admin
+        // Já logado como admin -> vai direto ao painel.
         if (AuthService.isAdmin()) {
-            // In Sprint 2, this would redirect to dashboard.
-            // For Sprint 1, we just alert or show "Logged in".
-            window.location.href = 'admin_dashboard.html'; // Future file
+            window.location.href = 'admin_dashboard.html';
         }
+
+        const msg = document.getElementById('admin-msg');
+        const btn = document.getElementById('admin-btn');
 
         document.getElementById('admin-form').addEventListener('submit', async (e) => { // v3.5.0-sec: login validado no servidor
             e.preventDefault();
+            msg.classList.add('hidden');
             const user = document.getElementById('admin-user').value;
             const pass = document.getElementById('admin-pass').value;
+            if (!pass) { msg.textContent = 'Digite a chave de administrador.'; msg.classList.remove('hidden'); return; }
 
+            btn.disabled = true;
+            btn.innerHTML = '<span class="sn-spin" aria-hidden="true"></span> Entrando…';
             const res = await AuthService.adminLogin(user, pass);
             if (res.success) {
-                // Redirect to Dashboard (Sprint 2)
                 window.location.href = 'admin_dashboard.html';
             } else {
-                alert("Acesso Negado.");
+                // v3.9.0: erro na tela (antes: alert "Acesso Negado.")
+                btn.disabled = false;
+                btn.textContent = 'Entrar';
+                msg.textContent = 'Chave de administrador incorreta, ou servidor fora do ar. Confira a chave (variável SISNAV_ADMIN_KEY do Railway) e tente de novo.';
+                msg.classList.remove('hidden');
             }
         });
     </script>
