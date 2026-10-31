@@ -2,9 +2,14 @@
 # =============================================================================
 # SISNAV COSTEIRO - dhn_avradio.py (Avisos-Rádio Náuticos oficiais da DHN/CHM)
 # Autor: Jossian Brito (Charlie Bravo) | TugLife Systems | Assistido por Claude
-# Data/Hora: 2026-10-30 (UTC-3)   Versão: 3.7.1 (Etapa A)
+# Data/Hora: 2026-10-30 23:35 (UTC-3)   Versão: 3.10.2
 # -----------------------------------------------------------------------------
 # HISTÓRICO DE MODIFICAÇÕES
+#  v3.10.2 (2026-10-30 23:35) - Gravação CONFIRMADA no envio pelo favorito:
+#   save_upload() grava com sisnav_store.kv_set SEM engolir erro e relê a chave
+#   para conferir. Se falhar -> GravacaoFalhou (a página mostra "Não gravado").
+#   Antes: _kv_set só registrava no log e a página dizia "recebidos" mesmo sem
+#   gravar (risco de o oficial achar que o boletim estava atualizado).
 #  v3.7.0 (2026-10-30) - Arquivo NOVO. Substitui a API paga Sealagom pela fonte
 #   oficial e gratuita da DHN: o arquivo JSON que alimenta o mapa da página
 #   "Avisos-Rádio Náuticos e SAR" do CHM (marinha.mil.br). O nome do arquivo
@@ -181,6 +186,10 @@ def _parse_atualizado(txt: str) -> float:
         return 0.0
 
 
+class GravacaoFalhou(Exception):
+    """v3.10.2: o envio era válido, mas o banco não confirmou a gravação."""
+
+
 def save_upload(payload: Dict[str, Any], quem: str) -> Dict[str, Any]:
     """Valida e grava o JSON enviado pelo botão "Enviar ao SISNAV".
     Regras (evitam dado falso ou velho sobrescrevendo o bom):
@@ -214,11 +223,21 @@ def save_upload(payload: Dict[str, Any], quem: str) -> Dict[str, Any]:
     data = {"atualizado": atual, "avisos": limpos, "url": fonte, "origem": "navegador",
             "enviado_em": time.strftime("%d/%m/%Y %H:%M", time.gmtime(time.time() - 3 * 3600)),
             "enviado_por": quem}
-    _kv_set("dhn_avradio_last", json.dumps(data, ensure_ascii=False))
+    # v3.10.2: grava SEM engolir erro e confere relendo (prova de gravação).
+    texto = json.dumps(data, ensure_ascii=False)
+    try:
+        import sisnav_store
+        sisnav_store.kv_set("dhn_avradio_last", texto)
+        relido = sisnav_store.kv_get("dhn_avradio_last")
+    except Exception as exc:
+        logger.error("save_upload: falha ao gravar no banco: %s", exc)
+        raise GravacaoFalhou(f"O banco de dados recusou a gravação ({type(exc).__name__}). Tente de novo em alguns minutos; se persistir, avise o administrador.")
+    if relido != texto:
+        raise GravacaoFalhou("A gravação não foi confirmada na releitura do banco. Tente de novo; se persistir, avise o administrador.")
     if fonte:
-        _kv_set("dhn_avradio_url", fonte)
+        _kv_set("dhn_avradio_url", fonte)  # auxiliar: falhar aqui não compromete o envio
     _cache.update(t=0.0, data=None)  # força releitura
-    return {"status": "ok", "message": f"{len(limpos)} avisos da DHN (atualizados em {atual}) recebidos."}
+    return {"status": "ok", "message": f"{len(limpos)} avisos da DHN (atualizados em {atual}) gravados e conferidos no banco do SISNAV."}
 
 
 # -----------------------------------------------------------------------------

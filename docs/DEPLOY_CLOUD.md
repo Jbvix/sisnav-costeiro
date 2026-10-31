@@ -91,6 +91,8 @@ Só um navegador de verdade passa. O favorito aproveita isso: o navegador do ofi
 |---|---|---|
 | **Avisos-Rádio recebidos** — "N avisos da DHN … recebidos" | gravado no banco | nada |
 | **Nada a atualizar** — "O SISNAV já tem uma versão mais nova" | a cópia enviada é mais antiga que a salva | nada |
+| **Não gravado** (v3.10.2) | o envio era válido, mas o banco não confirmou a gravação | tentar de novo em alguns minutos; se persistir, verificar o Supabase |
+| (nenhuma aba abre) | bloqueador de pop-ups (favorito antigo) | refazer o favorito com a linha da v3.10.2 e permitir pop-ups para marinha.mil.br |
 | **Convite inválido** | token ausente, revogado ou digitado errado | na página da Marinha, aperte `F12` > aba **Console** > digite `localStorage.removeItem('sisnav_invite_token')` > `Enter`; feche o F12 e clique no favorito de novo com o token correto |
 | **Envio rejeitado** — "não parece ser da DHN" / "fora do formato" | página errada ou o site da Marinha mudou o arquivo | confira se está na página do passo 1; se persistir, avise o administrador |
 | Alerta "abra a página Avisos-Rádio…" | o favorito foi clicado fora da página certa | abrir a página do passo 1 |

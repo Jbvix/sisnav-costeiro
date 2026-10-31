@@ -1,9 +1,11 @@
 # =============================================================================
 # SISNAV COSTEIRO - server.py (Flask / Passenger)
 # Autor: Jossian Brito (Charlie Bravo) | TugLife Systems
-# Data/Hora: 2026-10-30 23:05 (UTC-3)   Versão: 3.10.0
+# Data/Hora: 2026-10-30 23:35 (UTC-3)   Versão: 3.10.2
 # -----------------------------------------------------------------------------
 # HISTÓRICO DE MODIFICAÇÕES
+#  v3.10.2 (2026-10-30 23:35) - /api/dhn/avradio-upload: página "Não gravado"
+#       quando o banco não confirma a gravação (antes dizia "recebidos").
 #  v3.10.0 (2026-10-30 23:05) - Etapa B (assistido por Claude):
 #   [1] POST /api/marine/legs: previsão do mar por perna (Open-Meteo), com
 #       corrente decomposta no rumo (SOG, abatimento) e selo de alerta.
@@ -361,6 +363,9 @@ def dhn_avradio_upload():
         payload = json.loads(raw) if raw else (request.get_json(silent=True) or {})
         inv = store.get_invite(token) or {}
         res = dhn_avradio.save_upload(payload, quem=str(inv.get('type') or 'admin'))
+    except dhn_avradio.GravacaoFalhou as e:  # v3.10.2: válido, mas não gravou
+        logger.error(f"avradio-upload NÃO GRAVADO: {e}")
+        return page('Não gravado', str(e), False)
     except Exception as e:
         logger.warning(f"avradio-upload rejeitado: {e}")
         return page('Envio rejeitado', str(e), False)

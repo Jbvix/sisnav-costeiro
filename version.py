@@ -1,9 +1,10 @@
 # =============================================================================
 # SISNAV COSTEIRO - version.py
 # Autor: Jossian Brito (Charlie Bravo) | TugLife Systems
-# Data/Hora: 2026-10-30 23:18 (UTC-3)   Versão: 3.10.1
+# Data/Hora: 2026-10-30 23:36 (UTC-3)   Versão: 3.10.2
 # -----------------------------------------------------------------------------
 # HISTÓRICO DE MODIFICAÇÕES
+#  v3.10.2 (2026-10-30 23:36) - Favorito abre a aba no clique; gravação dos Avisos-Rádio confirmada.
 #  v3.10.1 (2026-10-30 23:18) - Favorito "Enviar ao SISNAV" pelo domínio oficial (proxy).
 #  v3.10.0 (2026-10-30 23:06) - Versão 3.10.0 (Etapa B: previsão do mar por perna, Open-Meteo).
 #  v3.9.2 (2026-10-30 22:40) - Versão 3.9.2 (Planejamento, Monitoramento e painel admin claro).
@@ -20,5 +21,5 @@
 # uma versão diferente (o health dizia 3.6.0-cloud com o sistema já na 3.8.0).
 # =============================================================================
 
-SISNAV_VERSION = "3.10.1"            # Versionamento semântico: MAIOR.MENOR.CORREÇÃO
+SISNAV_VERSION = "3.10.2"            # Versionamento semântico: MAIOR.MENOR.CORREÇÃO
 SISNAV_RELEASE_DATE = "2026-10-30"  # Data da versão (UTC-3)

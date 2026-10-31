@@ -1,4 +1,4 @@
-# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.10.1
+# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.10.2
 
 > Atualizado em 2026-10-29 21:30 (UTC-3) — Jossian Brito (Charlie Bravo). Novidades da v3.6.0 no fim do manual.
 
@@ -209,3 +209,12 @@ O site da Marinha só entrega os avisos-rádio a navegadores abertos por pessoas
 
 ### v3.10.1 (2026-10-30) — Favorito "Enviar ao SISNAV" atualizado
 O favorito agora envia pelo endereço oficial `sisnav.tuglife.live`, que funciona em redes que bloqueiam o servidor. **Se você já criou o favorito antes desta versão, troque a URL dele** pela linha que começa com `javascript:` no fim de `tools/favorito_enviar_ao_sisnav.js` (ou pela que o administrador enviar). Passo a passo em `docs/DEPLOY_CLOUD.md`, seção 4.
+
+### v3.10.2 (2026-10-30) — Favorito "Enviar ao SISNAV": refaça o favorito
+1. **Refaça o favorito** com a linha nova (no fim de `tools/favorito_enviar_ao_sisnav.js`, ou a que o administrador enviar): botão direito no favorito > **Editar** > cole a nova URL > **Salvar**.
+2. Ao clicar, abre na hora uma aba "SISNAV: enviando os Avisos-Rádio da DHN…", que em seguida mostra o resultado.
+3. Se o navegador não permitir abrir abas, o resultado aparece na própria página; use **Voltar** para retornar à Marinha. Para evitar isso, permita pop-ups para `marinha.mil.br`: ícone à direita da barra de endereço > **Sempre permitir pop-ups**.
+4. Resultados possíveis:
+   - **Avisos-Rádio recebidos:** "N avisos … gravados e conferidos no banco". Está garantido.
+   - **Não gravado:** o envio era válido, mas o banco não confirmou. Tente de novo em alguns minutos.
+   - **Convite inválido** ou **Envio rejeitado:** veja a tabela de mensagens em `docs/DEPLOY_CLOUD.md`, seção 4.

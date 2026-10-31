@@ -1,5 +1,15 @@
 # CHANGELOG — SISNAV Costeiro
 
+## [3.10.2] - 2026-10-30 23:36 (UTC-3) - Envio dos Avisos-Rádio confiável
+Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
+
+### Corrigido
+- **Favorito "Enviar ao SISNAV":** a aba do resultado abria só depois do download do JSON, e o bloqueador de pop-ups a barrava em silêncio ("nenhuma aba abriu"; nada chegava ao servidor). Agora abre no instante do clique; se o pop-up for negado, o envio acontece na própria aba. **É preciso refazer o favorito com a linha nova.**
+- **Gravação confirmada:** `dhn_avradio.save_upload()` deixava de gravar sem avisar (o erro do banco era só registrado no log) e a página dizia "recebidos". Agora grava sem engolir erro, relê para conferir e, se falhar, mostra **"Não gravado"** com a causa. A confirmação informa quantos avisos foram gravados e a data da DHN.
+
+### Diagnóstico (30/10/2026)
+- Logs do Supabase: nenhuma tentativa de gravação em `sisnav_kv` no período do 1º envio. Com o relato "nenhuma aba abriu", a causa é o bloqueador de pop-ups.
+
 ## [3.10.1] - 2026-10-30 23:18 (UTC-3) - Favorito dos Avisos-Rádio pelo domínio oficial
 Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
 
