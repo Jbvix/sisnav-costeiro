@@ -2,10 +2,10 @@
 # =============================================================================
 # SISNAV COSTEIRO - scripts/build_netlify.sh
 # Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
-# Data/Hora: 2026-10-30 21:20 (UTC-3)   Versão: 1.1 (v3.8.2)
+# Data/Hora: 2026-10-30 18:14 (UTC-3)   Versão: 1.1 (v3.8.2)
 # -----------------------------------------------------------------------------
 # HISTÓRICO DE MODIFICAÇÕES
-#  1.1 (v3.8.2, 2026-10-30 21:20) - Gera dist/_redirects: o Netlify repassa
+#  1.1 (v3.8.2, 2026-10-30 18:14) - Gera dist/_redirects: o Netlify repassa
 #      /api/* ao Railway (proxy, status 200). O navegador fala só com o
 #      domínio do site; redes que bloqueiam railway.app deixam de quebrar o
 #      login. Endereço do Railway vem da MESMA variável SISNAV_API_BASE.

@@ -1,4 +1,4 @@
-# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.9.1
+# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.9.2
 
 > Atualizado em 2026-10-29 21:30 (UTC-3) — Jossian Brito (Charlie Bravo). Novidades da v3.6.0 no fim do manual.
 
@@ -176,3 +176,10 @@ O site da Marinha só entrega os avisos-rádio a navegadores abertos por pessoas
    - **NAVAREA V:** avisos colados ou carregados pelo botão de rota.
    - **Checklist de máquinas:** aprovado ou restrito. NO-GO mantém a viagem pendente.
 4. Os campos de data usam o calendário do navegador. Se o seu Chrome estiver em inglês, eles aparecem como mês/dia/ano; confira a data no resumo, que está sempre no formato brasileiro. Para mudar o calendário: Chrome > ⋮ > Configurações > Idiomas > coloque **Português (Brasil)** no topo e reinicie o navegador.
+
+### v3.9.2 (2026-10-30) — Planejamento, Monitoramento e painel admin
+1. **Planejamento:** o botão azul é sempre a ação principal (**Exportar PDF**, **Salvar**); os de contorno são de apoio (**Carregar**).
+2. Para importar a rota, arraste o arquivo **.gpx** para a área tracejada ou clique nela. Marque **Inverter a rota ao importar** antes, se o GPX estiver no sentido contrário.
+3. Os indicadores (distância, tempo de viagem, waypoints, combustível requerido e ROB na chegada) usam números grandes, em fonte de instrumento. A autonomia continua colorida: verde = adequada, âmbar = baixa (<10 %), vermelho = crítica.
+4. **Monitoramento:** SOG e COG maiores no painel "Tempo real". As cores do botão GPS indicam o estado: verde = pronto, laranja = buscando sinal, vermelho = ativo/erro.
+5. **Painel admin:** claro no modo Dia; segue Crepúsculo e Noite como as demais telas.

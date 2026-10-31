@@ -1,10 +1,13 @@
 /* =============================================================================
  * SISNAV COSTEIRO - css/passadico.css ("Padrão Passadiço")
  * Autor: Jossian Brito (Charlie Bravo) | TugLife Systems | Assistido por Claude
- * Data/Hora: 2026-10-30 23:10 (UTC-3)   Versão: 1.1 (v3.9.1)
+ * Data/Hora: 2026-10-30 22:40 (UTC-3)   Versão: 1.2 (v3.9.2)
  * -----------------------------------------------------------------------------
  * HISTÓRICO DE MODIFICAÇÕES
- *  1.1 (v3.9.1, 2026-10-30 23:10) - Avaliação:
+ *  1.2 (v3.9.2, 2026-10-30 22:40) - Planejamento e Monitoramento:
+ *   [7] .sn-drop (importar GPX), .sn-gauge (indicadores), .sn-tabela (pernas),
+ *       SOG/COG maiores no Monitoramento.
+ *  1.1 (v3.9.1, 2026-10-30 22:36) - Avaliação:
  *   [5] Componentes de formulário: .sn-lbl (rótulo), .sn-grupo (caixa de
  *       grupo neutra), .sn-btn / .sn-btn-pri (regra única de botões).
  *   [6] Resumo da viagem (.sn-resumo) e prontidão (.sn-pront) no topo.
@@ -206,3 +209,25 @@ html .tour-btn-next { background: rgb(var(--c-sky-500)); color: rgb(var(--t-whit
     .sn-pront { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 420px) { .sn-pront { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- [7] Planejamento e Monitoramento (v3.9.2) ----------
+ * .sn-drop  = área de importação de GPX (tracejada, neutra).
+ * .sn-gauge = indicador de instrumento: rótulo pequeno + número grande em Mono.
+ * .sn-tabela = tabela de pernas: cabeçalho condensado, linhas zebradas, dígitos
+ *              alinhados (tabular-nums: todo algarismo com a mesma largura,
+ *              como num repetidor de rumo). */
+.sn-drop { background: rgb(var(--c-white)); border: 2px dashed rgb(var(--b-slate-300)); border-radius: 8px; padding: 28px 16px;
+    text-align: center; transition: border-color .15s, background-color .15s; }
+.sn-drop:hover, .sn-drop:focus-within { border-color: rgb(var(--sn-accent)); background: rgb(var(--c-slate-50)); }
+.sn-gauge { background: rgb(var(--c-white)); border: 1px solid rgb(var(--b-slate-200)); border-radius: 8px; padding: 14px 16px;
+    display: grid; gap: 4px; text-align: left; }
+.sn-gauge-v { font-family: var(--f-data); font-variant-numeric: tabular-nums; font-size: 28px; font-weight: 600; line-height: 1.1;
+    color: rgb(var(--t-slate-900)); }
+.sn-gauge-d { font-size: 13px; color: rgb(var(--t-slate-500)); }
+.sn-tabela thead th { font-family: var(--f-label); font-size: 12px; letter-spacing: .06em; font-weight: 600; }
+.sn-tabela tbody td { font-variant-numeric: tabular-nums; }
+.sn-tabela tbody tr:nth-child(even) { background: rgb(var(--c-slate-50)); }
+.sn-tabela tbody tr:hover { background: rgb(var(--c-blue-50)); }
+/* Painel SOG/COG do Monitoramento: números maiores, legíveis a 1-2 m do console */
+#stat-live-sog, #stat-live-cog { font-size: 22px; font-variant-numeric: tabular-nums; }
+@media (max-width: 640px) { .sn-gauge-v { font-size: 24px; } }

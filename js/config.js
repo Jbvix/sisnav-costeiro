@@ -2,10 +2,10 @@
  * =============================================================================
  * SISNAV COSTEIRO - js/config.js (Roteador de chamadas Front -> API)
  * Autor: Jossian Brito (Charlie Bravo) | TugLife Systems | Assistido por Claude
- * Data/Hora: 2026-10-30 21:20 (UTC-3)   Versão: 3.8.2
+ * Data/Hora: 2026-10-30 18:14 (UTC-3)   Versão: 3.8.2
  * -----------------------------------------------------------------------------
  * HISTÓRICO DE MODIFICAÇÕES
- *  v3.8.2 (2026-10-30 21:20) - Proxy pelo Netlify (assistido por Claude):
+ *  v3.8.2 (2026-10-30 18:14) - Proxy pelo Netlify (assistido por Claude):
  *   [6] PROBLEMA: em algumas redes (Wi-Fi de bordo/empresa, antivírus,
  *       extensões) o domínio *.up.railway.app é bloqueado e o login dava
  *       "Erro de conexão com servidor", embora o servidor estivesse no ar.

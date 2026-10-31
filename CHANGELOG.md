@@ -1,6 +1,17 @@
 # CHANGELOG — SISNAV Costeiro
 
-## [3.9.1] - 2026-10-30 23:10 (UTC-3) - Avaliação no Padrão Passadiço
+## [3.9.2] - 2026-10-30 22:40 (UTC-3) - Planejamento, Monitoramento e painel admin
+Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
+
+### Alterado
+- **Planejamento:** botões na regra única (Exportar PDF e Salvar = primários; Carregar = secundário; antes amarelo, vermelho, verde e laranja); área de importação de GPX neutra, com instrução; indicadores (distância, tempo, waypoints, combustível, ROB) no estilo de instrumento; tabela de pernas com cabeçalho condensado, linhas zebradas e dígitos alinhados.
+- **Monitoramento:** SOG e COG maiores. Os botões Simular e GPS Real mantêm as cores, que indicam o estado do GPS (buscando, ativo, erro).
+- **Painel admin:** redesenhado **claro** no Dia; Crepúsculo e Noite escurecem pela paleta, como o resto do sistema.
+
+### Corrigido
+- Horários nos cabeçalhos da v3.8.2 (18:14) e da v3.9.1 (22:36), que estavam diferentes da hora real dos commits.
+
+## [3.9.1] - 2026-10-30 22:36 (UTC-3) - Avaliação no Padrão Passadiço
 Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
 
 ### Adicionado
@@ -35,7 +46,7 @@ Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
 - Abas do app: o clique lia `e.target` (que passou a ser o texto dentro do botão). Agora usa `e.currentTarget`.
 - Campos de formulário sem cor própria ficavam cinza no modo escuro do navegador.
 
-## [3.8.2] - 2026-10-30 21:20 (UTC-3) - Proxy pelo Netlify (login em redes que bloqueiam o Railway)
+## [3.8.2] - 2026-10-30 18:14 (UTC-3) - Proxy pelo Netlify (login em redes que bloqueiam o Railway)
 Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
 
 ### Corrigido

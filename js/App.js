@@ -1,9 +1,11 @@
-/* v3.9.1 | 2026-10-30 23:10 (UTC-3) | Jossian Brito (assistido por Claude)
+/* v3.9.2 | 2026-10-30 22:40 (UTC-3) | Jossian Brito (assistido por Claude)
+ * Modificação: texto de versão no console -> 3.9.2 (Planejamento/Monitoramento/admin). */
+/* v3.9.1 | 2026-10-30 22:36 (UTC-3) | Jossian Brito (assistido por Claude)
  * Modificação: Avaliação - validateAppraisalLogic() envia ao UIManager QUAIS itens
  * faltam (mesmos critérios); resumo da viagem atualizado a cada campo editado. */
 /* v3.9.0 | 2026-10-30 22:26 (UTC-3) | Jossian Brito (assistido por Claude)
  * Modificação: texto de versão no console -> 3.9.0 (Padrão Passadiço). */
-/* v3.8.2 | 2026-10-30 21:20 (UTC-3) | Jossian Brito (assistido por Claude)
+/* v3.8.2 | 2026-10-30 18:14 (UTC-3) | Jossian Brito (assistido por Claude)
  * Modificação: texto de versão no console -> 3.8.2 (proxy Netlify, ver js/config.js). */
 /* v3.8.1 | 2026-10-30 17:06 (UTC-3) | Jossian Brito (assistido por Claude)
  * Modificação: mensagem de inicialização no console mostrava "v3.4.0";
@@ -46,7 +48,7 @@ import KratosService from './services/KratosService.js?v=9';
 
 const App = {
     init: function () {
-        console.log("App: Inicializando v3.9.1..."); // v3.8.1: manter igual a version.py
+        console.log("App: Inicializando v3.9.2..."); // v3.8.1: manter igual a version.py
 
         // Init Help (Sprint 6)
         HelpService.init();

@@ -3,7 +3,7 @@
  * MÓDULO: Gerenciador de Interface de Usuário (View Controller)
  * AUTOR: Jossian Brito
  * DATA: 2025-12-16
- * VERSÃO: 2.1.0 (v3.9.1 - 2026-10-30 23:10 UTC-3)
+ * VERSÃO: 2.1.0 (v3.9.1 - 2026-10-30 22:36 UTC-3)
  * HISTÓRICO DE MODIFICAÇÕES
  *  2.1.0 (v3.9.1, 2026-10-30) - Padrão Passadiço, Avaliação (assistido por Claude):
  *   [1] updateAppraisalStatus(isValid, det): selo "PRONTO · GO" / "PENDENTE · n
