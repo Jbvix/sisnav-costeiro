@@ -3,7 +3,12 @@
  * MÓDULO: Gerenciador de Mapas (Wrapper do Leaflet)
  * AUTOR: Jossian Brito
  * DATA: 2025-12-16
- * VERSÃO: 3.1.0 (Refatorado para Estrutura Hierárquica)
+ * VERSÃO: 3.2.0 (v3.13.0 - 2026-11-01 16:05 UTC-3)
+ * HISTÓRICO DE MODIFICAÇÕES
+ *  3.2.0 (v3.13.0, 2026-11-01) - Guarda o controle de camadas em
+ *      State.layerControl, para outros módulos acrescentarem camadas
+ *      (ex.: "Condições previstas", MapConditionsService.js) e expõe getMapa().
+ *      Assistido por Claude.
  * DESCRIÇÃO:
  * Encapsula toda a lógica de renderização de mapas, camadas, marcadores
  * e ícones. Isola a biblioteca 'Leaflet' do restante do sistema para facilitar manutenção.
@@ -211,7 +216,8 @@ const MapService = {
         };
 
         // Adiciona o controle no canto inferior esquerdo (evita conflito com o cadeado)
-        L.control.layers(baseMaps, overlayMaps, { position: 'bottomleft' }).addTo(map);
+        // v3.13.0: referência guardada para acrescentar camadas depois
+        State.layerControl = L.control.layers(baseMaps, overlayMaps, { position: 'bottomleft' }).addTo(map);
 
         console.log("MapService: ECDIS Inicializado com sucesso.");
     },
@@ -529,6 +535,17 @@ const MapService = {
      * Força o recálculo do tamanho do mapa.
      * Útil quando o mapa sai de um estado 'hidden' (display: none) para visível.
      */
+    /**
+     * v3.13.0: devolve o mapa e o controle de camadas.
+     * ATENÇÃO: este arquivo importa '../core/State.js' SEM "?v=8"; o App importa
+     * 'State.js?v=8'. Para o navegador são DOIS módulos (dois States). Por isso o
+     * mapa não aparece em App.State.mapInstance - outros módulos devem usar esta
+     * função em vez de ler State.mapInstance diretamente.
+     */
+    getMapa: function () {
+        return { map: State.mapInstance || null, control: State.layerControl || null };
+    },
+
     invalidateSize: function () {
         if (State.mapInstance) {
             State.mapInstance.invalidateSize();

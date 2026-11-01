@@ -5,6 +5,7 @@
  * Data/Hora: 2026-10-30 23:05 (UTC-3)   Versão: 1.0 (v3.10.0)
  * -----------------------------------------------------------------------------
  * HISTÓRICO DE MODIFICAÇÕES
+ *  1.1 (v3.13.0, 2026-11-01) - render() dispara o evento 'sisnav-condicoes' (mapa).
  *  1.0 (v3.10.0, 2026-10-30) - Arquivo NOVO (Etapa B):
  *   [1] Monta as pernas da rota carregada (State.routePoints): ponto médio,
  *       rumo, distância e INSTANTE em que o navio passa pelo meio da perna.
@@ -175,6 +176,8 @@ const MarineForecastService = {
         const fonte = document.getElementById('sn-mar-fonte');
         if (fonte) fonte.textContent = j.fonte || '';
         document.getElementById('sn-mar-resultado').classList.remove('hidden');
+        // v3.13.0: avisa o mapa (MapConditionsService) que há dados novos
+        window.dispatchEvent(new CustomEvent('sisnav-condicoes'));
     }
 };
 

@@ -1,4 +1,4 @@
-# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.12.0
+# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.13.0
 
 > Atualizado em 2026-10-29 21:30 (UTC-3) — Jossian Brito (Charlie Bravo). Novidades da v3.6.0 no fim do manual.
 
@@ -245,3 +245,12 @@ Sem mudança de uso. Arrumação interna: arquivos antigos e de depuração fora
 - **Estimativa de modelo: ±20 cm e ±1 h.** Para folga sob a quilha e horários de manobra, **use a tábua da DHN** (botão no cartão) e a informação da **praticagem**.
 - Portos sem estação DHN a menos de 50 km (ex.: Santana-AP, Ilhéus-BA) mostram a maré em relação ao **nível médio** (aviso no cartão).
 - Horizonte: até **8 dias**. Se a Open-Meteo atingir o limite diário, o cartão avisa; tente no dia seguinte.
+
+### v3.13.0 (2026-11-01) — Condições previstas no mapa
+1. Na aba **3 Monitoramento**, clique em **Condições no mapa**. Se a previsão ainda não foi feita no Planejamento, o SISNAV consulta agora (precisa de rota, portos e ETD).
+2. O mapa enquadra a rota e mostra:
+   - **cada perna colorida:** verde = normal; âmbar = atenção (Hs ≥ 2 m ou vento ≥ 20 kn); vermelho = restritivo (Hs ≥ 3 m ou vento ≥ 28 kn); cinza tracejado = sem previsão (além de 8 dias);
+   - **setas no meio da perna:** a escura/clara é o **vento** (aponta para onde ele sopra); a azul é a **corrente** (aponta para onde ela corre). O número é a intensidade em nós;
+   - **círculos nas barras** de saída e chegada, com o selo da barra. Toque para ver maré, corrente, vento e onda.
+3. Passe o mouse (ou toque) numa perna para ver o horário de passagem e os valores.
+4. A camada pode ser ligada e desligada no botão de camadas do mapa: **🌊 Condições previstas**.

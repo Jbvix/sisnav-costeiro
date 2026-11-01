@@ -4,6 +4,7 @@
  * Data/Hora: 2026-10-30 22:40 (UTC-3)   Versão: 1.2 (v3.9.2)
  * -----------------------------------------------------------------------------
  * HISTÓRICO DE MODIFICAÇÕES
+ *  1.3 (v3.13.0, 2026-11-01) - [8] Condições no mapa: pernas, setas, barras e legenda.
  *  1.2 (v3.9.2, 2026-10-30 22:40) - Planejamento e Monitoramento:
  *   [7] .sn-drop (importar GPX), .sn-gauge (indicadores), .sn-tabela (pernas),
  *       SOG/COG maiores no Monitoramento.
@@ -231,3 +232,28 @@ html .tour-btn-next { background: rgb(var(--c-sky-500)); color: rgb(var(--t-whit
 /* Painel SOG/COG do Monitoramento: números maiores, legíveis a 1-2 m do console */
 #stat-live-sog, #stat-live-cog { font-size: 22px; font-variant-numeric: tabular-nums; }
 @media (max-width: 640px) { .sn-gauge-v { font-size: 24px; } }
+
+/* ---------- [8] Condições no mapa (v3.13.0) ----------
+ * Leaflet escreve a cor como atributo SVG (stroke="..."); a propriedade CSS
+ * stroke tem prioridade sobre o atributo, então a classe manda e acompanha
+ * Dia/Crepúsculo/Noite. Sem previsão = tracejado cinza. */
+.sn-cond-normal     { --cond: var(--c-green-600); }
+.sn-cond-atencao    { --cond: var(--c-amber-500); }
+.sn-cond-restritivo { --cond: var(--c-red-600); }
+.sn-cond-fora_horizonte { --cond: var(--c-slate-400); }
+path.sn-cond-perna { stroke: rgb(var(--cond)); }
+path.sn-cond-perna.sn-cond-fora_horizonte { stroke-dasharray: 8 8; }
+path.sn-cond-barra { stroke: rgb(var(--cond)); fill: rgb(var(--cond)); }
+.sn-cond-seta { background: none; border: 0; position: relative; }
+.sn-cond-seta svg { display: block; filter: drop-shadow(0 0 2px rgb(var(--c-white))); }
+.sn-cond-seta span { position: absolute; left: 24px; top: 4px; font: 600 11px/1 var(--f-data); white-space: nowrap;
+    color: rgb(var(--t-slate-900)); text-shadow: 0 0 3px rgb(var(--c-white)), 0 0 3px rgb(var(--c-white)); }
+.sn-cond-vento svg { fill: rgb(var(--t-slate-900)); }   /* tinta: escura no Dia, clara no escuro */
+.sn-cond-corrente svg { fill: rgb(var(--c-blue-600)); }
+.sn-cond-legenda { background: rgb(var(--c-white) / .92); color: rgb(var(--t-slate-800)); border: 1px solid rgb(var(--b-slate-300));
+    border-radius: 6px; padding: 8px 10px; display: grid; gap: 3px; font: 12px/1.3 var(--f-body); max-width: 230px; }
+.sn-cond-legenda i { display: inline-block; width: 18px; height: 5px; border-radius: 2px; margin-right: 6px; vertical-align: middle; background: rgb(var(--cond)); }
+.sn-cond-legenda .lv { color: rgb(var(--t-slate-900)); }
+.sn-cond-legenda .lc { color: rgb(var(--c-blue-600)); }
+@media (max-width: 640px) { .sn-cond-legenda { font-size: 11px; max-width: 170px; } }
+

@@ -5,6 +5,7 @@
  * Data/Hora: 2026-11-01 15:50 (UTC-3)   Versão: 1.0 (v3.12.0)
  * -----------------------------------------------------------------------------
  * HISTÓRICO DE MODIFICAÇÕES
+ *  1.1 (v3.13.0, 2026-11-01) - render() dispara o evento 'sisnav-condicoes' (mapa).
  *  1.0 (v3.12.0, 2026-11-01) - Arquivo NOVO:
  *   [1] Monta SAÍDA (porto de partida, ETD, rumo da 1ª perna) e CHEGADA
  *       (porto de destino, ETA, rumo da última perna) e consulta
@@ -180,6 +181,8 @@ const BarraService = {
             </div>`;
         }).join('');
         document.getElementById('sn-barra-resultado').classList.remove('hidden');
+        // v3.13.0: avisa o mapa (MapConditionsService) que há dados novos
+        window.dispatchEvent(new CustomEvent('sisnav-condicoes'));
     }
 };
 

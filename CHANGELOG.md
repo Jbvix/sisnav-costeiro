@@ -1,5 +1,20 @@
 # CHANGELOG — SISNAV Costeiro
 
+## [3.13.0] - 2026-11-01 16:13 (UTC-3) - Condições previstas no mapa
+Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
+
+### Adicionado
+- **Monitoramento → botão "Condições no mapa"** e camada **"🌊 Condições previstas"** (`js/services/MapConditionsService.js`):
+  - cada perna pintada pelo selo: verde = normal, âmbar = atenção, vermelho = restritivo, cinza tracejado = sem previsão; ao passar o mouse ou tocar, aparecem horário, onda, vento, corrente e SOG;
+  - no meio de cada perna, seta de **vento** (para onde sopra) e de **corrente** (para onde corre), com a intensidade em nós;
+  - marcadores nas **barras de saída e chegada**, com o selo e um resumo de maré, corrente, vento e onda;
+  - legenda no canto do mapa, e o mapa enquadra a rota inteira.
+- Reaproveita a previsão por perna e a janela da barra já consultadas no Planejamento; só consulta a Open-Meteo se faltar algum dado. Ao atualizar no Planejamento, o mapa redesenha sozinho.
+
+### Corrigido
+- `MapService.js` importa `State.js` sem `?v=8` (o App usa `?v=8`): para o navegador são dois módulos, com dois "States", e o mapa ficava invisível para os outros módulos. Nova função `MapService.getMapa()`; o comportamento atual do mapa não foi alterado.
+- Endereços de módulo `MarineForecastService` e `BarraService` passam a `?v=2`, para os navegadores baixarem a versão nova.
+
 ## [3.12.0] - 2026-11-01 15:52 (UTC-3) - Janela da barra (saída e chegada)
 Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
 
