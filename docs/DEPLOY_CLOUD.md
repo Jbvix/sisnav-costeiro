@@ -22,6 +22,10 @@
 - Para migrar a produção para a `main` no futuro: trocar o branch no Railway (Settings > Source) e no Netlify (Build & deploy > Branches) e validar com um deploy de teste.
 - Repositório GitHub **privado** desde 01/11/2026.
 
+## 0.1 Cartas raster (v3.14.0)
+- O site lê os tiles em `/cartas/{z}/{x}/{y}.png`; o Netlify repassa a `SISNAV_CARTAS_BASE` (padrão `https://charts.tuglife.live/tiles`, hospedado no **cPanel**).
+- **Antes de desligar o cPanel**, migrar os tiles (Etapa 2) e trocar `SISNAV_CARTAS_BASE` no Netlify (Site configuration > Environment variables) + **Trigger deploy**.
+
 ## 1. Supabase (FEITO)
 - Projeto **tuglife-core** (`nsbeddfkcdyssrirrhzt`), URL `https://nsbeddfkcdyssrirrhzt.supabase.co`.
 - Tabelas `sisnav_invites`, `sisnav_fleet`, `sisnav_kv` com RLS ligado e sem políticas (só a chave `service_role` acessa).

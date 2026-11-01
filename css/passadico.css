@@ -257,3 +257,14 @@ path.sn-cond-barra { stroke: rgb(var(--cond)); fill: rgb(var(--cond)); }
 .sn-cond-legenda .lc { color: rgb(var(--c-blue-600)); }
 @media (max-width: 640px) { .sn-cond-legenda { font-size: 11px; max-width: 170px; } }
 
+
+/* ---------- [9] Controle das cartas raster (v3.14.0) ----------
+ * Caixa no canto do mapa: transparência da carta (0-100 %) e qual carta DHN
+ * cobre o centro do mapa. Mesmo visual dos controles do Leaflet. */
+.sn-cartas-ctrl { background: rgb(var(--c-white) / .94); color: rgb(var(--t-slate-800)); border: 1px solid rgb(var(--b-slate-300));
+    border-radius: 6px; padding: 6px 8px; display: grid; gap: 4px; width: 170px; font: 12px/1.3 var(--f-body); }
+.sn-cartas-ctrl label { font-family: var(--f-label); font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    display: flex; justify-content: space-between; color: rgb(var(--t-slate-600)); }
+.sn-cartas-ctrl output { font-family: var(--f-data); }
+.sn-cartas-ctrl input[type="range"] { width: 100%; accent-color: rgb(var(--sn-accent)); }
+.sn-cartas-ctrl span { font-family: var(--f-data); font-size: 11px; color: rgb(var(--t-slate-600)); }

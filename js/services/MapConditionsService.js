@@ -25,7 +25,7 @@
  */
 import MarineForecastService from './MarineForecastService.js?v=2';
 import BarraService from './BarraService.js?v=2';
-import MapService from './MapService.js?v=15';  // mesmo endereço do App -> mesmo módulo
+import MapService from './MapService.js?v=16';  // mesmo endereço do App -> mesmo módulo
 
 const ROTULO = { normal: 'Normal', atencao: 'Atenção', restritivo: 'Restritivo', fora_horizonte: 'Sem previsão' };
 const n = (v, d = 1) => (v === null || v === undefined || isNaN(v)) ? '—' : Number(v).toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });

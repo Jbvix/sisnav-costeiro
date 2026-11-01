@@ -3,7 +3,13 @@
  * MÓDULO: Gerenciador de Mapas (Wrapper do Leaflet)
  * AUTOR: Jossian Brito
  * DATA: 2025-12-16
- * VERSÃO: 3.2.0 (v3.13.0 - 2026-11-01 16:05 UTC-3)
+ * VERSÃO: 3.3.0 (v3.14.0 - 2026-11-01 19:18 UTC-3)
+ *  3.3.0 (v3.14.0, 2026-11-01) - CARTAS RASTER: camada sobreposta (antes era
+ *      mapa-base), transparência ajustável, zoom nativo 15 (acima disso amplia
+ *      o tile 15, nítido, em vez de pedir tiles inexistentes), tiles "sem carta"
+ *      (PNG branco de 334 bytes) ficam invisíveis, e carta DHN do centro do mapa.
+ *      Tiles lidos de /cartas/ (Netlify repassa ao servidor de cartas).
+ * VERSÃO ANTERIOR: 3.2.0 (v3.13.0 - 2026-11-01 16:05 UTC-3)
  * HISTÓRICO DE MODIFICAÇÕES
  *  3.2.0 (v3.13.0, 2026-11-01) - Guarda o controle de camadas em
  *      State.layerControl, para outros módulos acrescentarem camadas
@@ -18,6 +24,7 @@
 
 import State from '../core/State.js';
 import NavMath from '../core/NavMath.js?v=10';
+import ChartService from './ChartService.js'; // v3.14.0: carta DHN do centro do mapa
 
 // --- EXTERNAL MAP LAYERS (Iframe Integration for MarineTraffic/Windy) ---
 const ExternalMapLayer = L.Layer.extend({
@@ -167,10 +174,8 @@ const MapService = {
             maxZoom: 18
         });
 
-        const tuglifeChartsLayer = L.tileLayer('https://charts.tuglife.live/tiles/{z}/{x}/{y}.png', {
-            attribution: '&copy; Marinha do Brasil / TugLife Charts',
-            maxZoom: 18
-        });
+        // v3.14.0: cartas raster como SOBREPOSIÇÃO (ver criarCamadaCartas abaixo)
+        const tuglifeChartsLayer = this.criarCamadaCartas();
 
         // 2. Definição das Sobreposições (Overlays estáticos)
         const openSeaMapLayer = L.tileLayer('https://tiles.openseamap.org/seamark/{z}/{x}/{y}.png', {
@@ -181,6 +186,8 @@ const MapService = {
         // Adiciona as camadas iniciais ao mapa
         osmLayer.addTo(map);
         openSeaMapLayer.addTo(map);
+        tuglifeChartsLayer.addTo(map);                 // v3.14.0: cartas ligadas por padrão
+        this._controleCartas(map, tuglifeChartsLayer); // transparência + carta do centro
 
         const marineTrafficLayer = new ExternalMapLayer({
             urlBuilder: (lat, lon, zoom) => {
@@ -201,12 +208,12 @@ const MapService = {
         const baseMaps = {
             "🗺️ OpenStreetMap": osmLayer,
             "🛰️ Satélite (Esri)": satelliteLayer,
-            "⚓ Cartas Náuticas (TugLife)": tuglifeChartsLayer,
             "⛴️ MarineTraffic": marineTrafficLayer,
             "🌪️ Windy (Tempo)": windyLayer
         };
 
         const overlayMaps = {
+            "⚓ Cartas náuticas DHN (TugLife)": tuglifeChartsLayer,
             "🚢 Sinalização (OpenSeaMap)": openSeaMapLayer,
             "📍 Linha da Rota": State.layers.track,
             "🚩 Waypoints": State.layers.waypoints,
@@ -535,6 +542,85 @@ const MapService = {
      * Força o recálculo do tamanho do mapa.
      * Útil quando o mapa sai de um estado 'hidden' (display: none) para visível.
      */
+    /**
+     * v3.14.0: camada de cartas raster.
+     * - URL: /cartas/{z}/{x}/{y}.png no site (o Netlify repassa ao servidor de
+     *   cartas; trocar o servidor = trocar SISNAV_CARTAS_BASE no Netlify). Fora
+     *   do Netlify (local/cPanel) lê direto de charts.tuglife.live, sem o filtro.
+     * - Filtro de tile vazio: o servidor devolve um PNG branco de 334 bytes onde
+     *   não há carta. Tiles com menos de 400 bytes viram transparentes (nenhuma
+     *   carta real cabe em 400 bytes: o menor tile com carta medido tem ~3,9 KB).
+     * - maxNativeZoom 15: resolução máxima das cartas; nos zooms 16-18 o Leaflet
+     *   amplia o tile 15 (mais nítido que pedir tiles que não existem).
+     */
+    criarCamadaCartas: function () {
+        const proxy = !!(window.SISNAV_ROUTE_INFO && window.SISNAV_ROUTE_INFO.proxy);
+        const url = proxy ? '/cartas/{z}/{x}/{y}.png' : 'https://charts.tuglife.live/tiles/{z}/{x}/{y}.png';
+        const VAZIO = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+        let opac = 0.85;
+        try { const v = parseFloat(localStorage.getItem('sisnav_cartas_opac')); if (!isNaN(v)) opac = v; } catch (e) { /* sem storage */ }
+        const Camada = L.TileLayer.extend({
+            createTile: function (coords, done) {
+                const img = document.createElement('img');
+                img.alt = '';
+                const src = this.getTileUrl(coords);
+                if (!proxy) {                       // sem proxy: tile direto, sem filtro
+                    img.onload = () => done(null, img);
+                    img.onerror = (e) => done(e, img);
+                    img.src = src;
+                    return img;
+                }
+                fetch(src).then(r => (r.ok ? r.blob() : null)).then(b => {
+                    img.onload = () => { if (img.src.startsWith('blob:')) URL.revokeObjectURL(img.src); done(null, img); };
+                    img.onerror = (e) => done(e, img);
+                    img.src = (!b || b.size < 400) ? VAZIO : URL.createObjectURL(b);
+                }).catch(e => { img.src = VAZIO; done(e, img); });
+                return img;
+            }
+        });
+        return new Camada(url, {
+            attribution: '&copy; Marinha do Brasil (DHN) / TugLife Charts',
+            maxZoom: 18, maxNativeZoom: 15, opacity: opac, zIndex: 350
+        });
+    },
+
+    /** v3.14.0: controle "Cartas": transparência (0-100 %) e carta DHN do centro do mapa. */
+    _controleCartas: function (map, camada) {
+        const Ctrl = L.Control.extend({
+            options: { position: 'bottomright' },
+            onAdd: function () {
+                const div = L.DomUtil.create('div', 'sn-cartas-ctrl');
+                div.innerHTML = '<label for="sn-cartas-opac">Cartas <output id="sn-cartas-opac-v"></output></label>'
+                    + '<input id="sn-cartas-opac" type="range" min="0" max="100" step="5">'
+                    + '<span id="sn-cartas-centro">—</span>';
+                L.DomEvent.disableClickPropagation(div);
+                L.DomEvent.disableScrollPropagation(div);
+                return div;
+            }
+        });
+        const ctrl = new Ctrl().addTo(map);
+        const el = ctrl.getContainer();
+        const inp = el.querySelector('#sn-cartas-opac'), out = el.querySelector('#sn-cartas-opac-v');
+        const aplicar = (v) => { camada.setOpacity(v / 100); out.textContent = v + '%'; inp.value = v; };
+        aplicar(Math.round(camada.options.opacity * 100));
+        inp.addEventListener('input', () => {
+            aplicar(parseInt(inp.value, 10));
+            try { localStorage.setItem('sisnav_cartas_opac', String(inp.value / 100)); } catch (e) { /* ignora */ }
+        });
+        // Carta DHN catalogada no centro do mapa (ChartService: menor escala = mais detalhe)
+        const centro = el.querySelector('#sn-cartas-centro');
+        const atualizar = () => {
+            const c = map.getCenter();
+            const id = ChartService.getChartForPosition(c.lat, c.lng);
+            centro.textContent = id === '-' ? 'Centro: carta não catalogada' : `Centro: carta ${id}`;
+        };
+        map.on('moveend', atualizar);
+        atualizar();
+        // Mostra o controle só com a camada de cartas ligada
+        map.on('overlayadd', (e) => { if (e.layer === camada) el.hidden = false; });
+        map.on('overlayremove', (e) => { if (e.layer === camada) el.hidden = true; });
+    },
+
     /**
      * v3.13.0: devolve o mapa e o controle de camadas.
      * ATENÇÃO: este arquivo importa '../core/State.js' SEM "?v=8"; o App importa

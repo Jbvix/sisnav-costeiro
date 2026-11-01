@@ -1,5 +1,20 @@
 # CHANGELOG — SISNAV Costeiro
 
+## [3.14.0] - 2026-11-01 19:20 (UTC-3) - Cartas raster: apresentação (Etapa 1)
+Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
+
+### Corrigido
+- **Áreas brancas:** onde não há carta, o servidor de tiles devolve um PNG branco de 334 bytes (sempre o mesmo arquivo; md5 conferido), que cobria o mapa de baixo. Agora esses tiles ficam **transparentes**, e o OpenStreetMap/OpenSeaMap aparece por baixo. Teste: 7 de 24 tiles vazios filtrados, 17 com carta exibidos.
+- **Nitidez/escala:** a resolução nativa das cartas vai até o zoom 15, mas o SISNAV pedia tiles até o 18. Com `maxNativeZoom: 15`, os zooms 16–18 ampliam o tile 15, nítido, em vez de pedir tiles inexistentes.
+
+### Alterado
+- Cartas náuticas DHN (TugLife) passam de mapa-base a **camada sobreposta**, ligada por padrão, com **controle de transparência** (0–100 %, padrão 85 %, guardado no navegador) e a **carta DHN que cobre o centro do mapa** (catálogo do `ChartService`).
+- Tiles lidos de **`/cartas/`** no próprio site (o Netlify repassa ao servidor de cartas). Para migrar o servidor de cartas (ex.: Cloudflare R2), basta trocar a variável **`SISNAV_CARTAS_BASE`** no Netlify (padrão: `https://charts.tuglife.live/tiles`).
+
+### Pendente (Etapas 2 e 3)
+- Etapa 2: tirar os tiles do cPanel (que hospeda `charts.tuglife.live`) **antes de desligá-lo**.
+- Etapa 3: regenerar as cartas a partir dos originais da DHN (moldura transparente, nitidez, edição/atualização).
+
 ## [3.13.0] - 2026-11-01 16:13 (UTC-3) - Condições previstas no mapa
 Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
 

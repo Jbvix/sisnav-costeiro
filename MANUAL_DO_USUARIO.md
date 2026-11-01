@@ -1,4 +1,4 @@
-# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.13.0
+# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.14.0
 
 > Atualizado em 2026-10-29 21:30 (UTC-3) — Jossian Brito (Charlie Bravo). Novidades da v3.6.0 no fim do manual.
 
@@ -254,3 +254,11 @@ Sem mudança de uso. Arrumação interna: arquivos antigos e de depuração fora
    - **círculos nas barras** de saída e chegada, com o selo da barra. Toque para ver maré, corrente, vento e onda.
 3. Passe o mouse (ou toque) numa perna para ver o horário de passagem e os valores.
 4. A camada pode ser ligada e desligada no botão de camadas do mapa: **🌊 Condições previstas**.
+
+### v3.14.0 (2026-11-01) — Cartas náuticas no mapa
+1. As **cartas náuticas DHN** aparecem por cima do mapa (camada **⚓ Cartas náuticas DHN (TugLife)** no botão de camadas). Onde não há carta, aparece o mapa comum por baixo, sem áreas brancas.
+2. No canto inferior direito do mapa, a caixa **CARTAS**:
+   - a **barra de transparência** (0–100 %): diminua para ver o mapa e a sinalização (OpenSeaMap) por baixo da carta. A escolha fica salva no navegador;
+   - **Centro: carta BR-xxxx**: a carta DHN catalogada que cobre o centro do mapa (atualiza ao mover o mapa).
+3. Acima do zoom 15, o SISNAV amplia a carta mais detalhada disponível, em vez de mostrar tiles vazios.
+4. **As cartas do SISNAV são apoio visual e não substituem a carta náutica oficial atualizada** (edição vigente e Avisos aos Navegantes).

@@ -5,6 +5,8 @@
 # Data/Hora: 2026-10-30 18:14 (UTC-3)   Versão: 1.1 (v3.8.2)
 # -----------------------------------------------------------------------------
 # HISTÓRICO DE MODIFICAÇÕES
+#  1.2 (v3.14.0, 2026-11-01) - /cartas/* repassado ao servidor de tiles
+#      (SISNAV_CARTAS_BASE; padrão https://charts.tuglife.live/tiles).
 #  1.1 (v3.8.2, 2026-10-30 18:14) - Gera dist/_redirects: o Netlify repassa
 #      /api/* ao Railway (proxy, status 200). O navegador fala só com o
 #      domínio do site; redes que bloqueiam railway.app deixam de quebrar o
@@ -43,5 +45,14 @@ if [ -n "${API}" ]; then
     printf '/api/*  %s/api/:splat  200!\n' "${API%/}" > dist/_redirects
     echo "build_netlify: proxy /api/* -> ${API%/}/api/"
 fi
+
+# v3.14.0 - Cartas raster pelo próprio domínio: /cartas/{z}/{x}/{y}.png -> servidor
+# de tiles. Mesma origem = o navegador pode inspecionar o tile e esconder os
+# vazios. MIGRAR O SERVIDOR DE CARTAS (ex.: Cloudflare R2) = trocar só a variável
+# SISNAV_CARTAS_BASE no Netlify (Site configuration > Environment variables).
+CARTAS="${SISNAV_CARTAS_BASE:-https://charts.tuglife.live/tiles}"
+printf '/cartas/*  %s/:splat  200!\n' "${CARTAS%/}" >> dist/_redirects
+echo "build_netlify: proxy /cartas/* -> ${CARTAS%/}/"
+
 
 echo "build_netlify: dist/ pronto (API_BASE='${API:-mesma origem}')"
