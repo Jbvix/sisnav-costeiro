@@ -13,9 +13,10 @@ Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
 - Documentos antigos para `docs/historico/`: `proposta_atualizacao_v3_4_0.md`, `release_notes_2026_01_13.md`, `documentation.md`, `routing_strategy.md`.
 
 ### Observações
-- Remover arquivos não apaga o histórico do git. A proteção dos dados pessoais depende de o repositório ser **privado** (decidido em 01/11/2026; a mudança é feita pelo proprietário no GitHub).
+- Remover arquivos não apaga o histórico do git; a proteção dos dados pessoais vem do repositório privado.
 - Mantidos até desligar o cPanel: `passenger_wsgi.py`, `.cpanel.yml`, `.htaccess`.
-- A partir desta versão, a publicação é feita na **`main`** (Netlify e Railway configurados para esse branch em 01/11/2026; o deploy desta versão é a conferência).
+- Branches: a `main` passa a ser a cópia oficial; **Netlify e Railway seguem publicando a partir da `migracao-cloud-v3.6.0`** (a troca para a `main` não foi aplicada, conforme o diagnóstico do deploy de 01/11/2026). Regra adotada: cada versão avança `main` e `migracao-cloud-v3.6.0` para o mesmo commit.
+- Repositório tornado **privado** em 01/11/2026 (informado pelo proprietário).
 
 ## [3.10.2] - 2026-10-30 23:36 (UTC-3) - Envio dos Avisos-Rádio confiável
 Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude

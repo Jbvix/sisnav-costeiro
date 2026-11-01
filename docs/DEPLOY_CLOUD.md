@@ -16,6 +16,12 @@
                    └──► SUPABASE (paiol estanque: Postgres tuglife-core, tabelas sisnav_*)
 ```
 
+## 0. Branches e publicação (regra desde 01/11/2026)
+- `main` = cópia oficial do código. **Netlify e Railway publicam a partir de `migracao-cloud-v3.6.0`.**
+- Cada versão aprovada é enviada às **duas** (mesmo commit, sempre por avanço, nunca reescrevendo o histórico). Conferência: `https://sisnav.tuglife.live/api/health` mostra a versão nova em cerca de 1 minuto.
+- Para migrar a produção para a `main` no futuro: trocar o branch no Railway (Settings > Source) e no Netlify (Build & deploy > Branches) e validar com um deploy de teste.
+- Repositório GitHub **privado** desde 01/11/2026.
+
 ## 1. Supabase (FEITO)
 - Projeto **tuglife-core** (`nsbeddfkcdyssrirrhzt`), URL `https://nsbeddfkcdyssrirrhzt.supabase.co`.
 - Tabelas `sisnav_invites`, `sisnav_fleet`, `sisnav_kv` com RLS ligado e sem políticas (só a chave `service_role` acessa).
