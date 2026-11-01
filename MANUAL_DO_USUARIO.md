@@ -1,4 +1,4 @@
-# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.10.2
+# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.10.3
 
 > Atualizado em 2026-10-29 21:30 (UTC-3) — Jossian Brito (Charlie Bravo). Novidades da v3.6.0 no fim do manual.
 
@@ -218,3 +218,6 @@ O favorito agora envia pelo endereço oficial `sisnav.tuglife.live`, que funcion
    - **Avisos-Rádio recebidos:** "N avisos … gravados e conferidos no banco". Está garantido.
    - **Não gravado:** o envio era válido, mas o banco não confirmou. Tente de novo em alguns minutos.
    - **Convite inválido** ou **Envio rejeitado:** veja a tabela de mensagens em `docs/DEPLOY_CLOUD.md`, seção 4.
+
+### v3.10.3 (2026-11-01) — Manutenção
+Sem mudança de uso. Arrumação interna: arquivos antigos e de depuração foram removidos ou movidos para `tools/legado/`. O sistema passa a ser publicado a partir do branch `main` do GitHub.

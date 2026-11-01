@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
 """
+v3.10.3 (2026-11-01 11:13 UTC-3 - Jossian Brito / assistido por Claude): removido o código
+morto da API Sealagom (8 funções e a constante SEALAGOM_BASE, desligados desde a
+v3.7.0). O parâmetro token de fetch_all() passa a ser opcional e é ignorado.
+Este módulo segue em uso para a Meteoromarinha e os Avisos de Mau Tempo do CHM.
+
 v3.7.0 (2026-10-30 - Jossian Brito / assistido por Claude): NAVAREA V e avisos
 costeiros agora vêm da DHN (dhn_avradio.py); Sealagom desligado. O parâmetro
 token de fetch_all() é mantido só por compatibilidade e não é mais usado.
@@ -19,7 +24,6 @@ from bs4 import BeautifulSoup
 
 logger = logging.getLogger(__name__)
 
-SEALAGOM_BASE = "https://sealagom.com/api/v1"
 
 # Páginas HTML oficiais do CHM (não há endpoint Sealagom para Meteomarinha / aviso texto CHM).
 # Ordem: tentar 24h, depois 48h (meteo); WAF da Marinha pode bloquear IPs de datacenter (403).
@@ -74,61 +78,6 @@ def route_bbox(dep_id: str, arr_id: str, margin_deg: float = 1.0) -> Optional[Di
         "min_lon": min(lon1, lon2) - margin_deg,
         "max_lon": max(lon1, lon2) + margin_deg,
     }
-
-
-def _point_in_bbox(lat: float, lon: float, bbox: Dict[str, float]) -> bool:
-    return (
-        bbox["min_lat"] <= lat <= bbox["max_lat"]
-        and bbox["min_lon"] <= lon <= bbox["max_lon"]
-    )
-
-
-def _extract_decimal_points(msg: Dict[str, Any]) -> List[Tuple[float, float]]:
-    """Devolve [(lat, lon), ...] a partir de coordinates.decimal_coordinates."""
-    out: List[Tuple[float, float]] = []
-    coords = msg.get("coordinates") or {}
-    dec = coords.get("decimal_coordinates")
-    if not dec:
-        return out
-    for pair in dec:
-        if isinstance(pair, (list, tuple)) and len(pair) >= 2:
-            try:
-                lat, lon = float(pair[0]), float(pair[1])
-                out.append((lat, lon))
-            except (TypeError, ValueError):
-                continue
-    return out
-
-
-def message_touches_route(msg: Dict[str, Any], bbox: Optional[Dict[str, float]]) -> bool:
-    if not bbox:
-        return True
-    pts = _extract_decimal_points(msg)
-    if not pts:
-        return True
-    return any(_point_in_bbox(lat, lon, bbox) for lat, lon in pts)
-
-
-def _sealagom_headers(token: str) -> Dict[str, str]:
-    return {
-        "X-API-Token": token,
-        "User-Agent": "SISNAV-Costeiro/1.0 (+https://github.com/Jbvix/sisnav-costeiro)",
-    }
-
-
-def _fetch_sealagom_paginated(first_url: str, token: str) -> List[Dict[str, Any]]:
-    headers = _sealagom_headers(token)
-    items: List[Dict[str, Any]] = []
-    url: Optional[str] = first_url
-    for _ in range(50):
-        if not url:
-            break
-        resp = requests.get(url, headers=headers, timeout=60)
-        resp.raise_for_status()
-        data = resp.json()
-        items.extend(data.get("results") or [])
-        url = data.get("next")
-    return items
 
 
 def _chm_browser_headers(referer: str) -> Dict[str, str]:
@@ -197,64 +146,7 @@ def _chm_error_message(label: str, exc: BaseException) -> str:
     return base
 
 
-def format_navarea_v_block(items: List[Dict[str, Any]], bbox: Optional[Dict[str, float]]) -> str:
-    lines: List[str] = []
-    ts = __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M")
-    lines.append(f"NAVAREA — fonte Sealagom (filtrado à rota quando há coordenadas) — {ts}")
-    lines.append("=" * 60)
-
-    for area in items:
-        title = area.get("title") or ""
-        if not re.search(r"NAVAREA\s*V\b", title, re.I):
-            continue
-        lines.append(f"\n## {area.get('title', 'NAVAREA')}")
-        for msg in area.get("active_messages") or []:
-            if not message_touches_route(msg, bbox):
-                continue
-            num = msg.get("number") or ""
-            added = msg.get("added_on") or ""
-            body = (msg.get("content") or "").strip()
-            lines.append(f"\n--- {num} ({added}) ---\n{body}")
-
-    if len(lines) <= 2:
-        lines.append("\n(Nenhuma mensagem ativa NAVAREA V retornada pela API ou filtro excluiu todas.)")
-    return "\n".join(lines)
-
-
-def _is_brazil_coastal(entry: Dict[str, Any]) -> bool:
-    country = (entry.get("country") or "") + " " + (entry.get("title") or "")
-    c = country.upper()
-    return "BRAZIL" in c or "BRASIL" in c or "BRA" in c
-
-
-def format_coastal_block(items: List[Dict[str, Any]], bbox: Optional[Dict[str, float]]) -> str:
-    lines: List[str] = []
-    ts = __import__("datetime").datetime.now().strftime("%Y-%m-%d %H:%M")
-    lines.append(f"Avisos costeiros (Sealagom) — {ts}")
-    lines.append("=" * 60)
-
-    brazil_only = [a for a in items if _is_brazil_coastal(a)]
-    use_list = brazil_only if brazil_only else items
-
-    count = 0
-    for area in use_list:
-        t = area.get("title") or "Coastal"
-        lines.append(f"\n## {t}")
-        for msg in area.get("active_messages") or []:
-            if not message_touches_route(msg, bbox):
-                continue
-            num = msg.get("number") or ""
-            added = msg.get("added_on") or ""
-            body = (msg.get("content") or "").strip()
-            lines.append(f"\n--- {num} ({added}) ---\n{body}")
-            count += 1
-
-    if count == 0:
-        lines.append("\n(Nenhum aviso costeiro do Brasil com interseção na caixa da rota, ou API sem coordenadas.)")
-    return "\n".join(lines)
-
-
-def fetch_all(dep_port: Optional[str], arr_port: Optional[str], token: str) -> Dict[str, Any]:
+def fetch_all(dep_port: Optional[str], arr_port: Optional[str], token: str = "") -> Dict[str, Any]:
     """
     Meteomarinha e avisos CHM (HTML) são sempre tentados.
     Sealagom (NAVAREA + costeiro) é opcional: falhas HTTP (ex.: 403 token/plano)

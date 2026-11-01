@@ -1,9 +1,10 @@
 # =============================================================================
 # SISNAV COSTEIRO - server.py (Flask / Passenger)
 # Autor: Jossian Brito (Charlie Bravo) | TugLife Systems
-# Data/Hora: 2026-10-30 23:35 (UTC-3)   Versão: 3.10.2
+# Data/Hora: 2026-11-01 11:13 (UTC-3)   Versão: 3.10.3
 # -----------------------------------------------------------------------------
 # HISTÓRICO DE MODIFICAÇÕES
+#  v3.10.3 (2026-11-01 11:13) - /api/chm/fetch deixa de ler SEALAGOM_API_TOKEN (código morto).
 #  v3.10.2 (2026-10-30 23:35) - /api/dhn/avradio-upload: página "Não gravado"
 #       quando o banco não confirma a gravação (antes dizia "recebidos").
 #  v3.10.0 (2026-10-30 23:05) - Etapa B (assistido por Claude):
@@ -1028,22 +1029,17 @@ except ImportError:
 def chm_fetch():
     """
     Corpo JSON opcional: { "depPort": "BR_SAL", "arrPort": "BR_RIG" }
-    Token no ambiente: SEALAGOM_API_TOKEN ou sisnav_costeiro (Web Application cPanel).
+    v3.10.3: não usa mais token (Sealagom desligado na v3.7.0).
     """
     if not sealagom_chm:
         return jsonify({'status': 'error', 'message': 'Módulo sealagom_chm não disponível.'}), 500
 
-    token = (
-        os.environ.get('SEALAGOM_API_TOKEN')
-        or os.environ.get('sisnav_costeiro')
-        or ''
-    ).strip()
     body = request.get_json(silent=True) or {}
     dep = body.get('depPort') or body.get('dep')
     arr = body.get('arrPort') or body.get('arr')
 
     try:
-        result = sealagom_chm.fetch_all(dep, arr, token)
+        result = sealagom_chm.fetch_all(dep, arr)  # v3.10.3: sem token Sealagom
         st = result.get('status')
         code = 200 if st in ('success', 'partial') else 503
         return jsonify(result), code

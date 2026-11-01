@@ -1,5 +1,22 @@
 # CHANGELOG — SISNAV Costeiro
 
+## [3.10.3] - 2026-11-01 11:13 (UTC-3) - Arrumação do repositório
+Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
+
+### Removido
+- `deploy_sisnav_v3.4.0_20260113_1319.zip`, `debug.php` (expunha o caminho do servidor), `test_cgi.py`, `make_deploy_zip.py`, `contatos.txt` da raiz (dados pessoais; duplicava `library/CONTACTS.txt`) e a pasta `_arquivos_temporarios/` (38 arquivos).
+- `library/`: 2 fotos de WhatsApp e 2 planos de viagem `.docx` de terceiros.
+- Código morto da API Sealagom em `sealagom_chm.py` (8 funções e `SEALAGOM_BASE`) e a leitura de `SEALAGOM_API_TOKEN` em `/api/chm/fetch`. A Meteoromarinha e os Avisos de Mau Tempo do CHM continuam no mesmo módulo.
+
+### Movido
+- 21 scripts de depuração e uso único da raiz para `tools/legado/` (com `LEIAME.md`). O `parse_gpx.py` fica na raiz, porque é usado por `build_route_index.py`.
+- Documentos antigos para `docs/historico/`: `proposta_atualizacao_v3_4_0.md`, `release_notes_2026_01_13.md`, `documentation.md`, `routing_strategy.md`.
+
+### Observações
+- Remover arquivos não apaga o histórico do git. A proteção dos dados pessoais depende de o repositório ser **privado** (decidido em 01/11/2026; a mudança é feita pelo proprietário no GitHub).
+- Mantidos até desligar o cPanel: `passenger_wsgi.py`, `.cpanel.yml`, `.htaccess`.
+- A partir desta versão, a publicação é feita na **`main`** (Netlify e Railway configurados para esse branch em 01/11/2026; o deploy desta versão é a conferência).
+
 ## [3.10.2] - 2026-10-30 23:36 (UTC-3) - Envio dos Avisos-Rádio confiável
 Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
 
