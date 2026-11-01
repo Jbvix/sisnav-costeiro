@@ -1,9 +1,11 @@
 # =============================================================================
 # SISNAV COSTEIRO - server.py (Flask / Passenger)
 # Autor: Jossian Brito (Charlie Bravo) | TugLife Systems
-# Data/Hora: 2026-11-01 15:42 (UTC-3)   Versão: 3.11.0
+# Data/Hora: 2026-11-01 15:49 (UTC-3)   Versão: 3.12.0
 # -----------------------------------------------------------------------------
 # HISTÓRICO DE MODIFICAÇÕES
+#  v3.12.0 (2026-11-01 15:49) - Janela da barra: POST /api/marine/barra (maré, corrente,
+#       vento, onda na estação DHN mais próxima, no ETD/ETA); mensagem clara no limite 429.
 #  v3.11.0 (2026-11-01 15:42) - /api/upload-gpx: GPX validado (2 MB, >= 2 pontos), gravado e
 #       conferido na tabela sisnav_gpx; índice = repositório + enviados (sobrevive a deploys).
 #  v3.10.3 (2026-11-01 11:13) - /api/chm/fetch deixa de ler SEALAGOM_API_TOKEN (código morto).
@@ -449,7 +451,45 @@ def marine_legs():
         return jsonify({'status': 'error', 'message': f'Perna inválida: {e}'}), 400
     except requests.RequestException as e:
         logger.warning(f"marine_legs: Open-Meteo indisponível: {e}")
-        return jsonify({'status': 'error', 'message': 'Serviço de previsão (Open-Meteo) indisponível. Tente em alguns minutos.'}), 502
+        return jsonify({'status': 'error', 'message': _msg_open_meteo(e)}), 502
+
+
+def _msg_open_meteo(e):
+    """v3.12.0: mensagem clara quando a Open-Meteo recusa. 429 = limite diário
+    gratuito atingido (contado por IP; o IP do servidor pode ser compartilhado)."""
+    if getattr(getattr(e, 'response', None), 'status_code', None) == 429:
+        return ('Limite diário gratuito da Open-Meteo atingido. Tente amanhã ou consulte '
+                'a Meteoromarinha do CHM e a tábua de marés da DHN.')
+    return 'Serviço de previsão (Open-Meteo) indisponível. Tente em alguns minutos.'
+
+
+@app.route('/api/marine/barra', methods=['POST'])
+@require_invite
+def marine_barra():
+    """v3.12.0 - Janela da barra: maré, corrente, vento, onda e swell na
+    estação DHN mais próxima do porto, no ETD (saída) e no ETA (chegada).
+    Corpo: {"pontos": [{tipo, lat, lon, t_ms, rumo?, vel_kn?, porto?}, ...]} (até 2)."""
+    import marine_openmeteo
+    pontos = (request.get_json(silent=True) or {}).get('pontos')
+    if not isinstance(pontos, list) or not (1 <= len(pontos) <= 2):
+        return jsonify({'status': 'error', 'message': 'Envie "pontos" com a saída e/ou a chegada.'}), 400
+    saida = []
+    for p in pontos:
+        try:
+            lat, lon, t = float(p['lat']), float(p['lon']), float(p['t_ms'])
+            if not (-90 <= lat <= 90 and -180 <= lon <= 180):
+                raise ValueError('coordenada fora do intervalo')
+            rumo = p.get('rumo')
+            limpo = {'tipo': str(p.get('tipo') or '')[:10], 'porto': str(p.get('porto') or '')[:60], 'lat': lat, 'lon': lon,
+                     't_ms': t, 'rumo': None if rumo is None else float(rumo), 'vel_kn': float(p.get('vel_kn') or 10)}
+        except (KeyError, TypeError, ValueError) as e:
+            return jsonify({'status': 'error', 'message': f'Ponto inválido: {e}'}), 400
+        try:
+            saida.append(marine_openmeteo.janela_barra(limpo))
+        except requests.RequestException as e:
+            logger.warning(f"marine_barra: Open-Meteo: {e}")
+            saida.append({'tipo': limpo['tipo'], 'porto': limpo['porto'], 'status': 'erro', 'message': _msg_open_meteo(e)})
+    return jsonify({'status': 'ok', 'pontos': saida})
 
 
 @app.route('/api/health', methods=['GET'])

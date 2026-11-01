@@ -1,0 +1,355 @@
+{
+ "fonte": "DHN - Tábuas das Marés 2026 (cabeçalhos)",
+ "portos": [
+  {
+   "id": "10",
+   "nome": "SÃO LUÍS (ESTADO DO MARANHÃO)",
+   "lat": -2.52667,
+   "lon": -44.31167,
+   "nivel_medio_m": 3.27,
+   "fuso": "-03.0",
+   "carta": "412",
+   "pdf": "library/tabua mares 2026/10 - SÃO LUÍS 40 - 42.pdf"
+  },
+  {
+   "id": "11",
+   "nome": "TERMINAL DA PONTA DA MADEIRA (ESTADO DO MARANHÃO)",
+   "lat": -2.565,
+   "lon": -44.37833,
+   "nivel_medio_m": 3.23,
+   "fuso": "-03.0",
+   "carta": "413",
+   "pdf": "library/tabua mares 2026/11 - TERMINAL DA PONTA DA MADEIRA 43 - 45.pdf"
+  },
+  {
+   "id": "12",
+   "nome": "PORTO DE ITAQUI (ESTADO DO MARANHÃO)",
+   "lat": -2.575,
+   "lon": -44.37,
+   "nivel_medio_m": 3.4,
+   "fuso": "-03.0",
+   "carta": "413",
+   "pdf": "library/tabua mares 2026/12 - PORTO DE ITAQUI - 46 - 48.pdf"
+  },
+  {
+   "id": "16",
+   "nome": "TERMINAL PORTUÁRIO DO PECÉM (ESTADO DO CEARÁ)",
+   "lat": -3.535,
+   "lon": -38.79833,
+   "nivel_medio_m": 1.56,
+   "fuso": "-03.0",
+   "carta": "711",
+   "pdf": "library/tabua mares 2026/16 - TERMINAL PORTUÁRIO DO PECÉM  58 - 60.pdf"
+  },
+  {
+   "id": "17",
+   "nome": "PORTO DE MUCURIPE - FORTALEZA (ESTADO DO CEARÁ)",
+   "lat": -3.715,
+   "lon": -38.47667,
+   "nivel_medio_m": 1.55,
+   "fuso": "-03.0",
+   "carta": "701",
+   "pdf": "library/tabua mares 2026/17 - PORTO DE MUCURIPE - FORTALEZA 61 - 63.pdf"
+  },
+  {
+   "id": "19",
+   "nome": "PORTO DE AREIA BRANCA - TERMISA (ESTADO DO RIO GRANDE DO NORTE)",
+   "lat": -4.825,
+   "lon": -37.04,
+   "nivel_medio_m": 1.88,
+   "fuso": "-03.0",
+   "carta": "703",
+   "pdf": "library/tabua mares 2026/19 - PORTO DE AREIA BRANCA - TERMISA - 67 - 69.pdf"
+  },
+  {
+   "id": "21",
+   "nome": "PORTO DE GUAMARÉ (ESTADO DO RIO GRANDE DO NORTE)",
+   "lat": -5.10667,
+   "lon": -36.31667,
+   "nivel_medio_m": 1.4,
+   "fuso": "-03.0",
+   "carta": "704",
+   "pdf": "library/tabua mares 2026/21 - PORTO DE GUAMARÉ- 73 - 75.pdf"
+  },
+  {
+   "id": "22",
+   "nome": "PORTO DE NATAL - COMANDO DO 3º DISTRITO NAVAL",
+   "lat": -5.76667,
+   "lon": -35.20167,
+   "nivel_medio_m": 1.3,
+   "fuso": "-03.0",
+   "carta": "811",
+   "pdf": "library/tabua mares 2026/22 - PORTO DE NATAL - COM3DN - 76 -78.pdf"
+  },
+  {
+   "id": "23",
+   "nome": "PORTO DE CABEDELO (ESTADO DA PARAÍBA)",
+   "lat": -6.97,
+   "lon": -34.84,
+   "nivel_medio_m": 1.34,
+   "fuso": "-03.0",
+   "carta": "830",
+   "pdf": "library/tabua mares 2026/23 - PORTO DE CABEDELO - 79 - 81.pdf"
+  },
+  {
+   "id": "24",
+   "nome": "PORTO DO RECIFE (ESTADO DE PERNAMBUCO)",
+   "lat": -8.05667,
+   "lon": -34.86667,
+   "nivel_medio_m": 1.28,
+   "fuso": "-03.0",
+   "carta": "902",
+   "pdf": "library/tabua mares 2026/24 - PORTO DO RECIFE - 82 - 84.pdf"
+  },
+  {
+   "id": "25",
+   "nome": "PORTO DE SUAPE (ESTADO DE PERNAMBUCO)",
+   "lat": -8.39333,
+   "lon": -34.96,
+   "nivel_medio_m": 1.27,
+   "fuso": "-03.0",
+   "carta": "912",
+   "pdf": "library/tabua mares 2026/25 - PORTO DE SUAPE - 85 -87.pdf"
+  },
+  {
+   "id": "26",
+   "nome": "PORTO DE MACEIÓ (ESTADO DE ALAGOAS)",
+   "lat": -9.68333,
+   "lon": -35.725,
+   "nivel_medio_m": 1.16,
+   "fuso": "-03.0",
+   "carta": "921",
+   "pdf": "library/tabua mares 2026/26 - PORTO DE MACEIÓ - 88 -90.pdf"
+  },
+  {
+   "id": "27",
+   "nome": "TERMINAL MARÍTIMO INÁCIO BARBOSA (ESTADO DE SERGIPE)",
+   "lat": -10.84333,
+   "lon": -36.91833,
+   "nivel_medio_m": 1.18,
+   "fuso": "-03.0",
+   "carta": "1001",
+   "pdf": "library/tabua mares 2026/27 - TERMINAL MARÍTIMO INÁCIO BARBOSA - 91 - 93.pdf"
+  },
+  {
+   "id": "30",
+   "nome": "PORTO DE ARATU - BASE NAVAL (ESTADO DA BAHIA)",
+   "lat": -12.795,
+   "lon": -38.495,
+   "nivel_medio_m": 1.37,
+   "fuso": "-03.0",
+   "carta": "1103",
+   "pdf": "library/tabua mares 2026/30 - PORTO DE ARATU - BASE NAVAL 100 - 102.pdf"
+  },
+  {
+   "id": "31",
+   "nome": "PORTO DE SALVADOR (ESTADO DA BAHIA)",
+   "lat": -12.97333,
+   "lon": -38.51667,
+   "nivel_medio_m": 1.34,
+   "fuso": "-03.0",
+   "carta": "1102",
+   "pdf": "library/tabua mares 2026/31 - PORTO DE SALVADOR - 103 - 105.pdf"
+  },
+  {
+   "id": "34",
+   "nome": "PORTO DE TUBARÃO (ESTADO DO ESPÍRITO SANTO)",
+   "lat": -20.28833,
+   "lon": -40.24333,
+   "nivel_medio_m": 0.8,
+   "fuso": "-03.0",
+   "carta": "1401",
+   "pdf": "library/tabua mares 2026/34 - PORTO DE TUBARÃO - 112 - 114.pdf"
+  },
+  {
+   "id": "35",
+   "nome": "PORTO DE VITÓRIA (ESTADO DO ESPÍRITO SANTO)",
+   "lat": -20.32167,
+   "lon": -40.33667,
+   "nivel_medio_m": 0.81,
+   "fuso": "-03.0",
+   "carta": "1401",
+   "pdf": "library/tabua mares 2026/35 - PORTO DE VITÓRIA - 115 - 117.pdf"
+  },
+  {
+   "id": "38",
+   "nome": "PORTO DO AÇU (ESTADO DO RIO DE JANEIRO)",
+   "lat": -21.81333,
+   "lon": -40.99833,
+   "nivel_medio_m": 0.83,
+   "fuso": "-03.0",
+   "carta": "1405",
+   "pdf": "library/tabua mares 2026/38 - PORTO DO AÇU - 124 - 126.pdf"
+  },
+  {
+   "id": "40",
+   "nome": "PORTO DO RIO DE JANEIRO - ILHA FISCAL (ESTADO DO RIO DE JANEIRO)",
+   "lat": -22.89667,
+   "lon": -43.16667,
+   "nivel_medio_m": 0.73,
+   "fuso": "-03.0",
+   "carta": "1515",
+   "pdf": "library/tabua mares 2026/40 - PORTO DO RIO DE JANEIRO - I FISCAL - 130 - 132.pdf"
+  },
+  {
+   "id": "43",
+   "nome": "TERMINAL DA ILHA GUAÍBA (ESTADO DO RIO DE JANEIRO)",
+   "lat": -23.0,
+   "lon": -44.03167,
+   "nivel_medio_m": 0.75,
+   "fuso": "-03.0",
+   "carta": "1624",
+   "pdf": "library/tabua mares 2026/43 - TERMINAL DA ILHA GUAÍBA - 139 - 141.pdf"
+  },
+  {
+   "id": "44",
+   "nome": "PORTO DE ANGRA DOS REIS (ESTADO DO RIO DE JANEIRO)",
+   "lat": -23.01333,
+   "lon": -44.315,
+   "nivel_medio_m": 0.69,
+   "fuso": "-03.0",
+   "carta": "1636",
+   "pdf": "library/tabua mares 2026/44 - PORTO DE ANGRA DOS REIS - 142 -144.pdf"
+  },
+  {
+   "id": "45",
+   "nome": "PORTO DE SÃO SEBASTIÃO (ESTADO DE SÃO PAULO)",
+   "lat": -23.81,
+   "lon": -45.39833,
+   "nivel_medio_m": 0.64,
+   "fuso": "-03.0",
+   "carta": "1644",
+   "pdf": "library/tabua mares 2026/45 - PORTO DE SÃO SEBASTIÃO - 145 - 147.pdf"
+  },
+  {
+   "id": "46",
+   "nome": "PORTO DE SANTOS (ESTADO DE SÃO PAULO)",
+   "lat": -23.95667,
+   "lon": -46.30833,
+   "nivel_medio_m": 0.78,
+   "fuso": "-03.0",
+   "carta": "1711",
+   "pdf": "library/tabua mares 2026/46 - PORTO DE SANTOS - 148 - 150.pdf"
+  },
+  {
+   "id": "47",
+   "nome": "TERMINAL PORTUÁRIO DA PONTA DO FÉLIX (ESTADO DO PARANÁ)",
+   "lat": -25.455,
+   "lon": -48.67833,
+   "nivel_medio_m": 1.06,
+   "fuso": "+03.0",
+   "carta": "1822",
+   "pdf": "library/tabua mares 2026/47 - TERMINAL PORTUÁRIO DA PONTA DO FÉLIX  151 - 153.pdf"
+  },
+  {
+   "id": "48",
+   "nome": "PORTO DE PARANAGUÁ - CAIS OESTE (ESTADO DO PARANÁ)",
+   "lat": -25.50167,
+   "lon": -48.53167,
+   "nivel_medio_m": 0.99,
+   "fuso": "-03.0",
+   "carta": "1822",
+   "pdf": "library/tabua mares 2026/48 - PORTO DE PARANAGUÁ - CAIS OESTE - 154 - 156.pdf"
+  },
+  {
+   "id": "49",
+   "nome": "BARRA DE PARANAGUÁ - CANAL SUESTE (ESTADO DO PARANÁ)",
+   "lat": -25.54,
+   "lon": -48.295,
+   "nivel_medio_m": 0.78,
+   "fuso": "-03.0",
+   "carta": "1821",
+   "pdf": "library/tabua mares 2026/49 - BARRA DE PARANAGUÁ - CANAL SUESTE 157 - 159.pdf"
+  },
+  {
+   "id": "5",
+   "nome": "FUNDEADOURO DE SALINÓPOLIS (ESTADO DO PARÁ)",
+   "lat": -0.61667,
+   "lon": -47.35,
+   "nivel_medio_m": 2.75,
+   "fuso": "-03.0",
+   "carta": "302",
+   "pdf": "library/tabua mares 2026/5 -FUNDEADOURO DE SALINÓPOLIS    25 - 27.pdf"
+  },
+  {
+   "id": "50",
+   "nome": "BARRA DE PARANAGUÁ - CANAL DA GALHETA (ESTADO DO PARANÁ)",
+   "lat": -25.56667,
+   "lon": -48.31667,
+   "nivel_medio_m": 0.79,
+   "fuso": "-03.0",
+   "carta": "1821",
+   "pdf": "library/tabua mares 2026/50 - BARRA DE PARANAGUÁ - CANAL DA GALHETA 160 -162.pdf"
+  },
+  {
+   "id": "51",
+   "nome": "PORTO DE SÃO FRANCISCO DO SUL (ESTADO DE SANTA CATARINA)",
+   "lat": -26.245,
+   "lon": -48.64167,
+   "nivel_medio_m": 0.89,
+   "fuso": "-03.0",
+   "carta": "1831",
+   "pdf": "library/tabua mares 2026/51 - PORTO DE SÃO FRANCISCO DO SUL - 163 -165.pdf"
+  },
+  {
+   "id": "52",
+   "nome": "PORTO DE ITAJAÍ (ESTADO DE SANTA CATARINA)",
+   "lat": -26.905,
+   "lon": -48.65333,
+   "nivel_medio_m": 0.6,
+   "fuso": "-03.0",
+   "carta": "1841",
+   "pdf": "library/tabua mares 2026/52 - PORTO DE ITAJAÍ - 166 - 168.pdf"
+  },
+  {
+   "id": "53",
+   "nome": "PORTO DE FLORIANÓPOLIS (ESTADO DE SANTA CATARINA)",
+   "lat": -27.58833,
+   "lon": -48.55667,
+   "nivel_medio_m": 0.64,
+   "fuso": "-03.0",
+   "carta": "1902",
+   "pdf": "library/tabua mares 2026/53 - PORTO DE FLORIANÓPOLIS - 169 - 171.pdf"
+  },
+  {
+   "id": "54",
+   "nome": "PORTO DE IMBITUBA (ESTADO DE SANTA CATARINA)",
+   "lat": -28.23333,
+   "lon": -48.65,
+   "nivel_medio_m": 0.45,
+   "fuso": "-03.0",
+   "carta": "1921",
+   "pdf": "library/tabua mares 2026/54 - PORTO DE IMBITUBA - 172 - 174.pdf"
+  },
+  {
+   "id": "55",
+   "nome": "PORTO DO RIO GRANDE (ESTADO DO RIO GRANDE DO SUL)",
+   "lat": -32.13833,
+   "lon": -52.10333,
+   "nivel_medio_m": 0.22,
+   "fuso": "-03.0",
+   "carta": "2101",
+   "pdf": "library/tabua mares 2026/55 - PORTO DO RIO GRANDE - 175 -177.pdf"
+  },
+  {
+   "id": "7",
+   "nome": "PORTO DE BELÉM (ESTADO DO PARÁ)",
+   "lat": -1.39667,
+   "lon": -48.49333,
+   "nivel_medio_m": 1.75,
+   "fuso": "-03.0",
+   "carta": "320",
+   "pdf": "library/tabua mares 2026/7 - PORTO DE BELÉM (ESTADO DO PARÁ) - 2026 - 31 - 33.pdf"
+  },
+  {
+   "id": "8",
+   "nome": "PORTO DE VILA DO CONDE (ESTADO DO PARÁ)",
+   "lat": -1.53833,
+   "lon": -48.75333,
+   "nivel_medio_m": 1.72,
+   "fuso": "-03.0",
+   "carta": "321",
+   "pdf": "library/tabua mares 2026/8 - PORTO DE VILA DO CONDE  34 - 36.pdf"
+  }
+ ]
+}

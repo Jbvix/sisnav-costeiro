@@ -1,3 +1,4 @@
+/* v3.12.0 | 2026-11-01 15:52 (UTC-3) | Jossian Brito - Janela da barra (BarraService) e console -> 3.12.0. */
 /* v3.11.0 | 2026-11-01 15:44 (UTC-3) | Jossian Brito - console -> 3.11.0 (rotas GPX permanentes). */
 /* v3.10.3 | 2026-11-01 11:13 (UTC-3) | Jossian Brito - console -> 3.10.3 (arrumação do repositório). */
 /* v3.10.2 | 2026-10-30 23:36 (UTC-3) | Jossian Brito - console -> 3.10.2 (envio dos Avisos-Rádio confiável). */
@@ -52,16 +53,19 @@ import CHMService from './services/CHMService.js?v=4';
 import ProgressOverlay from './utils/ProgressOverlay.js?v=1';
 import KratosService from './services/KratosService.js?v=9';
 import MarineForecastService from './services/MarineForecastService.js?v=1'; // v3.10.0: Etapa B
+import BarraService from './services/BarraService.js?v=1'; // v3.12.0: Janela da barra
 
 const App = {
     init: function () {
-        console.log("App: Inicializando v3.11.0..."); // v3.8.1: manter igual a version.py
+        console.log("App: Inicializando v3.12.0..."); // v3.8.1: manter igual a version.py
 
         // Init Help (Sprint 6)
         HelpService.init();
 
         // v3.10.0: previsão do mar por perna (botão no Planejamento)
         MarineForecastService.init(State);
+        // v3.12.0: janela da barra (saída/chegada)
+        BarraService.init(State);
         CHMService.init();
 
         window.TideCSVService = TideCSVService;

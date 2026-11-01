@@ -1,9 +1,10 @@
 # =============================================================================
 # SISNAV COSTEIRO - version.py
 # Autor: Jossian Brito (Charlie Bravo) | TugLife Systems
-# Data/Hora: 2026-11-01 15:44 (UTC-3)   Versão: 3.11.0
+# Data/Hora: 2026-11-01 15:52 (UTC-3)   Versão: 3.12.0
 # -----------------------------------------------------------------------------
 # HISTÓRICO DE MODIFICAÇÕES
+#  v3.12.0 (2026-11-01 15:52) - Janela da barra (maré, corrente, vento, onda no ETD/ETA).
 #  v3.11.0 (2026-11-01 15:44) - Rotas GPX enviadas permanentes (tabela sisnav_gpx).
 #  v3.10.3 (2026-11-01 11:13) - Arrumação do repositório e remoção do código Sealagom.
 #  v3.10.2 (2026-10-30 23:36) - Favorito abre a aba no clique; gravação dos Avisos-Rádio confirmada.
@@ -23,5 +24,5 @@
 # uma versão diferente (o health dizia 3.6.0-cloud com o sistema já na 3.8.0).
 # =============================================================================
 
-SISNAV_VERSION = "3.11.0"            # Versionamento semântico: MAIOR.MENOR.CORREÇÃO
+SISNAV_VERSION = "3.12.0"            # Versionamento semântico: MAIOR.MENOR.CORREÇÃO
 SISNAV_RELEASE_DATE = "2026-11-01"  # Data da versão (UTC-3)

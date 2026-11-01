@@ -1,9 +1,12 @@
 # =============================================================================
 # SISNAV COSTEIRO - marine_openmeteo.py (previsão do mar por perna da rota)
 # Autor: Jossian Brito (Charlie Bravo) | TugLife Systems
-# Data/Hora: 2026-10-30 23:05 (UTC-3)   Versão: 1.0 (v3.10.0)
+# Data/Hora: 2026-11-01 15:49 (UTC-3)   Versão: 1.1 (v3.12.0)
 # -----------------------------------------------------------------------------
 # HISTÓRICO DE MODIFICAÇÕES
+#  1.1 (v3.12.0, 2026-11-01 15:49) - Janela da barra: janela_barra(), extremos()
+#       (PM/BM por parábola), estacao_mais_proxima() (dados/portos_dhn.json, até
+#       50 km), maré = nível do modelo + nível médio DHN (Z0).
 #  1.0 (v3.10.0, 2026-10-30) - Arquivo NOVO (Etapa B, assistido por Claude):
 #   [1] Consulta Open-Meteo Marine (onda, swell, corrente) e Forecast (vento)
 #       para o PONTO MÉDIO de cada perna, na HORA ESTIMADA de passagem.
@@ -211,3 +214,142 @@ def previsao_pernas(pernas: List[Dict[str, Any]]) -> Dict[str, Any]:
         "limites": LIMITES,
         "fonte": "Open-Meteo (CC BY 4.0) · ondas e corrente: Copernicus Marine / MeteoFrance (SMOC, inclui maré) · vento: modelos globais",
     }
+
+
+# =============================================================================
+# v3.12.0 - JANELA DA BARRA (saída e chegada)
+# Maré (nível do mar previsto), corrente, vento, onda e swell na posição da
+# estação maregráfica da DHN mais próxima do porto, no ETD (saída) e no ETA
+# (chegada). Fonte: Open-Meteo (modelo). Referência oficial: tábua da DHN.
+# =============================================================================
+import json as _json
+import os as _os
+from datetime import timedelta
+
+_PORTOS_DHN = None
+RAIO_ESTACAO_KM = 50.0   # acima disso, usa a posição do próprio porto (sem Z0)
+
+
+def _portos_dhn() -> List[Dict[str, Any]]:
+    global _PORTOS_DHN
+    if _PORTOS_DHN is None:
+        caminho = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), 'dados', 'portos_dhn.json')
+        with open(caminho, encoding='utf-8') as f:
+            _PORTOS_DHN = _json.load(f)['portos']
+    return _PORTOS_DHN
+
+
+def dist_km(lat1, lon1, lat2, lon2) -> float:
+    """Haversine: d = 2R · asen(√(sen²(Δφ/2) + cos φ1 · cos φ2 · sen²(Δλ/2))), R = 6371 km."""
+    p1, p2 = math.radians(lat1), math.radians(lat2)
+    dphi, dlam = p2 - p1, math.radians(lon2 - lon1)
+    a = math.sin(dphi / 2) ** 2 + math.cos(p1) * math.cos(p2) * math.sin(dlam / 2) ** 2
+    return 2 * 6371.0 * math.asin(math.sqrt(a))
+
+
+def estacao_mais_proxima(lat: float, lon: float) -> Optional[Dict[str, Any]]:
+    melhor = min(_portos_dhn(), key=lambda p: dist_km(lat, lon, p['lat'], p['lon']))
+    d = dist_km(lat, lon, melhor['lat'], melhor['lon'])
+    return dict(melhor, dist_km=round(d, 1)) if d <= RAIO_ESTACAO_KM else None
+
+
+def _interp(ts: List[float], vs: List[Optional[float]], t: float) -> Optional[float]:
+    """Interpolação linear entre as duas horas vizinhas: v = v0 + (v1−v0)·(t−t0)/(t1−t0)."""
+    for i in range(len(ts) - 1):
+        if ts[i] <= t <= ts[i + 1] and vs[i] is not None and vs[i + 1] is not None:
+            return vs[i] + (vs[i + 1] - vs[i]) * (t - ts[i]) / (ts[i + 1] - ts[i])
+    return None
+
+
+def extremos(ts: List[float], hs: List[Optional[float]]) -> List[Dict[str, Any]]:
+    """Preamares (PM) e baixa-mares (BM) a partir da série horária.
+    Um ponto i é extremo se é maior (PM) ou menor (BM) que os vizinhos. O
+    instante e a altura são refinados pela parábola que passa pelos 3 pontos:
+        δ = ½ · (h₋ − h₊) / (h₋ − 2h₀ + h₊)        (fração de hora, −½..+½)
+        t* = t₀ + δ · 1 h      h* = h₀ − ¼ · (h₋ − h₊) · δ
+    Ex.: h₋=1,30 h₀=1,41 h₊=1,38 -> δ=+0,29 -> pico 17 min depois, 1,42 m."""
+    out = []
+    for i in range(1, len(hs) - 1):
+        a, b, c = hs[i - 1], hs[i], hs[i + 1]
+        if None in (a, b, c):
+            continue
+        if (b > a and b >= c) or (b < a and b <= c):
+            den = a - 2 * b + c
+            d = 0.5 * (a - c) / den if den else 0.0
+            out.append({'tipo': 'PM' if b > a else 'BM', 't_ms': (ts[i] + d * 3600) * 1000,
+                        'altura_m': round(b - 0.25 * (a - c) * d, 2)})
+    return out
+
+
+def _consultar_janela(url, lat, lon, variaveis, t_ms, extra):
+    """Série de 26 h em torno do instante (−13 h a +13 h), em UTC."""
+    t = datetime.fromtimestamp(t_ms / 1000, tz=timezone.utc)
+    ini, fim = (t - timedelta(hours=13)).date().isoformat(), (t + timedelta(hours=13)).date().isoformat()
+    params = {"latitude": f"{lat:.3f}", "longitude": f"{lon:.3f}", "hourly": ",".join(variaveis),
+              "timezone": "GMT", "start_date": ini, "end_date": fim, **extra}
+    r = requests.get(url, params=params, timeout=20, headers={"User-Agent": "SISNAV-Costeiro/3.12 (TugLife)"})
+    r.raise_for_status()
+    return r.json().get("hourly", {})
+
+
+def janela_barra(ponto: Dict[str, Any]) -> Dict[str, Any]:
+    """ponto: {tipo: 'saida'|'chegada', lat, lon (do porto), t_ms (ETD/ETA, UTC ms),
+               rumo (graus; opcional), vel_kn (opcional), porto (nome, opcional)}."""
+    est = estacao_mais_proxima(float(ponto['lat']), float(ponto['lon']))
+    lat, lon = (est['lat'], est['lon']) if est else (float(ponto['lat']), float(ponto['lon']))
+    z0 = est.get('nivel_medio_m') if est else None
+    t_ms = float(ponto['t_ms'])
+    chave = f"barra|{lat:.3f},{lon:.3f}|{int(t_ms // 3600000)}"
+
+    def buscar():
+        mar = _consultar_janela(URL_MARINE, lat, lon, ["sea_level_height_msl"] + VARS_MARINE, t_ms, {})
+        vento = _consultar_janela(URL_FORECAST, lat, lon, VARS_VENTO, t_ms, {"wind_speed_unit": "kn"})
+        return {"mar": mar, "vento": vento}
+
+    bruto, do_cache = _com_cache(chave, buscar)
+    m, w = bruto["mar"], bruto["vento"]
+    ts = [datetime.fromisoformat(x).replace(tzinfo=timezone.utc).timestamp() for x in m.get("time", [])]
+    t = t_ms / 1000
+    base = {"tipo": ponto.get("tipo"), "porto": ponto.get("porto"), "t_ms": t_ms, "cache": do_cache,
+            "estacao": ({k: est[k] for k in ("nome", "lat", "lon", "nivel_medio_m", "carta", "pdf", "dist_km")} if est else None)}
+    if not ts or not (ts[0] <= t <= ts[-1]):
+        return dict(base, status="fora_horizonte")
+
+    # MARÉ: nível do modelo (rel. ao nível médio) + Z0 da DHN ≈ altura da tábua
+    msl = m.get("sea_level_height_msl") or []
+    h = [None if v is None else round(v + (z0 or 0.0), 3) for v in msl]
+    altura = _interp(ts, h, t)
+    antes, depois = _interp(ts, h, t - 1800), _interp(ts, h, t + 1800)
+    taxa = None if None in (antes, depois) else round((depois - antes) * 100, 1)   # cm/h (diferença em 1 h)
+    ext = extremos(ts, h)
+    prox = [e for e in ext if e["t_ms"] / 1000 >= t]
+    ante = [e for e in ext if e["t_ms"] / 1000 < t]
+    i = min(range(len(ts)), key=lambda k: abs(ts[k] - t))   # hora cheia mais próxima
+    janela = [k for k in range(len(ts)) if abs(ts[k] - t) <= 12 * 3600]
+
+    rumo = ponto.get("rumo")
+    vel = float(ponto.get("vel_kn") or 10)
+    vc_kmh = _val(m, "ocean_current_velocity", i)
+    dirc = _val(m, "ocean_current_direction", i)
+    corrente = {"kn": None if vc_kmh is None else round(vc_kmh / KMH_POR_NO, 2), "dir_para": dirc}
+    if rumo is not None and corrente["kn"] is not None and dirc is not None:
+        corrente.update(decompor_corrente(corrente["kn"], dirc, float(rumo), vel))
+    iw = _indice_hora(w.get("time", []), t_ms)
+    vento = {"kn": _val(w, "wind_speed_10m", iw), "rajada_kn": _val(w, "wind_gusts_10m", iw), "dir_de": _val(w, "wind_direction_10m", iw)}
+    if rumo is not None and vento["kn"] is not None and vento["dir_de"] is not None:
+        vento["de_proa_kn"] = vento_de_proa(vento["kn"], vento["dir_de"], float(rumo))
+    onda = {"hs_m": _val(m, "wave_height", i), "periodo_s": _val(m, "wave_period", i), "dir_de": _val(m, "wave_direction", i)}
+    swell = {"h_m": _val(m, "swell_wave_height", i), "periodo_s": _val(m, "swell_wave_period", i), "dir_de": _val(m, "swell_wave_direction", i)}
+    if rumo is not None:
+        for g, chave_dir in ((onda, "dir_de"), (swell, "dir_de")):
+            if g.get(chave_dir) is not None:
+                g["setor"] = setor(g[chave_dir], float(rumo))
+    return dict(base, status="ok", rumo=rumo, nivel=classificar(onda["hs_m"], vento["kn"]), limites=LIMITES,
+                mare={"referencia": "zero da carta (nível do modelo + nível médio DHN)" if z0 is not None else "nível médio do mar (sem estação DHN a menos de 50 km)",
+                      "altura_m": None if altura is None else round(altura, 2),
+                      "tendencia": None if taxa is None else ("enchente" if taxa > 2 else ("vazante" if taxa < -2 else "estofo")),
+                      "taxa_cm_h": taxa,
+                      "anterior": ante[-1] if ante else None, "proximos": prox[:2],
+                      "curva": [{"t_ms": ts[k] * 1000, "h": h[k]} for k in janela]},
+                corrente=corrente, vento=vento, onda=onda, swell=swell,
+                fonte="Open-Meteo (CC BY 4.0) · Copernicus Marine / MeteoFrance (SMOC) · nível médio: tábuas DHN 2026")

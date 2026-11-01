@@ -1,5 +1,25 @@
 # CHANGELOG — SISNAV Costeiro
 
+## [3.12.0] - 2026-11-01 15:52 (UTC-3) - Janela da barra (saída e chegada)
+Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
+
+### Adicionado
+- **Planejamento → "Janela da barra":** um cartão para a **saída (ETD)** e outro para a **chegada (ETA)**, com:
+  - **maré no horário:** altura, enchente/vazante/estofo (cm/h), preamar e baixa-mar anterior e próximas, curva de 24 h com a marca do horário;
+  - **corrente** (a favor/contra no rumo da 1ª e da última perna), **vento** (médio, rajada, proa/popa), **onda e swell** (setor de chegada);
+  - selo **Normal / Atenção / Restritivo** (mesmos limites da Etapa B) e botão **Tábua DHN**, que abre o PDF oficial do porto.
+- `POST /api/marine/barra` (exige convite) e `marine_openmeteo.janela_barra()`: consulta a Open-Meteo na posição da **estação maregráfica da DHN mais próxima** do porto (até 50 km). Maré = nível do modelo + **nível médio (Z0) da DHN**, ou seja, referida ao zero da carta, como na tábua. Preamares e baixa-mares refinadas por parábola sobre a série horária.
+- `tools/extrair_portos_dhn.py` → `dados/portos_dhn.json`: posição, nível médio, fuso e carta das **35 estações** das Tábuas das Marés DHN 2026 (lidos do cabeçalho dos PDFs).
+- Mensagem clara quando a Open-Meteo recusa por **limite diário (HTTP 429)**, também na previsão por perna.
+
+### Validação
+- Comparação com a tábua DHN de Santos (01/01/2026): mesma forma da maré; alturas ~0,1–0,2 m acima; um horário de baixa-mar ~1h20 adiantado. O painel avisa "±20 cm e ±1 h; confira a tábua DHN".
+- Lógica testada com maré sintética M2 (12,42 h): altura, tendência e extremos dentro de 1 minuto do cálculo à mão.
+
+### Observações
+- O limite diário gratuito da Open-Meteo é contado **por IP**, e o IP do servidor pode ser compartilhado com outros aplicativos. Avaliar uma chave paga se o 429 aparecer em produção.
+- Defeito antigo registrado: em `js/services/PortDatabase.js`, Santos usa `csvName: 'Sepetiba'` no painel antigo de maré (CSV). A Janela da barra não usa esse campo.
+
 ## [3.11.0] - 2026-11-01 15:44 (UTC-3) - Rotas GPX enviadas ficam permanentes
 Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
 
