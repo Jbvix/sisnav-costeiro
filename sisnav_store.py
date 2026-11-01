@@ -1,9 +1,14 @@
 # =============================================================================
 # SISNAV COSTEIRO - sisnav_store.py (Camada de Persistência)
 # Autor: Jossian Brito (Charlie Bravo) | TugLife Systems | Assistido por Claude
-# Data/Hora: 2026-10-29 21:30 (UTC-3)   Versão: 3.6.0-cloud
+# Data/Hora: 2026-11-01 15:42 (UTC-3)   Versão: 3.11.0
 # -----------------------------------------------------------------------------
 # HISTÓRICO DE MODIFICAÇÕES
+#  v3.11.0 (2026-11-01 15:42) - Rotas GPX permanentes (assistido por Claude):
+#   [5] gpx_save()/gpx_list(): cada GPX enviado vira uma linha da tabela
+#       sisnav_gpx (o disco do Railway zera a cada deploy). Gravação conferida
+#       por releitura: se o banco não confirmar, levanta erro (nada de "ok" falso).
+#       Modo arquivo (local/cPanel): data/gpx_enviados/.
 #  v3.6.0-cloud (2026-10-29) - Arquivo NOVO. Migração cPanel -> Railway/Supabase:
 #   [1] Banco de convites e frota sai dos arquivos JSON de data/ e vai para o
 #       Postgres do Supabase (tabelas sisnav_invites, sisnav_fleet, sisnav_kv),
@@ -347,3 +352,47 @@ def kv_get(key):
 
 def backend_name():
     return 'supabase' if USE_SUPABASE else 'json-files'
+
+
+# =============================================================================
+# v3.11.0 [5] - ROTAS GPX ENVIADAS (tabela sisnav_gpx)
+# Analogia: é o arquivo de derrotas do escritório da filial - o navio (disco
+# do Railway) pode trocar de tripulação a cada deploy, mas as derrotas ficam
+# guardadas em terra e voltam a bordo antes de montar o índice.
+# =============================================================================
+GPX_DIR_LOCAL = os.path.join(DATA_DIR, 'gpx_enviados')
+
+
+def gpx_save(nome, conteudo, pontos, enviado_por):
+    """Grava (ou substitui) um GPX e CONFERE relendo o tamanho gravado.
+    tamanho_bytes = len(conteudo em UTF-8): se o banco devolver outro valor,
+    a gravação não é aceita como feita."""
+    tamanho = len(conteudo.encode('utf-8'))
+    if USE_SUPABASE:
+        _rest('POST', 'sisnav_gpx', params={'on_conflict': 'nome'},
+              body={'nome': nome, 'conteudo': conteudo, 'tamanho_bytes': tamanho,
+                    'pontos': pontos, 'enviado_por': enviado_por},
+              prefer='resolution=merge-duplicates,return=minimal')
+        rows = _rest('GET', 'sisnav_gpx', params={'select': 'tamanho_bytes', 'nome': f'eq.{nome}', 'limit': 1})
+        if not rows or int(rows[0].get('tamanho_bytes') or -1) != tamanho:
+            raise RuntimeError('o banco não confirmou a gravação do GPX')
+        return tamanho
+    os.makedirs(GPX_DIR_LOCAL, exist_ok=True)
+    with open(os.path.join(GPX_DIR_LOCAL, nome), 'w', encoding='utf-8') as f:
+        f.write(conteudo)
+    return tamanho
+
+
+def gpx_list():
+    """Todos os GPX enviados: [{'nome': ..., 'conteudo': ...}] (ordem alfabética)."""
+    if USE_SUPABASE:
+        return _rest('GET', 'sisnav_gpx', params={'select': 'nome,conteudo', 'order': 'nome.asc'}) or []
+    if not os.path.isdir(GPX_DIR_LOCAL):
+        return []
+    saida = []
+    for nome in sorted(os.listdir(GPX_DIR_LOCAL)):
+        if nome.lower().endswith('.gpx'):
+            with open(os.path.join(GPX_DIR_LOCAL, nome), 'r', encoding='utf-8') as f:
+                saida.append({'nome': nome, 'conteudo': f.read()})
+    return saida
+

@@ -1,5 +1,20 @@
 # CHANGELOG — SISNAV Costeiro
 
+## [3.11.0] - 2026-11-01 15:44 (UTC-3) - Rotas GPX enviadas ficam permanentes
+Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
+
+### Corrigido
+- **Rotas enviadas sumiam depois de um deploy:** o GPX ia só para o disco do Railway (que zera a cada deploy). Na próxima importação, o índice era refeito sem elas. Nenhuma rota tinha sido enviada pela nuvem até 01/11/2026, então nada se perdeu.
+- GPX enviados apareciam com origem e destino "?": o nome saneado troca espaços por "_" (`santos_sp_x_suape_pe`), e o índice agora aceita o separador `_x_`.
+
+### Adicionado
+- Tabela `sisnav_gpx` no Supabase (migração `supabase/migrations/20261101_sisnav_gpx.sql`; RLS ligado, sem políticas, só o servidor acessa).
+- `/api/upload-gpx`: valida extensão, tamanho (até 2 MB) e conteúdo (GPX legível com pelo menos 2 pontos); grava no banco e confere relendo; restaura os GPX do banco no disco e reconstrói o índice (repositório + enviados), publicado em `sisnav_kv` sem engolir erro.
+- `sisnav_store.gpx_save()` / `gpx_list()`.
+
+### Observação
+- Os 10 GPX do repositório continuam vindo do próprio repositório (`gpx/`); não é preciso copiá-los para o banco.
+
 ## [3.10.3] - 2026-11-01 11:13 (UTC-3) - Arrumação do repositório
 Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
 

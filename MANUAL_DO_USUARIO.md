@@ -1,4 +1,4 @@
-# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.10.3
+# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.11.0
 
 > Atualizado em 2026-10-29 21:30 (UTC-3) — Jossian Brito (Charlie Bravo). Novidades da v3.6.0 no fim do manual.
 
@@ -221,3 +221,9 @@ O favorito agora envia pelo endereço oficial `sisnav.tuglife.live`, que funcion
 
 ### v3.10.3 (2026-11-01) — Manutenção
 Sem mudança de uso. Arrumação interna: arquivos antigos e de depuração foram removidos ou movidos para `tools/legado/`. O sistema passa a ser publicado a partir do branch `main` do GitHub.
+
+### v3.11.0 (2026-11-01) — Rotas GPX enviadas ficam guardadas
+1. As rotas GPX enviadas pelo app passam a ficar guardadas no banco do SISNAV. Não somem mais quando o sistema é atualizado.
+2. Ao enviar, a mensagem confirma o nome da rota, quantos pontos ela tem e quantas rotas o índice possui.
+3. **Nome do arquivo:** use `origem x destino.gpx` (ex.: `santos sp x suape pe.gpx`). O SISNAV usa esse padrão para saber de onde a rota sai e para onde vai.
+4. O arquivo é recusado se não for `.gpx`, se passar de 2 MB ou se não tiver uma rota legível (pelo menos 2 pontos).

@@ -1,9 +1,11 @@
 # =============================================================================
 # SISNAV COSTEIRO - server.py (Flask / Passenger)
 # Autor: Jossian Brito (Charlie Bravo) | TugLife Systems
-# Data/Hora: 2026-11-01 11:13 (UTC-3)   Versão: 3.10.3
+# Data/Hora: 2026-11-01 15:42 (UTC-3)   Versão: 3.11.0
 # -----------------------------------------------------------------------------
 # HISTÓRICO DE MODIFICAÇÕES
+#  v3.11.0 (2026-11-01 15:42) - /api/upload-gpx: GPX validado (2 MB, >= 2 pontos), gravado e
+#       conferido na tabela sisnav_gpx; índice = repositório + enviados (sobrevive a deploys).
 #  v3.10.3 (2026-11-01 11:13) - /api/chm/fetch deixa de ler SEALAGOM_API_TOKEN (código morto).
 #  v3.10.2 (2026-10-30 23:35) - /api/dhn/avradio-upload: página "Não gravado"
 #       quando o banco não confirma a gravação (antes dizia "recebidos").
@@ -200,37 +202,84 @@ def update_data():
 @app.route('/api/upload-gpx', methods=['POST'])
 @require_invite
 def upload_gpx():
-    from flask import request
-    
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file part'}), 400
-        
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
-        
-    if file and file.filename.lower().endswith('.gpx'):
-        try:
-            # Save to gpx/ folder
-            safe_name = secure_filename(file.filename)  # v3.5.0-sec [4]
-            if not safe_name.lower().endswith('.gpx'):
-                return jsonify({'error': 'Nome de arquivo inválido'}), 400
-            save_path = os.path.join(os.getcwd(), 'gpx', safe_name)
-            file.save(save_path)
-            
-            # Rebuild Index
-            gpx_dir = os.path.join(os.getcwd(), 'gpx')
-            output_file = os.path.join(os.getcwd(), 'js', 'data', 'known_routes.json')
-            
-            # Capture output or just run?
-            # We can mock the print or just trust it.
-            if build_route_index:
-                build_route_index.build_index(gpx_dir, output_file)
-                _publish_data_file('known_routes.json', output_file)  # v3.6.0 [6]
-            
-            return jsonify({'status': 'OK', 'message': f'Rota {file.filename} adicionada e índice atualizado!'})
-        except Exception as e:
-            return jsonify({'error': str(e)}), 500
+    """v3.11.0: rota GPX enviada pelo app fica PERMANENTE (tabela sisnav_gpx).
+    Passos (cada um só avança se o anterior deu certo):
+      1. valida extensão, nome (secure_filename) e tamanho (até 2 MB);
+      2. valida o conteúdo: precisa ser um GPX legível com pelo menos 2 pontos;
+      3. grava no banco e CONFERE (sisnav_store.gpx_save) - antes ia só para o
+         disco do Railway, que zera a cada deploy;
+      4. restaura no disco todos os GPX do banco e reconstrói o índice de rotas
+         (repositório + enviados), publicando-o em sisnav_kv.
+    Respostas: {'message': ...} em sucesso; {'error': ...} em falha (o app usa
+    esses dois campos)."""
+    import tempfile
+    from parse_gpx import parse_gpx
+
+    file = request.files.get('file')
+    if not file or not file.filename:
+        return jsonify({'error': 'Nenhum arquivo enviado.'}), 400
+    safe_name = secure_filename(file.filename)  # v3.5.0-sec [4]
+    if not safe_name.lower().endswith('.gpx'):
+        return jsonify({'error': 'Envie um arquivo .gpx.'}), 400
+
+    bruto = file.read(MAX_GPX_BYTES + 1)
+    if len(bruto) > MAX_GPX_BYTES:
+        return jsonify({'error': 'Arquivo acima de 2 MB; confira se é mesmo uma rota GPX.'}), 413
+    conteudo = bruto.decode('utf-8', errors='replace')
+
+    # 2) conteúdo válido? (parse num arquivo temporário, fora de gpx/)
+    with tempfile.TemporaryDirectory() as tmp:
+        caminho = os.path.join(tmp, safe_name)
+        with open(caminho, 'w', encoding='utf-8') as f:
+            f.write(conteudo)
+        resultado = parse_gpx(caminho)
+    pontos = len((resultado or {}).get('route') or [])
+    if pontos < 2:
+        return jsonify({'error': 'O arquivo não tem uma rota GPX legível (mínimo de 2 pontos).'}), 400
+
+    # 3) grava no banco com conferência
+    try:
+        inv = store.get_invite(request.headers.get('X-Invite-Token', '').strip()) or {}
+        store.gpx_save(safe_name, conteudo, pontos, str(inv.get('type') or 'admin'))
+    except Exception as e:
+        logger.error(f"upload-gpx: não gravado no banco: {e}")
+        return jsonify({'error': 'A rota não foi gravada no banco. Tente de novo em alguns minutos.'}), 503
+
+    # 4) restaura enviados no disco + reconstrói e publica o índice
+    try:
+        total = _reconstruir_indice_rotas()
+    except Exception as e:
+        logger.error(f"upload-gpx: índice não atualizado: {e}")
+        return jsonify({'error': f'Rota {safe_name} gravada, mas o índice de rotas não foi atualizado. Avise o administrador.'}), 500
+    return jsonify({'status': 'OK', 'message': f'Rota {safe_name} ({pontos} pontos) gravada no banco. Índice com {total} rotas.'})
+
+
+MAX_GPX_BYTES = 2 * 1024 * 1024  # v3.11.0: um GPX costeiro tem ~8 KB
+
+
+def _reconstruir_indice_rotas():
+    """v3.11.0: GPX do repositório (gpx/) + GPX enviados (banco) -> índice.
+    1. escreve no disco efêmero (gpx/) cada GPX do banco (sobrescreve o de
+       mesmo nome: a versão enviada é a mais recente);
+    2. build_route_index.build_index(gpx/) gera js/data/known_routes.json;
+    3. grava o índice em sisnav_kv SEM engolir erro (o front lê de lá).
+    Devolve o número de rotas no índice."""
+    gpx_dir = os.path.join(BASE_DIR, 'gpx')
+    os.makedirs(gpx_dir, exist_ok=True)
+    for item in store.gpx_list():
+        nome = secure_filename(item.get('nome') or '')
+        if nome.lower().endswith('.gpx'):
+            with open(os.path.join(gpx_dir, nome), 'w', encoding='utf-8') as f:
+                f.write(item.get('conteudo') or '')
+    destino = os.path.join(BASE_DIR, 'js', 'data', 'known_routes.json')
+    if not build_route_index:
+        raise RuntimeError('módulo build_route_index indisponível')
+    build_route_index.build_index(gpx_dir, destino)
+    with open(destino, 'r', encoding='utf-8') as f:
+        texto = f.read()
+    store.kv_set('known_routes.json', texto)
+    return len(json.loads(texto))
+
 
 @app.route('/api/tide-files', methods=['GET'])
 def list_tide_files():

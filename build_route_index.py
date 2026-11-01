@@ -1,3 +1,5 @@
+# SISNAV COSTEIRO - build_route_index.py | Jossian Brito | v3.11.0 (2026-11-01 15:42 UTC-3)
+# HISTÓRICO: v3.11.0 - aceita o separador "_x_" (nomes saneados dos GPX enviados).
 
 import os
 import json
@@ -31,7 +33,11 @@ def build_index(gpx_dir, output_file):
                 # Metadados úteis para o roteador ("De Onde -> Para Onde")
                 # Heurística: Nome do arquivo é "Origem x Destino.gpx"
                 filename = os.path.basename(gpx_path).replace('.gpx', '').lower()
-                parts = filename.split(' x ')
+                # v3.11.0: GPX enviados pelo app têm o nome saneado (secure_filename
+                # troca espaços por "_"): "santos_sp x suape_pe" -> "santos_sp_x_suape_pe".
+                # Aceita os dois separadores para não perder origem/destino.
+                sep = ' x ' if ' x ' in filename else ('_x_' if '_x_' in filename else ' x ')
+                parts = filename.split(sep)
                 
                 meta = {
                     "id": filename,
