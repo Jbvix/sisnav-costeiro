@@ -1,4 +1,4 @@
-# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.14.0
+# MANUAL DO USUÁRIO - SISNAV COSTEIRO v3.15.0
 
 > Atualizado em 2026-10-29 21:30 (UTC-3) — Jossian Brito (Charlie Bravo). Novidades da v3.6.0 no fim do manual.
 
@@ -262,3 +262,16 @@ Sem mudança de uso. Arrumação interna: arquivos antigos e de depuração fora
    - **Centro: carta BR-xxxx**: a carta DHN catalogada que cobre o centro do mapa (atualiza ao mover o mapa).
 3. Acima do zoom 15, o SISNAV amplia a carta mais detalhada disponível, em vez de mostrar tiles vazios.
 4. **As cartas do SISNAV são apoio visual e não substituem a carta náutica oficial atualizada** (edição vigente e Avisos aos Navegantes).
+
+### v3.15.0 (2026-11-01) — Ficha da carta do centro do mapa
+1. A caixa **CARTAS** (canto inferior direito do mapa) agora mostra a **ficha da carta DHN** que cobre o centro do mapa, escolhida entre as **628 cartas** do acervo (antes eram 17):
+   - **número e folha** (ex.: *Carta 1711 (fl. 01)*) e **escala** (ex.: *1:80.000*);
+   - **nome** da carta;
+   - **edição** e data, e o **último Aviso aos Navegantes (AN)** aplicado ao arquivo, com a data.
+2. Quando há várias cartas no mesmo ponto, aparece a de **maior escala** (mais detalhada), como no passadiço.
+3. **Alerta âmbar ⚠**:
+   - *Correção com mais de 2 anos*: o último AN registrado tem mais de 2 anos;
+   - *Sem correção registrada no arquivo*: o arquivo não traz AN.
+   Nos dois casos, confira a edição vigente e os Avisos aos Navegantes antes de usar a área.
+4. Fora do acervo aparece *"Centro: sem carta DHN no acervo"*.
+5. A imagem das cartas no mapa ainda é a mesma da v3.14.0. As cartas regeneradas a partir dos originais (mais nítidas no porto, sem branco na moldura) entram numa próxima versão, depois da sua aprovação do piloto.

@@ -2,9 +2,11 @@
 # =============================================================================
 # SISNAV COSTEIRO - scripts/build_netlify.sh
 # Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
-# Data/Hora: 2026-10-30 18:14 (UTC-3)   Versão: 1.1 (v3.8.2)
+# Data/Hora: 2026-11-01 23:06 (UTC-3)   Versão: 1.3 (v3.15.0)
 # -----------------------------------------------------------------------------
 # HISTÓRICO DE MODIFICAÇÕES
+#  1.3 (v3.15.0, 2026-11-01 23:06) - copia dados/cartas_dhn.json (catálogo das
+#      cartas DHN lido pelo ChartService no navegador).
 #  1.2 (v3.14.0, 2026-11-01) - /cartas/* repassado ao servidor de tiles
 #      (SISNAV_CARTAS_BASE; padrão https://charts.tuglife.live/tiles).
 #  1.1 (v3.8.2, 2026-10-30 18:14) - Gera dist/_redirects: o Netlify repassa
@@ -26,6 +28,7 @@ rm -rf dist && mkdir -p dist
 cp index.html login.html admin.html admin_dashboard.html manual.html dist/
 cp -r css js gpx dist/
 cp maritimo_mare_meteo.json tides_scraped.csv weather_scraped.csv dist/ 2>/dev/null || true
+mkdir -p dist/dados && cp dados/cartas_dhn.json dist/dados/   # v3.15.0: catálogo de cartas (público, só metadados)
 
 # Biblioteca: só o que o app consulta (txt, json, imagens, PDFs de marés/cartas).
 # Fora: .docx de viagens, fotos de WhatsApp, planilhas e o scraper.

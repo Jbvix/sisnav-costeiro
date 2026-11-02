@@ -3,7 +3,12 @@
  * MÓDULO: Gerenciador de Mapas (Wrapper do Leaflet)
  * AUTOR: Jossian Brito
  * DATA: 2025-12-16
- * VERSÃO: 3.3.0 (v3.14.0 - 2026-11-01 19:18 UTC-3)
+ * VERSÃO: 3.4.0 (v3.15.0 - 2026-11-01 23:02 UTC-3)
+ *  3.4.0 (v3.15.0, 2026-11-01) - Controle "Cartas" mostra a FICHA da carta DHN do
+ *      centro (número/folha, escala, nome, edição, último Aviso aos Navegantes)
+ *      e alerta âmbar se a correção tiver mais de 2 anos ou não existir.
+ *      Catálogo: ChartService 2.0 (dados/cartas_dhn.json, 628 cartas).
+ *  -- anterior --
  *  3.3.0 (v3.14.0, 2026-11-01) - CARTAS RASTER: camada sobreposta (antes era
  *      mapa-base), transparência ajustável, zoom nativo 15 (acima disso amplia
  *      o tile 15, nítido, em vez de pedir tiles inexistentes), tiles "sem carta"
@@ -24,7 +29,7 @@
 
 import State from '../core/State.js';
 import NavMath from '../core/NavMath.js?v=10';
-import ChartService from './ChartService.js'; // v3.14.0: carta DHN do centro do mapa
+import ChartService from './ChartService.js?v=2'; // v3.15.0: catálogo de 628 cartas (mesmo endereço do ReportService)
 
 // --- EXTERNAL MAP LAYERS (Iframe Integration for MarineTraffic/Windy) ---
 const ExternalMapLayer = L.Layer.extend({
@@ -607,15 +612,38 @@ const MapService = {
             aplicar(parseInt(inp.value, 10));
             try { localStorage.setItem('sisnav_cartas_opac', String(inp.value / 100)); } catch (e) { /* ignora */ }
         });
-        // Carta DHN catalogada no centro do mapa (ChartService: menor escala = mais detalhe)
+        // Carta DHN no centro do mapa (ChartService: menor escala = mais detalhe)
+        // v3.15.0: ficha completa (nome, escala, edição, último AN) + alerta de correção antiga
         const centro = el.querySelector('#sn-cartas-centro');
+        const fmtData = (iso) => iso ? iso.split('-').reverse().join('/') : '';
         const atualizar = () => {
-            const c = map.getCenter();
-            const id = ChartService.getChartForPosition(c.lat, c.lng);
-            centro.textContent = id === '-' ? 'Centro: carta não catalogada' : `Centro: carta ${id}`;
+            const p = map.getCenter();
+            const c = ChartService.getChartInfo(p.lat, p.lng);
+            centro.className = '';
+            if (!c) { centro.textContent = 'Centro: sem carta DHN no acervo'; return; }
+            const num = c.numero + (c.folha ? ` (fl. ${c.folha})` : '');
+            const esc = c.escala ? ' · 1:' + c.escala.toLocaleString('pt-BR') : '';
+            if (c.reserva) { centro.textContent = `Centro: carta ${num}${esc}`; return; }
+            const ed = c.edicao ? `${c.edicao}ª ed. ${fmtData(c.edicao_data)}` : '';
+            const est = ChartService.estadoCorrecao(c);
+            const an = c.an ? `últ. AN ${c.an} (${fmtData(c.an_data)})` : 'sem AN registrado';
+            centro.innerHTML = '';
+            const b = document.createElement('b'); b.textContent = `Carta ${num}${esc}`;
+            const nome = document.createElement('span'); nome.textContent = c.nome || '';
+            const cor = document.createElement('span'); cor.textContent = [ed, an].filter(Boolean).join(' · ');
+            centro.append(b, nome, cor);
+            if (est.nivel === 'antiga' || est.nivel === 'sem') {
+                const al = document.createElement('em');
+                al.textContent = est.nivel === 'antiga'
+                    ? `⚠ Correção com mais de 2 anos: confira os Avisos aos Navegantes vigentes.`
+                    : '⚠ Sem correção registrada no arquivo: confira a edição vigente e os Avisos.';
+                centro.append(al);
+                centro.className = 'sn-cartas-alerta';
+            }
         };
         map.on('moveend', atualizar);
         atualizar();
+        ChartService.carregarCatalogo().then(atualizar);   // redesenha quando o catálogo chegar
         // Mostra o controle só com a camada de cartas ligada
         map.on('overlayadd', (e) => { if (e.layer === camada) el.hidden = false; });
         map.on('overlayremove', (e) => { if (e.layer === camada) el.hidden = true; });

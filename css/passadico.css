@@ -268,3 +268,11 @@ path.sn-cond-barra { stroke: rgb(var(--cond)); fill: rgb(var(--cond)); }
 .sn-cartas-ctrl output { font-family: var(--f-data); }
 .sn-cartas-ctrl input[type="range"] { width: 100%; accent-color: rgb(var(--sn-accent)); }
 .sn-cartas-ctrl span { font-family: var(--f-data); font-size: 11px; color: rgb(var(--t-slate-600)); }
+/* v3.15.0: ficha da carta do centro (número/escala, nome, edição/AN) + alerta de correção antiga */
+.sn-cartas-ctrl { width: 230px; }
+#sn-cartas-centro { display: grid; gap: 1px; }
+#sn-cartas-centro b { font-family: var(--f-data); font-size: 11px; color: rgb(var(--t-slate-800)); }
+#sn-cartas-centro span { font-family: var(--f-body); }
+#sn-cartas-centro em { font-style: normal; font-family: var(--f-body); font-size: 11px; margin-top: 2px; padding: 2px 4px; border-radius: 4px;
+    background: rgb(var(--c-amber-100)); color: rgb(var(--t-amber-900)); border: 1px solid rgb(var(--b-amber-300)); }
+@media (max-width: 480px) { .sn-cartas-ctrl { width: 190px; } }   /* v3.15.0: ficha menor no celular */

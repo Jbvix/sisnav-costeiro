@@ -1,3 +1,4 @@
+/* v3.15.0 | 2026-11-01 23:04 (UTC-3) | Jossian Brito - catálogo de 628 cartas DHN (MapService v=17, ReportService v=13, MapConditionsService v=3) e console -> 3.15.0. */
 /* v3.14.0 | 2026-11-01 19:20 (UTC-3) | Jossian Brito - cartas raster (MapService v=16) e console -> 3.14.0. */
 /* v3.13.0 | 2026-11-01 16:13 (UTC-3) | Jossian Brito - condições no mapa (MapConditionsService) e console -> 3.13.0. */
 /* v3.12.0 | 2026-11-01 15:52 (UTC-3) | Jossian Brito - Janela da barra (BarraService) e console -> 3.12.0. */
@@ -32,7 +33,7 @@
 
 import State from './core/State.js?v=8';
 import NavMath from './core/NavMath.js?v=10';
-import MapService from './services/MapService.js?v=16'; // v3.14.0: cartas raster
+import MapService from './services/MapService.js?v=17'; // v3.15.0: ficha da carta do centro
 import WeatherAPI from './services/WeatherAPI.js?v=13';
 import GPXParser from './utils/GPXParser.js?v=9';
 import UIManager from './utils/UIManager.js?v=12'; // v3.9.1: resumo da Avaliação
@@ -41,7 +42,7 @@ import PersistenceService from './services/PersistenceService.js?v=1';
 import UpdateService from './services/UpdateService.js?v=1';
 import { tideJSONService } from './services/TideJSONService.js'; // NEW
 import TideCSVService from './services/TideCSVService.js?v=12';
-import ReportService from './services/ReportService.js?v=12'; // v3.10.0: seção do mar
+import ReportService from './services/ReportService.js?v=13'; // v3.10.0: seção do mar
 import TideLocator from './services/TideLocator.js';
 import AuthService from './services/AuthService.js?v=Hotfix4'; // SPRINT 4
 import HelpService from './services/HelpService.js'; // SPRINT 6
@@ -56,11 +57,11 @@ import ProgressOverlay from './utils/ProgressOverlay.js?v=1';
 import KratosService from './services/KratosService.js?v=9';
 import MarineForecastService from './services/MarineForecastService.js?v=2'; // v3.10.0: Etapa B
 import BarraService from './services/BarraService.js?v=2'; // v3.12.0: Janela da barra
-import MapConditionsService from './services/MapConditionsService.js?v=2'; // v3.13.0: condições no mapa
+import MapConditionsService from './services/MapConditionsService.js?v=3'; // v3.13.0: condições no mapa
 
 const App = {
     init: function () {
-        console.log("App: Inicializando v3.14.0..."); // v3.8.1: manter igual a version.py
+        console.log("App: Inicializando v3.15.0..."); // v3.8.1: manter igual a version.py
 
         // Init Help (Sprint 6)
         HelpService.init();

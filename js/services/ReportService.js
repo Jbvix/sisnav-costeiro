@@ -1,9 +1,10 @@
+/* v3.15.0 | 2026-11-01 23:04 (UTC-3) | Jossian Brito - importa ChartService?v=2 (catálogo de 628 cartas, mesmo módulo do mapa). */
 /* v3.10.0 | 2026-10-30 23:05 (UTC-3) | Jossian Brito (assistido por Claude)
  * Modificação: nova seção "7.2 CONDIÇÕES DO MAR PREVISTAS POR PERNA (Open-Meteo)",
  * impressa só quando a previsão foi consultada no Planejamento (State.marineForecast). */
 import NavMath from '../core/NavMath.js?v=10';
 import TideCSVService from './TideCSVService.js';
-import ChartService from './ChartService.js';
+import ChartService from './ChartService.js?v=2'; // v3.15.0: mesmo módulo do MapService (catálogo baixado 1 vez)
 import ProgressOverlay from '../utils/ProgressOverlay.js?v=1';
 
 // --- CONSTANTS & PARSERS ---

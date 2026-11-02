@@ -2,9 +2,10 @@
  * =============================================================================
  * SISNAV COSTEIRO - js/services/MapConditionsService.js ("Condições no mapa")
  * Autor: Jossian Brito (Charlie Bravo) | TugLife Systems | Assistido por Claude
- * Data/Hora: 2026-11-01 16:13 (UTC-3)   Versão: 1.0 (v3.13.0)
+ * Data/Hora: 2026-11-01 16:13 (UTC-3)   Versão: 1.1 (v3.15.0)
  * -----------------------------------------------------------------------------
  * HISTÓRICO DE MODIFICAÇÕES
+ *  1.1 (v3.15.0, 2026-11-01 23:04) - importa MapService.js?v=17 (mesmo endereço do App).
  *  1.0 (v3.13.0, 2026-11-01) - Arquivo NOVO:
  *   [1] Camada "Condições previstas" no mapa do Monitoramento:
  *       - cada perna pintada pelo selo (normal / atenção / restritivo);
@@ -25,7 +26,7 @@
  */
 import MarineForecastService from './MarineForecastService.js?v=2';
 import BarraService from './BarraService.js?v=2';
-import MapService from './MapService.js?v=16';  // mesmo endereço do App -> mesmo módulo
+import MapService from './MapService.js?v=17';  // mesmo endereço do App -> mesmo módulo
 
 const ROTULO = { normal: 'Normal', atencao: 'Atenção', restritivo: 'Restritivo', fora_horizonte: 'Sem previsão' };
 const n = (v, d = 1) => (v === null || v === undefined || isNaN(v)) ? '—' : Number(v).toLocaleString('pt-BR', { minimumFractionDigits: d, maximumFractionDigits: d });

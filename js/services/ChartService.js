@@ -1,9 +1,35 @@
 /**
- * ARQUIVO: ChartService.js
- * AUTOR: Jossian Brito
- * DATA: 2025-12-30
- * DESCRIÇÃO: Serviço para identificar a Carta Náutica (DHN) baseada em coordenadas.
- * Dados baseados em 'library/CHARTS_BRAZIL.txt' + Coordenadas aproximadas.
+ * =============================================================================
+ * SISNAV COSTEIRO - js/services/ChartService.js (carta náutica DHN por posição)
+ * Autor: Jossian Brito (Charlie Bravo) | TugLife Systems
+ * Data/Hora: 2026-11-01 22:58 (UTC-3)   Versão: 2.0 (v3.15.0)
+ * -----------------------------------------------------------------------------
+ * HISTÓRICO DE MODIFICAÇÕES
+ *  2.0 (v3.15.0, 2026-11-01, assistido por Claude):
+ *   [1] Catálogo COMPLETO: carrega dados/cartas_dhn.json (628 cartas raster da
+ *       DHN, gerado por tools/extrair_catalogo_cartas.py a partir dos .KAP)
+ *       com número, folha, nome, escala, edição e último Aviso aos Navegantes.
+ *       A tabela antiga (17 cartas, limites aproximados) fica como reserva
+ *       enquanto o catálogo não carrega ou se o arquivo faltar.
+ *   [2] getChartInfo(lat, lon): devolve a ficha da carta de MAIOR escala
+ *       (mais detalhe) que contém o ponto; usa a moldura (polígono) quando a
+ *       carta tem uma, senão o retângulo de limites.
+ *   [3] estadoCorrecao(carta): "ok" / "antiga" (último AN com mais de 2 anos)
+ *       / "sem" (sem AN registrado no arquivo) - aprovado por Charlie Bravo.
+ *   [4] getChartForPosition() mantém a mesma resposta ("BR-1711" ou "-").
+ *  1.0 (2025-12-30) - tabela com 17 cartas e limites aproximados.
+ * -----------------------------------------------------------------------------
+ * REGRA DE ESCOLHA: entre as cartas que contêm o ponto, vence a de MENOR
+ *   denominador de escala: 1:10.000 (porto) vence 1:80.000 (aproximação), que
+ *   vence 1:1.000.000 (costeira). É o que o navegador faz no passadiço: usar
+ *   sempre a carta de maior escala disponível para a área.
+ * PONTO NO POLÍGONO (raio): traça-se uma linha do ponto para leste e contam-se
+ *   os cruzamentos com os lados da moldura; ímpar = dentro, par = fora.
+ *   Analogia: como saber se a boia está dentro da área de fundeio contando
+ *   quantas vezes o alinhamento corta o limite da área.
+ * IDADE DA CORREÇÃO: dias = (hoje - data do AN) / 86 400 000 ms;
+ *   "antiga" quando dias > 730 (2 anos).
+ * =============================================================================
  */
 
 const CHART_DB = [
@@ -132,30 +158,76 @@ const CHART_DB = [
     }
 ];
 
+// v3.15.0: catálogo completo (carregado sob demanda) e a fronteira de "antiga"
+const CATALOGO_URL = 'dados/cartas_dhn.json?v=1';
+const DIAS_CORRECAO_ANTIGA = 730;   // 2 anos (aprovado por Charlie Bravo)
+
+/** [2] Ponto (lat, lon) dentro do polígono [[lat, lon], ...]? Algoritmo do raio. */
+function dentroPoligono(lat, lon, ply) {
+    let dentro = false;
+    for (let i = 0, j = ply.length - 1; i < ply.length; j = i++) {
+        const [ai, oi] = ply[i], [aj, oj] = ply[j];
+        // o lado (j -> i) cruza a latitude do ponto, a leste dele?
+        if ((ai > lat) !== (aj > lat) && lon < (oj - oi) * (lat - ai) / (aj - ai) + oi) dentro = !dentro;
+    }
+    return dentro;
+}
+
 const ChartService = {
+    _cartas: null,        // lista do catálogo, já ordenada por escala (maior detalhe primeiro)
+    _carregando: null,    // Promise do carregamento (evita baixar duas vezes)
+
+    /** [1] Carrega o catálogo uma vez. Resolve com a lista (ou null se falhar). */
+    carregarCatalogo: function () {
+        if (this._carregando) return this._carregando;
+        this._carregando = fetch(CATALOGO_URL)
+            .then(r => (r.ok ? r.json() : null))
+            .then(j => {
+                if (j && Array.isArray(j.cartas)) {
+                    this._cartas = j.cartas.slice().sort((a, b) => (a.escala || 1e9) - (b.escala || 1e9));
+                }
+                return this._cartas;
+            })
+            .catch(() => null);   // sem catálogo: segue com a tabela reserva
+        return this._carregando;
+    },
+
+    /** [2] Ficha da carta de maior escala que contém o ponto, ou null. */
+    getChartInfo: function (lat, lon) {
+        if (this._cartas) {
+            for (const c of this._cartas) {   // já ordenadas: o 1º que contém vence
+                const [s, w, n, e] = c.b;
+                if (lat < s || lat > n || lon < w || lon > e) continue;
+                if (c.ply && !dentroPoligono(lat, lon, c.ply)) continue;
+                return c;
+            }
+            return null;
+        }
+        // Reserva (v1.0): tabela aproximada
+        const cand = CHART_DB.filter(c => lat <= c.bounds.n && lat >= c.bounds.s && lon >= c.bounds.w && lon <= c.bounds.e)
+            .sort((a, b) => a.scale - b.scale);
+        if (!cand.length) return null;
+        return { numero: cand[0].id, nome: cand[0].title, escala: cand[0].scale, reserva: true };
+    },
+
+    /** [3] Situação da última correção registrada no arquivo da carta. */
+    estadoCorrecao: function (carta, hoje = Date.now()) {
+        if (!carta || carta.reserva) return { nivel: 'desconhecido', dias: null };
+        if (!carta.an_data) return { nivel: 'sem', dias: null };
+        const dias = Math.floor((hoje - Date.parse(carta.an_data + 'T00:00:00')) / 86400000);
+        return { nivel: dias > DIAS_CORRECAO_ANTIGA ? 'antiga' : 'ok', dias };
+    },
+
     /**
      * Retorna a carta mais adequada para uma coordenada (Lat/Lon).
-     * Prioriza cartas de aproximação (escala menor) sobre costeiras.
-     * @param {number} lat 
-     * @param {number} lon 
-     * @returns {string} ID da Carta (ex: "BR-21040") ou "-"
+     * [4] Mesmo formato de antes: "BR-1711" ou "-".
      */
     getChartForPosition: function (lat, lon) {
-        // Filtra todas que contém o ponto
-        const candidates = CHART_DB.filter(c =>
-            lat <= c.bounds.n && lat >= c.bounds.s &&
-            lon >= c.bounds.w && lon <= c.bounds.e
-        );
-
-        if (candidates.length === 0) return "-";
-
-        // Ordena por Escala (Menor escala = Mais detalhe/Zoom = Prioridade)
-        // Ex: 1:50.000 (50000) < 1:1.000.000 (1000000)
-        // Queremos o menor valor de Scale.
-        candidates.sort((a, b) => a.scale - b.scale);
-
-        return "BR-" + candidates[0].id; // Prefixo BR padrão
+        const c = this.getChartInfo(lat, lon);
+        return c ? 'BR-' + c.numero : '-';
     }
 };
+
+ChartService.carregarCatalogo();   // começa a baixar já (218 KB, uma vez por sessão)
 
 export default ChartService;

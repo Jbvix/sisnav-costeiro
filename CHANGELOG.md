@@ -1,5 +1,20 @@
 # CHANGELOG — SISNAV Costeiro
 
+## [3.15.0] - 2026-11-01 23:30 (UTC-3) - Catálogo das cartas DHN e gerador de tiles
+Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
+
+### Adicionado
+- **`tools/extrair_catalogo_cartas.py` → `dados/cartas_dhn.json`** (219 KB): cabeçalho das **628 cartas raster da DHN** (BSB/KAP) com número e folha, nome, escala, **edição** e data, **último Aviso aos Navegantes** e data, limites, moldura (quando irregular) e **zoom nativo**. Datas do arquivo vêm em mês/dia/ano (conferido nas 628) e são gravadas em ISO.
+- **Caixa CARTAS do mapa**: ficha da carta do centro (número/folha, escala, nome, edição, último AN) e **alerta âmbar** quando a correção tem **mais de 2 anos** ou não existe (194 cartas sem AN registrado no arquivo).
+- **`tools/gerar_tiles_cartas.py`**: gerador de tiles Web Mercator a partir dos .KAP: cada carta até o **seu zoom nativo** (portos até 17), fora da carta **transparente**, recorte pela moldura irregular, carta de **maior escala por cima** e fundo herdado da carta de menor escala dentro do mesmo tile. Opções `--estimar` e `--bbox` (piloto por área).
+
+### Alterado
+- **`ChartService` 2.0**: carrega o catálogo (uma vez por sessão), escolhe a carta de maior escala que contém o ponto (ponto-no-polígono pela moldura) e expõe `getChartInfo()` e `estadoCorrecao()`. `getChartForPosition()` mantém a resposta `"BR-1711"`. A tabela antiga (17 cartas) fica como reserva se o catálogo não carregar.
+- Build do Netlify copia `dados/cartas_dhn.json`. Endereços de módulo: `MapService ?v=17`, `ReportService ?v=13`, `MapConditionsService ?v=3`, `ChartService ?v=2`, `App.js ?v=68`.
+
+### Observação
+- Os .KAP originais (356 MB) **não** entram no repositório. A imagem das cartas no mapa continua vindo do servidor atual; os tiles regenerados entram depois da aprovação do piloto e da publicação no Cloudflare R2.
+
 ## [3.14.0] - 2026-11-01 19:20 (UTC-3) - Cartas raster: apresentação (Etapa 1)
 Autor: Jossian Brito (Charlie Bravo) | Assistido por Claude
 
